@@ -10,7 +10,7 @@ Antígua & Barbuda
 Arábia Saudita
 Argélia
 Argentina
-Armênia
+Arménia
 Aruba
 Austrália
 Áustria
@@ -243,6 +243,6 @@ Uzbequistão
 Vanuatu
 Vaticano
 Venezuela
-Vietnã
+Vietname
 Zâmbia
 Zimbábue
