@@ -1,0 +1,1 @@
+Esta pasta incui imagens que são usadas na aplicação.
