@@ -19,7 +19,7 @@ __app_name__ = "RepService 2017"
 __author__ = "Victor Domingos"
 __copyright__ = "Copyright 2017 Victor Domingos"
 __license__ = "Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)"
-__version__ = "v.0.4 development"
+__version__ = "v.0.5 development"
 __email__ = "web@victordomingos.com"
 __status__ = "Development"
 
@@ -61,8 +61,8 @@ class thanks_window:
         self.close_button.pack()
         self.thanksframe.pack(side=tk.TOP)
         self.thanksframe_bottom.pack(side=tk.BOTTOM)
-            
-       
+
+
 
 class about_window:
     def __init__(self):
@@ -85,7 +85,7 @@ class about_window:
         pframe_topo = ttk.Frame(popupRoot, padding="10 10 10 2")
         pframe_meio = ttk.Frame(popupRoot, padding="10 2 2 10")
         pframe_fundo = ttk.Frame(popupRoot, padding="10 2 10 10")
-        
+
         os.chdir(os.path.dirname(__file__))
         icon_path = os.getcwd()
         icon_path += "/images/icon.gif"
@@ -98,7 +98,7 @@ class about_window:
 
         appfont = tkinter.font.Font(size=15, weight='bold')
         copyfont = tkinter.font.Font(size=10)
-        
+
         #---------- TOPO -----------
         app_lbl = ttk.Label(pframe_topo, font=appfont, text=__app_name__)
         assin_lbl = ttk.Label(pframe_topo,text="\nO gestor seu avançado de reparações.\n")
@@ -123,13 +123,13 @@ class about_window:
         pframe_topo.pack(side=tk.TOP)
         pframe_meio.pack(side=tk.TOP)
         pframe_fundo.pack(side=tk.TOP)
-        
+
         pframe_topo.focus()
 
         popupRoot.mainloop()
-    
-    
-     
+
+
+
 def thanks(*event):
     janela_thanks = thanks_window()
 
@@ -137,5 +137,3 @@ def thanks(*event):
 def about(*event):
     janela_thanks.destroy()
     janela_about = about_window()
-    
-    
