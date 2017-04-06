@@ -1,3 +1,6 @@
+#!/usr/bin/env python3.6
+# encoding: utf-8
+
 import os.path
 
 
@@ -20,8 +23,7 @@ WROOT_GEOMETRIA = '1060x800+0+0'
 WCONTACTOS_GEOMETRIA = '430x730+1062+92'
 WREMESSAS_GEOMETRIA = '430x730+1062+92'
 
-#SLOW_MACHINE = True  # Alterar para False no caso de se tratar de uma máquina rápida (animações no entryframe)
-SLOW_MACHINE = False # Alterar para True no caso de se tratar de uma máquina rápida (animações no entryframe)
+SLOW_MACHINE = False # Alterar para True no caso de se tratar de uma máquina lenta (animações no entryframe)
 
 #Estados (como serão registados na base de dados)
 EM_PROCESSAMENTO = 0
@@ -57,6 +59,9 @@ EQUIP_FALTA_PECAS = 3
 
 TIPO_REP_CLIENTE = 0
 TIPO_REP_STOCK = 1
+
+TIPO_REMESSA_SAIDA = 0
+TIPO_REMESSA_ENTRADA = 1
 
 GARANTIA_NAO = 0
 GARANTIA_NESTE = 1

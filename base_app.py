@@ -1,4 +1,5 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3.6
+# encoding: utf-8
 """
 Este módulo é parte integrante da aplicação RepService, desenvolvida por
 Victor Domingos e distribuída sob os termos da licença Creative Commons

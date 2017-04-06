@@ -1,15 +1,18 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3.6
+# encoding: utf-8
 """
 Este módulo é parte integrante da aplicação RepService, desenvolvida por
 Victor Domingos e distribuída sob os termos da licença Creative Commons
 Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
 
+import tkinter as tk
+from tkinter import ttk
 from extra_tk_classes import *
 from base_app import *
 from service import *
 
-     
+
 class ContactsWindow(baseApp):
     """ base class for application """
     def __init__(self, master, estado, *args, **kwargs):
@@ -17,7 +20,7 @@ class ContactsWindow(baseApp):
         self.estado = estado
         self.master.minsize(CONTACTOS_MIN_WIDTH, CONTACTOS_MIN_HEIGTH)
         self.master.maxsize(CONTACTOS_MAX_WIDTH, CONTACTOS_MAX_HEIGTH)
-        self.centerframe = ttk.Frame(self.mainframe, padding="4 0 4 0")
+        #self.centerframe = ttk.Frame(self.mainframe, padding="4 0 4 0")  #apagar isto
         self.montar_barra_de_ferramentas()
         self.montar_tabela()
 
@@ -33,7 +36,6 @@ class ContactsWindow(baseApp):
             self.mostrar_painel_entrada()
 
 
-
     def montar_tabela(self):
         self.tree = ttk.Treeview(self.leftframe, height=60, selectmode='browse')
         self.tree['columns'] = ('ID', 'Nome', 'Telefone','Email')
@@ -43,8 +45,8 @@ class ContactsWindow(baseApp):
         self.tree.column('Nome', minwidth=140, stretch=1, width=140)
         self.tree.column('Telefone', anchor=tk.E, minwidth=90, stretch=1, width=90)
         self.tree.column('Email', anchor=tk.E, minwidth=130, stretch=1, width=130)
-        
-        self.configurarTree()       
+
+        self.configurarTree()
 
         self.leftframe.grid_columnconfigure(0, weight=1)
         self.leftframe.grid_rowconfigure(0, weight=1)
@@ -76,7 +78,6 @@ class ContactsWindow(baseApp):
         self.topframe.columnconfigure(2, weight=1)
 
 
-    
     def mostrar_painel_entrada(self, *event):
         self.estado.painel_novo_contacto_aberto = True
         #self.MenuFicheiro.entryconfig("Novo contacto", state="disabled")
@@ -97,7 +98,6 @@ class ContactsWindow(baseApp):
         #entryfr1-----------------------------
         #TODO:adicionar campos, notebook, etc
         #criar funções para usar esses campos, ora para adicionar, ora para editar, ora para visualizar registos
-        pass
 
         self.ef_var_tipo_is_cliente = tk.IntVar()
         self.ef_var_tipo_is_cliente.set(True)
@@ -106,7 +106,7 @@ class ContactsWindow(baseApp):
             self.ef_var_tipo_is_fornecedor.set(True)
             self.ef_var_tipo_is_cliente.set(False)
         self.ef_var_tipo_is_loja = tk.IntVar()
-        
+
         self.ef_cabecalho = ttk.Frame(self.entryfr1, padding=4)
         self.ef_lbl_titulo = ttk.Label(self.ef_cabecalho, style="BW.TLabel", text="Adicionar Contacto:\n")
         self.ef_lbl_tipo = ttk.Label(self.ef_cabecalho, text="Tipo:")
@@ -118,7 +118,7 @@ class ContactsWindow(baseApp):
         self.btn_adicionar = ttk.Button(self.ef_cabecalho, text="Adicionar", command=self.adicionar_contacto)
         self.btn_cancelar = ttk.Button(self.ef_cabecalho, text="Cancelar", command=self.fechar_painel_entrada)
 
-        
+
         self.ef_lbl_titulo.grid(column=0, row=0, columnspan=3, sticky='w')
         self.ef_lbl_tipo.grid(column=0, row=1, sticky='e')
         self.ef_chkbtn_tipo_cliente.grid(column=1, row=1, sticky='w')
@@ -127,14 +127,14 @@ class ContactsWindow(baseApp):
 
         self.btn_adicionar.grid(column=3, row=1, sticky='we')
         self.btn_cancelar.grid(column=3, row=2, sticky='we')
-        
+
         self.ef_cabecalho.grid(column=0,row=0, sticky='we')
         self.entryfr1.columnconfigure(0, weight=1)
         self.ef_cabecalho.columnconfigure(2, weight=1)
 
         #self.btn_adicionar.bind('<Button-1>', self.add_remessa)
 
-        
+
         #entryfr2-----------------------------
         self.ef_lf_top = ttk.Labelframe(self.entryfr2, padding=4, text="")
         self.ef_lbl_nome = ttk.Label(self.ef_lf_top, text="Nome")
@@ -158,9 +158,9 @@ class ContactsWindow(baseApp):
         self.ef_txt_cod_postal = ttk.Entry(self.ef_lf_top)
         self.ef_lbl_localidade = ttk.Label(self.ef_lf_top, text="Localidade")
         self.ef_txt_localidade = ttk.Entry(self.ef_lf_top)
-        
+
         self.ef_lbl_pais = ttk.Label(self.ef_lf_top, text="País")
-        with open(f"{APP_PATH}/paises.txt", 'r') as f:
+        with open(f"{APP_PATH}/paises.txt", 'r', encoding='latin1') as f:
             linhas = f.readlines()
         self.paises = [linha.strip() for linha in linhas]
         self.paises_value = tk.StringVar()
@@ -191,7 +191,7 @@ class ContactsWindow(baseApp):
         self.ef_txt_email.grid(column=0, row=7, columnspan=3, padx=5, sticky='we')
         self.ef_lbl_morada.grid(column=0, row=8, columnspan=2, padx=5, sticky='we')
         self.ef_text_morada.grid(column=0, row=9, columnspan=3, rowspan=1, padx=5, sticky='we')
-        
+
         self.ef_lbl_cod_postal.grid(column=0, row=12, padx=5, sticky='we')
         self.ef_txt_cod_postal.grid(column=0, row=13, padx=5, sticky='we')
         self.ef_lbl_localidade.grid(column=1, row=12, columnspan=2, padx=5, sticky='we')
@@ -200,7 +200,7 @@ class ContactsWindow(baseApp):
         self.ef_combo_pais.grid(column=0, row=15, padx=5, sticky='we')
         self.ef_lbl_notas.grid(column=0, row=18, columnspan=3, padx=5, sticky='we')
         self.ef_text_notas.grid(column=0, row=19, columnspan=3, rowspan=3, padx=5, sticky='we')
-        
+
         self.ef_lf_top.grid(column=0,row=0, sticky='we')
         self.ef_lf_top.columnconfigure(0, weight=1)
         self.ef_lf_top.columnconfigure(1, weight=1)
@@ -208,9 +208,9 @@ class ContactsWindow(baseApp):
         self.entryfr2.columnconfigure(0, weight=1)
 
 
-        #--- acabaram os 'entryfr', apenas código geral para o entryframe a partir daqui ---        
+        #--- acabaram os 'entryfr', apenas código geral para o entryframe a partir daqui ---
         self.entryframe.bind_all("<Command-Escape>", self.fechar_painel_entrada)
-        
+
     def procurar_em_combobox(self, event):
         """
         Saltar para o primeiro país da lista (combobox) começado pela letra
@@ -230,35 +230,34 @@ class ContactsWindow(baseApp):
         reparação, adiciona o contacto ao campo correspondente.
         """
         # guardar na base de dados e obter o nº do último contacto adicionado
-        
+
         if self.estado.tipo_novo_contacto == "Cliente":
             print("Usar este cliente")
             self.estado.contacto_para_nova_reparacao = "123"
             self.estado.janela_principal.close_window_contactos()
-            pass # preencher o campo do nº de cliente com o último contacto de cliente criado; depois atribuir foco ao formulário da reparação e fechar a janela
+            pass  # preencher o campo do nº de cliente com o último contacto de cliente criado; depois atribuir foco ao formulário da reparação e fechar a janela
         elif self.estado.tipo_novo_contacto == "Fornecedor":
             print("Usar este fornecedor")
             self.estado.janela_principal.close_window_contactos()
-            pass # preencher o campo do nº de fornecedor com o último contacto de fornecedor criado; depois atribuir foco ao formulário da reparação e fechar a janela
+            pass  # preencher o campo do nº de fornecedor com o último contacto de fornecedor criado; depois atribuir foco ao formulário da reparação e fechar a janela
         else:
             print("guardar e nao fazer mais nada")
-            pass # atualizar a lista de contactos nesta janela fechar o formulário
-        
+            pass  # atualizar a lista de contactos nesta janela fechar o formulário
+
 
     def liga_desliga_menu_novo(self, *event):
-        """ 
+        """
         Liga e desliga menus com base na configuração atual da janela. Por exemplo, ao
         abrir o painel de entrada de dados, desativa o menu "nova reparação", para evitar
         que o painel se feche inadvertidamente.
         """
-        if self.is_entryform_visible == True:
+        if self.is_entryform_visible:
             self.MenuFicheiro.entryconfigure("Novo contacto", state="disabled")
             # TODO - corrigir bug: o atalho de teclado só fica realmente inativo depois de acedermos ao menu ficheiro. Porquê??
             #root.unbind_all("<Command-Option-n>")
         else:
             self.MenuFicheiro.entryconfigure("Novo contacto", state="active")
             #root.bind_all("<Command-Option-n>")
-
 
 
     def inserir_dados_de_exemplo(self):
