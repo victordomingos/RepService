@@ -45,8 +45,8 @@ China
 Chipre
 Colômbia
 Congo
-Coréia do Norte
-Coréia do Sul
+Coreia do Norte
+Coreia do Sul
 Costa do Marfim
 Costa Rica
 Croácia
@@ -78,7 +78,7 @@ Geórgia
 Gibraltar
 Granada
 Grécia
-Groelândia
+Gronelândia
 Guadalupe
 Guam (Território dos Estados Unidos)
 Guatemala
@@ -233,7 +233,7 @@ Togo
 Tonga
 Trinidad & Tobago
 Tunísia
-Turcomenistão
+Turquemenistão
 Turquia
 Tuvalu
 Ucrânia

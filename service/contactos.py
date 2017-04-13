@@ -151,7 +151,7 @@ class ContactsWindow(baseApp):
         self.ef_ltxt_localidade = LabelEntry(self.ef_lf_top, "Localidade")
 
         self.ef_lbl_pais = ttk.Label(self.ef_lf_top, text="País")
-        with open(f"{APP_PATH}/paises.txt", 'r', encoding='latin1') as f:
+        with open(f"{APP_PATH}/paises.txt", 'r', encoding='utf-8') as f:
             linhas = f.readlines()
         self.paises = [linha.strip() for linha in linhas]
         self.paises_value = tk.StringVar()
