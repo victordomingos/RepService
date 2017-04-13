@@ -1,15 +1,18 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3.6
+# encoding: utf-8
 """
 Este módulo é parte integrante da aplicação RepService, desenvolvida por
 Victor Domingos e distribuída sob os termos da licença Creative Commons
-Attribution-ShareAlike 4.0 International (CC BY-SA 4.0). Contém partes 
-desenvolvidas por inicialmente por terceiros, conforme indicado ao longo 
+Attribution-ShareAlike 4.0 International (CC BY-SA 4.0). Contém partes
+desenvolvidas por inicialmente por terceiros, conforme indicado ao longo
 do código.
 """
 
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font
+from tkinter.scrolledtext import ScrolledText
+
 
 
 class AutocompleteEntry(ttk.Entry):
@@ -97,9 +100,53 @@ class AutoScrollbar(ttk.Scrollbar):
         raise TclError("cannot use place with this widget")
 
 
+class IconButton(ttk.Frame):
+    """
+    Generate a OS X style toolbar button with icon (e.g., a UTF Emoji) and a text lable
+    below.
+    """
+    def __init__(sel,master, icon_str, label_str, command):
+        pass
+
+
+class LabelEntry(ttk.Frame):
+    """
+    Generate a ttk.Entry form field with a text label above it.
+    """
+    def __init__(self, parent, label, default_text="", width=0):
+        ttk.Frame.__init__(self, parent)
+
+        self.label = ttk.Label(self, text=label, anchor="w")
+        self.entry = ttk.Entry(self, width=width)
+        self.entry.insert(0, default_text)
+
+        self.label.pack(side="top", fill="x", expand=True)
+        self.entry.pack(side="top", fill="x", expand=True)
+      
+    def get(self):
+        return self.entry.get()
+
+
+class LabelText(ttk.Frame):
+    """
+    Generate an empty tkinter.scrolledtext form field with a text label above it.
+    """
+    def __init__(self, parent, label, width=0, height=0):
+        ttk.Frame.__init__(self, parent)
+
+        self.label = ttk.Label(self, text=label, anchor="w")
+        self.scrolledtext = ScrolledText(self, highlightcolor="LightSteelBlue2", width=width, height=height)
+
+        self.label.pack(side="top", fill="x", expand=True)
+        self.scrolledtext.pack(side="top", fill="both", expand=True)
+      
+    def get(self):
+        return self.scrolledtext.get()
+
+
 class StatusBar(ttk.Frame):
     """ Simple Status Bar class - based on ttk.Frame """
-    def __init__(self,master): 
+    def __init__(self,master):
         ttk.Frame.__init__(self,master)
         self.lblStatusColor = "grey22"
         self.statusFont = tkinter.font.Font(family="Lucida Grande", size=11)
@@ -113,4 +160,3 @@ class StatusBar(ttk.Frame):
     def clear(self):
         self.label.config(text="")
         self.label.update_idletasks()
-
