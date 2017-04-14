@@ -4,6 +4,15 @@ Histórico de versões:
 ====================
 
 ---
+v.0.6 - 14/04/2017 (2 meses desde o início do projeto)
+ * Adicionados campos ao painel de introdução de nova remessa.
+ * Ajustes na janela de remessas.
+ * Criação de novas classes LabelEntry e LabelText, que ajudam a reduzir a
+   extensão do código e a melhorar a sua legibilidade ao criar formulários.
+ * Aplicação dessas duas novas classes nos locais apropriados.
+ * Correção da codificação do ficheiro de países e respetiva abertura.
+
+---
 v.0.5 - 06/04/2017
  * Adicionado painel de introdução de novo contacto, na janela de contactos.
  * Botão "+" no painel de criação de reparação abre a janela de contactos,
