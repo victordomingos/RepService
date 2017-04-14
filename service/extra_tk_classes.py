@@ -100,6 +100,7 @@ class AutoScrollbar(ttk.Scrollbar):
         raise TclError("cannot use place with this widget")
 
 
+'''
 class IconButton(ttk.Frame):
     """
     Generate a OS X style toolbar button with icon (e.g., a UTF Emoji) and a text lable
@@ -107,6 +108,7 @@ class IconButton(ttk.Frame):
     """
     def __init__(sel,master, icon_str, label_str, command):
         pass
+'''
 
 
 class LabelEntry(ttk.Frame):

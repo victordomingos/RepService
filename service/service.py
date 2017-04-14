@@ -41,7 +41,7 @@ __app_name__ = "RepService 2017"
 __author__ = "Victor Domingos"
 __copyright__ = "Copyright 2017 Victor Domingos"
 __license__ = "Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)"
-__version__ = "v.0.5 development"
+__version__ = "v.0.6 development"
 __email__ = "web@victordomingos.com"
 __status__ = "Development"
 
@@ -652,7 +652,7 @@ class App(baseApp):
 
             self.ef_ltxt_descr_equipamento.scrolledtext.configure(height=7)
             self.ef_ltxt_descr_equipamento.grid_configure(rowspan=8)
-            
+
             self.ef_lbl_estado_equipamento.grid_remove()
             self.ef_radio_estado_marcas_uso.grid_remove()
             self.ef_radio_estado_bom.grid_remove()
@@ -685,7 +685,7 @@ class App(baseApp):
             self.ef_ltxt_notas.grid(column=0, row=0, columnspan=3, rowspan=3, padx=5, sticky='wens')
             self.ef_lf_outros_dados.configure(text="\nNotas")
             self.ef_ltxt_notas.label.pack_forget()
-            
+
             self.ef_ltxt_num_serie.label.configure(text="Nº de série")
             self.ef_ltxt_cod_artigo.label.configure(text="Código de artigo")
             self.ef_ltxt_cod_artigo.grid(column=2, row=0, rowspan=2, padx=5, sticky='we')
@@ -747,11 +747,11 @@ class App(baseApp):
             self.ef_ltxt_acessorios_entregues.grid()
             self.ef_lbl_local_intervencao.grid()
             self.ef_combo_local_intervencao.grid()
-            
+
             self.ef_ltxt_notas.scrolledtext.pack_forget()
             self.ef_ltxt_notas.label.pack(side="top", fill="x", expand=True)
             self.ef_ltxt_notas.scrolledtext.pack(side="top",fill="x", expand=True)
-            
+
             self.ef_ltxt_notas.grid(column=1, row=0, columnspan=1, rowspan=3, padx=5, sticky='wens')
             self.ef_txt_num_cliente.focus()
 
