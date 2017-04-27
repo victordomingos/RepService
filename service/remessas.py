@@ -13,7 +13,7 @@ from service import *
 
 
 class RemessasWindow(baseApp):
-    """ base class for application """
+    """ Classe de base para a janela de remessas """
     def __init__(self, master, estado, *args,**kwargs):
         super().__init__(master,*args,**kwargs)
         self.estado = estado

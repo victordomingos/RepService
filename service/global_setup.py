@@ -22,6 +22,7 @@ REMESSAS_MAX_HEIGTH = 2000
 WROOT_GEOMETRIA = '1060x800+0+0'
 WCONTACTOS_GEOMETRIA = '430x730+1062+92'
 WREMESSAS_GEOMETRIA = '430x730+1062+92'
+WREPDETALHE_GEOMETRIA = '900x600+80+130'
 
 SLOW_MACHINE = False # Alterar para True no caso de se tratar de uma máquina lenta (animações no entryframe)
 

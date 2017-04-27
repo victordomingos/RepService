@@ -28,20 +28,20 @@ import datetime
 import textwrap
 from string import ascii_uppercase
 
-
 from about_window import *
 from base_app import *
 from extra_tk_classes import *
 from global_setup import *
 from contactos import *
 from remessas import *
+from detalhe_reparacao import *
 
 
 __app_name__ = "RepService 2017"
 __author__ = "Victor Domingos"
 __copyright__ = "Copyright 2017 Victor Domingos"
 __license__ = "Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)"
-__version__ = "v.0.6 development"
+__version__ = "v.0.7 development"
 __email__ = "web@victordomingos.com"
 __status__ = "Development"
 
@@ -54,6 +54,8 @@ class App(baseApp):
         self.master.minsize(MASTER_MIN_WIDTH, MASTER_MIN_HEIGTH)
         self.master.maxsize(MASTER_MAX_WIDTH, MASTER_MAX_HEIGTH)
         self.a_editar_reparacao = False
+        self.rep_newDetailsWindow = {}
+        self.rep_detail_windows_count = 0
 
         self.gerar_menu()
         self.montar_barra_de_ferramentas()
@@ -67,6 +69,9 @@ class App(baseApp):
         self.inserir_dados_de_exemplo()
         self.alternar_cores(self.tree)
         #self.after(5000, self.teste_GUI)
+        #self.create_window_detalhe_rep(self, num_rep=1)
+        #self.create_window_detalhe_rep(self, num_rep=2)
+        self.create_window_detalhe_rep(self, num_rep=3)
 
 
     def teste_GUI(self):
@@ -85,9 +90,9 @@ class App(baseApp):
 
     def bind_tree(self):
         self.tree.bind('<<TreeviewSelect>>', self.selectItem_popup)
-        self.tree.bind('<Double-1>', None)
-        #self.tree.bind("<Button-2>", self.popupMenu)
-        #self.tree.bind("<Button-3>", self.popupMenu)
+        self.tree.bind('<Double-1>', lambda x: self.create_window_detalhe_rep(num_rep=self.reparacao_selecionada))
+        self.tree.bind("<Button-2>", self.popupMenu)
+        self.tree.bind("<Button-3>", self.popupMenu)
 
 
     def unbind_tree(self):
@@ -274,7 +279,7 @@ class App(baseApp):
             estado.janela_remessas.title('Remessas')
             self.janela_remessas = RemessasWindow(estado.janela_remessas, estado)
             estado.janela_remessas_aberta = True
-            estado.janela_remessas.wm_protocol("WM_DELETE_WINDOW", lambda: self.close_window_remessas())
+            #estado.janela_remessas.wm_protocol("WM_DELETE_WINDOW", lambda: self.close_window_remessas())
         else:
             if not criar_nova_remessa:
                 self.close_window_remessas()
@@ -285,7 +290,6 @@ class App(baseApp):
 
     def close_window_remessas(self, *event):
         root.update_idletasks()
-        print("a fechar janela")
         estado.janela_remessas_aberta = False
         estado.painel_nova_remessa_aberto = False
         estado.janela_remessas.destroy()
@@ -304,7 +308,7 @@ class App(baseApp):
             estado.janela_contactos.title('Contactos')
             self.janela_contactos = ContactsWindow(estado.janela_contactos, estado)
             estado.janela_contactos_aberta = True
-            estado.janela_contactos.wm_protocol("WM_DELETE_WINDOW", lambda: self.close_window_contactos())
+            #estado.janela_contactos.wm_protocol("WM_DELETE_WINDOW", lambda: self.close_window_contactos())
         else:
             if not criar_novo_contacto:
                 self.close_window_contactos()
@@ -329,6 +333,33 @@ class App(baseApp):
         estado.painel_novo_contacto_aberto = False
         estado.janela_contactos.destroy()
         self.ef_ltxt_descr_equipamento.scrolledtext.focus()
+
+
+
+
+    def create_window_detalhe_rep(self, *event, num_rep=None):
+        self.rep_detail_windows_count += 1
+        self.rep_newDetailsWindow[self.rep_detail_windows_count] = tk.Toplevel()
+        self.rep_newDetailsWindow[self.rep_detail_windows_count].geometry(WREPDETALHE_GEOMETRIA)
+        self.rep_newDetailsWindow[self.rep_detail_windows_count].title(f'Detalhe de reparação: {num_rep}')
+
+        self.rep_newDetailsWindow[self.rep_detail_windows_count].bind(
+            "<Command-w>", self.close_detail_window)
+        self.rep_newDetailsWindow[self.rep_detail_windows_count].wm_protocol(
+            "WM_DELETE_WINDOW",
+            lambda: self.rep_newDetailsWindow[self.rep_detail_windows_count].event_generate("<Command-w>") )
+
+        self.janela_detalhes_rep = detailWindow(self.rep_newDetailsWindow[self.rep_detail_windows_count], self.rep_detail_windows_count)
+        self.rep_newDetailsWindow[self.rep_detail_windows_count].focus()
+
+
+
+    def close_detail_window(self, event):
+        """ will test for some condition before closing, save if necessary and
+            then call destroy()
+        """
+        window = event.widget.winfo_toplevel()
+        window.destroy()
 
 
     def abrir_painel_mensagens(self, *event):
@@ -781,6 +812,8 @@ class App(baseApp):
 
     def gerar_menu(self):
         # Menu da janela principal
+        pass
+
         self.menu = tk.Menu(root)
         root.config(menu=self.menu)
 
@@ -788,6 +821,7 @@ class App(baseApp):
 
         self.menu.add_cascade(label="Ficheiro", menu=self.MenuFicheiro)
         self.MenuFicheiro.add_command(label="Nova reparação", command=self.mostrar_painel_entrada, accelerator="Command+n")
+
         self.MenuFicheiro.add_command(label="Novo contacto", command=lambda *x: self.create_window_contacts(criar_novo_contacto="Cliente"), accelerator="Command+t")
         self.MenuFicheiro.add_command(label="Nova remessa", command=lambda *x: self.create_window_remessas(criar_nova_remessa=True), accelerator="Command+r")
         self.MenuFicheiro.add_separator()
@@ -806,11 +840,10 @@ class App(baseApp):
         self.menuVis.bind_all("<Command-KeyPress-2>", self.create_window_contacts)
         self.menuVis.bind_all("<Command-KeyPress-3>", self.create_window_remessas)
 
+
         self.windowmenu = tk.Menu(self.menu, name='window')
         self.menu.add_cascade(menu=self.windowmenu, label='Janela')
         self.windowmenu.add_separator()
-        #self.windowmenu.add_command(label="Fechar", command=self.fechar_janela_ativa, accelerator="Command-w") ###fechar janela ativa cmd-w
-
 
         self.helpmenu = tk.Menu(self.menu)
         self.menu.add_cascade(label="Help", menu=self.helpmenu)
@@ -825,20 +858,22 @@ class App(baseApp):
         #root.bind('<<open-config-dialog>>', config_dialog)
         root.createcommand('tkAboutDialog', about_window)
 
-        """
+
         #----------------Menu contextual tabela principal---------------------
-        self.contextMenu = Menu(self.menu)
-        self.contextMenu.add_command(label="Informações", command=self.mostrar_detalhe)
-        self.contextMenu.add_command(label="Abrir no site da transportadora", command=self.abrir_url_browser)
+        self.contextMenu = tk.Menu(self.menu)
+        self.contextMenu.add_command(label="Informações", command=lambda: self.create_window_detalhe_rep(num_rep=self.reparacao_selecionada))
+        #self.contextMenu.add_command(label="Abrir no site da transportadora", command=self.abrir_url_browser)
         self.contextMenu.add_separator()
-        self.contextMenu.add_command(label="Copiar número de objeto", command=self.copiar_obj_num)
-        self.contextMenu.add_command(label="Copiar mensagem de expedição", command=self.copiar_msg)
-        self.contextMenu.add_separator()
-        self.contextMenu.add_command(label="Arquivar/restaurar remessa", command=self.del_remessa)
-        self.contextMenu.add_separator()
-        self.contextMenu.add_command(label="Registar cheque recebido", command=self.pag_recebido)
-        self.contextMenu.add_command(label="Registar cheque depositado", command=self.chq_depositado)
-        """
+        #self.contextMenu.add_command(label="Copiar número de objeto", command=self.copiar_obj_num)
+        #self.contextMenu.add_command(label="Copiar mensagem de expedição", command=self.copiar_msg)
+        #self.contextMenu.add_separator()
+        #self.contextMenu.add_command(label="Arquivar/restaurar remessa", command=self.del_remessa)
+        #self.contextMenu.add_separator()
+        #self.contextMenu.add_command(label="Registar cheque recebido", command=self.pag_recebido)
+        #self.contextMenu.add_command(label="Registar cheque depositado", command=self.chq_depositado)
+
+
+
 
     def liga_desliga_menu_novo(self, *event):
         """
@@ -903,4 +938,11 @@ if __name__ == "__main__":
     root.title('RepService')
     root.geometry(WROOT_GEOMETRIA)
     root.bind_all("<Mod2-q>", exit)
+
+    #Removed bad AquaTk Button-2 (right) and Paste bindings.
+    root.unbind_class('Text', '<B2>')
+    root.unbind_class('Text', '<B2-Motion>')
+    root.unbind_class('Text', '<<PasteSelection>>')
+
+
     root.mainloop()
