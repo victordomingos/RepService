@@ -69,9 +69,7 @@ class App(baseApp):
         self.inserir_dados_de_exemplo()
         self.alternar_cores(self.tree)
         #self.after(5000, self.teste_GUI)
-        #self.create_window_detalhe_rep(self, num_rep=1)
-        #self.create_window_detalhe_rep(self, num_rep=2)
-        self.create_window_detalhe_rep(self, num_rep=3)
+        #self.create_window_detalhe_rep(self, num_reparacao=3)
 
 
     def teste_GUI(self):
@@ -90,7 +88,7 @@ class App(baseApp):
 
     def bind_tree(self):
         self.tree.bind('<<TreeviewSelect>>', self.selectItem_popup)
-        self.tree.bind('<Double-1>', lambda x: self.create_window_detalhe_rep(num_rep=self.reparacao_selecionada))
+        self.tree.bind('<Double-1>', lambda x: self.create_window_detalhe_rep(num_reparacao=self.reparacao_selecionada))
         self.tree.bind("<Button-2>", self.popupMenu)
         self.tree.bind("<Button-3>", self.popupMenu)
 
@@ -337,11 +335,11 @@ class App(baseApp):
 
 
 
-    def create_window_detalhe_rep(self, *event, num_rep=None):
+    def create_window_detalhe_rep(self, *event, num_reparacao=None):
         self.rep_detail_windows_count += 1
         self.rep_newDetailsWindow[self.rep_detail_windows_count] = tk.Toplevel()
         self.rep_newDetailsWindow[self.rep_detail_windows_count].geometry(WREPDETALHE_GEOMETRIA)
-        self.rep_newDetailsWindow[self.rep_detail_windows_count].title(f'Detalhe de reparação: {num_rep}')
+        self.rep_newDetailsWindow[self.rep_detail_windows_count].title(f'Detalhe de reparação: {num_reparacao}')
 
         self.rep_newDetailsWindow[self.rep_detail_windows_count].bind(
             "<Command-w>", self.close_detail_window)
@@ -349,7 +347,7 @@ class App(baseApp):
             "WM_DELETE_WINDOW",
             lambda: self.rep_newDetailsWindow[self.rep_detail_windows_count].event_generate("<Command-w>") )
 
-        self.janela_detalhes_rep = detailWindow(self.rep_newDetailsWindow[self.rep_detail_windows_count], self.rep_detail_windows_count)
+        self.janela_detalhes_rep = repairDetailWindow(self.rep_newDetailsWindow[self.rep_detail_windows_count], num_reparacao)
         self.rep_newDetailsWindow[self.rep_detail_windows_count].focus()
 
 
@@ -861,7 +859,7 @@ class App(baseApp):
 
         #----------------Menu contextual tabela principal---------------------
         self.contextMenu = tk.Menu(self.menu)
-        self.contextMenu.add_command(label="Informações", command=lambda: self.create_window_detalhe_rep(num_rep=self.reparacao_selecionada))
+        self.contextMenu.add_command(label="Informações", command=lambda: self.create_window_detalhe_rep(num_reparacao=self.reparacao_selecionada))
         #self.contextMenu.add_command(label="Abrir no site da transportadora", command=self.abrir_url_browser)
         self.contextMenu.add_separator()
         #self.contextMenu.add_command(label="Copiar número de objeto", command=self.copiar_obj_num)
