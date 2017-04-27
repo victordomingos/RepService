@@ -9,18 +9,18 @@ import tkinter as tk
 from tkinter import ttk
 
 
-class detailWindow(ttk.Frame):
-    """ Classe de base para a janela de remessas """
-    def __init__(self, master, rep_num, *args,**kwargs):
+class remessaDetailWindow(ttk.Frame):
+    """ Classe de base para a janela de detalhes de remessa """
+    def __init__(self, master, num_remessa, *args,**kwargs):
         super().__init__(master,*args,**kwargs)
-        self.num_rep = rep_num
+        self.num_remessa = num_remessa
         self.master.minsize(900, 600)
         self.master.maxsize(900, 600)
         #self.centerframe = ttk.Frame(self.mainframe, padding="4 0 4 0") #apagar isto
-        print(f"A mostrar detalhes da reparação nº {self.num_rep}")
+        print(f"A mostrar detalhes da remessa nº {self.num_remessa}")
         self.mainframe = ttk.Frame(master)
         self.mainframe.pack()
 
         self.lbl_text = ttk.Label(self.mainframe,
-                                  text=f"A mostrar detalhes da reparação nº {self.num_rep}")
+                                  text=f"A mostrar detalhes da remessa nº {self.num_remessa}")
         self.lbl_text.pack()

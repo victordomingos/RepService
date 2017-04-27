@@ -10,6 +10,7 @@ from tkinter import ttk
 from extra_tk_classes import *
 from base_app import *
 from service import *
+from detalhe_remessa import *
 
 
 class RemessasWindow(baseApp):
@@ -19,6 +20,9 @@ class RemessasWindow(baseApp):
         self.estado = estado
         self.master.minsize(REMESSAS_MIN_WIDTH, REMESSAS_MIN_HEIGTH)
         self.master.maxsize(REMESSAS_MAX_WIDTH, REMESSAS_MAX_HEIGTH)
+        self.remessa_selecionada = None
+        self.remessa_newDetailsWindow = {}
+        self.remessa_detail_windows_count = 0
         #self.centerframe = ttk.Frame(self.mainframe, padding="4 0 4 0") #apagar isto
         self.montar_barra_de_ferramentas()
         self.montar_tabela()
@@ -28,12 +32,29 @@ class RemessasWindow(baseApp):
         self.my_statusbar.set(f"{self.nremessas} remessas")
 
         self.gerar_painel_entrada()
+        self.gerar_menu()
 
         self.composeFrames()
         self.inserir_dados_de_exemplo()
         self.alternar_cores(self.tree)
         if self.estado.painel_nova_remessa_aberto:
             self.mostrar_painel_entrada()
+
+    def gerar_menu(self):
+        self.menu = tk.Menu(self.master)
+        #----------------Menu contextual tabela principal---------------------
+        self.contextMenu = tk.Menu(self.menu)
+        self.contextMenu.add_command(label="Informações", command=lambda: self.create_window_detalhe_remessa(num_remessa=self.remessa_selecionada))
+        #self.contextMenu.add_command(label="Abrir no site da transportadora", command=self.abrir_url_browser)
+        self.contextMenu.add_separator()
+        #self.contextMenu.add_command(label="Copiar número de objeto", command=self.copiar_obj_num)
+        #self.contextMenu.add_command(label="Copiar mensagem de expedição", command=self.copiar_msg)
+        #self.contextMenu.add_separator()
+        #self.contextMenu.add_command(label="Arquivar/restaurar remessa", command=self.del_remessa)
+        #self.contextMenu.add_separator()
+        #self.contextMenu.add_command(label="Registar cheque recebido", command=self.pag_recebido)
+        #self.contextMenu.add_command(label="Registar cheque depositado", command=self.chq_depositado)
+
 
 
     def montar_tabela(self):
@@ -50,6 +71,7 @@ class RemessasWindow(baseApp):
         self.configurarTree()
         self.leftframe.grid_columnconfigure(0, weight=1)
         self.leftframe.grid_rowconfigure(0, weight=1)
+        self.bind_tree()
 
 
     def montar_barra_de_ferramentas(self):
@@ -218,6 +240,89 @@ class RemessasWindow(baseApp):
         self.vsb_lista = AutoScrollbar(self.ef_lista, orient="vertical", command=self.tree_lista_processos_remessa.yview)
         self.tree_lista_processos_remessa.configure(yscrollcommand=self.vsb_lista.set)
         self.vsb_lista.grid(column=1, row=0, sticky=tk.N+tk.S, in_=self.ef_lista)
+
+
+    def bind_tree(self):
+        self.tree.bind('<<TreeviewSelect>>', self.selectItem_popup)
+        self.tree.bind('<Double-1>', lambda x: self.create_window_detalhe_remessa(num_remessa=self.remessa_selecionada))
+        self.tree.bind("<Button-2>", self.popupMenu)
+        self.tree.bind("<Button-3>", self.popupMenu)
+
+
+    def unbind_tree(self):
+        self.tree.bind('<<TreeviewSelect>>', None)
+        self.tree.bind('<Double-1>', None)
+        self.tree.bind("<Button-2>", None)
+        self.tree.bind("<Button-3>", None)
+
+
+    def selectItem_popup(self, event):
+        """ # Hacking moment: Uma função que junta duas funções, para assegurar a sequência...
+        """
+        self.selectItem()
+        self.popupMenu(event)
+
+
+    def popupMenu(self, event):
+        """action in event of button 3 on tree view"""
+        # select row under mouse
+        self.selectItem()
+
+        iid = self.tree.identify_row(event.y)
+        x, y = event.x_root, event.y_root
+        if iid:
+            if x!=0 and y!=0:
+                # mouse pointer over item
+                self.tree.selection_set(iid)
+                self.tree.focus(iid)
+                self.contextMenu.post(event.x_root, event.y_root)
+                print("popupMenu(): x,y = ", event.x_root, event.y_root)
+            else:
+                print("popupMenu(): wrong values for event - x=0, y=0")
+        else:
+            print(iid)
+            print("popupMenu(): Else - No code here yet! (mouse not over item)")
+            # mouse pointer not over item
+            # occurs when items do not fill frame
+            # no action required
+            pass
+
+
+    def selectItem(self, *event):
+        """
+        Obter remessa selecionada (após clique de rato na linha correspondente)
+        """
+        curItem = self.tree.focus()
+        tree_linha = self.tree.item(curItem)
+
+        remessa = tree_linha["values"][0]
+        destino =  tree_linha["values"][2]
+        self.my_statusbar.set(f"{remessa} • {destino}")
+        self.remessa_selecionada = remessa
+
+    
+    def create_window_detalhe_remessa(self, *event, num_remessa=None):
+        self.remessa_detail_windows_count += 1
+        self.remessa_newDetailsWindow[self.remessa_detail_windows_count] = tk.Toplevel()
+        self.remessa_newDetailsWindow[self.remessa_detail_windows_count].geometry(WREMESSAS_GEOMETRIA)
+        self.remessa_newDetailsWindow[self.remessa_detail_windows_count].title(f'Detalhe de remessa: {num_remessa}')
+
+        self.remessa_newDetailsWindow[self.remessa_detail_windows_count].bind(
+            "<Command-w>", self.close_detail_remessa_window)
+        self.remessa_newDetailsWindow[self.remessa_detail_windows_count].wm_protocol(
+            "WM_DELETE_WINDOW",
+            lambda: self.remessa_newDetailsWindow[self.remessa_detail_windows_count].event_generate("<Command-w>") )
+
+        self.janela_detalhes_remessa = remessaDetailWindow(self.remessa_newDetailsWindow[self.remessa_detail_windows_count], num_remessa)
+        self.remessa_newDetailsWindow[self.remessa_detail_windows_count].focus()
+
+
+    def close_detail_remessa_window(self, event):
+        """ will test for some condition before closing, save if necessary and
+            then call destroy()
+        """
+        window = event.widget.winfo_toplevel()
+        window.destroy()
 
 
     def radio_tipo_command(self, *event):

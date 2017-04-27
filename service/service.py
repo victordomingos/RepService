@@ -36,7 +36,6 @@ from contactos import *
 from remessas import *
 from detalhe_reparacao import *
 
-
 __app_name__ = "RepService 2017"
 __author__ = "Victor Domingos"
 __copyright__ = "Copyright 2017 Victor Domingos"
@@ -333,8 +332,6 @@ class App(baseApp):
         self.ef_ltxt_descr_equipamento.scrolledtext.focus()
 
 
-
-
     def create_window_detalhe_rep(self, *event, num_reparacao=None):
         self.rep_detail_windows_count += 1
         self.rep_newDetailsWindow[self.rep_detail_windows_count] = tk.Toplevel()
@@ -342,7 +339,7 @@ class App(baseApp):
         self.rep_newDetailsWindow[self.rep_detail_windows_count].title(f'Detalhe de reparação: {num_reparacao}')
 
         self.rep_newDetailsWindow[self.rep_detail_windows_count].bind(
-            "<Command-w>", self.close_detail_window)
+            "<Command-w>", self.close_detail_repair_window)
         self.rep_newDetailsWindow[self.rep_detail_windows_count].wm_protocol(
             "WM_DELETE_WINDOW",
             lambda: self.rep_newDetailsWindow[self.rep_detail_windows_count].event_generate("<Command-w>") )
@@ -351,8 +348,7 @@ class App(baseApp):
         self.rep_newDetailsWindow[self.rep_detail_windows_count].focus()
 
 
-
-    def close_detail_window(self, event):
+    def close_detail_repair_window(self, event):
         """ will test for some condition before closing, save if necessary and
             then call destroy()
         """
