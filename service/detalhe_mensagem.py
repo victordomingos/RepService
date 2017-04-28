@@ -10,12 +10,11 @@ from tkinter import ttk
 from global_setup import *
 
 
-
-class remessaDetailWindow(ttk.Frame):
-    """ Classe de base para a janela de detalhes de remessa """
-    def __init__(self, master, num_remessa, *args,**kwargs):
+class msgDetailWindow(ttk.Frame):
+    """ Classe de base para a janela de detalhes de mensagem """
+    def __init__(self, master, num_mensagem, *args,**kwargs):
         super().__init__(master,*args,**kwargs)
-        self.num_remessa = num_remessa
+        self.num_mensagem = num_mensagem
         self.master = master
 
         self.configurar_frames_e_estilos()
@@ -23,8 +22,8 @@ class remessaDetailWindow(ttk.Frame):
         self.montar_painel_principal()
         self.montar_rodape()
         self.composeFrames()
-    
-    
+
+
     def montar_barra_de_ferramentas(self):
         # ----------- Botão com menu "Alterar estado" --------------
         self.label_mbtn_alterar = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Alterar estado")
@@ -49,16 +48,16 @@ class remessaDetailWindow(ttk.Frame):
         self.label_mbtn_alterar.grid(column=7, row=1)
         # ----------- fim de Botão com menu "Alterar estado" -------------
 
-    
-    
-    def montar_painel_principal(self):
-        print(f"A mostrar detalhes da remessa nº {self.num_remessa}")
 
-           
+
+    def montar_painel_principal(self):
+        print(f"A mostrar detalhes da mensagem nº {self.num_mensagem}")
+
+            
     def montar_rodape(self):
         pass
             
-    
+
 
     def configurar_frames_e_estilos(self):
         self.master.minsize(900, 600)

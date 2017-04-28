@@ -36,6 +36,7 @@ from global_setup import *
 from contactos import *
 from remessas import *
 from detalhe_reparacao import *
+from detalhe_mensagem import *
 
 __app_name__ = "RepService 2017"
 __author__ = "Victor Domingos"
@@ -56,12 +57,19 @@ class App(baseApp):
         self.a_editar_reparacao = False
         self.rep_newDetailsWindow = {}
         self.rep_detail_windows_count = 0
-        self.reparacao_selecionada = None
+        self.msg_newDetailsWindow = {}
+        self.msg_detail_windows_count = 0
 
+        self.reparacao_selecionada = None
+        self.mensagem_selecionada = None
+
+
+        self.gerar_painel_mensagens()
         self.gerar_menu()
         self.montar_barra_de_ferramentas()
         self.montar_tabela()
         self.gerar_painel_entrada()
+
 
         self.nprocessos = 1232 #TODO - contar processos em curso
         self.my_statusbar.set(f"{self.nprocessos} processos")
@@ -93,6 +101,11 @@ class App(baseApp):
         self.tree.bind("<Button-2>", self.popupMenu)
         self.tree.bind("<Button-3>", self.popupMenu)
 
+        self.msgtree.bind('<<TreeviewSelect>>', self.selectItemMsg_popup)
+        self.msgtree.bind('<Double-1>', lambda x: self.create_window_detalhe_msg(num_mensagem=self.mensagem_selecionada))
+        self.msgtree.bind("<Button-2>", self.popupMenuMsg)
+        self.msgtree.bind("<Button-3>", self.popupMenuMsg)
+
 
     def unbind_tree(self):
         self.tree.bind('<<TreeviewSelect>>', None)
@@ -100,12 +113,40 @@ class App(baseApp):
         self.tree.bind("<Button-2>", None)
         self.tree.bind("<Button-3>", None)
 
+        self.msgtree.bind('<<TreeviewSelect>>', None)
+        self.msgtree.bind('<Double-1>', None)
+        self.msgtree.bind("<Button-2>", None)
+        self.msgtree.bind("<Button-3>", None)
+
 
     def selectItem_popup(self, event):
         """ # Hacking moment: Uma função que junta duas funções, para assegurar a sequência...
         """
+        print("selectItem_popup")
         self.selectItem()
         self.popupMenu(event)
+
+
+    def selectItemMsg_popup(self, event):
+        """ # Hacking moment: Uma função que junta duas funções, para assegurar a sequência...
+        """
+        print("selectItemMsg_popup")
+        self.selectItemMsg()
+        self.popupMenuMsg(event)
+    
+
+
+    def selectItemMsg(self, *event):
+        """
+        Obter mensagem selecionada (após clique de rato na linha correspondente)
+        """
+        curItem = self.msgtree.focus()
+        tree_linha = self.msgtree.item(curItem)
+
+        mensagem = tree_linha["values"][1]
+        remetente =  tree_linha["values"][2].split(',', 1)[0]
+        self.my_statusbar.set(f"{mensagem} • Mensagem enviada por {remetente}")
+        self.mensagem_selecionada = mensagem
 
 
     def popupMenu(self, event):
@@ -133,9 +174,36 @@ class App(baseApp):
             pass
 
 
+    def popupMenuMsg(self, event):
+        """action in event of button 3 on tree view"""
+        # select row under mouse
+        self.selectItemMsg()
+
+        iid = self.msgtree.identify_row(event.y)
+        x, y = event.x_root, event.y_root
+        if iid:
+            if x!=0 and y!=0:
+                # mouse pointer over item
+                self.msgtree.selection_set(iid)
+                self.msgtree.focus(iid)
+                self.contextMenuMsg.post(event.x_root, event.y_root)
+                print("popupMenuMsg(): x,y = ", event.x_root, event.y_root)
+            else:
+                print("popupMenuMsg(): wrong values for event - x=0, y=0")
+        else:
+            print(iid)
+            print("popupMenuMsg(): Else - No code here yet! (mouse not over item)")
+            # mouse pointer not over item
+            # occurs when items do not fill frame
+            # no action required
+            pass
+    
+
+
+
     def selectItem(self, *event):
         """
-        Obter remessa selecionada (após clique de rato na linha correspondente)
+        Obter reparação selecionada (após clique de rato na linha correspondente)
         """
         curItem = self.tree.focus()
         tree_linha = self.tree.item(curItem)
@@ -363,72 +431,101 @@ class App(baseApp):
         window.destroy()
 
 
+
+    def create_window_detalhe_msg(self, *event, num_mensagem=None):
+        if num_mensagem == None:
+            messagebox.showwarning("", "Nenhuma mensagem selecionada.")
+            root.focus_force()
+            return
+
+        self.msg_detail_windows_count += 1
+        self.msg_newDetailsWindow[self.msg_detail_windows_count] = tk.Toplevel()
+        self.msg_newDetailsWindow[self.msg_detail_windows_count].geometry(W_MSG_DETALHE_GEOMETRIA)
+        self.msg_newDetailsWindow[self.msg_detail_windows_count].title(f'Detalhe de mensagem: {num_mensagem}')
+
+        self.msg_newDetailsWindow[self.msg_detail_windows_count].bind(
+            "<Command-w>", self.close_detail_msg_window)
+        self.msg_newDetailsWindow[self.msg_detail_windows_count].wm_protocol(
+            "WM_DELETE_WINDOW",
+            lambda: self.msg_newDetailsWindow[self.msg_detail_windows_count].event_generate("<Command-w>") )
+
+        self.janela_detalhes_msg = msgDetailWindow(self.msg_newDetailsWindow[self.msg_detail_windows_count], num_mensagem)
+        self.msg_newDetailsWindow[self.msg_detail_windows_count].focus()
+
+
+    def close_detail_msg_window(self, event):
+        """ will test for some condition before closing, save if necessary and
+            then call destroy()
+        """
+        window = event.widget.winfo_toplevel()
+        window.destroy()
+
+
+    def gerar_painel_mensagens(self):
+        self.estilo = ttk.Style()
+
+        self.mensagens_frame = ttk.Frame(self.messagepane)
+        #self.mensagens_frame.pack()
+
+        self.mensagens_frame_top = ttk.Frame(self.mensagens_frame, padding="4 10 4 4")
+
+        contar_mensagens = 36 #TODO: implementar método para obter o número de mensagens do utilizador
+        self.lbl_mensagens_titulo = ttk.Label(self.mensagens_frame, text=f"{contar_mensagens} mensagens", anchor='center', font=("Lucida Grande", 18)).pack()
+
+        self.mensagens_frame_btn = ttk.Frame(self.mensagens_frame, padding="2 4 2 2")
+        self.mensagens_frame_tree = ttk.Frame(self.mensagens_frame, padding="2 5 2 2")
+
+        self.btn_msg_mostrar = ttk.Button(self.mensagens_frame_btn, text="Mostrar")
+        self.btn_msg_mostrar.grid(column=0, sticky=tk.W, row=1, in_=self.mensagens_frame_btn)
+
+        self.btn_msg_apagar_um = ttk.Button(self.mensagens_frame_btn, text="Apagar")
+        self.btn_msg_apagar_um.grid(column=1, sticky=tk.E, row=1, in_=self.mensagens_frame_btn)
+
+        self.btn_msg_apagar_tudo = ttk.Button(self.mensagens_frame_btn, text="Apagar tudo")
+        self.btn_msg_apagar_tudo.grid(column=3, sticky=tk.E, row=1, in_=self.mensagens_frame_btn)
+
+        self.mensagens_frame_btn.grid_columnconfigure(0, weight=0)
+        self.mensagens_frame_btn.grid_columnconfigure(1, weight=0)
+        self.mensagens_frame_btn.grid_columnconfigure(2, weight=1)
+        self.mensagens_frame_btn.grid_columnconfigure(3, weight=0)
+
+        self.lblFrame_mensagens = ttk.LabelFrame(self.mensagens_frame_tree,labelanchor="s", padding="4 4 4 4")
+
+        self.msgtree = ttk.Treeview(self.lblFrame_mensagens, height=31, selectmode='browse', show='', style='Msg.Treeview')
+        self.msgtree['columns'] = ('ico','Processo', 'Mensagem')
+        #self.msgtree.pack(side=tk.TOP, fill=tk.BOTH)
+        self.msgtree.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
+        self.msgtree.column('ico', anchor='ne', minwidth=20, stretch=0, width=20)
+        self.msgtree.column('Processo', anchor='ne', minwidth=40, stretch=0, width=40)
+        self.msgtree.column('Mensagem', anchor='nw', minwidth=235, stretch=1, width=235)
+        self.lblFrame_mensagens.grid_columnconfigure(2, weight=1)
+
+        self.msgtree.grid(column=0, columnspan=4, row=2, sticky=tk.N+tk.W+tk.E)
+        # Barra de deslocação para a tabela
+        #self.vsb2 = AutoScrollbar(self.tab_mensagens, orient="vertical", command=self.msgtree.yview)
+        #self.msgtree.configure(yscrollcommand=self.vsb2.set)
+        #self.vsb2.grid(column=1, row=0, sticky=tk.N+tk.S, in_=self.tab_mensagens)
+
+
+        self.estilo.configure('Msg.Treeview', font=("Lucida Grande", 10), foreground="grey22", fieldbackground="grey89", anchor='n', background='grey91', rowheight=72)
+
+        #estilo.configure('Msg.Treeview.Heading', font=("Lucida Grande", 9), foreground="grey22")
+        #estilo.configure( 'Msg.Treeview', relief = 'flat', borderwidth = 0)
+
+        self.mensagens_frame_top.pack(side=tk.TOP)
+        self.mensagens_frame_btn.pack(side=tk.TOP)
+        self.mensagens_frame_tree.pack(side=tk.TOP)
+        self.lblFrame_mensagens.pack()
+
+
+
     def abrir_painel_mensagens(self, *event):
         root.update_idletasks()
-
         if estado.painel_mensagens_aberto == False:
-            self.estilo = ttk.Style()
-
-            self.mensagens_frame = ttk.Frame(self.messagepane)
-            self.mensagens_frame.pack()
-
-            self.mensagens_frame_top = ttk.Frame(self.mensagens_frame, padding="4 10 4 4")
-
-            contar_mensagens = 36 #TODO: implementar método para obter o número de mensagens do utilizador
-            self.lbl_mensagens_titulo = ttk.Label(self.mensagens_frame, text=f"{contar_mensagens} mensagens", anchor='center', font=("Lucida Grande", 18)).pack()
-            #ttk.Separator(self.messagepane, orient=tk.HORIZONTAL).pack(fill="x")
-            self.mensagens_frame_btn = ttk.Frame(self.mensagens_frame, padding="2 4 2 2")
-            self.mensagens_frame_tree = ttk.Frame(self.mensagens_frame, padding="2 5 2 2")
-
-            self.btn_msg_mostrar = ttk.Button(self.mensagens_frame_btn, text="Mostrar")
-            self.btn_msg_mostrar.grid(column=0, sticky=tk.W, row=1, in_=self.mensagens_frame_btn)
-
-            self.btn_msg_apagar_um = ttk.Button(self.mensagens_frame_btn, text="Apagar")
-            self.btn_msg_apagar_um.grid(column=1, sticky=tk.E, row=1, in_=self.mensagens_frame_btn)
-
-            self.btn_msg_apagar_tudo = ttk.Button(self.mensagens_frame_btn, text="Apagar tudo")
-            self.btn_msg_apagar_tudo.grid(column=3, sticky=tk.E, row=1, in_=self.mensagens_frame_btn)
-
-            self.mensagens_frame_btn.grid_columnconfigure(0, weight=0)
-            self.mensagens_frame_btn.grid_columnconfigure(1, weight=0)
-            self.mensagens_frame_btn.grid_columnconfigure(2, weight=1)
-            self.mensagens_frame_btn.grid_columnconfigure(3, weight=0)
-
-            self.lblFrame_mensagens = ttk.LabelFrame(self.mensagens_frame_tree,labelanchor="s", padding="4 4 4 4")
-
-            self.msgtree = ttk.Treeview(self.lblFrame_mensagens, height=31, selectmode='browse', show='', style='Msg.Treeview')
-            self.msgtree['columns'] = ('ico','Processo', 'Mensagem')
-            #self.msgtree.pack(side=tk.TOP, fill=tk.BOTH)
-            self.msgtree.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
-            self.msgtree.column('ico', anchor='ne', minwidth=20, stretch=0, width=20)
-            self.msgtree.column('Processo', anchor='ne', minwidth=40, stretch=0, width=40)
-            self.msgtree.column('Mensagem', anchor='nw', minwidth=235, stretch=1, width=235)
-            self.lblFrame_mensagens.grid_columnconfigure(2, weight=1)
-
-            self.bind_tree()
-
-
-            self.msgtree.grid(column=0, columnspan=4, row=2, sticky=tk.N+tk.W+tk.E)
-            # Barra de deslocação para a tabela
-            #self.vsb2 = AutoScrollbar(self.tab_mensagens, orient="vertical", command=self.msgtree.yview)
-            #self.msgtree.configure(yscrollcommand=self.vsb2.set)
-            #self.vsb2.grid(column=1, row=0, sticky=tk.N+tk.S, in_=self.tab_mensagens)
-
-
-            self.estilo.configure('Msg.Treeview', font=("Lucida Grande", 10), foreground="grey22", fieldbackground="grey89", anchor='n', background='grey91', rowheight=72)
-
-            #estilo.configure('Msg.Treeview.Heading', font=("Lucida Grande", 9), foreground="grey22")
-            #estilo.configure( 'Msg.Treeview', relief = 'flat', borderwidth = 0)
-
-            self.mensagens_frame_top.pack(side=tk.TOP)
-            self.mensagens_frame_btn.pack(side=tk.TOP)
-            self.mensagens_frame_tree.pack(side=tk.TOP)
-            self.lblFrame_mensagens.pack()
             self.mensagens_frame.pack()
             self.messagepane.pack()
             self.rightframe.grid()
-
-            self.inserir_msgs_de_exemplo()
+            self.inserir_msgs_de_exemplo()  # trocar isto por atualizar_mensagens()
             self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
             estado.painel_mensagens_aberto = True
         else:
@@ -438,7 +535,7 @@ class App(baseApp):
     def fechar_painel_mensagens(self, *event):
         root.update_idletasks()
         self.messagepane.pack_forget()
-        self.mensagens_frame.destroy()
+        self.mensagens_frame.pack_forget()
         self.rightframe.grid_remove()
         estado.painel_mensagens_aberto = False
 
@@ -872,6 +969,10 @@ class App(baseApp):
         #self.contextMenu.add_separator()
         #self.contextMenu.add_command(label="Registar cheque recebido", command=self.pag_recebido)
         #self.contextMenu.add_command(label="Registar cheque depositado", command=self.chq_depositado)
+
+        #----------------Menu contextual tabela de mensagens---------------------
+        self.contextMenuMsg = tk.Menu(self.menu)
+        self.contextMenuMsg.add_command(label="Visualizar Mensagem", command=lambda: self.create_window_detalhe_msg(num_mensagem=self.mensagem_selecionada))
 
 
 
