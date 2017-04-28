@@ -23,6 +23,7 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 import tkinter as tk
 import tkinter.font
 from tkinter import ttk
+from tkinter import messagebox
 from tkinter.scrolledtext import ScrolledText
 import datetime
 import textwrap
@@ -55,6 +56,7 @@ class App(baseApp):
         self.a_editar_reparacao = False
         self.rep_newDetailsWindow = {}
         self.rep_detail_windows_count = 0
+        self.reparacao_selecionada = None
 
         self.gerar_menu()
         self.montar_barra_de_ferramentas()
@@ -192,7 +194,7 @@ class App(baseApp):
         # ----------- fim de Botão com menu "Mostrar" -------------
 
 
-        self.btn_hoje = ttk.Button(self.topframe, text=" ℹ️️", width=3, command=None)
+        self.btn_hoje = ttk.Button(self.topframe, text=" ℹ️️", width=3, command=lambda: self.create_window_detalhe_rep(num_reparacao=self.reparacao_selecionada))
         self.btn_hoje.grid(column=6, row=0)
         ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Detalhes").grid(column=6, row=1)
 
@@ -333,6 +335,11 @@ class App(baseApp):
 
 
     def create_window_detalhe_rep(self, *event, num_reparacao=None):
+        if num_reparacao == None:
+            messagebox.showwarning("", "Nenhuma reparação selecionada.")
+            root.focus_force()
+            return
+
         self.rep_detail_windows_count += 1
         self.rep_newDetailsWindow[self.rep_detail_windows_count] = tk.Toplevel()
         self.rep_newDetailsWindow[self.rep_detail_windows_count].geometry(WREPDETALHE_GEOMETRIA)
