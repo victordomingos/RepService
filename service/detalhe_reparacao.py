@@ -23,8 +23,8 @@ class repairDetailWindow(ttk.Frame):
         self.montar_painel_principal()
         self.montar_rodape()
         self.composeFrames()
-    
-    
+
+
     def montar_barra_de_ferramentas(self):
         # ----------- Botão com menu "Alterar estado" --------------
         self.label_mbtn_alterar = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Alterar estado")
@@ -49,20 +49,21 @@ class repairDetailWindow(ttk.Frame):
         self.label_mbtn_alterar.grid(column=7, row=1)
         # ----------- fim de Botão com menu "Alterar estado" -------------
 
-    
-    
+
+
     def montar_painel_principal(self):
         print(f"A mostrar detalhes da reparação nº {self.num_reparacao}")
 
-           
+
     def montar_rodape(self):
         pass
-            
-    
+
+
 
     def configurar_frames_e_estilos(self):
-        self.master.minsize(900, 600)
-        self.master.maxsize(900, 600)
+        self.master.minsize(W_DETALHE_REP_MIN_WIDTH, W_DETALHE_REP_MIN_HEIGHT)
+        self.master.maxsize(W_DETALHE_REP_MAX_WIDTH, W_DETALHE_REP_MAX_HEIGHT)
+        self.master.geometry(W_DETALHE_REP_GEOMETRIA)
         self.mainframe = ttk.Frame(self.master)
         self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 5")
         self.centerframe = ttk.Frame(self.mainframe)
@@ -78,5 +79,5 @@ class repairDetailWindow(ttk.Frame):
     def composeFrames(self):
         self.topframe.pack(side=tk.TOP, fill=tk.X)
         self.centerframe.pack(side=tk.TOP, fill=tk.BOTH)
-        self.bottomframe.pack(side=tk.BOTTOM, fill=tk.X)        
+        self.bottomframe.pack(side=tk.BOTTOM, fill=tk.X)
         self.mainframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)

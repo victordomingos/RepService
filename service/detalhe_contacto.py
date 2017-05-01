@@ -49,19 +49,18 @@ class contactDetailWindow(ttk.Frame):
         # ----------- fim de Botão com menu "Alterar estado" -------------
 
 
-
     def montar_painel_principal(self):
         print(f"A mostrar detalhes do contacto nº {self.num_contacto}")
 
             
     def montar_rodape(self):
         pass
-            
 
 
     def configurar_frames_e_estilos(self):
-        self.master.minsize(900, 600)
-        self.master.maxsize(900, 600)
+        self.master.minsize(W_DETALHE_CONTACTO_MIN_WIDTH, W_DETALHE_CONTACTO_MIN_HEIGHT)
+        self.master.maxsize(W_DETALHE_CONTACTO_MAX_WIDTH, W_DETALHE_CONTACTO_MAX_HEIGHT)
+        self.master.geometry(W_DETALHE_CONTACTO_GEOMETRIA)
         self.mainframe = ttk.Frame(self.master)
         self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 5")
         self.centerframe = ttk.Frame(self.mainframe)

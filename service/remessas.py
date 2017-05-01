@@ -18,8 +18,10 @@ class RemessasWindow(baseApp):
     def __init__(self, master, estado, *args,**kwargs):
         super().__init__(master,*args,**kwargs)
         self.estado = estado
-        self.master.minsize(REMESSAS_MIN_WIDTH, REMESSAS_MIN_HEIGTH)
-        self.master.maxsize(REMESSAS_MAX_WIDTH, REMESSAS_MAX_HEIGTH)
+        self.master.minsize(REMESSAS_MIN_WIDTH, REMESSAS_MIN_HEIGHT)
+        self.master.maxsize(REMESSAS_MAX_WIDTH, REMESSAS_MAX_HEIGHT)
+        self.master.geometry(REMESSAS_GEOMETRIA)
+        self.master.title('Remessas')
         self.remessa_selecionada = None
         self.remessa_newDetailsWindow = {}
         self.remessa_detail_windows_count = 0
@@ -304,7 +306,6 @@ class RemessasWindow(baseApp):
     def create_window_detalhe_remessa(self, *event, num_remessa=None):
         self.remessa_detail_windows_count += 1
         self.remessa_newDetailsWindow[self.remessa_detail_windows_count] = tk.Toplevel()
-        self.remessa_newDetailsWindow[self.remessa_detail_windows_count].geometry(WREMESSAS_GEOMETRIA)
         self.remessa_newDetailsWindow[self.remessa_detail_windows_count].title(f'Detalhe de remessa: {num_remessa}')
 
         self.remessa_newDetailsWindow[self.remessa_detail_windows_count].bind(

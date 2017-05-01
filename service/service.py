@@ -52,8 +52,8 @@ class App(baseApp):
     def __init__(self,master,*args,**kwargs):
         super().__init__(master,*args,**kwargs)
         self.master = master
-        self.master.minsize(MASTER_MIN_WIDTH, MASTER_MIN_HEIGTH)
-        self.master.maxsize(MASTER_MAX_WIDTH, MASTER_MAX_HEIGTH)
+        self.master.minsize(MASTER_MIN_WIDTH, MASTER_MIN_HEIGHT)
+        self.master.maxsize(MASTER_MAX_WIDTH, MASTER_MAX_HEIGHT)
         self.a_editar_reparacao = False
         self.rep_newDetailsWindow = {}
         self.rep_detail_windows_count = 0
@@ -133,7 +133,7 @@ class App(baseApp):
         print("selectItemMsg_popup")
         self.selectItemMsg()
         self.popupMenuMsg(event)
-    
+
 
 
     def selectItemMsg(self, *event):
@@ -197,7 +197,7 @@ class App(baseApp):
             # occurs when items do not fill frame
             # no action required
             pass
-    
+
 
 
 
@@ -342,8 +342,6 @@ class App(baseApp):
                 estado.painel_nova_remessa_aberto = True
             #self.newWindow2 = tk.Toplevel(self.master)
             estado.janela_remessas = tk.Toplevel(self.master)
-            estado.janela_remessas.geometry(WREMESSAS_GEOMETRIA)
-            estado.janela_remessas.title('Remessas')
             self.janela_remessas = RemessasWindow(estado.janela_remessas, estado)
             estado.janela_remessas_aberta = True
             #estado.janela_remessas.wm_protocol("WM_DELETE_WINDOW", lambda: self.close_window_remessas())
@@ -371,8 +369,6 @@ class App(baseApp):
                 print("Sim:", criar_novo_contacto)
                 estado.painel_novo_contacto_aberto = True
             estado.janela_contactos = tk.Toplevel(self.master)
-            estado.janela_contactos.geometry(WCONTACTOS_GEOMETRIA)
-            estado.janela_contactos.title('Contactos')
             self.janela_contactos = ContactsWindow(estado.janela_contactos, estado)
             estado.janela_contactos_aberta = True
             #estado.janela_contactos.wm_protocol("WM_DELETE_WINDOW", lambda: self.close_window_contactos())
@@ -410,13 +406,8 @@ class App(baseApp):
 
         self.rep_detail_windows_count += 1
         self.rep_newDetailsWindow[self.rep_detail_windows_count] = tk.Toplevel()
-        self.rep_newDetailsWindow[self.rep_detail_windows_count].geometry(WREPDETALHE_GEOMETRIA)
-        self.rep_newDetailsWindow[self.rep_detail_windows_count].title(f'Detalhe de reparação: {num_reparacao}')
-
-        self.rep_newDetailsWindow[self.rep_detail_windows_count].bind(
-            "<Command-w>", self.close_detail_repair_window)
-        self.rep_newDetailsWindow[self.rep_detail_windows_count].wm_protocol(
-            "WM_DELETE_WINDOW",
+        self.rep_newDetailsWindow[self.rep_detail_windows_count].bind("<Command-w>", self.close_detail_repair_window)
+        self.rep_newDetailsWindow[self.rep_detail_windows_count].wm_protocol("WM_DELETE_WINDOW",
             lambda: self.rep_newDetailsWindow[self.rep_detail_windows_count].event_generate("<Command-w>") )
 
         self.janela_detalhes_rep = repairDetailWindow(self.rep_newDetailsWindow[self.rep_detail_windows_count], num_reparacao)
@@ -440,13 +431,8 @@ class App(baseApp):
 
         self.msg_detail_windows_count += 1
         self.msg_newDetailsWindow[self.msg_detail_windows_count] = tk.Toplevel()
-        self.msg_newDetailsWindow[self.msg_detail_windows_count].geometry(W_MSG_DETALHE_GEOMETRIA)
-        self.msg_newDetailsWindow[self.msg_detail_windows_count].title(f'Detalhe de mensagem: {num_mensagem}')
-
-        self.msg_newDetailsWindow[self.msg_detail_windows_count].bind(
-            "<Command-w>", self.close_detail_msg_window)
-        self.msg_newDetailsWindow[self.msg_detail_windows_count].wm_protocol(
-            "WM_DELETE_WINDOW",
+        self.msg_newDetailsWindow[self.msg_detail_windows_count].bind("<Command-w>", self.close_detail_msg_window)
+        self.msg_newDetailsWindow[self.msg_detail_windows_count].wm_protocol("WM_DELETE_WINDOW",
             lambda: self.msg_newDetailsWindow[self.msg_detail_windows_count].event_generate("<Command-w>") )
 
         self.janela_detalhes_msg = msgDetailWindow(self.msg_newDetailsWindow[self.msg_detail_windows_count], num_mensagem)
@@ -1038,7 +1024,7 @@ if __name__ == "__main__":
     estado.janela_principal = App(root)
     root.configure(background='grey95')
     root.title('RepService')
-    root.geometry(WROOT_GEOMETRIA)
+    root.geometry(ROOT_GEOMETRIA)
     root.bind_all("<Mod2-q>", exit)
 
     #Removed bad AquaTk Button-2 (right) and Paste bindings.

@@ -61,8 +61,9 @@ class remessaDetailWindow(ttk.Frame):
     
 
     def configurar_frames_e_estilos(self):
-        self.master.minsize(900, 600)
-        self.master.maxsize(900, 600)
+        self.master.minsize(W_DETALHE_REMESSA_MIN_WIDTH, W_DETALHE_REMESSA_MIN_HEIGHT)
+        self.master.maxsize(W_DETALHE_REMESSA_MAX_WIDTH, W_DETALHE_REMESSA_MAX_HEIGHT)
+        self.master.geometry(W_DETALHE_REMESSA_GEOMETRIA)
         self.mainframe = ttk.Frame(self.master)
         self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 5")
         self.centerframe = ttk.Frame(self.mainframe)

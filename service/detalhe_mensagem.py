@@ -49,19 +49,19 @@ class msgDetailWindow(ttk.Frame):
         # ----------- fim de Botão com menu "Alterar estado" -------------
 
 
-
     def montar_painel_principal(self):
         print(f"A mostrar detalhes da mensagem nº {self.num_mensagem}")
 
             
     def montar_rodape(self):
         pass
-            
 
 
     def configurar_frames_e_estilos(self):
-        self.master.minsize(900, 600)
-        self.master.maxsize(900, 600)
+        self.master.minsize(W_DETALHE_MSG_MIN_WIDTH, W_DETALHE_MSG_MIN_HEIGHT)
+        self.master.maxsize(W_DETALHE_MSG_MAX_WIDTH, W_DETALHE_MSG_MIN_HEIGHT)
+        self.master.geometry(W_DETALHE_MSG_GEOMETRIA)
+        self.master.title(f'Detalhe de mensagem: {self.num_mensagem}')
         self.mainframe = ttk.Frame(self.master)
         self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 5")
         self.centerframe = ttk.Frame(self.mainframe)

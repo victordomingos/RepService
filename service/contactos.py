@@ -23,9 +23,11 @@ class ContactsWindow(baseApp):
         self.contact_detail_windows_count = 0
         self.contacto_selecionado = None
         
-        self.master.minsize(CONTACTOS_MIN_WIDTH, CONTACTOS_MIN_HEIGTH)
-        self.master.maxsize(CONTACTOS_MAX_WIDTH, CONTACTOS_MAX_HEIGTH)
-        #self.centerframe = ttk.Frame(self.mainframe, padding="4 0 4 0")  #apagar isto
+        self.master.minsize(CONTACTOS_MIN_WIDTH, CONTACTOS_MIN_HEIGHT)
+        self.master.maxsize(CONTACTOS_MAX_WIDTH, CONTACTOS_MAX_HEIGHT)
+        self.master.geometry(CONTACTOS_GEOMETRIA)
+        self.master.title("Contactos")
+
         self.montar_barra_de_ferramentas()
         self.montar_tabela()
         self.gerar_menu()
@@ -314,7 +316,6 @@ class ContactsWindow(baseApp):
     def create_window_detalhe_contacto(self, *event, num_contacto=None):
         self.contact_detail_windows_count += 1
         self.contacto_newDetailsWindow[self.contact_detail_windows_count] = tk.Toplevel()
-        self.contacto_newDetailsWindow[self.contact_detail_windows_count].geometry(WREMESSAS_GEOMETRIA)
         self.contacto_newDetailsWindow[self.contact_detail_windows_count].title(f'Detalhe de contacto: {num_contacto}')
 
         self.contacto_newDetailsWindow[self.contact_detail_windows_count].bind(
