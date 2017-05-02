@@ -25,6 +25,9 @@ class contactDetailWindow(ttk.Frame):
 
 
     def montar_barra_de_ferramentas(self):
+        ttk.Label(self.topframe, text="12345").grid(column=0, row=0, sticky='w')
+        ttk.Label(self.topframe, text="José Manuel da Silva Costa Ferreira").grid(column=0, row=1, sticky='w')
+                
         # ----------- Botão com menu "Alterar estado" --------------
         self.label_mbtn_alterar = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Alterar estado")
         self.mbtn_alterar = ttk.Menubutton (self.topframe, text="•••")
@@ -47,6 +50,8 @@ class contactDetailWindow(ttk.Frame):
         self.mbtn_alterar.grid(column=7, row=0)
         self.label_mbtn_alterar.grid(column=7, row=1)
         # ----------- fim de Botão com menu "Alterar estado" -------------
+        
+        self.topframe.grid_columnconfigure(1, weight=1)
 
 
     def montar_painel_principal(self):

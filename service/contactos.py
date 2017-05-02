@@ -354,5 +354,5 @@ class ContactsWindow(baseApp):
 
 
     def inserir_dados_de_exemplo(self):
-        for i in range(560):
+        for i in range(10000):
             self.tree.insert("", "end", text="", values=(str(i),"Nome do cliente", "+351000000000", "endereco@emaildocliente.com"))

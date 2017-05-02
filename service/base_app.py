@@ -36,7 +36,7 @@ class baseApp(ttk.Frame):
     Classe de base para as janelas de aplicação. Inclui uma estrutura de vários frames:
         - topframe (Barra de ferramentas)
         - centerframe (organizador da área central), composto por:
-          - leftframe (que recebe a tabela prncipal tree)
+          - leftframe (que recebe a tabela principal tree)
           - rightframe (painel escondido por defeito, que pode ser utilizado como inspetor,
             lista de mensagens, etc.)
         - bottomframe (área reservada à barra de estado)
@@ -59,13 +59,17 @@ class baseApp(ttk.Frame):
         self.mainframe = ttk.Frame(master)
         self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 5")
         self.centerframe = ttk.Frame(self.mainframe)
+        
 
         self.leftframe = ttk.Frame(self.centerframe)
         self.rightframe = ttk.Frame(self.centerframe)
-        self.leftframe.grid(column=0,row=1, sticky=tk.W+tk.E+tk.N+tk.S)
-        self.rightframe.grid(column=1, row=1, stick=tk.E+tk.N+tk.S)
+        self.leftframe.grid(column=0, row=1, sticky="nsew")
+        self.rightframe.grid(column=1, row=1, stick="nse")
         self.centerframe.grid_columnconfigure(0, weight=1)
         self.centerframe.grid_columnconfigure(1, weight=0)
+        self.centerframe.grid_rowconfigure(1, weight=1)
+        
+        self.messagepane = ttk.Frame(self.rightframe, padding="5 5 5 0")
         
         self.bottomframe = ttk.Frame(self.mainframe)
         self.btnFont = tkinter.font.Font(family="Lucida Grande", size=10)
@@ -83,7 +87,6 @@ class baseApp(ttk.Frame):
         self.entryfr4 = ttk.Frame(self.entryframe)
         self.entryfr5 = ttk.Frame(self.entryframe)
         
-
         #get status bar
         self.my_statusbar = StatusBar(self.mainframe)
                 
@@ -137,25 +140,17 @@ class baseApp(ttk.Frame):
 
 
     def composeFrames(self):    
-        self.topframe.pack(side=tk.TOP, fill=tk.X)
-        self.centerframe.pack(side=tk.TOP, fill=tk.BOTH)
-        self.messagepane = ttk.Frame(self.rightframe, padding="5 5 5 5")
-        self.messagepane.pack()
-        self.bottomframe.pack(side=tk.BOTTOM, fill=tk.X)        
-        self.mainframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
+        self.topframe.pack(side='top', fill='x')
+        self.centerframe.pack(side='top', expand=True, fill='both')
+        self.messagepane.pack(side='top', expand=True, fill='both')
+        self.bottomframe.pack(side='bottom', fill='x')        
+        self.mainframe.pack(side='top', expand=True, fill='both')
         
-        self.entryfr1.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
-        self.entryfr2.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
-        self.entryfr3.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
-        self.entryfr4.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
-        self.entryfr5.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
-        """
-        self.entryfr1.grid(column=0, row=0, sticky=tk.W+tk.E)
-        self.entryfr2.grid(column=0, row=1, sticky=tk.W+tk.E)
-        self.entryfr3.grid(column=0, row=2, sticky=tk.W+tk.E)
-        self.entryfr4.grid(column=0, row=3, sticky=tk.W+tk.E)
-        self.entryfr5.grid(column=0, row=4, sticky=tk.W+tk.E)
-        """        
+        self.entryfr1.pack(side='top', expand=True, fill='both')
+        self.entryfr2.pack(side='top', expand=True, fill='both')
+        self.entryfr3.pack(side='top', expand=True, fill='both')
+        self.entryfr4.pack(side='top', expand=True, fill='both')
+        self.entryfr5.pack(side='top', expand=True, fill='both')
 
 
     def popupMsg(self, msg):
@@ -197,6 +192,7 @@ class baseApp(ttk.Frame):
             return new_data
         return data
 
+
     def sortBy(self, tree, col, descending):
         """
         sort tree contents when a column header is clicked
@@ -213,6 +209,7 @@ class baseApp(ttk.Frame):
         tree.heading(col, command=lambda col=col: self.sortBy(tree, col, int(not descending)))
         self.alternar_cores(tree)
     # ------ Fim das funções relacionadas c/ o ordenamento da tabela -----------------------------
+
 
     def alternar_cores(self, tree, inverso=False, fundo1='grey98', fundo2='white'):
         tree = tree
@@ -232,7 +229,8 @@ class baseApp(ttk.Frame):
         tree.tag_configure('par', background=fundo1)
         tree.tag_configure('impar', background=fundo2)
         self.update_idletasks()
-    
+
+
     def configurarTree(self):
         # Ordenar por coluna ao clicar no respetivo cabeçalho
         for col in self.tree['columns']:
@@ -240,8 +238,8 @@ class baseApp(ttk.Frame):
             command=lambda c=col: self.sortBy(self.tree, c, 0))
 
         # Barra de deslocação para a tabela
-        self.tree.grid(column=0, row=0, sticky=tk.N+tk.W+tk.E, in_=self.leftframe)
+        self.tree.grid(column=0, row=0, sticky="nsew", in_=self.leftframe)
         self.vsb = AutoScrollbar(self.leftframe, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=self.vsb.set)
-        self.vsb.grid(column=1, row=0, sticky=tk.N+tk.S, in_=self.leftframe)
+        self.vsb.grid(column=1, row=0, sticky="ns", in_=self.leftframe)
 

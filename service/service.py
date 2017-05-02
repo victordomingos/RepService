@@ -42,7 +42,7 @@ __app_name__ = "RepService 2017"
 __author__ = "Victor Domingos"
 __copyright__ = "Copyright 2017 Victor Domingos"
 __license__ = "Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)"
-__version__ = "v.0.7 development"
+__version__ = "v0.8 development"
 __email__ = "web@victordomingos.com"
 __status__ = "Development"
 
@@ -77,6 +77,8 @@ class App(baseApp):
         self.composeFrames()
         self.inserir_dados_de_exemplo()
         self.alternar_cores(self.tree)
+        self.inserir_msgs_de_exemplo()
+        self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
         #self.after(5000, self.teste_GUI)
         #self.create_window_detalhe_rep(self, num_reparacao=3)
 
@@ -217,16 +219,17 @@ class App(baseApp):
 
     def montar_tabela(self):
         self.tree['columns'] = ('Nº', 'Cliente', 'Equipamento', 'Serviço', 'Estado', 'Dias')
-        self.tree.pack(side=tk.TOP, fill=tk.BOTH)
-        self.tree.column('#0', anchor=tk.W, minwidth=0, stretch=0, width=0)
-        self.tree.column('Nº', anchor=tk.E, minwidth=46, stretch=0, width=46)
-        self.tree.column('Cliente', minwidth=120, stretch=1, width=120)
-        self.tree.column('Equipamento', minwidth=170, stretch=1, width=170)
-        self.tree.column('Serviço', minwidth=210, stretch=1, width=210)
-        self.tree.column('Estado', minwidth=145, stretch=0, width=145)
-        self.tree.column('Dias', anchor=tk.E, minwidth=35, stretch=0, width=35)
+        #self.tree.pack(side='top', expand=True, fill='both')
+        self.tree.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
+        self.tree.column('Nº', anchor='e', minwidth=46, stretch=0, width=46)
+        self.tree.column('Cliente', minwidth=80, stretch=1, width=120)
+        self.tree.column('Equipamento', minwidth=80, stretch=1, width=170)
+        self.tree.column('Serviço', minwidth=80, stretch=1, width=210)
+        self.tree.column('Estado', minwidth=80, stretch=0, width=145)
+        self.tree.column('Dias', anchor='e', minwidth=35, stretch=0, width=35)
         self.configurarTree()
         self.leftframe.grid_columnconfigure(0, weight=1)
+        self.leftframe.grid_columnconfigure(1, weight=0)
         self.leftframe.grid_rowconfigure(0, weight=1)
 
         self.bind_tree()
@@ -451,15 +454,13 @@ class App(baseApp):
         self.estilo = ttk.Style()
 
         self.mensagens_frame = ttk.Frame(self.messagepane)
-        #self.mensagens_frame.pack()
-
-        self.mensagens_frame_top = ttk.Frame(self.mensagens_frame, padding="4 10 4 4")
+        self.mensagens_frame_top = ttk.Frame(self.mensagens_frame, padding="4 10 4 0")
 
         contar_mensagens = 36 #TODO: implementar método para obter o número de mensagens do utilizador
         self.lbl_mensagens_titulo = ttk.Label(self.mensagens_frame, text=f"{contar_mensagens} mensagens", anchor='center', font=("Lucida Grande", 18)).pack()
 
-        self.mensagens_frame_btn = ttk.Frame(self.mensagens_frame, padding="2 4 2 2")
-        self.mensagens_frame_tree = ttk.Frame(self.mensagens_frame, padding="2 5 2 2")
+        self.mensagens_frame_btn = ttk.Frame(self.mensagens_frame, padding="2 4 2 0")
+        self.mensagens_frame_tree = ttk.Frame(self.mensagens_frame, padding="2 0 2 0")
 
         self.btn_msg_mostrar = ttk.Button(self.mensagens_frame_btn, text="Mostrar")
         self.btn_msg_mostrar.grid(column=0, sticky=tk.W, row=1, in_=self.mensagens_frame_btn)
@@ -475,18 +476,19 @@ class App(baseApp):
         self.mensagens_frame_btn.grid_columnconfigure(2, weight=1)
         self.mensagens_frame_btn.grid_columnconfigure(3, weight=0)
 
-        self.lblFrame_mensagens = ttk.LabelFrame(self.mensagens_frame_tree,labelanchor="s", padding="4 4 4 4")
+        self.lblFrame_mensagens = ttk.LabelFrame(self.mensagens_frame_tree, labelanchor="n", padding="4 4 4 4")
 
         self.msgtree = ttk.Treeview(self.lblFrame_mensagens, height=31, selectmode='browse', show='', style='Msg.Treeview')
         self.msgtree['columns'] = ('ico','Processo', 'Mensagem')
-        #self.msgtree.pack(side=tk.TOP, fill=tk.BOTH)
         self.msgtree.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
         self.msgtree.column('ico', anchor='ne', minwidth=20, stretch=0, width=20)
         self.msgtree.column('Processo', anchor='ne', minwidth=40, stretch=0, width=40)
         self.msgtree.column('Mensagem', anchor='nw', minwidth=235, stretch=1, width=235)
-        self.lblFrame_mensagens.grid_columnconfigure(2, weight=1)
 
-        self.msgtree.grid(column=0, columnspan=4, row=2, sticky=tk.N+tk.W+tk.E)
+        self.msgtree.grid(column=0, columnspan=4, row=2, sticky="nsew")
+        self.lblFrame_mensagens.grid_columnconfigure(2, weight=1)
+        self.lblFrame_mensagens.grid_rowconfigure(2, weight=1)
+
         # Barra de deslocação para a tabela
         #self.vsb2 = AutoScrollbar(self.tab_mensagens, orient="vertical", command=self.msgtree.yview)
         #self.msgtree.configure(yscrollcommand=self.vsb2.set)
@@ -500,8 +502,8 @@ class App(baseApp):
 
         self.mensagens_frame_top.pack(side=tk.TOP)
         self.mensagens_frame_btn.pack(side=tk.TOP)
-        self.mensagens_frame_tree.pack(side=tk.TOP)
-        self.lblFrame_mensagens.pack()
+        self.mensagens_frame_tree.pack(side=tk.TOP, expand=True, fill='both')
+        self.lblFrame_mensagens.pack(side=tk.TOP, expand=True, fill='both')
 
 
 
@@ -509,9 +511,9 @@ class App(baseApp):
         root.update_idletasks()
         if estado.painel_mensagens_aberto == False:
             self.mensagens_frame.pack()
-            self.messagepane.pack()
+            self.messagepane.pack(side='top', expand=True, fill='both')
             self.rightframe.grid()
-            self.inserir_msgs_de_exemplo()  # trocar isto por atualizar_mensagens()
+            # self.inserir_msgs_de_exemplo()  # TODO atualizar_mensagens()
             self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
             estado.painel_mensagens_aberto = True
         else:
@@ -989,18 +991,18 @@ class App(baseApp):
 
 
     def inserir_dados_de_exemplo(self):
-        for i in range(15):
-            self.tree.insert("", "end", tag="", text="", values=("12000","José Manuel da Silva Rodrigues", "Artigo Muito Jeitoso (Early 2015)", "Substituição de ecrã", "Em processamento", "120" ))
-            self.tree.insert("", "end", text="", values=("12000","Joana Manuela Rodrigues", "Outro Artigo Bem Jeitoso", "Bateria não carrega", "Aguarda envio", "120" ))
-            self.tree.insert("", "end", tag="baixa", text="", values=("1004","Maria Apolinário Gomes Fernandes", "Smartphone Daqueles Bons", "Substituição de ecrã", "Enviado", "15" ))
-            self.tree.insert("", "end", text="", tag="normal", values=("2001","José Carvalho", "Computador do modelo ABCD", "Formatar disco e reinstalar sistema operativo", "Recebido", "1" ))
-            self.tree.insert("", "end", text="", tag="urgente", values=("702","Loja X", "Coisa que não funciona devidamente", "Substituição ao abrigo da garantia", "Aguarda entrega", "12" ))
-            self.tree.insert("", "end", text="", tag="baixa", values=("30002","Loja X", "Coisa que devia funcionar melhor", "Substituição ao abrigo da garantia", "Entregue", "12" ))
+        for i in range(1,10000,6):
+            self.tree.insert("", "end", tag="", text="", values=(str(i),"José Manuel da Silva Rodrigues", "Artigo Muito Jeitoso (Early 2015)", "Substituição de ecrã", "Em processamento", "120" ))
+            self.tree.insert("", "end", text="", values=(str(i+1),"Joana Manuela Rodrigues", "Outro Artigo Bem Jeitoso", "Bateria não carrega", "Aguarda envio", "120" ))
+            self.tree.insert("", "end", tag="baixa", text="", values=(str(i+2),"Maria Apolinário Gomes Fernandes", "Smartphone Daqueles Bons", "Substituição de ecrã", "Enviado", "15" ))
+            self.tree.insert("", "end", text="", tag="normal", values=(str(i+3),"José Carvalho", "Computador do modelo ABCD", "Formatar disco e reinstalar sistema operativo", "Recebido", "1" ))
+            self.tree.insert("", "end", text="", tag="urgente", values=(str(i+4),"Loja X", "Coisa que não funciona devidamente", "Substituição ao abrigo da garantia", "Aguarda entrega", "12" ))
+            self.tree.insert("", "end", text="", tag="baixa", values=(str(i+5),"Loja X", "Coisa que devia funcionar melhor", "Substituição ao abrigo da garantia", "Entregue", "12" ))
 
 
     def inserir_msgs_de_exemplo(self):
         now = datetime.datetime.now()
-        for i in range(3):
+        for i in range(15):
             utilizadores = ["Victor Domingos", "DJ Mars", "AC", "NPK"]
             processo0 = 23456
             processo1 = 21345
@@ -1024,7 +1026,7 @@ if __name__ == "__main__":
     estado.janela_principal = App(root)
     root.configure(background='grey95')
     root.title('RepService')
-    root.geometry(ROOT_GEOMETRIA)
+    #root.geometry(ROOT_GEOMETRIA)
     root.bind_all("<Mod2-q>", exit)
 
     #Removed bad AquaTk Button-2 (right) and Paste bindings.

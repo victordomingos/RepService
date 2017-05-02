@@ -249,6 +249,7 @@ class RemessasWindow(baseApp):
         self.tree.bind('<Double-1>', lambda x: self.create_window_detalhe_remessa(num_remessa=self.remessa_selecionada))
         self.tree.bind("<Button-2>", self.popupMenu)
         self.tree.bind("<Button-3>", self.popupMenu)
+        self.update_idletasks()
 
 
     def unbind_tree(self):
@@ -256,6 +257,7 @@ class RemessasWindow(baseApp):
         self.tree.bind('<Double-1>', None)
         self.tree.bind("<Button-2>", None)
         self.tree.bind("<Button-3>", None)
+        self.update_idletasks()
 
 
     def selectItem_popup(self, event):
@@ -356,7 +358,7 @@ class RemessasWindow(baseApp):
 
 
     def inserir_dados_de_exemplo(self):
-        for i in range(2560):
+        for i in range(1,1800,3):
             self.tree.insert("", "end", text="", values=(str(i), "Loja X", "Fornecedor", "3", "2017-12-31"))
-            self.tree.insert("", "end", text="", values=(str(i), "Centro técnico", "Loja X", "10", "2017-01-12"))
-            self.tree.insert("", "end", text="", values=(str(i), "Loja X", "Distribuidor internacional", "10", "2017-02-01"))
+            self.tree.insert("", "end", text="", values=(str(i+1), "Centro técnico", "Loja X", "10", "2017-01-12"))
+            self.tree.insert("", "end", text="", values=(str(i+2), "Loja X", "Distribuidor internacional", "10", "2017-02-01"))
