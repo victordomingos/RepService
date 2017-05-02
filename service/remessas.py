@@ -109,6 +109,8 @@ class RemessasWindow(baseApp):
         #self.MenuFicheiro.entryconfig("Novo contacto", state="disabled")
         #root.unbind_all("<Command-n>")
         self.show_entryform()
+        self.ef_radio_tipo_saida.focus()
+
 
 
     def fechar_painel_entrada(self, *event):
