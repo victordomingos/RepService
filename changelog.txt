@@ -4,6 +4,11 @@ Histórico de versões:
 ====================
 
 ---
+v.0.8 - 14/05/2017
+ * Corrigido um bug que fazia com que alguns registos nas tabelas ficassem
+   fora da área visível da janela.
+
+---
 v.0.7 - 30/04/2017
  * Criado mecanismo para abertura de janelas secundárias com informação 
    detalhada sobre um determinado processo de reparação, um contacto, uma
