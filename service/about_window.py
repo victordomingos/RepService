@@ -11,6 +11,7 @@ import os
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font
+import webbrowser
 
 from global_setup import *
 
@@ -49,86 +50,100 @@ class thanks_window:
 
 
         file = open(file_path, "r")
-        texto = file.read()
+        self.texto = file.read()
         file.close()
         self.campo_texto = tk.Text(self.thanksframe, height=20)
-        self.campo_texto.insert(tk.END, texto)
+        self.campo_texto.insert("end", self.texto)
         self.campo_texto.tag_configure("center", justify='center')
         self.campo_texto.tag_add("center", 1.0, "end")
-        self.campo_texto.pack(side=tk.TOP)
+        self.campo_texto.pack(side='top')
 
 
-        self.close_button = ttk.Button(self.thanksframe_bottom, text="Obrigado!", command=self.thanksRoot.protocol("WM_DELETE_WINDOW"))
+        self.close_button = ttk.Button(self.thanksframe_bottom, text="Obrigado!", command=self.thanksRoot.destroy)
         self.close_button.pack()
         self.thanksframe.pack(side=tk.TOP)
         self.thanksframe_bottom.pack(side=tk.BOTTOM)
+        self.thanksRoot.bind("<Command-w>", self.close_window)
 
+
+    def close_window(self, event):
+        window = event.widget.winfo_toplevel()
+        window.destroy()
+        return "break"
 
 
 class about_window:
     def __init__(self):
-        about_w = 320
-        about_h = 370
+        self.about_w = 320
+        self.about_h = 370
 
-        popupRoot = tk.Toplevel()
-        popupRoot.title("")
-        popupRoot.focus()
+        self.popupRoot = tk.Toplevel()
+        self.popupRoot.title("")
 
-        popupRoot.update_idletasks()
-        w = popupRoot.winfo_screenwidth()
-        h = popupRoot.winfo_screenheight()
-        size = tuple(int(_) for _ in popupRoot.geometry().split('+')[0].split('x'))
-        x = int(w/2 - about_w/2)
-        y = int(h/3 - about_h/2)
-        popupRoot.configure(background='grey92')
-        popupRoot.geometry("{}x{}+{}+{}".format(about_w,about_h,x,y))
+        self.popupRoot.focus()
 
-        pframe_topo = ttk.Frame(popupRoot, padding="10 10 10 2")
-        pframe_meio = ttk.Frame(popupRoot, padding="10 2 2 10")
-        pframe_fundo = ttk.Frame(popupRoot, padding="10 2 10 10")
+        self.popupRoot.update_idletasks()
+        w = self.popupRoot.winfo_screenwidth()
+        h = self.popupRoot.winfo_screenheight()
+        size = tuple(int(_) for _ in self.popupRoot.geometry().split('+')[0].split('x'))
+        x = int(w/2 - self.about_w/2)
+        y = int(h/3 - self.about_h/2)
+        self.popupRoot.configure(background='grey92')
+        self.popupRoot.geometry("{}x{}+{}+{}".format(self.about_w,self.about_h,x,y))
+
+        self.pframe_topo = ttk.Frame(self.popupRoot, padding="10 10 10 2")
+        self.pframe_meio = ttk.Frame(self.popupRoot, padding="10 2 2 10")
+        self.pframe_fundo = ttk.Frame(self.popupRoot, padding="10 2 10 10")
 
         os.chdir(os.path.dirname(__file__))
-        icon_path = os.getcwd()
-        icon_path += "/images/icon.gif"
-        icon = tk.PhotoImage(file=icon_path)
-        label = ttk.Label(pframe_topo, image=icon)
-        label.image = icon
-        label.pack(side=tk.TOP)
-        label.bind('<Button-1>', thanks)
+        self.icon_path = os.getcwd()
+        self.icon_path += "/images/icon.gif"
+        self.icon = tk.PhotoImage(file=self.icon_path)
+        self.label = ttk.Label(self.pframe_topo, image=self.icon)
+        self.label.image = self.icon
+        self.label.pack(side='top')
+        self.label.bind('<Button-1>', thanks)
 
 
-        appfont = tkinter.font.Font(size=15, weight='bold')
-        copyfont = tkinter.font.Font(size=10)
+        self.appfont = tkinter.font.Font(size=15, weight='bold')
+        self.copyfont = tkinter.font.Font(size=10)
 
         #---------- TOPO -----------
-        app_lbl = ttk.Label(pframe_topo, font=appfont, text=__app_name__)
-        assin_lbl = ttk.Label(pframe_topo,text="\nO seu gestor avançado de reparações.\n")
-        version_lbl = ttk.Label(pframe_topo, font=copyfont, text="Versão {}\n\n\n".format(__version__))
+        self.app_lbl = ttk.Label(self.pframe_topo, font=self.appfont, text=__app_name__)
+        self.assin_lbl = ttk.Label(self.pframe_topo,text="\nO seu gestor avançado de reparações.\n")
+        self.version_lbl = ttk.Label(self.pframe_topo, font=self.copyfont, text="Versão {}\n\n\n".format(__version__))
 
         #---------- MEIO -----------
 
 
 
         #---------- FUNDO -----------
-        copyright_lbl = ttk.Label(pframe_fundo, font=copyfont, text="\n\n\n© 2017 Victor Domingos")
-        license_lbl = ttk.Label(pframe_fundo, font=copyfont, text=__license__)
+        self.copyright_lbl = ttk.Label(self.pframe_fundo, font=self.copyfont, text="\n\n\n© 2017 Victor Domingos")
+        self.license_lbl = ttk.Label(self.pframe_fundo, font=self.copyfont, text=__license__)
 
 
-        app_lbl.pack()
-        assin_lbl.pack()
-        version_lbl.pack()
+        self.app_lbl.pack()
+        self.assin_lbl.pack()
+        self.version_lbl.pack()
 
 
-        copyright_lbl.pack()
-        license_lbl.pack()
-        pframe_topo.pack(side=tk.TOP)
-        pframe_meio.pack(side=tk.TOP)
-        pframe_fundo.pack(side=tk.TOP)
+        self.copyright_lbl.pack()
+        self.license_lbl.pack()
+        self.pframe_topo.pack(side=tk.TOP)
+        self.pframe_meio.pack(side=tk.TOP)
+        self.pframe_fundo.pack(side=tk.TOP)
 
-        pframe_topo.focus()
+        self.pframe_topo.focus()
+        self.popupRoot.bind("<Command-w>", self.close_window)
 
-        popupRoot.mainloop()
+        self.popupRoot.mainloop()
 
+
+    def close_window(self, event):
+        window = event.widget.winfo_toplevel()
+        window.destroy()
+        return "break"
+    
 
 
 def thanks(*event):
