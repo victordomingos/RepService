@@ -547,8 +547,7 @@ class App(baseApp):
     def gerar_painel_entrada(self):
 
         #entryfr1-----------------------------
-        #TODO:adicionar campos, notebook, etc
-        #criar funções para usar esses campos, ora para adicionar, ora para editar, ora para visualizar registos
+        #criar funções para usar estes campos, ora para adicionar, ora para editar, ora para visualizar registos
         self.ef_var_tipo = tk.IntVar()
         self.ef_var_estado = tk.IntVar()
         self.ef_var_garantia = tk.IntVar()
