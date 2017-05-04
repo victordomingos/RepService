@@ -87,14 +87,26 @@ class repairDetailWindow(ttk.Frame):
         # ----------- fim de Botão com menu "Alterar Prioridade" -------------
 
 
+
         # ----------- Botão com menu "Copiar" --------------
         self.label_mbtn_copiar = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Copiar")
         self.mbtn_copiar = ttk.Menubutton(self.topframe, text=" ⚡")
         self.mbtn_copiar.menu = tk.Menu(self.mbtn_copiar, tearoff=0)
         self.mbtn_copiar["menu"] = self.mbtn_copiar.menu
 
-        self.mbtn_copiar.menu.add_command(label=ESTADOS[ENTREGUE], command=None)
+        if self.tipo_processo == "Cliente":
+            self.mbtn_copiar.menu.add_command(label="Nome", command=None)
+            self.mbtn_copiar.menu.add_command(label="NIF", command=None)
+            self.mbtn_copiar.menu.add_command(label="Morada", command=None)
+            self.mbtn_copiar.menu.add_command(label="Código Postal", command=None)
+            self.mbtn_copiar.menu.add_command(label="Localidade", command=None)
+            
+        self.mbtn_copiar.menu.add_command(label="Email", command=None)
+        self.mbtn_copiar.menu.add_command(label="Telefone", command=None)
         self.mbtn_copiar.menu.add_separator()
+        self.mbtn_copiar.menu.add_command(label="Número de série", command=None)
+        self.mbtn_copiar.menu.add_command(label="Descrição do equipamento", command=None)
+
         self.mbtn_copiar.menu.add_command(label=ESTADOS[SEM_INFORMACAO], command=None)
         # ----------- fim de Botão com menu "Copiar" -------------
         
