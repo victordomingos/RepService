@@ -240,6 +240,7 @@ class App(baseApp):
         self.btn_add.grid(column=0, row=0)
         self.label_add = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Nova reparação")
         self.label_add.grid(column=0, row=1)
+        self.label_add.bind('<Button-1>', self.show_entryform)
 
 
         # ----------- Botão com menu "Mostrar" --------------
@@ -448,6 +449,7 @@ class App(baseApp):
         """
         window = event.widget.winfo_toplevel()
         window.destroy()
+        return "break"
 
 
     def gerar_painel_mensagens(self):
