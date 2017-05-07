@@ -80,10 +80,10 @@ class repairDetailWindow(ttk.Frame):
         self.mbtn_alterar_prioridade.menu = tk.Menu(self.mbtn_alterar_prioridade, tearoff=0)
         self.mbtn_alterar_prioridade["menu"] = self.mbtn_alterar_prioridade.menu
 
-        self.mbtn_alterar_prioridade.menu.add_command(label="_ Baixa", command=None)
-        self.mbtn_alterar_prioridade.menu.add_command(label="= Normal", command=None)
-        self.mbtn_alterar_prioridade.menu.add_command(label="o Alta", command=None)
-        self.mbtn_alterar_prioridade.menu.add_command(label="O Urgente", command=None)
+        self.mbtn_alterar_prioridade.menu.add_command(label="Baixa", command=None)
+        self.mbtn_alterar_prioridade.menu.add_command(label="Normal", command=None)
+        self.mbtn_alterar_prioridade.menu.add_command(label="Alta", command=None)
+        self.mbtn_alterar_prioridade.menu.add_command(label="Urgente", command=None)
         # ----------- fim de Botão com menu "Alterar Prioridade" -------------
 
 
@@ -113,7 +113,7 @@ class repairDetailWindow(ttk.Frame):
        
         # ----------- Botão com menu "Imprimir" --------------
         self.label_mbtn_imprimir = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Imprimir")
-        self.mbtn_imprimir = ttk.Menubutton(self.topframe, text="•••")
+        self.mbtn_imprimir = ttk.Menubutton(self.topframe, text="Imprimir")
         self.mbtn_imprimir.menu = tk.Menu(self.mbtn_imprimir, tearoff=0)
         self.mbtn_imprimir["menu"] = self.mbtn_imprimir.menu
 
@@ -131,23 +131,27 @@ class repairDetailWindow(ttk.Frame):
         self.mbtn_imprimir.menu.add_command(label="Recibo de pagamento: caução de empréstimo", command=None)
         # ----------- fim de Botão com menu "Imprimir" -------------
 
-        self.btn_comunicacao = ttk.Button(self.topframe, text="➕", width=4, command=None)
+
+        icon_path = APP_PATH + "/images/icon.gif"
+        self.icon = tk.PhotoImage(file=(APP_PATH+"/images/icon.gif"))
+
+        self.btn_comunicacao = ttk.Button(self.topframe, text="✉️", width=4, command=None)
         self.lbl_comunicacao = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Comunicação")
 
 
         self.lbl_titulo.grid(column=0, row=0, rowspan=2)        
 
         self.mbtn_alterar_estado.grid(column=4, row=0)
-        self.label_mbtn_alterar_estado.grid(column=4, row=1)
+        #self.label_mbtn_alterar_estado.grid(column=4, row=1)
         self.mbtn_alterar_prioridade.grid(column=5, row=0)
-        self.label_mbtn_alterar_prioridade.grid(column=5, row=1)
+        #self.label_mbtn_alterar_prioridade.grid(column=5, row=1)
         
         self.btn_comunicacao.grid(column=7, row=0)
-        self.lbl_comunicacao.grid(column=7, row=1)
+        #self.lbl_comunicacao.grid(column=7, row=1)
         self.mbtn_copiar.grid(column=8, row=0)
-        self.label_mbtn_copiar.grid(column=8, row=1)
+        #self.label_mbtn_copiar.grid(column=8, row=1)
         self.mbtn_imprimir.grid(column=9, row=0)
-        self.label_mbtn_imprimir.grid(column=9, row=1)
+        #self.label_mbtn_imprimir.grid(column=9, row=1)
         
         
         # Reincidência apenas aparece se reparação está entregue, anulado, abandonado, sem_informacao
@@ -158,24 +162,25 @@ class repairDetailWindow(ttk.Frame):
         # Botão para registar entrega apenas aparece se reparação ainda não está entregue
         if self.estado != ESTADOS[ENTREGUE]:
             self.btn_entregar.grid(column=11, row=0)
-            self.lbl_entregar.grid(column=11, row=1)
+            #self.lbl_entregar.grid(column=11, row=1)
         
-        
+        self.style_separador = ttk.Style()
+        self.style_separador.configure("TSeparator", width=10, relief="flat", background="blue", foreground="red")
+        #self.separador1 = ttk.Separator(self.centerframe, style="TSeparator", orient='horizontal').pack(side='top', pady=5, expand=True, fill='x')        
         self.topframe.grid_columnconfigure(2, weight=1)
         self.topframe.grid_columnconfigure(6, weight=1)
 
 
     def montar_painel_principal(self):
         print(f"A mostrar detalhes da reparação nº {self.num_reparacao}")
-        self.note = ttk.Notebook(self.centerframe)
+        self.note = ttk.Notebook(self.centerframe, padding="3 20 3 3")
 
         self.tab_geral = ttk.Frame(self.note, padding=10)
         self.tab_historico = ttk.Frame(self.note, padding=10)
         self.tab_orcamentos = ttk.Frame(self.note, padding=10)
         self.tab_emprestimos = ttk.Frame(self.note, padding=10)
 
-
-        self.note.add(self.tab_geral, text = "Geral", compound='top')
+        self.note.add(self.tab_geral, text="Geral")
         self.note.add(self.tab_historico, text = "Histórico")
         self.note.add(self.tab_orcamentos, text = "Orçamentos")
         self.note.add(self.tab_emprestimos, text = "Empréstimos")
@@ -329,7 +334,17 @@ class repairDetailWindow(ttk.Frame):
 
 
     def montar_rodape(self):
-        pass
+        #TODO - obter dados da base de dados
+        txt_esquerda = "Criado por Victor Domingos em 12/05/2021 18:01."
+        txt_direita = "Fechado por Victor Domingos em 13/05/2021 17:01."
+
+        self.rodapeFont = tk.font.Font(family="Lucida Grande", size=9)
+        self.rodapeTxtColor = "grey22"
+
+        self.esquerda = ttk.Label(self.bottomframe, anchor='w', text=txt_esquerda, font=self.rodapeFont, foreground=self.rodapeTxtColor)
+        self.direita = ttk.Label(self.bottomframe, anchor='e', text=txt_direita, font=self.rodapeFont, foreground=self.rodapeTxtColor)
+        self.esquerda.pack(side="left")
+        self.direita.pack(side="right")
 
 
 
@@ -343,7 +358,7 @@ class repairDetailWindow(ttk.Frame):
         self.mainframe = ttk.Frame(self.master)
         self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 5")
         self.centerframe = ttk.Frame(self.mainframe)
-        self.bottomframe = ttk.Frame(self.mainframe)
+        self.bottomframe = ttk.Frame(self.mainframe, padding="3 1 3 1")
 
         self.style_label = ttk.Style()
         self.style_label.configure("BW.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))

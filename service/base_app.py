@@ -74,6 +74,7 @@ class baseApp(ttk.Frame):
         self.bottomframe = ttk.Frame(self.mainframe)
         self.btnFont = tkinter.font.Font(family="Lucida Grande", size=10)
         self.btnTxtColor = "grey22"
+        self.btnTxtColor_active = "white"
         
         self.tree = ttk.Treeview(self.leftframe, height=60, selectmode='browse')
 
@@ -81,6 +82,7 @@ class baseApp(ttk.Frame):
         self.entryframe = ttk.Frame(master, padding="4 8 4 10")
         style_label = ttk.Style()
         style_label.configure("BW.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
+        style_label.configure("Active.TButton", foreground="white")
         self.entryfr1 = ttk.Frame(self.entryframe)
         self.entryfr2 = ttk.Frame(self.entryframe)
         self.entryfr3 = ttk.Frame(self.entryframe)

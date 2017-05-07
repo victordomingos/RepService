@@ -7,6 +7,7 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
 import tkinter as tk
 from tkinter import ttk
+import tkinter.font
 from global_setup import *
 
 
@@ -59,7 +60,17 @@ class contactDetailWindow(ttk.Frame):
 
             
     def montar_rodape(self):
-        pass
+        #TODO - obter dados da base de dados
+        txt_esquerda = "Criado por Victor Domingos em 12/05/2021 18:01."
+        txt_direita = "Atualizado por Victor Domingos em 13/05/2021 17:01."
+
+        self.rodapeFont = tk.font.Font(family="Lucida Grande", size=9)
+        self.rodapeTxtColor = "grey22"
+
+        self.esquerda = ttk.Label(self.bottomframe, anchor='w', text=txt_esquerda, font=self.rodapeFont, foreground=self.rodapeTxtColor)
+        self.direita = ttk.Label(self.bottomframe, anchor='e', text=txt_direita, font=self.rodapeFont, foreground=self.rodapeTxtColor)
+        self.esquerda.pack(side="left")
+        self.direita.pack(side="right")
 
 
     def configurar_frames_e_estilos(self):
@@ -69,13 +80,20 @@ class contactDetailWindow(ttk.Frame):
         self.mainframe = ttk.Frame(self.master)
         self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 5")
         self.centerframe = ttk.Frame(self.mainframe)
-        self.bottomframe = ttk.Frame(self.mainframe)
+        self.bottomframe = ttk.Frame(self.mainframe, padding="3 1 3 1")
 
         style_label = ttk.Style()
         style_label.configure("BW.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
-
+        style_label.configure("Active.TButton", foreground="white")
+        
         self.btnFont = tk.font.Font(family="Lucida Grande", size=10)
         self.btnTxtColor = "grey22"
+        
+        self.statusFont = tkinter.font.Font(family="Lucida Grande", size=11)
+        self.status_left = ttk.Label(self.bottomframe,anchor='w', text="" , font=self.statusFont, foreground=self.btnTxtColor)
+        self.status_right = ttk.Label(self.bottomframe,anchor='e', font=self.statusFont, foreground=self.btnTxtColor)
+        self.status_left.pack(side="left")
+        self.status_right.pack(side="right")
 
 
     def composeFrames(self):

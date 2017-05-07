@@ -142,7 +142,7 @@ class ContactsWindow(baseApp):
         self.ef_chkbtn_tipo_fornecedor = ttk.Checkbutton(self.ef_cabecalho, text="Fornecedor ou centro técnico", variable=self.ef_var_tipo_is_fornecedor)
         self.ef_chkbtn_tipo_loja = ttk.Checkbutton(self.ef_cabecalho, text="Loja do nosso grupo", variable=self.ef_var_tipo_is_loja)
 
-        self.btn_adicionar = ttk.Button(self.ef_cabecalho, text="Adicionar", command=self.adicionar_contacto)
+        self.btn_adicionar = ttk.Button(self.ef_cabecalho, default="active",  style="Active.TButton", text="Adicionar", command=self.adicionar_contacto)
         self.btn_cancelar = ttk.Button(self.ef_cabecalho, text="Cancelar", command=self.fechar_painel_entrada)
 
 

@@ -56,7 +56,17 @@ class remessaDetailWindow(ttk.Frame):
 
            
     def montar_rodape(self):
-        pass
+        #TODO - obter dados da base de dados
+        txt_esquerda = "Criado por Victor Domingos em 12/05/2021 18:01."
+        txt_direita = "Fechado por Victor Domingos em 13/05/2021 17:01."
+
+        self.rodapeFont = tk.font.Font(family="Lucida Grande", size=9)
+        self.rodapeTxtColor = "grey22"
+
+        self.esquerda = ttk.Label(self.bottomframe, anchor='w', text=txt_esquerda, font=self.rodapeFont, foreground=self.rodapeTxtColor)
+        self.direita = ttk.Label(self.bottomframe, anchor='e', text=txt_direita, font=self.rodapeFont, foreground=self.rodapeTxtColor)
+        self.esquerda.pack(side="left")
+        self.direita.pack(side="right")
             
     
 
@@ -67,7 +77,7 @@ class remessaDetailWindow(ttk.Frame):
         self.mainframe = ttk.Frame(self.master)
         self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 5")
         self.centerframe = ttk.Frame(self.mainframe)
-        self.bottomframe = ttk.Frame(self.mainframe)
+        self.bottomframe = ttk.Frame(self.mainframe, padding="3 1 3 1")
 
         style_label = ttk.Style()
         style_label.configure("BW.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))

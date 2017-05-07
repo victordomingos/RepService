@@ -54,7 +54,16 @@ class msgDetailWindow(ttk.Frame):
 
             
     def montar_rodape(self):
-        pass
+        #TODO - obter dados da base de dados
+        txt = "Enviada por Victor Domingos em 12/05/2021 18:01."
+
+        self.rodapeFont = tk.font.Font(family="Lucida Grande", size=9)
+        self.rodapeTxtColor = "grey22"
+
+        self.txt = ttk.Label(self.bottomframe, anchor='n', text=txt, font=self.rodapeFont, foreground=self.rodapeTxtColor)
+        self.txt.pack(side="top")
+
+
 
 
     def configurar_frames_e_estilos(self):
@@ -65,10 +74,11 @@ class msgDetailWindow(ttk.Frame):
         self.mainframe = ttk.Frame(self.master)
         self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 5")
         self.centerframe = ttk.Frame(self.mainframe)
-        self.bottomframe = ttk.Frame(self.mainframe)
+        self.bottomframe = ttk.Frame(self.mainframe, padding="3 1 3 1")
 
         style_label = ttk.Style()
         style_label.configure("BW.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
+        style_label.configure("Active.TButton", foreground="white")
 
         self.btnFont = tk.font.Font(family="Lucida Grande", size=10)
         self.btnTxtColor = "grey22"

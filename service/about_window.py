@@ -95,12 +95,9 @@ class about_window:
         self.pframe_meio = ttk.Frame(self.popupRoot, padding="10 2 2 10")
         self.pframe_fundo = ttk.Frame(self.popupRoot, padding="10 2 10 10")
 
-        os.chdir(os.path.dirname(__file__))
-        self.icon_path = os.getcwd()
-        self.icon_path += "/images/icon.gif"
-        self.icon = tk.PhotoImage(file=self.icon_path)
+        icon_path = APP_PATH + "/images/icon.gif"
+        self.icon = tk.PhotoImage(file=icon_path)
         self.label = ttk.Label(self.pframe_topo, image=self.icon)
-        self.label.image = self.icon
         self.label.pack(side='top')
         self.label.bind('<Button-1>', thanks)
 

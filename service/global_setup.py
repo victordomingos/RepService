@@ -94,6 +94,6 @@ TIPO_CONTACTO_CLIENTE = 0
 TIPO_CONTACTO_FORNECEDOR = 1
 TIPO_CONTACTO_LOJA = 2
 
-
 os.chdir(os.path.dirname(__file__))
 APP_PATH = os.getcwd()
+ICON_PATH = APP_PATH + "/images/icons/"

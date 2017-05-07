@@ -141,7 +141,7 @@ class RemessasWindow(baseApp):
         self.ef_lbl_tipo = ttk.Label(self.ef_cabecalho, text="Tipo:")
         self.ef_radio_tipo_saida = ttk.Radiobutton(self.ef_cabecalho, text="Envio", variable=self.ef_var_tipo, value=TIPO_REMESSA_ENVIO, command=self.radio_tipo_command)
         self.ef_radio_tipo_entrada = ttk.Radiobutton(self.ef_cabecalho, text="Receção", variable=self.ef_var_tipo, value=TIPO_REMESSA_RECECAO, command=self.radio_tipo_command)
-        self.btn_adicionar = ttk.Button(self.ef_cabecalho, text="Adicionar", command=None)
+        self.btn_adicionar = ttk.Button(self.ef_cabecalho, default="active", style="Active.TButton", text="Adicionar", command=None)
         self.btn_cancelar = ttk.Button(self.ef_cabecalho, text="Cancelar", command=self.fechar_painel_entrada)
 
 

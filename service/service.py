@@ -240,8 +240,6 @@ class App(baseApp):
         self.btn_add.grid(column=0, row=0)
         self.label_add = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Nova reparação")
         self.label_add.grid(column=0, row=1)
-        self.label_add.bind('<Button-1>', self.show_entryform)
-
 
         # ----------- Botão com menu "Mostrar" --------------
         self.label_mbtn_mostrar = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Mostrar processos…")
@@ -565,7 +563,7 @@ class App(baseApp):
         self.ef_lbl_tipo = ttk.Label(self.ef_cabecalho, text="Tipo de processo:")
         self.ef_radio_tipo_cliente = ttk.Radiobutton(self.ef_cabecalho, text="Cliente", variable=self.ef_var_tipo, value=TIPO_REP_CLIENTE, command=self.radio_tipo_command)
         self.ef_radio_tipo_stock = ttk.Radiobutton(self.ef_cabecalho, text="Stock", variable=self.ef_var_tipo, value=TIPO_REP_STOCK, command=self.radio_tipo_command)
-        self.btn_adicionar = ttk.Button(self.ef_cabecalho, text="Adicionar", command=None)
+        self.btn_adicionar = ttk.Button(self.ef_cabecalho, default="active", style="Active.TButton", text="Adicionar", command=None)
         self.btn_cancelar = ttk.Button(self.ef_cabecalho, text="Cancelar", command=self.fechar_painel_entrada)
 
 
