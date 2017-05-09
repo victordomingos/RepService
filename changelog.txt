@@ -14,8 +14,9 @@ v.0.8 - 14/05/2017
  * Os botões "Adicionar" nos paineis de introdução de dados são agora 
    destacados como ativos, seguindo a recomendação das macOS Human Interface
    Guidelines.
- * O tamanho do texto nos paineis de introdução de dados foi reduzido com a
-   aplicação de estilos (permite fácil alteração no módulo 'base_app.py').
+ * O tamanho do texto nos paineis de introdução de dados foi reduzido e os
+   títulos de cada secção têm agora mais destaque, com a aplicação de estilos
+   (permite uma mais fácil alteração, no módulo 'base_app.py').
 
 ---
 v.0.7 - 30/04/2017
