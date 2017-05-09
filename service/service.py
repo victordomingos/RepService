@@ -27,7 +27,6 @@ from tkinter import messagebox
 from tkinter.scrolledtext import ScrolledText
 import datetime
 import textwrap
-from string import ascii_uppercase
 
 from about_window import *
 from base_app import *
@@ -559,10 +558,10 @@ class App(baseApp):
         self.ef_var_local_intervencao.set("Loja X")
 
         self.ef_cabecalho = ttk.Frame(self.entryfr1, padding=4)
-        self.ef_lbl_titulo = ttk.Label(self.ef_cabecalho, style="BW.TLabel", text="Adicionar Reparação:\n")
-        self.ef_lbl_tipo = ttk.Label(self.ef_cabecalho, text="Tipo de processo:")
-        self.ef_radio_tipo_cliente = ttk.Radiobutton(self.ef_cabecalho, text="Cliente", variable=self.ef_var_tipo, value=TIPO_REP_CLIENTE, command=self.radio_tipo_command)
-        self.ef_radio_tipo_stock = ttk.Radiobutton(self.ef_cabecalho, text="Stock", variable=self.ef_var_tipo, value=TIPO_REP_STOCK, command=self.radio_tipo_command)
+        self.ef_lbl_titulo = ttk.Label(self.ef_cabecalho, style="Panel_Title.TLabel", text="Adicionar Reparação:\n")
+        self.ef_lbl_tipo = ttk.Label(self.ef_cabecalho, text="Tipo de processo:", style="Panel_Body.TLabel")
+        self.ef_radio_tipo_cliente = ttk.Radiobutton(self.ef_cabecalho, text="Cliente", style="Panel_Body.TRadiobutton", variable=self.ef_var_tipo, value=TIPO_REP_CLIENTE, command=self.radio_tipo_command)
+        self.ef_radio_tipo_stock = ttk.Radiobutton(self.ef_cabecalho, text="Stock", style="Panel_Body.TRadiobutton", variable=self.ef_var_tipo, value=TIPO_REP_STOCK, command=self.radio_tipo_command)
         self.btn_adicionar = ttk.Button(self.ef_cabecalho, default="active", style="Active.TButton", text="Adicionar", command=None)
         self.btn_cancelar = ttk.Button(self.ef_cabecalho, text="Cancelar", command=self.fechar_painel_entrada)
 
@@ -583,23 +582,23 @@ class App(baseApp):
 
 
         #entryfr2-----------------------------
-        self.ef_lf_cliente = ttk.Labelframe(self.entryfr2, padding=4, text="Dados do cliente")
+        self.ef_lf_cliente = ttk.Labelframe(self.entryfr2, padding=4, style="Panel_Section_Title.TLabelframe", text="Dados do cliente")
         self.ef_txt_num_cliente = ttk.Entry(self.ef_lf_cliente, width=5)
         self.ef_btn_buscar_cliente = ttk.Button(self.ef_lf_cliente, width=1, text="+", command=lambda *x: self.create_window_contacts(criar_novo_contacto="Cliente"))
         self.ef_txt_nome_cliente = ttk.Entry(self.ef_lf_cliente, width=45)
-        self.ef_lbl_telefone_lbl = ttk.Label(self.ef_lf_cliente, text="Tel.:")
-        self.ef_lbl_telefone_info = ttk.Label(self.ef_lf_cliente, text="00 351 000 000 000")
-        self.ef_lbl_email_lbl = ttk.Label(self.ef_lf_cliente, text="Email:")
-        self.ef_lbl_email_info = ttk.Label(self.ef_lf_cliente, text="email.address@portugalmail.com")
+        self.ef_lbl_telefone_lbl = ttk.Label(self.ef_lf_cliente, style="Panel_Body.TLabel", text="Tel.:")
+        self.ef_lbl_telefone_info = ttk.Label(self.ef_lf_cliente, style="Panel_Body.TLabel", text="00 351 000 000 000")
+        self.ef_lbl_email_lbl = ttk.Label(self.ef_lf_cliente, style="Panel_Body.TLabel", text="Email:")
+        self.ef_lbl_email_info = ttk.Label(self.ef_lf_cliente, style="Panel_Body.TLabel", text="email.address@portugalmail.com")
 
-        self.ef_lf_fornecedor = ttk.Labelframe(self.entryfr2, padding=4, text="Dados do fornecedor")
+        self.ef_lf_fornecedor = ttk.Labelframe(self.entryfr2, padding=4, style="Panel_Section_Title.TLabelframe", text="Dados do fornecedor")
         self.ef_txt_num_fornecedor = ttk.Entry(self.ef_lf_fornecedor, width=5)
         self.ef_btn_buscar_fornecedor = ttk.Button(self.ef_lf_fornecedor, width=1, text="+", command=lambda *x: self.create_window_contacts(criar_novo_contacto="Fornecedor"))
         self.ef_txt_nome_fornecedor = ttk.Entry(self.ef_lf_fornecedor, width=45)
-        self.ef_lbl_telefone_lbl_fornecedor = ttk.Label(self.ef_lf_fornecedor, text="Tel.:")
-        self.ef_lbl_telefone_info_fornecedor = ttk.Label(self.ef_lf_fornecedor, text="00 351 000 000 000")
-        self.ef_lbl_email_lbl_fornecedor = ttk.Label(self.ef_lf_fornecedor, text="Email:")
-        self.ef_lbl_email_info_fornecedor = ttk.Label(self.ef_lf_fornecedor, text="email.address@portugalmail.com")
+        self.ef_lbl_telefone_lbl_fornecedor = ttk.Label(self.ef_lf_fornecedor, style="Panel_Body.TLabel", text="Tel.:")
+        self.ef_lbl_telefone_info_fornecedor = ttk.Label(self.ef_lf_fornecedor, style="Panel_Body.TLabel", text="00 351 000 000 000")
+        self.ef_lbl_email_lbl_fornecedor = ttk.Label(self.ef_lf_fornecedor, style="Panel_Body.TLabel", text="Email:")
+        self.ef_lbl_email_info_fornecedor = ttk.Label(self.ef_lf_fornecedor, style="Panel_Body.TLabel", text="email.address@portugalmail.com")
 
         self.ef_txt_num_cliente.grid(column=0, row=0, padx=5, sticky='w')
         self.ef_btn_buscar_cliente.grid(column=2, row=0, sticky='w')
@@ -635,32 +634,32 @@ class App(baseApp):
 
         #entryfr3-----------------------------
             #estabelecimento_compra (mostrar apenas se garantia for "sim, outro estabelecimento") c4
-        self.ef_lf_equipamento = ttk.Labelframe(self.entryfr3, padding=4, text="\nDados do equipamento")
-        self.ef_ltxt_descr_equipamento = LabelText(self.ef_lf_equipamento, "Descrição:", width=30, height=2)
-        self.ef_lbl_estado_equipamento = ttk.Label(self.ef_lf_equipamento, text="Estado:")
-        self.ef_radio_estado_marcas_uso = ttk.Radiobutton(self.ef_lf_equipamento, text="Marcas de uso", variable=self.ef_var_estado, value=0, command=self.radio_estado_command)
-        self.ef_radio_estado_bom = ttk.Radiobutton(self.ef_lf_equipamento, text="Bom estado geral", variable=self.ef_var_estado, value=1, command=self.radio_estado_command)
-        self.ef_radio_estado_marcas_acidente = ttk.Radiobutton(self.ef_lf_equipamento, text="Marcas de acidente", variable=self.ef_var_estado, value=2, command=self.radio_estado_command)
-        self.ef_radio_estado_faltam_pecas = ttk.Radiobutton(self.ef_lf_equipamento, text="Faltam peças", variable=self.ef_var_estado, value=3, command=self.radio_estado_command)
-        self.ef_ltxt_obs_estado_equipamento = LabelText(self.ef_lf_equipamento, "Observações acerca do estado:", width=27, height=2)
+        self.ef_lf_equipamento = ttk.Labelframe(self.entryfr3, padding=4, style="Panel_Section_Title.TLabelframe", text="\nDados do equipamento")
+        self.ef_ltxt_descr_equipamento = LabelText(self.ef_lf_equipamento, "Descrição:", style="Panel_Body.TLabel", width=30, height=2)
+        self.ef_lbl_estado_equipamento = ttk.Label(self.ef_lf_equipamento, style="Panel_Body.TLabel", text="Estado:")
+        self.ef_radio_estado_marcas_uso = ttk.Radiobutton(self.ef_lf_equipamento, text="Marcas de uso", style="Panel_Body.TRadiobutton", variable=self.ef_var_estado, value=0, command=self.radio_estado_command)
+        self.ef_radio_estado_bom = ttk.Radiobutton(self.ef_lf_equipamento, text="Bom estado geral", style="Panel_Body.TRadiobutton", variable=self.ef_var_estado, value=1, command=self.radio_estado_command)
+        self.ef_radio_estado_marcas_acidente = ttk.Radiobutton(self.ef_lf_equipamento, text="Marcas de acidente", style="Panel_Body.TRadiobutton", variable=self.ef_var_estado, value=2, command=self.radio_estado_command)
+        self.ef_radio_estado_faltam_pecas = ttk.Radiobutton(self.ef_lf_equipamento, text="Faltam peças", style="Panel_Body.TRadiobutton", variable=self.ef_var_estado, value=3, command=self.radio_estado_command)
+        self.ef_ltxt_obs_estado_equipamento = LabelText(self.ef_lf_equipamento, "Observações acerca do estado:", style="Panel_Body.TLabel", width=27, height=2)
 
-        self.ef_lbl_garantia = ttk.Label(self.ef_lf_equipamento, text="Garantia:")
-        self.ef_radio_garantia_fora_garantia = ttk.Radiobutton(self.ef_lf_equipamento, text="Fora de garantia", variable=self.ef_var_garantia, value=0, command=self.radio_garantia_command)
-        self.ef_radio_garantia_neste = ttk.Radiobutton(self.ef_lf_equipamento, text="Sim, neste estabelecimento", variable=self.ef_var_garantia, value=1, command=self.radio_garantia_command)
-        self.ef_radio_garantia_noutro = ttk.Radiobutton(self.ef_lf_equipamento, text="Sim, noutro estabelecimento", variable=self.ef_var_garantia, value=2, command=self.radio_garantia_command)
+        self.ef_lbl_garantia = ttk.Label(self.ef_lf_equipamento, style="Panel_Body.TLabel", text="Garantia:")
+        self.ef_radio_garantia_fora_garantia = ttk.Radiobutton(self.ef_lf_equipamento, text="Fora de garantia", style="Panel_Body.TRadiobutton", variable=self.ef_var_garantia, value=0, command=self.radio_garantia_command)
+        self.ef_radio_garantia_neste = ttk.Radiobutton(self.ef_lf_equipamento, text="Sim, neste estabelecimento", style="Panel_Body.TRadiobutton", variable=self.ef_var_garantia, value=1, command=self.radio_garantia_command)
+        self.ef_radio_garantia_noutro = ttk.Radiobutton(self.ef_lf_equipamento, text="Sim, noutro estabelecimento", style="Panel_Body.TRadiobutton", variable=self.ef_var_garantia, value=2, command=self.radio_garantia_command)
 
-        self.ef_ltxt_cod_artigo = LabelEntry(self.ef_lf_equipamento, "\nCódigo de artigo:", width=15)
-        self.ef_ltxt_num_serie = LabelEntry(self.ef_lf_equipamento, "\nNº de série:", width=15)
-        self.ef_ltxt_data_compra = LabelEntry(self.ef_lf_equipamento, "\nData de compra:", width=15)
-        self.ef_ltxt_num_fatura = LabelEntry(self.ef_lf_equipamento, "\nNº da fatura:", width=15)
-        self.ef_ltxt_local_compra = LabelEntry(self.ef_lf_equipamento, "\nEstabelecimento:", width=15)
+        self.ef_ltxt_cod_artigo = LabelEntry(self.ef_lf_equipamento, "\nCódigo de artigo:", style="Panel_Body.TLabel", width=15)
+        self.ef_ltxt_num_serie = LabelEntry(self.ef_lf_equipamento, "\nNº de série:", style="Panel_Body.TLabel", width=15)
+        self.ef_ltxt_data_compra = LabelEntry(self.ef_lf_equipamento, "\nData de compra:", style="Panel_Body.TLabel", width=15)
+        self.ef_ltxt_num_fatura = LabelEntry(self.ef_lf_equipamento, "\nNº da fatura:", style="Panel_Body.TLabel", width=15)
+        self.ef_ltxt_local_compra = LabelEntry(self.ef_lf_equipamento, "\nEstabelecimento:", style="Panel_Body.TLabel", width=15)
 
-        self.ef_ltxt_num_fatura_fornecedor = LabelEntry(self.ef_lf_equipamento, "Nº fatura fornecedor:", width=15)
-        self.ef_ltxt_data_fatura_fornecedor = LabelEntry(self.ef_lf_equipamento, "Data fatura fornecedor:", width=15)
-        self.ef_ltxt_nar = LabelEntry(self.ef_lf_equipamento, "NAR:", width=15)
-        self.ef_ltxt_num_guia_rececao = LabelEntry(self.ef_lf_equipamento, "Guia de receção:", width=15)
-        self.ef_ltxt_data_entrada_stock = LabelEntry(self.ef_lf_equipamento, "Data de entrada em stock:", width=15)
-        self.ef_ltxt_num_quebra_stock = LabelEntry(self.ef_lf_equipamento, "Nº de quebra de stock:", width=15)
+        self.ef_ltxt_num_fatura_fornecedor = LabelEntry(self.ef_lf_equipamento, "Nº fatura fornecedor:", style="Panel_Body.TLabel", width=15)
+        self.ef_ltxt_data_fatura_fornecedor = LabelEntry(self.ef_lf_equipamento, "Data fatura fornecedor:", style="Panel_Body.TLabel", width=15)
+        self.ef_ltxt_nar = LabelEntry(self.ef_lf_equipamento, "NAR:", style="Panel_Body.TLabel", width=15)
+        self.ef_ltxt_num_guia_rececao = LabelEntry(self.ef_lf_equipamento, "Guia de receção:", style="Panel_Body.TLabel", width=15)
+        self.ef_ltxt_data_entrada_stock = LabelEntry(self.ef_lf_equipamento, "Data de entrada em stock:", style="Panel_Body.TLabel", width=15)
+        self.ef_ltxt_num_quebra_stock = LabelEntry(self.ef_lf_equipamento, "Nº de quebra de stock:", style="Panel_Body.TLabel", width=15)
 
         self.ef_ltxt_descr_equipamento.grid(column=0, columnspan=2, rowspan=5, row=0, padx=5, sticky='wen')
         self.ef_lbl_estado_equipamento.grid(column=2, row=0, padx=5, sticky='w')
@@ -689,19 +688,19 @@ class App(baseApp):
 
 
         #entryfr4-----------------------------
-        self.ef_lf_servico = ttk.Labelframe(self.entryfr4, padding=4, text="\nAvaria e/ou serviço a realizar")
+        self.ef_lf_servico = ttk.Labelframe(self.entryfr4, padding=4, style="Panel_Section_Title.TLabelframe", text="\nAvaria e/ou serviço a realizar")
         self.ef_text_descr_avaria_servico = ScrolledText(self.ef_lf_servico, highlightcolor="LightSteelBlue2", width=20, height=4)
-        self.ef_chkbtn_avaria_reprod_loja = ttk.Checkbutton(self.ef_lf_servico, variable=self.ef_var_repr_loja, width=27, text="Avaria reproduzida na loja")
-        self.ef_ltxt_senha = LabelEntry(self.ef_lf_servico, "Senha:", width=22)
-        self.ef_lbl_find_my = ttk.Label(self.ef_lf_servico, width=27, text="Find my iPhone ativo?")
-        self.ef_radio_find_my_sim = ttk.Radiobutton(self.ef_lf_servico, text="Sim", variable=self.ef_var_find_my, value=1, command=self.radio_find_my)
-        self.ef_radio_find_my_nao = ttk.Radiobutton(self.ef_lf_servico, text="Não", variable=self.ef_var_find_my, value=0, command=self.radio_find_my)
-        self.ef_radio_find_my_nao_aplic = ttk.Radiobutton(self.ef_lf_servico, text="Não aplicável", variable=self.ef_var_find_my, value=2, command=self.radio_find_my)
-        self.ef_lbl_espaco = ttk.Label(self.ef_lf_servico, text=" ")
-        self.ef_lbl_efetuar_copia = ttk.Label(self.ef_lf_servico, text="Efetuar cópia de segurança?")
-        self.ef_radio_efetuar_copia_sim = ttk.Radiobutton(self.ef_lf_servico, text="Sim", variable=self.ef_var_efetuar_copia, value=1, command=self.radio_copia_command)
-        self.ef_radio_efetuar_copia_nao = ttk.Radiobutton(self.ef_lf_servico, text="Não", variable=self.ef_var_efetuar_copia, value=0, command=self.radio_copia_command)
-        self.ef_radio_efetuar_copia_n_aplic = ttk.Radiobutton(self.ef_lf_servico, text="Não aplicável", variable=self.ef_var_efetuar_copia, value=2, command=self.radio_copia_command)
+        self.ef_chkbtn_avaria_reprod_loja = ttk.Checkbutton(self.ef_lf_servico, variable=self.ef_var_repr_loja, style="Panel_Body.Checkbutton", width=27, text="Avaria reproduzida na loja")
+        self.ef_ltxt_senha = LabelEntry(self.ef_lf_servico, "Senha:", style="Panel_Body.TLabel", width=22)
+        self.ef_lbl_find_my = ttk.Label(self.ef_lf_servico, style="Panel_Body.TLabel", width=27, text="Find my iPhone ativo?")
+        self.ef_radio_find_my_sim = ttk.Radiobutton(self.ef_lf_servico, text="Sim", style="Panel_Body.TRadiobutton", variable=self.ef_var_find_my, value=1, command=self.radio_find_my)
+        self.ef_radio_find_my_nao = ttk.Radiobutton(self.ef_lf_servico, text="Não", style="Panel_Body.TRadiobutton", variable=self.ef_var_find_my, value=0, command=self.radio_find_my)
+        self.ef_radio_find_my_nao_aplic = ttk.Radiobutton(self.ef_lf_servico, text="Não aplicável", style="Panel_Body.TRadiobutton", variable=self.ef_var_find_my, value=2, command=self.radio_find_my)
+        self.ef_lbl_espaco = ttk.Label(self.ef_lf_servico, style="Panel_Body.TLabel", text=" ")
+        self.ef_lbl_efetuar_copia = ttk.Label(self.ef_lf_servico, style="Panel_Body.TLabel", text="Efetuar cópia de segurança?")
+        self.ef_radio_efetuar_copia_sim = ttk.Radiobutton(self.ef_lf_servico, text="Sim", style="Panel_Body.TRadiobutton", variable=self.ef_var_efetuar_copia, value=1, command=self.radio_copia_command)
+        self.ef_radio_efetuar_copia_nao = ttk.Radiobutton(self.ef_lf_servico, text="Não", style="Panel_Body.TRadiobutton", variable=self.ef_var_efetuar_copia, value=0, command=self.radio_copia_command)
+        self.ef_radio_efetuar_copia_n_aplic = ttk.Radiobutton(self.ef_lf_servico, text="Não aplicável", style="Panel_Body.TRadiobutton", variable=self.ef_var_efetuar_copia, value=2, command=self.radio_copia_command)
 
         self.ef_text_descr_avaria_servico.grid(column=0, row=0, columnspan=3, rowspan=5, padx=5, sticky='wens')
         self.ef_chkbtn_avaria_reprod_loja.grid(column=3, row=0, columnspan=3, padx=5, sticky='nw')
@@ -724,11 +723,11 @@ class App(baseApp):
         #entryfr5-----------------------------
             #Notas: text 3 linhas
             # local intervenção lbl + combobox(contactos>fornecedores)
-        self.ef_lf_outros_dados = ttk.Labelframe(self.entryfr5, padding=4, text="\nOutros dados")
-        self.ef_ltxt_acessorios_entregues = LabelText(self.ef_lf_outros_dados, "Acessórios entregues:", height=3)
+        self.ef_lf_outros_dados = ttk.Labelframe(self.entryfr5, padding=4, style="Panel_Section_Title.TLabelframe", text="\nOutros dados")
+        self.ef_ltxt_acessorios_entregues = LabelText(self.ef_lf_outros_dados, "Acessórios entregues:", style="Panel_Body.TLabel", height=3)
         #self.ef_lbl_espaco = ttk.Label(self.ef_lf_outros_dados, text="  ")
-        self.ef_ltxt_notas = LabelText(self.ef_lf_outros_dados, "Notas:", height=3)
-        self.ef_lbl_local_intervencao = ttk.Label(self.ef_lf_outros_dados, width=27,  text="Local de intervenção:")
+        self.ef_ltxt_notas = LabelText(self.ef_lf_outros_dados, "Notas:", style="Panel_Body.TLabel", height=3)
+        self.ef_lbl_local_intervencao = ttk.Label(self.ef_lf_outros_dados, style="Panel_Body.TLabel", width=27,  text="Local de intervenção:")
         self.ef_combo_local_intervencao = ttk.Combobox(self.ef_lf_outros_dados,
                                                        width=21,
                                                        textvariable=self.ef_var_local_intervencao,

@@ -137,10 +137,10 @@ class RemessasWindow(baseApp):
         self.ef_var_destino.set("Centro técnico N")
 
         self.ef_cabecalho = ttk.Frame(self.entryfr1, padding=4)
-        self.ef_lbl_titulo = ttk.Label(self.ef_cabecalho, style="BW.TLabel", text="Adicionar Remessa:\n")
-        self.ef_lbl_tipo = ttk.Label(self.ef_cabecalho, text="Tipo:")
-        self.ef_radio_tipo_saida = ttk.Radiobutton(self.ef_cabecalho, text="Envio", variable=self.ef_var_tipo, value=TIPO_REMESSA_ENVIO, command=self.radio_tipo_command)
-        self.ef_radio_tipo_entrada = ttk.Radiobutton(self.ef_cabecalho, text="Receção", variable=self.ef_var_tipo, value=TIPO_REMESSA_RECECAO, command=self.radio_tipo_command)
+        self.ef_lbl_titulo = ttk.Label(self.ef_cabecalho, style="Panel_Title.TLabel", text="Adicionar Remessa:\n")
+        self.ef_lbl_tipo = ttk.Label(self.ef_cabecalho, text="Tipo:", style="Panel_Body.TLabel")
+        self.ef_radio_tipo_saida = ttk.Radiobutton(self.ef_cabecalho, text="Envio", style="Panel_Body.TRadiobutton", variable=self.ef_var_tipo, value=TIPO_REMESSA_ENVIO, command=self.radio_tipo_command)
+        self.ef_radio_tipo_entrada = ttk.Radiobutton(self.ef_cabecalho, text="Receção", style="Panel_Body.TRadiobutton", variable=self.ef_var_tipo, value=TIPO_REMESSA_RECECAO, command=self.radio_tipo_command)
         self.btn_adicionar = ttk.Button(self.ef_cabecalho, default="active", style="Active.TButton", text="Adicionar", command=None)
         self.btn_cancelar = ttk.Button(self.ef_cabecalho, text="Cancelar", command=self.fechar_painel_entrada)
 
@@ -160,10 +160,10 @@ class RemessasWindow(baseApp):
         # self.btn_adicionar.bind('<Button-1>', self.add_remessa)
 
         #entryfr2-----------------------------
-        self.ef_lbl_destino = ttk.Label(self.entryfr2, width=27, text="Destino:")
+        self.ef_lbl_destino = ttk.Label(self.entryfr2, width=27, text="Destino:", style="Panel_Body.TLabel")
         self.ef_combo_destino = ttk.Combobox(self.entryfr2,
                                              width=21,
-                                             textvariable=self.ef_var_destino,
+                                             textvariable=self.ef_var_destino, 
                                              values=("Loja X",
                                                      "Importador Nacional A",
                                                      "Distribuidor Ibérico Y",
@@ -175,7 +175,7 @@ class RemessasWindow(baseApp):
         self.ef_combo_destino.grid(column=0, row=1, padx=5, sticky='we')
 
         # Entryfr3
-        self.ef_lbl_num_rep = ttk.Label(self.entryfr3, text="\nNº rep.:")
+        self.ef_lbl_num_rep = ttk.Label(self.entryfr3, text="\nNº rep.:", style="Panel_Body.TLabel")
         self.ef_txt_num_reparacao = ttk.Entry(self.entryfr3, width=7)
         self.ef_btn_adicionar_rep = ttk.Button(self.entryfr3, text="Inserir")
 

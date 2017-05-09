@@ -115,10 +115,14 @@ class LabelEntry(ttk.Frame):
     """
     Generate a ttk.Entry form field with a text label above it.
     """
-    def __init__(self, parent, label, default_text="", width=0):
+    def __init__(self, parent, label, default_text="", style=None, width=0):
         ttk.Frame.__init__(self, parent)
 
-        self.label = ttk.Label(self, text=label, anchor="w")
+        if style:
+            self.label = ttk.Label(self, text=label, style=style, anchor="w")
+        else:
+            self.label = ttk.Label(self, text=label, anchor="w")
+            
         self.entry = ttk.Entry(self, width=width)
         self.entry.insert(0, default_text)
 
@@ -133,10 +137,13 @@ class LabelText(ttk.Frame):
     """
     Generate an empty tkinter.scrolledtext form field with a text label above it.
     """
-    def __init__(self, parent, label, width=0, height=0):
+    def __init__(self, parent, label, style=None, width=0, height=0):
         ttk.Frame.__init__(self, parent)
-
-        self.label = ttk.Label(self, text=label, anchor="w")
+        if style:
+            self.label = ttk.Label(self, text=label, style=style, anchor="w")
+        else:
+            self.label = ttk.Label(self, text=label, anchor="w")
+            
         self.scrolledtext = ScrolledText(self, highlightcolor="LightSteelBlue2", width=width, height=height)
 
         self.label.pack(side="top", fill="x", expand=True)

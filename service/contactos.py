@@ -135,12 +135,12 @@ class ContactsWindow(baseApp):
         self.ef_var_tipo_is_loja = tk.IntVar()
 
         self.ef_cabecalho = ttk.Frame(self.entryfr1, padding=4)
-        self.ef_lbl_titulo = ttk.Label(self.ef_cabecalho, style="BW.TLabel", text="Adicionar Contacto:\n")
-        self.ef_lbl_tipo = ttk.Label(self.ef_cabecalho, text="Tipo:")
+        self.ef_lbl_titulo = ttk.Label(self.ef_cabecalho, style="Panel_Title.TLabel", text="Adicionar Contacto:\n")
+        self.ef_lbl_tipo = ttk.Label(self.ef_cabecalho, text="Tipo:", style="Panel_Body.TLabel")
 
-        self.ef_chkbtn_tipo_cliente = ttk.Checkbutton(self.ef_cabecalho, text="Cliente", variable=self.ef_var_tipo_is_cliente)
-        self.ef_chkbtn_tipo_fornecedor = ttk.Checkbutton(self.ef_cabecalho, text="Fornecedor ou centro técnico", variable=self.ef_var_tipo_is_fornecedor)
-        self.ef_chkbtn_tipo_loja = ttk.Checkbutton(self.ef_cabecalho, text="Loja do nosso grupo", variable=self.ef_var_tipo_is_loja)
+        self.ef_chkbtn_tipo_cliente = ttk.Checkbutton(self.ef_cabecalho, text="Cliente", style="Panel_Body.Checkbutton", variable=self.ef_var_tipo_is_cliente)
+        self.ef_chkbtn_tipo_fornecedor = ttk.Checkbutton(self.ef_cabecalho, text="Fornecedor ou centro técnico", style="Panel_Body.Checkbutton", variable=self.ef_var_tipo_is_fornecedor)
+        self.ef_chkbtn_tipo_loja = ttk.Checkbutton(self.ef_cabecalho, text="Loja do nosso grupo", style="Panel_Body.Checkbutton", variable=self.ef_var_tipo_is_loja)
 
         self.btn_adicionar = ttk.Button(self.ef_cabecalho, default="active",  style="Active.TButton", text="Adicionar", command=self.adicionar_contacto)
         self.btn_cancelar = ttk.Button(self.ef_cabecalho, text="Cancelar", command=self.fechar_painel_entrada)
@@ -164,20 +164,20 @@ class ContactsWindow(baseApp):
 
         #entryfr2-----------------------------
         self.ef_lf_top = ttk.Labelframe(self.entryfr2, padding=4, text="")
-        self.ef_ltxt_nome = LabelEntry(self.ef_lf_top, "Nome")
-        self.ef_ltxt_empresa = LabelEntry(self.ef_lf_top, "Empresa")
-        self.ef_ltxt_nif = LabelEntry(self.ef_lf_top, "NIF")
-        self.ef_ltxt_telefone = LabelEntry(self.ef_lf_top, "\nTel.", width=14)
-        self.ef_ltxt_tlm = LabelEntry(self.ef_lf_top, "\nTlm.", width=14)
-        self.ef_ltxt_tel_empresa = LabelEntry(self.ef_lf_top, "\nTel. empresa", width=14)
+        self.ef_ltxt_nome = LabelEntry(self.ef_lf_top, "Nome", style="Panel_Body.TLabel")
+        self.ef_ltxt_empresa = LabelEntry(self.ef_lf_top, "Empresa", style="Panel_Body.TLabel")
+        self.ef_ltxt_nif = LabelEntry(self.ef_lf_top, "NIF", style="Panel_Body.TLabel")
+        self.ef_ltxt_telefone = LabelEntry(self.ef_lf_top, "\nTel.", width=14, style="Panel_Body.TLabel")
+        self.ef_ltxt_tlm = LabelEntry(self.ef_lf_top, "\nTlm.", width=14, style="Panel_Body.TLabel")
+        self.ef_ltxt_tel_empresa = LabelEntry(self.ef_lf_top, "\nTel. empresa", width=14, style="Panel_Body.TLabel")
 
-        self.ef_ltxt_email = LabelEntry(self.ef_lf_top, "Email")
-        self.ef_lstxt_morada = LabelText(self.ef_lf_top, "\nMorada", height=2)
+        self.ef_ltxt_email = LabelEntry(self.ef_lf_top, "Email", style="Panel_Body.TLabel")
+        self.ef_lstxt_morada = LabelText(self.ef_lf_top, "\nMorada", height=2, style="Panel_Body.TLabel")
 
-        self.ef_ltxt_cod_postal = LabelEntry(self.ef_lf_top, "Código Postal")
-        self.ef_ltxt_localidade = LabelEntry(self.ef_lf_top, "Localidade")
+        self.ef_ltxt_cod_postal = LabelEntry(self.ef_lf_top, "Código Postal", style="Panel_Body.TLabel")
+        self.ef_ltxt_localidade = LabelEntry(self.ef_lf_top, "Localidade", style="Panel_Body.TLabel")
 
-        self.ef_lbl_pais = ttk.Label(self.ef_lf_top, text="País")
+        self.ef_lbl_pais = ttk.Label(self.ef_lf_top, text="País", style="Panel_Body.TLabel")
         with open(f"{APP_PATH}/paises.txt", 'r', encoding='utf-8') as f:
             linhas = f.readlines()
         self.paises = [linha.strip() for linha in linhas]
@@ -188,7 +188,7 @@ class ContactsWindow(baseApp):
         self.ef_combo_pais.current(178)
         self.ef_combo_pais.bind("<Key>", self.procurar_em_combobox)
 
-        self.ef_lstxt_notas = LabelText(self.ef_lf_top, "\nNotas:", height=3)
+        self.ef_lstxt_notas = LabelText(self.ef_lf_top, "\nNotas:", height=3, style="Panel_Body.TLabel")
 
         self.ef_ltxt_nome.grid(column=0, row=0, columnspan=3, padx=5, sticky='we')
         self.ef_ltxt_empresa.grid(column=0, row=1, columnspan=2, padx=5, sticky='we')

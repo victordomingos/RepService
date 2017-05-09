@@ -77,7 +77,7 @@ class msgDetailWindow(ttk.Frame):
         self.bottomframe = ttk.Frame(self.mainframe, padding="3 1 3 1")
 
         style_label = ttk.Style()
-        style_label.configure("BW.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
+        style_label.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
         style_label.configure("Active.TButton", foreground="white")
 
         self.btnFont = tk.font.Font(family="Lucida Grande", size=10)

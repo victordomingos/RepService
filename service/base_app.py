@@ -81,7 +81,18 @@ class baseApp(ttk.Frame):
         # Formulário de introdução de dados (aparece somente quando o utilizador solicita) ----------------------------
         self.entryframe = ttk.Frame(master, padding="4 8 4 10")
         style_label = ttk.Style()
-        style_label.configure("BW.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
+        style_label.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
+        style_label.configure("Panel_Section_Title.TLabelframe.Label", foreground="grey25", font=("Helvetica Neue", 13, "bold"))
+        style_label.configure("Panel_Body.TLabel", font=("Lucida Grande", 10))
+        style_label.configure("Panel_Body.TRadiobutton", font=("Lucida Grande", 10))
+
+        style_label.layout('Panel_Body.Checkbutton', style_label.layout('TCheckbutton'))  # Copia o estilo padrão dos widgets Checkbutton.
+        style_label.map('Panel_Body.Checkbutton', **style_label.map('TCheckbutton'))
+        style_label.configure('Panel_Body.Checkbutton', **style_label.map('TCheckbutton'))
+        style_label.configure('Panel_Body.Checkbutton', font=("Lucida Grande", 10))
+
+        style_label.configure(".TLabel", foreground="grey25", font=("Helvetica Neue", 18, "bold"))
+
         style_label.configure("Active.TButton", foreground="white")
         self.entryfr1 = ttk.Frame(self.entryframe)
         self.entryfr2 = ttk.Frame(self.entryframe)

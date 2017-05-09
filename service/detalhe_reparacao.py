@@ -40,7 +40,7 @@ class repairDetailWindow(ttk.Frame):
 
 
     def montar_barra_de_ferramentas(self):
-        self.lbl_titulo = ttk.Label(self.topframe, style="BW.TLabel", foreground=self.btnTxtColor, text=f"Reparação nº {self.num_reparacao}")
+        self.lbl_titulo = ttk.Label(self.topframe, style="Panel_Title.TLabel", foreground=self.btnTxtColor, text=f"Reparação nº {self.num_reparacao}")
         
         # Reincidência apenas aparece se reparação está entregue, anulado, abandonado, sem_informacao
         if self.estado >= ESTADOS[ENTREGUE]:
@@ -361,7 +361,7 @@ class repairDetailWindow(ttk.Frame):
         self.bottomframe = ttk.Frame(self.mainframe, padding="3 1 3 1")
 
         self.style_label = ttk.Style()
-        self.style_label.configure("BW.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
+        self.style_label.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
 
         self.btnFont = tk.font.Font(family="Lucida Grande", size=10)
         self.btnTxtColor = "grey22"
