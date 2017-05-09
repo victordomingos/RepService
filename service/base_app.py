@@ -32,7 +32,7 @@ class AppStatus:
 
 
 class baseApp(ttk.Frame):
-    """ 
+    """
     Classe de base para as janelas de aplicação. Inclui uma estrutura de vários frames:
         - topframe (Barra de ferramentas)
         - centerframe (organizador da área central), composto por:
@@ -40,14 +40,14 @@ class baseApp(ttk.Frame):
           - rightframe (painel escondido por defeito, que pode ser utilizado como inspetor,
             lista de mensagens, etc.)
         - bottomframe (área reservada à barra de estado)
-        - tree (tabela com algumas predefinições, ordenação ao clicar nos 
+        - tree (tabela com algumas predefinições, ordenação ao clicar nos
           cabeçalhos das colunas, scrollbar automática)
-        - entryframe (painel que surge opcionalmente no rodapé da janela, para mostrar 
+        - entryframe (painel que surge opcionalmente no rodapé da janela, para mostrar
           por exemplo detalhes ou formulários), composto por:
            - entryfr1...entryfr5 (5 frames para organizar widgets, empacotados
              verticalmente e ocupando a totalidade do entryframe)
            - todos os widgets devem ser criados como descendentes de um destes subframes
-        
+
     São criados alguns objetos e métodos comuns às várias janelas da aplicação:
         - popupMsg() - mensagens breves dentro da janela (tipo notificações)
     """
@@ -55,11 +55,11 @@ class baseApp(ttk.Frame):
         super().__init__(master,*args,**kwargs)
         self.master = master
         self.is_entryform_visible = False
-        
+
         self.mainframe = ttk.Frame(master)
         self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 5")
         self.centerframe = ttk.Frame(self.mainframe)
-        
+
 
         self.leftframe = ttk.Frame(self.centerframe)
         self.rightframe = ttk.Frame(self.centerframe)
@@ -68,30 +68,30 @@ class baseApp(ttk.Frame):
         self.centerframe.grid_columnconfigure(0, weight=1)
         self.centerframe.grid_columnconfigure(1, weight=0)
         self.centerframe.grid_rowconfigure(1, weight=1)
-        
+
         self.messagepane = ttk.Frame(self.rightframe, padding="5 5 5 0")
-        
+
         self.bottomframe = ttk.Frame(self.mainframe)
         self.btnFont = tkinter.font.Font(family="Lucida Grande", size=10)
         self.btnTxtColor = "grey22"
         self.btnTxtColor_active = "white"
-        
+
         self.tree = ttk.Treeview(self.leftframe, height=60, selectmode='browse')
 
         # Formulário de introdução de dados (aparece somente quando o utilizador solicita) ----------------------------
         self.entryframe = ttk.Frame(master, padding="4 8 4 10")
         style_label = ttk.Style()
         style_label.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
-        style_label.configure("Panel_Section_Title.TLabelframe.Label", foreground="grey25", font=("Helvetica Neue", 13, "bold"))
-        style_label.configure("Panel_Body.TLabel", font=("Lucida Grande", 10))
-        style_label.configure("Panel_Body.TRadiobutton", font=("Lucida Grande", 10))
+        style_label.configure("Panel_Section_Title.TLabelframe.Label", foreground="grey25", font=("Helvetica Neue", 14, "bold"))
+        style_label.configure("Panel_Body.TLabel", font=("Lucida Grande", 11))
+        style_label.configure("Panel_Body.TRadiobutton", font=("Lucida Grande", 11))
 
         style_label.layout('Panel_Body.Checkbutton', style_label.layout('TCheckbutton'))  # Copia o estilo padrão dos widgets Checkbutton.
         style_label.map('Panel_Body.Checkbutton', **style_label.map('TCheckbutton'))
         style_label.configure('Panel_Body.Checkbutton', **style_label.map('TCheckbutton'))
-        style_label.configure('Panel_Body.Checkbutton', font=("Lucida Grande", 10))
+        style_label.configure('Panel_Body.Checkbutton', font=("Lucida Grande", 11))
 
-        style_label.configure(".TLabel", foreground="grey25", font=("Helvetica Neue", 18, "bold"))
+        #style_label.configure(".TLabel", foreground="grey25", font=("Helvetica Neue", 18, "bold"))
 
         style_label.configure("Active.TButton", foreground="white")
         self.entryfr1 = ttk.Frame(self.entryframe)
@@ -99,10 +99,10 @@ class baseApp(ttk.Frame):
         self.entryfr3 = ttk.Frame(self.entryframe)
         self.entryfr4 = ttk.Frame(self.entryframe)
         self.entryfr5 = ttk.Frame(self.entryframe)
-        
+
         #get status bar
         self.my_statusbar = StatusBar(self.mainframe)
-                
+
         ttk.Style().configure('Treeview', font=("Lucida Grande", 11), foreground="grey22", rowheight=20)
         ttk.Style().configure('Treeview.Heading', font=("Lucida Grande", 11), foreground="grey22")
         ttk.Style().configure( 'Treeview', relief = 'flat', borderwidth = 0)
@@ -116,7 +116,7 @@ class baseApp(ttk.Frame):
             self.btn_add.configure(state="disabled")
             # Formulário de entrada de dados (fundo da janela)
             self.my_statusbar.lift()
-            
+
             if SLOW_MACHINE:
                 self.entryframe.place(in_=self.my_statusbar, relx=1,  y=0, anchor="se", relwidth=1, bordermode="outside")
             else:
@@ -152,13 +152,13 @@ class baseApp(ttk.Frame):
             self.entryframe.place_forget()
 
 
-    def composeFrames(self):    
+    def composeFrames(self):
         self.topframe.pack(side='top', fill='x')
         self.centerframe.pack(side='top', expand=True, fill='both')
         self.messagepane.pack(side='top', expand=True, fill='both')
-        self.bottomframe.pack(side='bottom', fill='x')        
+        self.bottomframe.pack(side='bottom', fill='x')
         self.mainframe.pack(side='top', expand=True, fill='both')
-        
+
         self.entryfr1.pack(side='top', expand=True, fill='both')
         self.entryfr2.pack(side='top', expand=True, fill='both')
         self.entryfr3.pack(side='top', expand=True, fill='both')
@@ -255,4 +255,3 @@ class baseApp(ttk.Frame):
         self.vsb = AutoScrollbar(self.leftframe, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=self.vsb.set)
         self.vsb.grid(column=1, row=0, sticky="ns", in_=self.leftframe)
-
