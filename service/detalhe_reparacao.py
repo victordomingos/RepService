@@ -8,7 +8,7 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 import tkinter as tk
 from tkinter import ttk
 from global_setup import *
-
+from extra_tk_classes import *
 
 
 class repairDetailWindow(ttk.Frame):
@@ -202,8 +202,18 @@ class repairDetailWindow(ttk.Frame):
         self.lbl_telefone = ttk.Label(self.geral_fr1, style="Panel_Body.TLabel", text=f"Tel.:{self.telefone}")
         self.lbl_email = ttk.Label(self.geral_fr1, style="Panel_Body.TLabel", text=f"Email:{self.email}")
 
+        self.ltxt_descr_equipamento = LabelText(self.geral_fr2, "Descrição:", width=30, height=3)
+        self.ltxt_descr_equipamento.scrolledtext.insert('insert', 'Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
 
 
+
+        # Desativar todos os campos de texto para não permitir alterações.
+        for widget in (self.txt_numero_contacto, 
+                       self.txt_nome,
+                       self.ltxt_descr_equipamento.scrolledtext):
+            widget.configure(state="disabled")
+        
+        
         """
         #entryfr3-----------------------------
             #estabelecimento_compra (mostrar apenas se garantia for "sim, outro estabelecimento") c4
@@ -317,15 +327,18 @@ class repairDetailWindow(ttk.Frame):
         self.ef_lbl_local_intervencao.grid(column=2, row=0, padx=5, sticky='nw')
         self.ef_combo_local_intervencao.grid(column=2, row=1, padx=5, sticky='nwe')
         """
-        self.txt_numero_contacto.grid(column=0, row=3)
-        self.btn_buscar_cliente.grid(column=1, row=3)
-        self.txt_nome.grid(column=2, sticky='we', row=3)
-        self.lbl_telefone.grid(column=3, sticky='w', row=3)
-        self.lbl_email.grid(column=4, sticky='we', row=3)
+        self.txt_numero_contacto.grid(column=0, row=0)
+        self.btn_buscar_cliente.grid(column=1, row=0)
+        self.txt_nome.grid(column=2, sticky='we', row=0)
+        self.lbl_telefone.grid(column=3, sticky='w', row=0)
+        self.lbl_email.grid(column=4, sticky='we', row=0)
 
         self.geral_fr1.grid_columnconfigure(4, weight=1)
         self.geral_fr1.grid_columnconfigure(3, weight=1)
         self.geral_fr1.grid_columnconfigure(2, weight=1)
+
+
+        self.ltxt_descr_equipamento.grid(column=0, row=0)
 
 
         self.geral_fr1.pack(side='top', expand=True, fill='both')

@@ -133,7 +133,7 @@ class LabelText(ttk.Frame):
         else:
             self.label = ttk.Label(self, text=label, anchor="w")
 
-        self.scrolledtext = ScrolledText(self, highlightcolor="LightSteelBlue2", width=width, height=height)
+        self.scrolledtext = ScrolledText(self, highlightcolor="LightSteelBlue2", wrap='word', width=width, height=height)
 
         self.label.pack(side="top", fill="x", expand=True)
         self.scrolledtext.pack(side="top", fill="both", expand=True)
