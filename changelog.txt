@@ -17,6 +17,10 @@ v.0.8 - 14/05/2017
  * O tamanho do texto nos paineis de introdução de dados foi reduzido e os
    títulos de cada secção têm agora mais destaque, com a aplicação de estilos
    (permite uma mais fácil alteração, no módulo 'base_app.py').
+ * O tamanho do texto dos botões nas barras de ferramentas das janelas
+   secundárias foi ligeiramente reduzido.
+ * Foi simplificado o código relativo à aplicação de estilos dos widgets.
+
 
 ---
 v.0.7 - 30/04/2017
