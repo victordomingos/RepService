@@ -54,6 +54,7 @@ class baseApp(ttk.Frame):
     def __init__(self,master,*args,**kwargs):
         super().__init__(master,*args,**kwargs)
         self.master = master
+        self.estilo = ttk.Style()
         self.is_entryform_visible = False
 
         self.mainframe = ttk.Frame(master)
@@ -80,20 +81,19 @@ class baseApp(ttk.Frame):
 
         # Formulário de introdução de dados (aparece somente quando o utilizador solicita) ----------------------------
         self.entryframe = ttk.Frame(master, padding="4 8 4 10")
-        style_label = ttk.Style()
-        style_label.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
-        style_label.configure("Panel_Section_Title.TLabelframe.Label", foreground="grey25", font=("Helvetica Neue", 14, "bold"))
-        style_label.configure("Panel_Body.TLabel", font=("Lucida Grande", 11))
-        style_label.configure("Panel_Body.TRadiobutton", font=("Lucida Grande", 11))
+        self.estilo.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
+        self.estilo.configure("Panel_Section_Title.TLabelframe.Label", foreground="grey25", font=("Helvetica Neue", 14, "bold"))
+        self.estilo.configure("Panel_Body.TLabel", font=("Lucida Grande", 11))
+        self.estilo.configure("Panel_Body.TRadiobutton", font=("Lucida Grande", 11))
 
-        style_label.layout('Panel_Body.Checkbutton', style_label.layout('TCheckbutton'))  # Copia o estilo padrão dos widgets Checkbutton.
-        style_label.map('Panel_Body.Checkbutton', **style_label.map('TCheckbutton'))
-        style_label.configure('Panel_Body.Checkbutton', **style_label.map('TCheckbutton'))
-        style_label.configure('Panel_Body.Checkbutton', font=("Lucida Grande", 11))
+        self.estilo.layout('Panel_Body.Checkbutton', self.estilo.layout('TCheckbutton'))  # Copia o estilo padrão dos widgets Checkbutton.
+        self.estilo.map('Panel_Body.Checkbutton', **self.estilo.map('TCheckbutton'))
+        self.estilo.configure('Panel_Body.Checkbutton', **self.estilo.map('TCheckbutton'))
+        self.estilo.configure('Panel_Body.Checkbutton', font=("Lucida Grande", 11))
 
-        #style_label.configure(".TLabel", foreground="grey25", font=("Helvetica Neue", 18, "bold"))
+        #self.estilo.configure(".TLabel", foreground="grey25", font=("Helvetica Neue", 18, "bold"))
 
-        style_label.configure("Active.TButton", foreground="white")
+        self.estilo.configure("Active.TButton", foreground="white")
         self.entryfr1 = ttk.Frame(self.entryframe)
         self.entryfr2 = ttk.Frame(self.entryframe)
         self.entryfr3 = ttk.Frame(self.entryframe)
@@ -103,9 +103,9 @@ class baseApp(ttk.Frame):
         #get status bar
         self.my_statusbar = StatusBar(self.mainframe)
 
-        ttk.Style().configure('Treeview', font=("Lucida Grande", 11), foreground="grey22", rowheight=20)
-        ttk.Style().configure('Treeview.Heading', font=("Lucida Grande", 11), foreground="grey22")
-        ttk.Style().configure( 'Treeview', relief = 'flat', borderwidth = 0)
+        self.estilo.configure('Treeview', font=("Lucida Grande", 11), foreground="grey22", rowheight=20)
+        self.estilo.configure('Treeview.Heading', font=("Lucida Grande", 11), foreground="grey22")
+        self.estilo.configure( 'Treeview', relief = 'flat', borderwidth = 0)
 
         self.composeFrames()
 
@@ -164,6 +164,7 @@ class baseApp(ttk.Frame):
         self.entryfr3.pack(side='top', expand=True, fill='both')
         self.entryfr4.pack(side='top', expand=True, fill='both')
         self.entryfr5.pack(side='top', expand=True, fill='both')
+        self.estilo.configure("secondary.TButton", font=("Lucida Grande", 11))
 
 
     def popupMsg(self, msg):

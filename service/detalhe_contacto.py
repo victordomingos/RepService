@@ -28,7 +28,7 @@ class contactDetailWindow(ttk.Frame):
     def montar_barra_de_ferramentas(self):
         ttk.Label(self.topframe, text="12345").grid(column=0, row=0, sticky='w')
         ttk.Label(self.topframe, text="José Manuel da Silva Costa Ferreira").grid(column=0, row=1, sticky='w')
-                
+
         # ----------- Botão com menu "Alterar estado" --------------
         self.label_mbtn_alterar = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Alterar estado")
         self.mbtn_alterar = ttk.Menubutton (self.topframe, text="•••")
@@ -51,14 +51,14 @@ class contactDetailWindow(ttk.Frame):
         self.mbtn_alterar.grid(column=7, row=0)
         self.label_mbtn_alterar.grid(column=7, row=1)
         # ----------- fim de Botão com menu "Alterar estado" -------------
-        
+
         self.topframe.grid_columnconfigure(1, weight=1)
 
 
     def montar_painel_principal(self):
         print(f"A mostrar detalhes do contacto nº {self.num_contacto}")
 
-            
+
     def montar_rodape(self):
         #TODO - obter dados da base de dados
         txt_esquerda = "Criado por Victor Domingos em 12/05/2021 18:01."
@@ -82,13 +82,13 @@ class contactDetailWindow(ttk.Frame):
         self.centerframe = ttk.Frame(self.mainframe)
         self.bottomframe = ttk.Frame(self.mainframe, padding="3 1 3 1")
 
-        style_label = ttk.Style()
-        style_label.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
-        style_label.configure("Active.TButton", foreground="white")
-        
+        self.estilo = ttk.Style()
+        self.estilo.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
+        self.estilo.configure("Active.TButton", foreground="white")
+
         self.btnFont = tk.font.Font(family="Lucida Grande", size=10)
         self.btnTxtColor = "grey22"
-        
+
         self.statusFont = tkinter.font.Font(family="Lucida Grande", size=11)
         self.status_left = ttk.Label(self.bottomframe,anchor='w', text="" , font=self.statusFont, foreground=self.btnTxtColor)
         self.status_right = ttk.Label(self.bottomframe,anchor='e', font=self.statusFont, foreground=self.btnTxtColor)
@@ -99,5 +99,5 @@ class contactDetailWindow(ttk.Frame):
     def composeFrames(self):
         self.topframe.pack(side=tk.TOP, fill=tk.X)
         self.centerframe.pack(side=tk.TOP, fill=tk.BOTH)
-        self.bottomframe.pack(side=tk.BOTTOM, fill=tk.X)        
+        self.bottomframe.pack(side=tk.BOTTOM, fill=tk.X)
         self.mainframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)

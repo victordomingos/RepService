@@ -26,6 +26,7 @@ class RemessasWindow(baseApp):
         self.remessa_newDetailsWindow = {}
         self.remessa_detail_windows_count = 0
         #self.centerframe = ttk.Frame(self.mainframe, padding="4 0 4 0") #apagar isto
+
         self.montar_barra_de_ferramentas()
         self.montar_tabela()
 
@@ -41,6 +42,7 @@ class RemessasWindow(baseApp):
         self.alternar_cores(self.tree)
         if self.estado.painel_nova_remessa_aberto:
             self.mostrar_painel_entrada()
+
 
     def gerar_menu(self):
         self.menu = tk.Menu(self.master)
@@ -79,10 +81,10 @@ class RemessasWindow(baseApp):
     def montar_barra_de_ferramentas(self):
         # Barra de ferramentas / botões -------------------------------------------------------------------------------
 
-        self.btn_entrada = ttk.Button(self.topframe, text="Entrada", command=None)
+        self.btn_entrada = ttk.Button(self.topframe, style="secondary.TButton", text="Entrada", command=None)
         self.btn_entrada.grid(column=0, row=0)
 
-        self.btn_saida = ttk.Button(self.topframe, text="Saída", command=None)
+        self.btn_saida = ttk.Button(self.topframe, style="secondary.TButton", text="Saída", command=None)
         self.btn_saida.grid(column=1, row=0)
 
         self.btn_add = ttk.Button(self.topframe, text=" ➕", width=3, command=self.show_entryform)
@@ -102,6 +104,7 @@ class RemessasWindow(baseApp):
         for col in range(1,4):
             self.topframe.columnconfigure(col, weight=0)
         self.topframe.columnconfigure(2, weight=1)
+
 
 
     def mostrar_painel_entrada(self, *event):
@@ -163,7 +166,7 @@ class RemessasWindow(baseApp):
         self.ef_lbl_destino = ttk.Label(self.entryfr2, width=27, text="Destino:", style="Panel_Body.TLabel")
         self.ef_combo_destino = ttk.Combobox(self.entryfr2,
                                              width=21,
-                                             textvariable=self.ef_var_destino, 
+                                             textvariable=self.ef_var_destino,
                                              values=("Loja X",
                                                      "Importador Nacional A",
                                                      "Distribuidor Ibérico Y",
@@ -306,7 +309,7 @@ class RemessasWindow(baseApp):
         self.my_statusbar.set(f"{remessa} • {destino}")
         self.remessa_selecionada = remessa
 
-    
+
     def create_window_detalhe_remessa(self, *event, num_remessa=None):
         self.remessa_detail_windows_count += 1
         self.remessa_newDetailsWindow[self.remessa_detail_windows_count] = tk.Toplevel()
@@ -360,7 +363,7 @@ class RemessasWindow(baseApp):
 
 
     def inserir_dados_de_exemplo(self):
-        for i in range(1,1800,3):
+        for i in range(1,180):
             self.tree.insert("", "end", text="", values=(str(i), "Loja X", "Fornecedor", "3", "2017-12-31"))
             self.tree.insert("", "end", text="", values=(str(i+1), "Centro técnico", "Loja X", "10", "2017-01-12"))
             self.tree.insert("", "end", text="", values=(str(i+2), "Loja X", "Distribuidor internacional", "10", "2017-02-01"))

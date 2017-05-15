@@ -52,7 +52,7 @@ class msgDetailWindow(ttk.Frame):
     def montar_painel_principal(self):
         print(f"A mostrar detalhes da mensagem nº {self.num_mensagem}")
 
-            
+
     def montar_rodape(self):
         #TODO - obter dados da base de dados
         txt = "Enviada por Victor Domingos em 12/05/2021 18:01."
@@ -76,9 +76,9 @@ class msgDetailWindow(ttk.Frame):
         self.centerframe = ttk.Frame(self.mainframe)
         self.bottomframe = ttk.Frame(self.mainframe, padding="3 1 3 1")
 
-        style_label = ttk.Style()
-        style_label.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
-        style_label.configure("Active.TButton", foreground="white")
+        self.estilo = ttk.Style()
+        self.estilo.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
+        self.estilo.configure("Active.TButton", foreground="white")
 
         self.btnFont = tk.font.Font(family="Lucida Grande", size=10)
         self.btnTxtColor = "grey22"
@@ -87,5 +87,5 @@ class msgDetailWindow(ttk.Frame):
     def composeFrames(self):
         self.topframe.pack(side=tk.TOP, fill=tk.X)
         self.centerframe.pack(side=tk.TOP, fill=tk.BOTH)
-        self.bottomframe.pack(side=tk.BOTTOM, fill=tk.X)        
+        self.bottomframe.pack(side=tk.BOTTOM, fill=tk.X)
         self.mainframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)

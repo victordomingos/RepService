@@ -27,6 +27,8 @@ from tkinter import messagebox
 from tkinter.scrolledtext import ScrolledText
 import datetime
 import textwrap
+import sys
+import io
 
 from about_window import *
 from base_app import *
@@ -36,6 +38,7 @@ from contactos import *
 from remessas import *
 from detalhe_reparacao import *
 from detalhe_mensagem import *
+
 
 __app_name__ = "RepService 2017"
 __author__ = "Victor Domingos"
@@ -246,22 +249,21 @@ class App(baseApp):
         self.mbtn_mostrar.menu  =  tk.Menu (self.mbtn_mostrar, tearoff=0)
         self.mbtn_mostrar["menu"] =  self.mbtn_mostrar.menu
 
-        self.mbtn_mostrar.menu.add_command(label="Processos em curso", command=None, accelerator="Command+Option+1")
-        self.mbtn_mostrar.menu.add_command(label="Processos finalizados", command=None, accelerator="Command+Option+2")
-        self.mbtn_mostrar.menu.add_command(label="Todos os processos", command=None, accelerator="Command+Option+3")
+        self.mbtn_mostrar.menu.add_command(label="Processos em curso", command=None)
+        self.mbtn_mostrar.menu.add_command(label="Processos finalizados", command=None)
+        self.mbtn_mostrar.menu.add_command(label="Todos os processos", command=None)
         self.mbtn_mostrar.menu.add_separator()
-        self.mbtn_mostrar.menu.add_command(label=ESTADOS[EM_PROCESSAMENTO], command=None, accelerator="Command+Option+4")
-        self.mbtn_mostrar.menu.add_command(label=ESTADOS[AGUARDA_ENVIO], command=None, accelerator="Command+Option+5")
-        self.mbtn_mostrar.menu.add_command(label=ESTADOS[AGUARDA_RESP_FORNECEDOR], command=None, accelerator="Command+Option+6")
-        self.mbtn_mostrar.menu.add_command(label=ESTADOS[AGUARDA_RESP_CLIENTE], command=None, accelerator="Command+Option+7")
-        self.mbtn_mostrar.menu.add_command(label=ESTADOS[AGUARDA_RECECAO], command=None, accelerator="Command+Option+8")
-        self.mbtn_mostrar.menu.add_command(label=ESTADOS[RECEBIDO], command=None, accelerator="Command+Option+9")
-        self.mbtn_mostrar.menu.add_command(label=ESTADOS[DISPONIVEL_P_LEVANTAMENTO], command=None, accelerator="Command+Option+0")
+        self.mbtn_mostrar.menu.add_command(label=ESTADOS[EM_PROCESSAMENTO], command=None)
+        self.mbtn_mostrar.menu.add_command(label=ESTADOS[AGUARDA_ENVIO], command=None)
+        self.mbtn_mostrar.menu.add_command(label=ESTADOS[AGUARDA_RESP_FORNECEDOR], command=None)
+        self.mbtn_mostrar.menu.add_command(label=ESTADOS[AGUARDA_RESP_CLIENTE], command=None)
+        self.mbtn_mostrar.menu.add_command(label=ESTADOS[AGUARDA_RECECAO], command=None)
+        self.mbtn_mostrar.menu.add_command(label=ESTADOS[RECEBIDO], command=None)
+        self.mbtn_mostrar.menu.add_command(label=ESTADOS[DISPONIVEL_P_LEVANTAMENTO])
 
         self.mbtn_mostrar.grid(column=1, row=0)
         self.label_mbtn_mostrar.grid(column=1, row=1)
         # ----------- fim de Botão com menu "Mostrar" -------------
-
 
         self.btn_hoje = ttk.Button(self.topframe, text=" ℹ️️", width=3, command=lambda: self.create_window_detalhe_rep(num_reparacao=self.reparacao_selecionada))
         self.btn_hoje.grid(column=6, row=0)
@@ -450,8 +452,6 @@ class App(baseApp):
 
 
     def gerar_painel_mensagens(self):
-        self.estilo = ttk.Style()
-
         self.mensagens_frame = ttk.Frame(self.messagepane)
         self.mensagens_frame_top = ttk.Frame(self.mensagens_frame, padding="4 10 4 0")
 
@@ -461,13 +461,13 @@ class App(baseApp):
         self.mensagens_frame_btn = ttk.Frame(self.mensagens_frame, padding="2 4 2 0")
         self.mensagens_frame_tree = ttk.Frame(self.mensagens_frame, padding="2 0 2 0")
 
-        self.btn_msg_mostrar = ttk.Button(self.mensagens_frame_btn, text="Mostrar")
+        self.btn_msg_mostrar = ttk.Button(self.mensagens_frame_btn, style="secondary_msg.TButton", text="Mostrar")
         self.btn_msg_mostrar.grid(column=0, sticky=tk.W, row=1, in_=self.mensagens_frame_btn)
 
-        self.btn_msg_apagar_um = ttk.Button(self.mensagens_frame_btn, text="Apagar")
+        self.btn_msg_apagar_um = ttk.Button(self.mensagens_frame_btn, style="secondary_msg.TButton", text="Apagar")
         self.btn_msg_apagar_um.grid(column=1, sticky=tk.E, row=1, in_=self.mensagens_frame_btn)
 
-        self.btn_msg_apagar_tudo = ttk.Button(self.mensagens_frame_btn, text="Apagar tudo")
+        self.btn_msg_apagar_tudo = ttk.Button(self.mensagens_frame_btn, style="secondary_msg.TButton", text="Apagar tudo")
         self.btn_msg_apagar_tudo.grid(column=3, sticky=tk.E, row=1, in_=self.mensagens_frame_btn)
 
         self.mensagens_frame_btn.grid_columnconfigure(0, weight=0)
@@ -495,7 +495,7 @@ class App(baseApp):
 
 
         self.estilo.configure('Msg.Treeview', font=("Lucida Grande", 10), foreground="grey22", fieldbackground="grey89", anchor='n', background='grey91', rowheight=72)
-
+        self.estilo.configure("secondary_msg.TButton", font=("Lucida Grande", 11))
         #estilo.configure('Msg.Treeview.Heading', font=("Lucida Grande", 9), foreground="grey22")
         #estilo.configure( 'Msg.Treeview', relief = 'flat', borderwidth = 0)
 
@@ -989,7 +989,7 @@ class App(baseApp):
 
 
     def inserir_dados_de_exemplo(self):
-        for i in range(1,10000,6):
+        for i in range(1,200):
             self.tree.insert("", "end", tag="", text="", values=(str(i),"José Manuel da Silva Rodrigues", "Artigo Muito Jeitoso (Early 2015)", "Substituição de ecrã", "Em processamento", "120" ))
             self.tree.insert("", "end", text="", values=(str(i+1),"Joana Manuela Rodrigues", "Outro Artigo Bem Jeitoso", "Bateria não carrega", "Aguarda envio", "120" ))
             self.tree.insert("", "end", tag="baixa", text="", values=(str(i+2),"Maria Apolinário Gomes Fernandes", "Smartphone Daqueles Bons", "Substituição de ecrã", "Enviado", "15" ))
@@ -1000,7 +1000,7 @@ class App(baseApp):
 
     def inserir_msgs_de_exemplo(self):
         now = datetime.datetime.now()
-        for i in range(15):
+        for i in range(7):
             utilizadores = ["Victor Domingos", "DJ Mars", "AC", "NPK"]
             processo0 = 23456
             processo1 = 21345
@@ -1019,6 +1019,8 @@ class App(baseApp):
 
 
 if __name__ == "__main__":
+    sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
     root = tk.Tk()
     estado = AppStatus()
     estado.janela_principal = App(root)
@@ -1032,5 +1034,9 @@ if __name__ == "__main__":
     root.unbind_class('Text', '<B2-Motion>')
     root.unbind_class('Text', '<<PasteSelection>>')
 
+    root.unbind_class('TEntry', '<B2>')
+    root.bind_class('Tentry', '<Button-2>', lambda: print("bla"))
+    root.unbind_class('TEntry', '<B2-Motion>')
+    root.unbind_class('TEntry', '<<PasteSelection>>')
 
     root.mainloop()

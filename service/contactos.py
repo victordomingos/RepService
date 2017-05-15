@@ -22,7 +22,7 @@ class ContactsWindow(baseApp):
         self.contacto_newDetailsWindow = {}
         self.contact_detail_windows_count = 0
         self.contacto_selecionado = None
-        
+
         self.master.minsize(CONTACTOS_MIN_WIDTH, CONTACTOS_MIN_HEIGHT)
         self.master.maxsize(CONTACTOS_MAX_WIDTH, CONTACTOS_MAX_HEIGHT)
         self.master.geometry(CONTACTOS_GEOMETRIA)
@@ -42,6 +42,7 @@ class ContactsWindow(baseApp):
         self.alternar_cores(self.tree)
         if self.estado.painel_novo_contacto_aberto:
             self.mostrar_painel_entrada()
+
 
 
     def gerar_menu(self):
@@ -80,10 +81,10 @@ class ContactsWindow(baseApp):
 
 
     def montar_barra_de_ferramentas(self):
-        self.btn_clientes = ttk.Button(self.topframe, text="Clientes", command=None)
+        self.btn_clientes = ttk.Button(self.topframe, style="secondary.TButton", text="Clientes", command=None)
         self.btn_clientes.grid(column=0, row=0)
 
-        self.btn_fornecedores = ttk.Button(self.topframe, text="Fornecedores", command=None)
+        self.btn_fornecedores = ttk.Button(self.topframe, style="secondary.TButton", text="Fornecedores", command=None)
         self.btn_fornecedores.grid(column=1, row=0)
 
         self.btn_add = ttk.Button(self.topframe, text=" ➕", width=3, command=self.show_entryform)
@@ -312,7 +313,7 @@ class ContactsWindow(baseApp):
 
 
 
-    
+
     def create_window_detalhe_contacto(self, *event, num_contacto=None):
         self.contact_detail_windows_count += 1
         self.contacto_newDetailsWindow[self.contact_detail_windows_count] = tk.Toplevel()
@@ -354,5 +355,5 @@ class ContactsWindow(baseApp):
 
 
     def inserir_dados_de_exemplo(self):
-        for i in range(10000):
+        for i in range(100):
             self.tree.insert("", "end", text="", values=(str(i),"Nome do cliente", "+351000000000", "endereco@emaildocliente.com"))

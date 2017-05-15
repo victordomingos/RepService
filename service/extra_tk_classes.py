@@ -100,17 +100,6 @@ class AutoScrollbar(ttk.Scrollbar):
         raise TclError("cannot use place with this widget")
 
 
-'''
-class IconButton(ttk.Frame):
-    """
-    Generate a OS X style toolbar button with icon (e.g., a UTF Emoji) and a text lable
-    below.
-    """
-    def __init__(sel,master, icon_str, label_str, command):
-        pass
-'''
-
-
 class LabelEntry(ttk.Frame):
     """
     Generate a ttk.Entry form field with a text label above it.
@@ -122,13 +111,13 @@ class LabelEntry(ttk.Frame):
             self.label = ttk.Label(self, text=label, style=style, anchor="w")
         else:
             self.label = ttk.Label(self, text=label, anchor="w")
-            
+
         self.entry = ttk.Entry(self, width=width)
         self.entry.insert(0, default_text)
 
         self.label.pack(side="top", fill="x", expand=True)
         self.entry.pack(side="top", fill="x", expand=True)
-      
+
     def get(self):
         return self.entry.get()
 
@@ -143,12 +132,12 @@ class LabelText(ttk.Frame):
             self.label = ttk.Label(self, text=label, style=style, anchor="w")
         else:
             self.label = ttk.Label(self, text=label, anchor="w")
-            
+
         self.scrolledtext = ScrolledText(self, highlightcolor="LightSteelBlue2", width=width, height=height)
 
         self.label.pack(side="top", fill="x", expand=True)
         self.scrolledtext.pack(side="top", fill="both", expand=True)
-      
+
     def get(self):
         return self.scrolledtext.get()
 
