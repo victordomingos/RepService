@@ -202,27 +202,39 @@ class repairDetailWindow(ttk.Frame):
         self.lbl_telefone = ttk.Label(self.geral_fr1, style="Panel_Body.TLabel", text=f"Tel.:{self.telefone}")
         self.lbl_email = ttk.Label(self.geral_fr1, style="Panel_Body.TLabel", text=f"Email:{self.email}")
 
-        self.ltxt_descr_equipamento = LabelText(self.geral_fr2, "Descrição:", style="Panel_Body.TLabel", width=30, height=3)
+        self.ltxt_descr_equipamento = LabelText(self.geral_fr2, "Descrição:", style="Panel_Body.TLabel", height=2)
         self.ltxt_descr_equipamento.scrolledtext.insert('insert', 'Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
 
         estado = f'Estado: {"Marcas de acidente"}'  # TODO: obter string do estado do equipamento
-        self.ltxt_obs_estado_equipamento = LabelText(self.geral_fr2, estado, style="Panel_Body.TLabel", width=27, height=2)
+        self.ltxt_obs_estado_equipamento = LabelText(self.geral_fr2, estado, style="Panel_Body.TLabel", height=2)
         self.ltxt_obs_estado_equipamento.scrolledtext.insert('insert', 'Texto de exemplo para experimentar como sai na prática.\n Eqauipamento muito danificado!...')
 
         garantia = True
         if garantia:
-            self.ltxt_data_compra = LabelEntry(self.geral_fr2, "Data de compra:", style="Panel_Body.TLabel", width=15)
+            self.ltxt_data_compra = LabelEntry(self.geral_fr2, "Data de compra:", style="Panel_Body.TLabel")
             self.ltxt_data_compra.entry.insert(0, '29-07-2035')
-            self.ltxt_num_fatura = LabelEntry(self.geral_fr2, "Nº da fatura:", style="Panel_Body.TLabel", width=15)
+            self.ltxt_num_fatura = LabelEntry(self.geral_fr2, "Nº da fatura:", style="Panel_Body.TLabel")
             self.ltxt_num_fatura.entry.insert(0, 'FCR 1234567890/2035')
-            self.lbl_garantia = ttk.Label(self.geral_fr2, text="Garantia em NPK International Online Store", style="Panel_Body.TLabel")
+            self.ltxt_garantia = LabelEntry(self.geral_fr2, "Garantia em:", style="Panel_Body.TLabel")
+            self.ltxt_garantia.entry.insert(0, 'NPK International Online Store')
         else:
-            self.lbl_garantia = ttk.Label(self.geral_fr2, text="Fora de garantia")
+            self.lbl_garantia = ttk.Label(self.geral_fr2, text="Garantia:\nFora de garantia", style="Panel_Body.TLabel")
 
-        self.ltxt_cod_artigo = LabelEntry(self.geral_fr2, "Código de artigo:", style="Panel_Body.TLabel", width=15)
+        self.ltxt_cod_artigo = LabelEntry(self.geral_fr2, "Código de artigo:", style="Panel_Body.TLabel")
         self.ltxt_cod_artigo.entry.insert(0, 'Z0GV2345623P')
-        self.ltxt_num_serie = LabelEntry(self.geral_fr2, "Nº de série:", style="Panel_Body.TLabel", width=15)
+        self.ltxt_num_serie = LabelEntry(self.geral_fr2, "Nº de série:", style="Panel_Body.TLabel")
         self.ltxt_num_serie.entry.insert(0, 'C02G387HJG7865BNFV')
+        self.ltxt_local_intervencao = LabelEntry(self.geral_fr2, "Local da intervenção:", style="Panel_Body.TLabel")
+        self.ltxt_local_intervencao.entry.insert(0, 'Aquele Tal Centro Técnico')
+
+        self.ltxt_descr_avaria = LabelText(self.geral_fr2, "Avaria/Serviço:", style="Panel_Body.TLabel")
+        self.ltxt_descr_avaria.scrolledtext.insert('insert', 'Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
+
+        self.ltxt_acessorios = LabelText(self.geral_fr2, "Acessórios entregues:", style="Panel_Body.TLabel")
+        self.ltxt_acessorios.scrolledtext.insert('insert', 'Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
+        self.ltxt_notas = LabelText(self.geral_fr2, "Notas:", style="Panel_Body.TLabel")
+        self.ltxt_notas.scrolledtext.insert('insert', 'Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
+
 
         # Desativar todos os campos de texto para não permitir alterações. TODO: verificar se todos os widgets foram mesmo criados garantia/fora de garantia, stock/cliente
         for widget in (self.txt_numero_contacto, 
@@ -233,6 +245,11 @@ class repairDetailWindow(ttk.Frame):
                        self.ltxt_num_fatura.entry,
                        self.ltxt_cod_artigo.entry,
                        self.ltxt_num_serie.entry,
+                       self.ltxt_garantia.entry,
+                       self.ltxt_local_intervencao.entry,
+                       self.ltxt_descr_avaria.scrolledtext,
+                       self.ltxt_acessorios.scrolledtext,
+                       self.ltxt_notas.scrolledtext,
                     ):
             widget.configure(state="disabled")
         
@@ -316,28 +333,39 @@ class repairDetailWindow(ttk.Frame):
         self.geral_fr1.grid_columnconfigure(2, weight=1)
 
 
-        self.ltxt_descr_equipamento.grid(column=0, row=0, rowspan=5, sticky='nwe', padx=4)
-        self.ltxt_obs_estado_equipamento.grid(column=1, row=0, rowspan=5, sticky='nwe', padx=4)
+        self.ltxt_descr_equipamento.grid(column=0, row=0, columnspan=2, rowspan=4, sticky='we', padx=4)
+        self.ltxt_obs_estado_equipamento.grid(column=2, row=0, columnspan=2, rowspan=4, sticky='we', padx=4)
 
-        self.ltxt_cod_artigo.grid(column=2, row=0, rowspan=2,  sticky='nwe', padx=4)
-        self.ltxt_num_serie.grid(column=2, row=2, rowspan=2, sticky='nwe', padx=4)
+        self.ltxt_cod_artigo.grid(column=4, row=0, rowspan=2,  sticky='we', padx=4)
+        self.ltxt_num_serie.grid(column=4, row=2, rowspan=2, sticky='we', padx=4)
 
-        self.ltxt_data_compra.grid(column=3, row=0, rowspan=2, sticky='nwe', padx=4)
-        self.ltxt_num_fatura.grid(column=3, row=2, rowspan=2, sticky='nwe', padx=4)
-        self.lbl_garantia.grid(column=2, columnspan=2, row=4, sticky='nw', padx=4)
+        ttk.Separator(self.geral_fr2).grid(column=0, row=4, columnspan=5, sticky='we', pady=10)
+        
+        self.ltxt_garantia.grid(column=0, row=5, columnspan=2, rowspan=2, sticky='we', padx=4)
+        self.ltxt_data_compra.grid(column=2, row=5, rowspan=2, sticky='we', padx=4)
+        self.ltxt_num_fatura.grid(column=3, row=5, rowspan=2, sticky='we', padx=4)
+        self.ltxt_local_intervencao.grid(column=4, row=5, rowspan=2, sticky='we', padx=4)
 
+        ttk.Separator(self.geral_fr2).grid(column=0, row=7, columnspan=5, sticky='we', pady=10)
+        self.ltxt_descr_avaria.grid(column=0, row=8, columnspan=2, rowspan=4, sticky='we', padx=4)
 
-        for i in range(4):
+        ttk.Separator(self.geral_fr2).grid(column=0, row=12, columnspan=5, sticky='we', pady=10)
+        self.ltxt_acessorios.grid(column=0, row=13, columnspan=2, rowspan=3, sticky='wes', padx=4)
+        self.ltxt_notas.grid(column=2, row=13, columnspan=3, rowspan=3, sticky='wes', padx=4)
+
+        self.geral_fr2.grid_columnconfigure(0, weight=2)
+        for i in range(1,5):
             self.geral_fr2.grid_columnconfigure(i, weight=1)
 
-        self.geral_fr1.pack(side='top', expand=True, fill='both')
-        ttk.Separator(self.tab_geral).pack(side='top', expand=True, fill='both', pady=10)
+        self.geral_fr1.pack(side='top', expand=True, fill='x')
+        ttk.Separator(self.tab_geral).pack(side='top', expand=False, fill='both', pady=10)
         self.geral_fr2.pack(side='top', expand=True, fill='both')
+        """
         ttk.Separator(self.tab_geral).pack(side='top', expand=True, fill='both', pady=10)
         self.geral_fr3.pack(side='top', expand=True, fill='both')
         ttk.Separator(self.tab_geral).pack(side='top', expand=True, fill='both', pady=10)
         self.geral_fr4.pack(side='top', expand=True, fill='both')
-
+        """
 
 
         # TAB Histórico ~~~~~~~~~~~~~~~
@@ -391,6 +419,6 @@ class repairDetailWindow(ttk.Frame):
 
     def composeFrames(self):
         self.topframe.pack(side=tk.TOP, fill=tk.X)
-        self.centerframe.pack(side=tk.TOP, fill=tk.BOTH)
+        self.centerframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
         self.bottomframe.pack(side=tk.BOTTOM, fill=tk.X)
         self.mainframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
