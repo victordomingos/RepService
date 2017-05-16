@@ -202,41 +202,43 @@ class repairDetailWindow(ttk.Frame):
         self.lbl_telefone = ttk.Label(self.geral_fr1, style="Panel_Body.TLabel", text=f"Tel.:{self.telefone}")
         self.lbl_email = ttk.Label(self.geral_fr1, style="Panel_Body.TLabel", text=f"Email:{self.email}")
 
-        self.ltxt_descr_equipamento = LabelText(self.geral_fr2, "Descrição:", width=30, height=3)
+        self.ltxt_descr_equipamento = LabelText(self.geral_fr2, "Descrição:", style="Panel_Body.TLabel", width=30, height=3)
         self.ltxt_descr_equipamento.scrolledtext.insert('insert', 'Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
 
+        estado = f'Estado: {"Marcas de acidente"}'  # TODO: obter string do estado do equipamento
+        self.ltxt_obs_estado_equipamento = LabelText(self.geral_fr2, estado, style="Panel_Body.TLabel", width=27, height=2)
+        self.ltxt_obs_estado_equipamento.scrolledtext.insert('insert', 'Texto de exemplo para experimentar como sai na prática.\n Eqauipamento muito danificado!...')
 
+        garantia = True
+        if garantia:
+            self.ltxt_data_compra = LabelEntry(self.geral_fr2, "Data de compra:", style="Panel_Body.TLabel", width=15)
+            self.ltxt_data_compra.entry.insert(0, '29-07-2035')
+            self.ltxt_num_fatura = LabelEntry(self.geral_fr2, "Nº da fatura:", style="Panel_Body.TLabel", width=15)
+            self.ltxt_num_fatura.entry.insert(0, 'FCR 1234567890/2035')
+            self.lbl_garantia = ttk.Label(self.geral_fr2, text="Garantia em NPK International Online Store", style="Panel_Body.TLabel")
+        else:
+            self.lbl_garantia = ttk.Label(self.geral_fr2, text="Fora de garantia")
 
-        # Desativar todos os campos de texto para não permitir alterações.
+        self.ltxt_cod_artigo = LabelEntry(self.geral_fr2, "Código de artigo:", style="Panel_Body.TLabel", width=15)
+        self.ltxt_cod_artigo.entry.insert(0, 'Z0GV2345623P')
+        self.ltxt_num_serie = LabelEntry(self.geral_fr2, "Nº de série:", style="Panel_Body.TLabel", width=15)
+        self.ltxt_num_serie.entry.insert(0, 'C02G387HJG7865BNFV')
+
+        # Desativar todos os campos de texto para não permitir alterações. TODO: verificar se todos os widgets foram mesmo criados garantia/fora de garantia, stock/cliente
         for widget in (self.txt_numero_contacto, 
                        self.txt_nome,
-                       self.ltxt_descr_equipamento.scrolledtext):
+                       self.ltxt_descr_equipamento.scrolledtext,
+                       self.ltxt_obs_estado_equipamento.scrolledtext,
+                       self.ltxt_data_compra.entry,
+                       self.ltxt_num_fatura.entry,
+                       self.ltxt_cod_artigo.entry,
+                       self.ltxt_num_serie.entry,
+                    ):
             widget.configure(state="disabled")
         
         
         """
-        #entryfr3-----------------------------
-            #estabelecimento_compra (mostrar apenas se garantia for "sim, outro estabelecimento") c4
-        self.ef_lf_equipamento = ttk.Labelframe(self.entryfr3, padding=4, text="\nDados do equipamento")
-        self.ef_ltxt_descr_equipamento = LabelText(self.ef_lf_equipamento, "Descrição:", width=30, height=2)
-        self.ef_lbl_estado_equipamento = ttk.Label(self.ef_lf_equipamento, text="Estado:")
-        self.ef_radio_estado_marcas_uso = ttk.Radiobutton(self.ef_lf_equipamento, text="Marcas de uso", variable=self.ef_var_estado, value=0, command=self.radio_estado_command)
-        self.ef_radio_estado_bom = ttk.Radiobutton(self.ef_lf_equipamento, text="Bom estado geral", variable=self.ef_var_estado, value=1, command=self.radio_estado_command)
-        self.ef_radio_estado_marcas_acidente = ttk.Radiobutton(self.ef_lf_equipamento, text="Marcas de acidente", variable=self.ef_var_estado, value=2, command=self.radio_estado_command)
-        self.ef_radio_estado_faltam_pecas = ttk.Radiobutton(self.ef_lf_equipamento, text="Faltam peças", variable=self.ef_var_estado, value=3, command=self.radio_estado_command)
-        self.ef_ltxt_obs_estado_equipamento = LabelText(self.ef_lf_equipamento, "Observações acerca do estado:", width=27, height=2)
-
-        self.ef_lbl_garantia = ttk.Label(self.ef_lf_equipamento, text="Garantia:")
-        self.ef_radio_garantia_fora_garantia = ttk.Radiobutton(self.ef_lf_equipamento, text="Fora de garantia", variable=self.ef_var_garantia, value=0, command=self.radio_garantia_command)
-        self.ef_radio_garantia_neste = ttk.Radiobutton(self.ef_lf_equipamento, text="Sim, neste estabelecimento", variable=self.ef_var_garantia, value=1, command=self.radio_garantia_command)
-        self.ef_radio_garantia_noutro = ttk.Radiobutton(self.ef_lf_equipamento, text="Sim, noutro estabelecimento", variable=self.ef_var_garantia, value=2, command=self.radio_garantia_command)
-
-        self.ef_ltxt_cod_artigo = LabelEntry(self.ef_lf_equipamento, "\nCódigo de artigo:", width=15)
-        self.ef_ltxt_num_serie = LabelEntry(self.ef_lf_equipamento, "\nNº de série:", width=15)
-        self.ef_ltxt_data_compra = LabelEntry(self.ef_lf_equipamento, "\nData de compra:", width=15)
-        self.ef_ltxt_num_fatura = LabelEntry(self.ef_lf_equipamento, "\nNº da fatura:", width=15)
-        self.ef_ltxt_local_compra = LabelEntry(self.ef_lf_equipamento, "\nEstabelecimento:", width=15)
-
+        
         self.ef_ltxt_num_fatura_fornecedor = LabelEntry(self.ef_lf_equipamento, "Nº fatura fornecedor:", width=15)
         self.ef_ltxt_data_fatura_fornecedor = LabelEntry(self.ef_lf_equipamento, "Data fatura fornecedor:", width=15)
         self.ef_ltxt_nar = LabelEntry(self.ef_lf_equipamento, "NAR:", width=15)
@@ -244,31 +246,7 @@ class repairDetailWindow(ttk.Frame):
         self.ef_ltxt_data_entrada_stock = LabelEntry(self.ef_lf_equipamento, "Data de entrada em stock:", width=15)
         self.ef_ltxt_num_quebra_stock = LabelEntry(self.ef_lf_equipamento, "Nº de quebra de stock:", width=15)
 
-        self.ef_ltxt_descr_equipamento.grid(column=0, columnspan=2, rowspan=5, row=0, padx=5, sticky='wen')
-        self.ef_lbl_estado_equipamento.grid(column=2, row=0, padx=5, sticky='w')
-        self.ef_radio_estado_marcas_uso.grid(column=2, row=1, padx=5, sticky='w')
-        self.ef_radio_estado_bom.grid(column=2, row=2, padx=5, sticky='w')
-        self.ef_radio_estado_marcas_acidente.grid(column=2, row=3, padx=5, sticky='w')
-        self.ef_radio_estado_faltam_pecas.grid(column=2, row=4, padx=5, sticky='w')
-        self.ef_ltxt_obs_estado_equipamento.grid(column=3, row=0, rowspan=5, padx=5, sticky='wen')
-        self.ef_lbl_garantia.grid(column=4, row=0, padx=5, sticky='w')
-        self.ef_radio_garantia_fora_garantia.grid(column=4, row=1, padx=5, sticky='w')
-        self.ef_radio_garantia_neste.grid(column=4, row=2, padx=5, sticky='w')
-        self.ef_radio_garantia_noutro.grid(column=4, row=3, padx=5, sticky='w')
-        self.ef_ltxt_cod_artigo.grid(column=0, row=5, padx=5, sticky='we')
-        self.ef_ltxt_num_serie.grid(column=1, row=5, padx=5, sticky='we')
-        self.ef_ltxt_data_compra.grid(column=2, row=5, padx=5, sticky='we')
-        self.ef_ltxt_num_fatura.grid(column=3, row=5, padx=5, sticky='we')
-
-        self.ef_lf_equipamento.grid(column=0,row=0, sticky='we')
-        self.entryfr3.columnconfigure(0, weight=1)
-
-        self.ef_lf_equipamento.columnconfigure(0, weight=1)
-        self.ef_lf_equipamento.columnconfigure(1, weight=1)
-        self.ef_lf_equipamento.columnconfigure(2, weight=1)
-        self.ef_lf_equipamento.columnconfigure(3, weight=1)
-        self.ef_lf_equipamento.columnconfigure(4, weight=1)
-
+        
 
         #entryfr4-----------------------------
         self.ef_lf_servico = ttk.Labelframe(self.entryfr4, padding=4, text="\nAvaria e/ou serviço a realizar")
@@ -338,8 +316,19 @@ class repairDetailWindow(ttk.Frame):
         self.geral_fr1.grid_columnconfigure(2, weight=1)
 
 
-        self.ltxt_descr_equipamento.grid(column=0, row=0)
+        self.ltxt_descr_equipamento.grid(column=0, row=0, rowspan=5, sticky='nwe', padx=4)
+        self.ltxt_obs_estado_equipamento.grid(column=1, row=0, rowspan=5, sticky='nwe', padx=4)
 
+        self.ltxt_cod_artigo.grid(column=2, row=0, rowspan=2,  sticky='nwe', padx=4)
+        self.ltxt_num_serie.grid(column=2, row=2, rowspan=2, sticky='nwe', padx=4)
+
+        self.ltxt_data_compra.grid(column=3, row=0, rowspan=2, sticky='nwe', padx=4)
+        self.ltxt_num_fatura.grid(column=3, row=2, rowspan=2, sticky='nwe', padx=4)
+        self.lbl_garantia.grid(column=2, columnspan=2, row=4, sticky='nw', padx=4)
+
+
+        for i in range(4):
+            self.geral_fr2.grid_columnconfigure(i, weight=1)
 
         self.geral_fr1.pack(side='top', expand=True, fill='both')
         ttk.Separator(self.tab_geral).pack(side='top', expand=True, fill='both', pady=10)
