@@ -4,14 +4,14 @@ Histórico de versões:
 ====================
 
 ---
-v.0.8 - 14/05/2017
+v.0.8 - 17/05/2017
  * Corrigido um bug que fazia com que alguns registos nas tabelas ficassem
    fora da área visível da janela.
  * Corrigido um bug que impedia a abertura de um comando do menu.
  * Corrigido um bug que impedia o fecho das janelas "Sobre" e "Agradecimentos".
  * O comando de criar nova remessa agora ativa a janela de remessas no caso de
    ela se encontrar por detrás de outras janelas.
- * Os botões "Adicionar" nos paineis de introdução de dados são agora 
+ * Os botões "Adicionar" nos paineis de introdução de dados são agora
    destacados como ativos, seguindo a recomendação das macOS Human Interface
    Guidelines.
  * O tamanho do texto nos paineis de introdução de dados foi reduzido e os
@@ -20,11 +20,12 @@ v.0.8 - 14/05/2017
  * O tamanho do texto dos botões nas barras de ferramentas das janelas
    secundárias foi ligeiramente reduzido.
  * Foi simplificado o código relativo à aplicação de estilos dos widgets.
+ * Criada estrutura da janela de detalhes de reparação, com parte dos widgets.
 
 
 ---
 v.0.7 - 30/04/2017
- * Criado mecanismo para abertura de janelas secundárias com informação 
+ * Criado mecanismo para abertura de janelas secundárias com informação
    detalhada sobre um determinado processo de reparação, um contacto, uma
    remessa ou uma mensagem.
  * Corrigido um bug que impedia o fecho de janelas secundárias.
