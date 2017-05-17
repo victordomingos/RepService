@@ -583,18 +583,18 @@ class App(baseApp):
 
         #entryfr2-----------------------------
         self.ef_lf_cliente = ttk.Labelframe(self.entryfr2, padding=4, style="Panel_Section_Title.TLabelframe", text="Dados do cliente")
-        self.ef_txt_num_cliente = ttk.Entry(self.ef_lf_cliente, width=5)
+        self.ef_txt_num_cliente = ttk.Entry(self.ef_lf_cliente, font=("Helvetica-Neue", 12), width=5)
         self.ef_btn_buscar_cliente = ttk.Button(self.ef_lf_cliente, width=1, text="+", command=lambda *x: self.create_window_contacts(criar_novo_contacto="Cliente"))
-        self.ef_txt_nome_cliente = ttk.Entry(self.ef_lf_cliente, width=45)
+        self.ef_txt_nome_cliente = ttk.Entry(self.ef_lf_cliente, font=("Helvetica-Neue", 12), width=45)
         self.ef_lbl_telefone_lbl = ttk.Label(self.ef_lf_cliente, style="Panel_Body.TLabel", text="Tel.:")
         self.ef_lbl_telefone_info = ttk.Label(self.ef_lf_cliente, style="Panel_Body.TLabel", text="00 351 000 000 000")
         self.ef_lbl_email_lbl = ttk.Label(self.ef_lf_cliente, style="Panel_Body.TLabel", text="Email:")
         self.ef_lbl_email_info = ttk.Label(self.ef_lf_cliente, style="Panel_Body.TLabel", text="email.address@portugalmail.com")
 
         self.ef_lf_fornecedor = ttk.Labelframe(self.entryfr2, padding=4, style="Panel_Section_Title.TLabelframe", text="Dados do fornecedor")
-        self.ef_txt_num_fornecedor = ttk.Entry(self.ef_lf_fornecedor, width=5)
+        self.ef_txt_num_fornecedor = ttk.Entry(self.ef_lf_fornecedor, font=("Helvetica-Neue", 12), width=5)
         self.ef_btn_buscar_fornecedor = ttk.Button(self.ef_lf_fornecedor, width=1, text="+", command=lambda *x: self.create_window_contacts(criar_novo_contacto="Fornecedor"))
-        self.ef_txt_nome_fornecedor = ttk.Entry(self.ef_lf_fornecedor, width=45)
+        self.ef_txt_nome_fornecedor = ttk.Entry(self.ef_lf_fornecedor, font=("Helvetica-Neue", 12), width=45)
         self.ef_lbl_telefone_lbl_fornecedor = ttk.Label(self.ef_lf_fornecedor, style="Panel_Body.TLabel", text="Tel.:")
         self.ef_lbl_telefone_info_fornecedor = ttk.Label(self.ef_lf_fornecedor, style="Panel_Body.TLabel", text="00 351 000 000 000")
         self.ef_lbl_email_lbl_fornecedor = ttk.Label(self.ef_lf_fornecedor, style="Panel_Body.TLabel", text="Email:")
@@ -689,7 +689,7 @@ class App(baseApp):
 
         #entryfr4-----------------------------
         self.ef_lf_servico = ttk.Labelframe(self.entryfr4, padding=4, style="Panel_Section_Title.TLabelframe", text="\nAvaria e/ou serviço a realizar")
-        self.ef_text_descr_avaria_servico = ScrolledText(self.ef_lf_servico, highlightcolor="LightSteelBlue2", width=20, height=4)
+        self.ef_text_descr_avaria_servico = ScrolledText(self.ef_lf_servico, highlightcolor="LightSteelBlue2", font=("Helvetica-Neue", 12), wrap='word', width=20, height=4)
         self.ef_chkbtn_avaria_reprod_loja = ttk.Checkbutton(self.ef_lf_servico, variable=self.ef_var_repr_loja, style="Panel_Body.Checkbutton", width=27, text="Avaria reproduzida na loja")
         self.ef_ltxt_senha = LabelEntry(self.ef_lf_servico, "Senha:", style="Panel_Body.TLabel", width=22)
         self.ef_lbl_find_my = ttk.Label(self.ef_lf_servico, style="Panel_Body.TLabel", width=27, text="Find my iPhone ativo?")
@@ -1026,7 +1026,7 @@ if __name__ == "__main__":
     estado.janela_principal = App(root)
     root.configure(background='grey95')
     root.title('RepService')
-    #root.geometry(ROOT_GEOMETRIA)
+    root.geometry(ROOT_GEOMETRIA)
     root.bind_all("<Mod2-q>", exit)
 
     #Removed bad AquaTk Button-2 (right) and Paste bindings.

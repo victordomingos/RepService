@@ -112,7 +112,7 @@ class LabelEntry(ttk.Frame):
         else:
             self.label = ttk.Label(self, text=label, anchor="w")
 
-        self.entry = ttk.Entry(self, width=width)
+        self.entry = ttk.Entry(self, font=("Helvetica-Neue", 12), width=width)
         self.entry.insert(0, default_text)
 
         self.label.pack(side="top", fill="x", expand=True)
@@ -120,6 +120,13 @@ class LabelEntry(ttk.Frame):
 
     def get(self):
         return self.entry.get()
+
+    def disable(self):
+        self.entry.configure(state="disabled")
+
+    def enable(self):
+        self.entry.configure(state="enabled")
+
 
 
 class LabelText(ttk.Frame):
@@ -133,7 +140,12 @@ class LabelText(ttk.Frame):
         else:
             self.label = ttk.Label(self, text=label, anchor="w")
 
-        self.scrolledtext = ScrolledText(self, highlightcolor="LightSteelBlue2", wrap='word', width=width, height=height)
+        self.scrolledtext = ScrolledText(self, font=("Helvetica-Neue", 12),
+                                        highlightcolor="LightSteelBlue2", 
+                                        wrap='word', 
+                                        width=width, 
+                                        height=height
+                                        )
 
         self.label.pack(side="top", fill="x", expand=True)
         self.scrolledtext.pack(side="top", fill="both", expand=True)
@@ -141,6 +153,18 @@ class LabelText(ttk.Frame):
     def get(self):
         return self.scrolledtext.get()
 
+    def disable(self):
+        self.scrolledtext.configure(state="disabled", 
+                                    bg="#fafafa",
+                                    highlightbackground = "#fafafa",
+                                    highlightthickness = 1,
+                                    )
+
+
+
+    def enable(self):
+        self.scrolledtext.configure(state="enabled", bg="white")
+        
 
 class StatusBar(ttk.Frame):
     """ Simple Status Bar class - based on ttk.Frame """
