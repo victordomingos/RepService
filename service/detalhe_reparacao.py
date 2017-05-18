@@ -17,7 +17,7 @@ class repairDetailWindow(ttk.Frame):
         super().__init__(master,*args,**kwargs)
         self.master = master
         self.num_reparacao = num_reparacao
-        self.tipo_processo = "Cliente" if True else "Stock"  #TODO: Substituir True por função que busca tipo na info da base de dados
+        self.tipo_processo = "Cliente" if bool((self.num_reparacao%2)==0) else "Stock"  #TODO: Substituir isto por função que busca tipo na info da base de dados
         self.estado = ESTADOS[EM_PROCESSAMENTO] #TODO: Obter estado a partir da base de dados
 
         if self.tipo_processo == "Cliente":
@@ -173,8 +173,11 @@ class repairDetailWindow(ttk.Frame):
 
     def montar_painel_principal(self):
         print(f"A mostrar detalhes da reparação nº {self.num_reparacao}")
-        rep_stock = False  # todo - verificar se é reparação de artigo de stock
-        rep_cliente = not rep_stock
+        if (self.tipo_processo == "Cliente"):
+            rep_cliente = True
+        else:
+            rep_cliente = False
+        rep_stock = not rep_cliente
         garantia = True  # todo - verificar se é garantia
 
         self.note = ttk.Notebook(self.centerframe, padding="3 20 3 3")
@@ -217,10 +220,10 @@ class repairDetailWindow(ttk.Frame):
                 self.ltxt_garantia = LabelEntry(self.geral_fr2, "Garantia em:", style="Panel_Body.TLabel")
             else:
                 self.lbl_garantia = ttk.Label(self.geral_fr2, text="Garantia:\nFora de garantia", style="Panel_Body.TLabel")
-            
+
         self.ltxt_cod_artigo = LabelEntry(self.geral_fr2, "Código de artigo:", style="Panel_Body.TLabel")
         self.ltxt_num_serie = LabelEntry(self.geral_fr2, "Nº de série:", style="Panel_Body.TLabel")
-        
+
         self.ltxt_descr_avaria = LabelText(self.geral_fr2, "Avaria/Serviço:", style="Panel_Body.TLabel")
         self.ltxt_notas = LabelText(self.geral_fr2, "Notas:", style="Panel_Body.TLabel")
 
@@ -231,24 +234,23 @@ class repairDetailWindow(ttk.Frame):
             self.ltxt_num_guia_rececao = LabelEntry(self.geral_fr2, "Guia de receção:", style="Panel_Body.TLabel", width=6)
             self.ltxt_data_entrada_stock = LabelEntry(self.geral_fr2, "Data de entrada em stock:", style="Panel_Body.TLabel", width=15)
             self.ltxt_num_quebra_stock = LabelEntry(self.geral_fr2, "Nº de quebra de stock:", style="Panel_Body.TLabel", width=6)
+        else:
+            self.lbl_avaria_reprod_loja = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Avaria reproduzida na loja")
+            self.lbl_find_my = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Find my iPhone ativo.")
+            self.lbl_efetuar_copia = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Efetuar cópia de segurança.")
 
-        
-        """
-        #entryfr4-----------------------------
-        self.ef_chkbtn_avaria_reprod_loja = ttk.Checkbutton(self.ef_lf_servico, variable=self.ef_var_repr_loja, width=27, text="Avaria reproduzida na loja")
-        self.ef_ltxt_senha = LabelEntry(self.ef_lf_servico, "Senha:", width=22)
-        self.ef_lbl_find_my = ttk.Label(self.ef_lf_servico, width=27, text="Find my iPhone ativo?")
-        self.ef_lbl_efetuar_copia = ttk.Label(self.ef_lf_servico, text="Efetuar cópia de segurança?")
-        """
+            self.ltxt_senha = LabelEntry(self.geral_fr2, "Senha:", style="Panel_Body.TLabel", width=22)
+
         self.txt_numero_contacto.insert(0, self.numero_contacto)
         self.txt_nome.insert(0, self.nome)
 
-                    
+
         self.ltxt_descr_equipamento.set('Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
         if rep_cliente:
             self.ltxt_obs_estado_equipamento.set('Texto de exemplo para experimentar como sai na prática.\n Equipamento muito danificado!...')
             self.ltxt_local_intervencao.set('Aquele Tal Centro Técnico')
             self.ltxt_acessorios.set('Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
+            self.ltxt_senha.set('12343112121')
             if garantia:
                 self.ltxt_data_compra.set('29-07-2035')
                 self.ltxt_num_fatura.set('FCR 1234567890/2035')
@@ -277,15 +279,16 @@ class repairDetailWindow(ttk.Frame):
                     self.ltxt_notas)
         for widget in widgets:
             widget.disable()
-        
+
         if rep_cliente:
-            if garantia: 
+            if garantia:
                 self.ltxt_garantia.disable()
                 self.ltxt_data_compra.disable()
                 self.ltxt_num_fatura.disable()
             self.ltxt_obs_estado_equipamento.disable()
             self.ltxt_local_intervencao.disable()
             self.ltxt_acessorios.disable()
+            self.ltxt_senha.disable()
         else:
             widgets = ( self.ltxt_num_fatura_fornecedor,
                         self.ltxt_data_fatura_fornecedor,
@@ -295,7 +298,7 @@ class repairDetailWindow(ttk.Frame):
                         self.ltxt_nar)
             for widget in widgets:
                 widget.disable()
-        
+
         self.txt_numero_contacto.grid(column=0, row=0)
         self.btn_buscar_contacto.grid(column=1, row=0)
         self.txt_nome.grid(column=2, sticky='we', row=0)
@@ -320,7 +323,13 @@ class repairDetailWindow(ttk.Frame):
 
             self.ltxt_local_intervencao.grid(column=4, row=5, rowspan=2, sticky='we', padx=4)
             ttk.Separator(self.geral_fr2).grid(column=0, row=7, columnspan=5, sticky='we', pady=10)
-            self.ltxt_descr_avaria.grid(column=0, row=8, columnspan=2, rowspan=4, sticky='we', padx=4)
+            self.ltxt_descr_avaria.grid(column=0, row=8, columnspan=3, rowspan=4, sticky='we', padx=4)
+
+            self.lbl_avaria_reprod_loja.grid(column=4, row=9, columnspan=2, sticky='we', padx=4)
+            self.lbl_efetuar_copia.grid(column=4, row=10, columnspan=2, sticky='we', padx=4)
+            self.lbl_find_my.grid(column=4, row=11, columnspan=2, sticky='we', padx=4)
+            self.ltxt_senha.grid(column=3, row=8, rowspan=2, sticky='we', padx=4)
+
             ttk.Separator(self.geral_fr2).grid(column=0, row=12, columnspan=5, sticky='we', pady=10)
             self.ltxt_acessorios.grid(column=0, row=13, columnspan=2, rowspan=3, sticky='wes', padx=4)
             self.ltxt_notas.grid(column=2, row=13, columnspan=3, rowspan=3, sticky='wes', padx=4)
@@ -354,12 +363,12 @@ class repairDetailWindow(ttk.Frame):
                 self.geral_fr2.grid_columnconfigure(i, weight=1)
             self.geral_fr2.grid_columnconfigure(2, weight=1)
             self.geral_fr2.grid_columnconfigure(3, weight=1)
-            
+
 
         self.geral_fr1.pack(side='top', expand=False, fill='x')
         ttk.Separator(self.tab_geral).pack(side='top', expand=False, fill='x', pady=10)
         self.geral_fr2.pack(side='top', expand=True, fill='both')
-        
+
         """
         ttk.Separator(self.tab_geral).pack(side='top', expand=True, fill='both', pady=10)
         self.geral_fr3.pack(side='top', expand=True, fill='both')
