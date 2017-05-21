@@ -727,8 +727,16 @@ class App(baseApp):
             # local intervenção lbl + combobox(contactos>fornecedores)
         self.ef_lf_outros_dados = ttk.Labelframe(self.entryfr5, padding=4, style="Panel_Section_Title.TLabelframe", text="\nOutros dados")
         self.ef_ltxt_acessorios_entregues = LabelText(self.ef_lf_outros_dados, "Acessórios entregues:", style="Panel_Body.TLabel", height=4)
-        #self.ef_lbl_espaco = ttk.Label(self.ef_lf_outros_dados, text="  ")
         self.ef_ltxt_notas = LabelText(self.ef_lf_outros_dados, "Notas:", style="Panel_Body.TLabel", width=30, height=4)
+
+        self.ef_lbl_modo_entrega = ttk.Label(self.ef_lf_outros_dados, style="Panel_Body.TLabel", text="Local de intervenção:")
+        self.ef_combo_modo_entrega = ttk.Combobox(self.ef_lf_outros_dados,
+                                                textvariable=self.ef_var_modo_entrega,
+                                                values=("Levantamento nas n/ instalações",
+                                                    "Enviar para a morada da ficha de cliente",
+                                                    "Enviar para outra morada..."),
+                                                state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
+
         self.ef_lbl_local_intervencao = ttk.Label(self.ef_lf_outros_dados, style="Panel_Body.TLabel",  text="Local de intervenção:")
         self.ef_combo_local_intervencao = ttk.Combobox(self.ef_lf_outros_dados,
                                                        width=21,
@@ -741,24 +749,15 @@ class App(baseApp):
                                                                "Centro de assistência K"),
                                                        state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
 
-        self.ef_lbl_modo_entrega = ttk.Label(self.ef_lf_outros_dados, style="Panel_Body.TLabel", text="Local de intervenção:")
-        self.ef_combo_modo_entrega = ttk.Combobox(self.ef_lf_outros_dados,
-                                                       textvariable=self.ef_var_modo_entrega,
-                                                       values=("Levantamento nas n/ instalações",
-                                                               "Enviar para a morada da ficha de cliente",
-                                                               "Enviar para outra morada..."),
-                                                       state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
-
         self.ef_ltxt_morada_entrega = LabelText(self.ef_lf_outros_dados, "Morada a utilizar na entrega:", width=30, style="Panel_Body.TLabel", height=4)
 
         self.ef_ltxt_acessorios_entregues.grid(column=0, row=0, rowspan=5, padx=5, sticky='wens')
         self.ef_ltxt_notas.grid(column=1, row=0, rowspan=5, padx=5, sticky='wens')
-        self.ef_lbl_local_intervencao.grid(column=2, row=3, padx=5, sticky='nw')
-        self.ef_combo_local_intervencao.grid(column=2, row=4, padx=5, sticky='nw')
-
         self.ef_lbl_modo_entrega.grid(column=2, row=0, padx=5, sticky='nw')
         self.ef_combo_modo_entrega.grid(column=2, row=1, padx=5, sticky='nwe')
         self.ef_combo_modo_entrega.bind('<<ComboboxSelected>>', self.adicionar_morada_entrega)
+        self.ef_lbl_local_intervencao.grid(column=2, row=3, padx=5, sticky='nw')
+        self.ef_combo_local_intervencao.grid(column=2, row=4, padx=5, sticky='nw')
         self.ef_lf_outros_dados.grid(column=0,row=0, sticky='wes')
         self.entryfr5.columnconfigure(0, weight=1)
 
@@ -820,13 +819,13 @@ class App(baseApp):
             self.ef_radio_efetuar_copia_n_aplic.grid_remove()
 
             self.ef_ltxt_acessorios_entregues.grid_remove()
+            self.ef_lbl_modo_entrega.grid_remove()
+            self.ef_combo_modo_entrega.grid_remove()
             self.ef_lbl_local_intervencao.grid_remove()
             self.ef_combo_local_intervencao.grid_remove()
-
-            self.ef_ltxt_notas.grid(column=0, row=0, columnspan=3, rowspan=3, padx=5, sticky='wens')
-            self.ef_lf_outros_dados.configure(text="\nNotas")
-            self.ef_ltxt_notas.label.pack_forget()
-
+            self.ef_ltxt_morada_entrega.grid_remove()
+            
+            self.ef_ltxt_notas.grid(column=0, row=0, columnspan=4, rowspan=5, padx=5, sticky='wens')
             self.ef_ltxt_num_serie.label.configure(text="Nº de série")
             self.ef_ltxt_cod_artigo.label.configure(text="Código de artigo")
             self.ef_ltxt_cod_artigo.grid(column=2, row=0, rowspan=2, padx=5, sticky='we')
@@ -844,7 +843,6 @@ class App(baseApp):
 
             self.ef_ltxt_descr_equipamento.scrolledtext.configure(height=4)
             self.ef_ltxt_descr_equipamento.grid_configure(rowspan=5)
-
 
             self.ef_lbl_estado_equipamento.grid()
             self.ef_radio_estado_marcas_uso.grid()
@@ -884,16 +882,14 @@ class App(baseApp):
             self.ef_ltxt_num_serie.grid(column=1, row=5, padx=5, sticky='we')
 
             self.ef_lf_outros_dados.configure(text="\nOutros dados")
-            self.ef_ltxt_notas.label.configure(text="Notas:")
             self.ef_ltxt_acessorios_entregues.grid()
+            self.ef_ltxt_notas.grid(column=1, row=0, columnspan=1, rowspan=5, padx=5, sticky='wens')
+            
+            self.ef_lbl_modo_entrega.grid()
+            self.ef_combo_modo_entrega.grid()
             self.ef_lbl_local_intervencao.grid()
             self.ef_combo_local_intervencao.grid()
 
-            self.ef_ltxt_notas.scrolledtext.pack_forget()
-            self.ef_ltxt_notas.label.pack(side="top", fill="x", expand=True)
-            self.ef_ltxt_notas.scrolledtext.pack(side="top",fill="x", expand=True)
-
-            self.ef_ltxt_notas.grid(column=1, row=0, columnspan=1, rowspan=3, padx=5, sticky='wens')
             self.ef_txt_num_cliente.focus()
 
 
@@ -923,8 +919,6 @@ class App(baseApp):
 
     def gerar_menu(self):
         # Menu da janela principal
-        pass
-
         self.menu = tk.Menu(root)
         root.config(menu=self.menu)
 
@@ -941,7 +935,6 @@ class App(baseApp):
         root.bind_all("<Command-t>", lambda *x: self.create_window_contacts(criar_novo_contacto="Cliente"))
         root.bind_all("<Command-r>", lambda *x: self.create_window_remessas(criar_nova_remessa=True))
 
-
         self.menuVis = tk.Menu(self.menu)
         self.menu.add_cascade(label="Visualização", menu=self.menuVis)
         self.menuVis.add_command(label="Mostrar/ocultar mensagens", command=self.abrir_painel_mensagens, accelerator="Command-1")
@@ -950,7 +943,6 @@ class App(baseApp):
         self.menuVis.bind_all("<Command-KeyPress-1>", self.abrir_painel_mensagens)
         self.menuVis.bind_all("<Command-KeyPress-2>", self.create_window_contacts)
         self.menuVis.bind_all("<Command-KeyPress-3>", self.create_window_remessas)
-
 
         self.windowmenu = tk.Menu(self.menu, name='window')
         self.menu.add_cascade(menu=self.windowmenu, label='Janela')
@@ -968,7 +960,6 @@ class App(baseApp):
         #root.bind('<<about-idle>>', about_dialog)
         #root.bind('<<open-config-dialog>>', config_dialog)
         root.createcommand('tkAboutDialog', about_window)
-
 
         #----------------Menu contextual tabela principal---------------------
         self.contextMenu = tk.Menu(self.menu)
