@@ -18,9 +18,14 @@ class repairDetailWindow(ttk.Frame):
         self.master = master
         self.num_reparacao = num_reparacao
         self.tipo_processo = "Cliente" if bool((self.num_reparacao%2)==0) else "Stock"  #TODO: Substituir isto por função que busca tipo na info da base de dados
+
+        self.is_rep_cliente = (self.tipo_processo == "Cliente")  # i.e. True se for reparação de cliente
         self.estado = ESTADOS[EM_PROCESSAMENTO] #TODO: Obter estado a partir da base de dados
 
-        if self.tipo_processo == "Cliente":
+        self.is_garantia = True  # todo - verificar se é garantia
+
+
+        if self.is_rep_cliente:
             self.numero_contacto = "12345" #TODO numero de cliente
             self.nome = "Norberto Plutarco Keppler" #TODO Nome do cliente
             self.telefone = "+351 900 000 000" #TODO Telefone do cliente
@@ -34,7 +39,9 @@ class repairDetailWindow(ttk.Frame):
 
         self.configurar_frames_e_estilos()
         self.montar_barra_de_ferramentas()
-        self.montar_painel_principal()
+        self.gerar_painel_principal()
+        self.mostrar_painel_principal()
+        
         self.montar_rodape()
         self.composeFrames()
 
@@ -44,16 +51,13 @@ class repairDetailWindow(ttk.Frame):
 
         # Reincidência apenas aparece se reparação está entregue, anulado, abandonado, sem_informacao
         if self.estado >= ESTADOS[ENTREGUE]:
-            self.btn_reincidencia = ttk.Button(self.topframe, text="➕", width=4, command=None)
-            self.lbl_reincidencia = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Criar reincidência")
+            self.btn_reincidencia = ttk.Button(self.topframe, text="➕ Reincidência", width=4, command=None)
 
         # Botão para registar entrega apenas aparece se reparação ainda não está entregue
         if self.estado != ESTADOS[ENTREGUE]:
             self.btn_entregar = ttk.Button(self.topframe, text=" ✅", width=4, command=None)
-            self.lbl_entregar = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Entregar")
 
         # ----------- Botão com menu "Alterar estado" --------------
-        self.label_mbtn_alterar_estado = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Atualizar")
         self.mbtn_alterar_estado = ttk.Menubutton(self.topframe, style="TMenubutton", text="Estado")
         self.mbtn_alterar_estado.menu = tk.Menu(self.mbtn_alterar_estado, tearoff=0)
         self.mbtn_alterar_estado["menu"] = self.mbtn_alterar_estado.menu
@@ -75,7 +79,6 @@ class repairDetailWindow(ttk.Frame):
 
 
         # ----------- Botão com menu "Alterar Prioridade" --------------
-        self.label_mbtn_alterar_prioridade = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Alterar")
         self.mbtn_alterar_prioridade = ttk.Menubutton(self.topframe, text="Prioridade")
         self.mbtn_alterar_prioridade.menu = tk.Menu(self.mbtn_alterar_prioridade, tearoff=0)
         self.mbtn_alterar_prioridade["menu"] = self.mbtn_alterar_prioridade.menu
@@ -87,14 +90,12 @@ class repairDetailWindow(ttk.Frame):
         # ----------- fim de Botão com menu "Alterar Prioridade" -------------
 
 
-
         # ----------- Botão com menu "Copiar" --------------
-        self.label_mbtn_copiar = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Copiar")
         self.mbtn_copiar = ttk.Menubutton(self.topframe, text=" ⚡")
         self.mbtn_copiar.menu = tk.Menu(self.mbtn_copiar, tearoff=0)
         self.mbtn_copiar["menu"] = self.mbtn_copiar.menu
 
-        if self.tipo_processo == "Cliente":
+        if self.is_rep_cliente:
             self.mbtn_copiar.menu.add_command(label="Nome", command=None)
             self.mbtn_copiar.menu.add_command(label="NIF", command=None)
             self.mbtn_copiar.menu.add_command(label="Morada", command=None)
@@ -106,13 +107,10 @@ class repairDetailWindow(ttk.Frame):
         self.mbtn_copiar.menu.add_separator()
         self.mbtn_copiar.menu.add_command(label="Número de série", command=None)
         self.mbtn_copiar.menu.add_command(label="Descrição do equipamento", command=None)
-
-        self.mbtn_copiar.menu.add_command(label=ESTADOS[SEM_INFORMACAO], command=None)
         # ----------- fim de Botão com menu "Copiar" -------------
 
 
         # ----------- Botão com menu "Imprimir" --------------
-        self.label_mbtn_imprimir = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Imprimir")
         self.mbtn_imprimir = ttk.Menubutton(self.topframe, text="Imprimir")
         self.mbtn_imprimir.menu = tk.Menu(self.mbtn_imprimir, tearoff=0)
         self.mbtn_imprimir["menu"] = self.mbtn_imprimir.menu
@@ -131,76 +129,60 @@ class repairDetailWindow(ttk.Frame):
         self.mbtn_imprimir.menu.add_command(label="Recibo de pagamento: caução de empréstimo", command=None)
         # ----------- fim de Botão com menu "Imprimir" -------------
 
-
-        icon_path = APP_PATH + "/images/icon.gif"
-        self.icon = tk.PhotoImage(file=(APP_PATH+"/images/icon.gif"))
-
         self.btn_comunicacao = ttk.Button(self.topframe, text="✉️", width=4, command=None)
-        self.lbl_comunicacao = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Comunicação")
-
 
         self.lbl_titulo.grid(column=0, row=0, rowspan=2)
-
         self.mbtn_alterar_estado.grid(column=4, row=0)
-        #self.label_mbtn_alterar_estado.grid(column=4, row=1)
         self.mbtn_alterar_prioridade.grid(column=5, row=0)
-        #self.label_mbtn_alterar_prioridade.grid(column=5, row=1)
-
         self.btn_comunicacao.grid(column=7, row=0)
-        #self.lbl_comunicacao.grid(column=7, row=1)
         self.mbtn_copiar.grid(column=8, row=0)
-        #self.label_mbtn_copiar.grid(column=8, row=1)
         self.mbtn_imprimir.grid(column=9, row=0)
-        #self.label_mbtn_imprimir.grid(column=9, row=1)
-
 
         # Reincidência apenas aparece se reparação está entregue, anulado, abandonado, sem_informacao
         if self.estado >= ESTADOS[ENTREGUE]:
             self.btn_reincidencia.grid(column=10, row=0)
-            self.lbl_reincidencia.grid(column=10, row=1)
 
         # Botão para registar entrega apenas aparece se reparação ainda não está entregue
         if self.estado != ESTADOS[ENTREGUE]:
             self.btn_entregar.grid(column=11, row=0)
-            #self.lbl_entregar.grid(column=11, row=1)
 
-
-        #self.estilo.configure("TSeparator", width=10, relief="flat", background="blue", foreground="red")
-        #self.separador1 = ttk.Separator(self.centerframe, style="TSeparator", orient='horizontal').pack(side='top', pady=5, expand=True, fill='x')
         self.topframe.grid_columnconfigure(2, weight=1)
-        #self.topframe.grid_columnconfigure(6, weight=1)
 
 
-    def montar_painel_principal(self):
+    def gerar_painel_principal(self):
         print(f"A mostrar detalhes da reparação nº {self.num_reparacao}")
-        if (self.tipo_processo == "Cliente"):
-            rep_cliente = True
-        else:
-            rep_cliente = False
-        rep_stock = not rep_cliente
-        garantia = True  # todo - verificar se é garantia
 
+        # Preparar o notebook da secção principal ------------------------
         self.note = ttk.Notebook(self.centerframe, padding="3 20 3 3")
         self.tab_geral = ttk.Frame(self.note, padding=10)
         self.tab_historico = ttk.Frame(self.note, padding=10)
         self.note.add(self.tab_geral, text="Geral")
-        self.note.add(self.tab_historico, text = "Histórico")
-
-        if rep_cliente:
+        self.note.add(self.tab_historico, text="Histórico")
+        self.gerar_tab_geral()
+        self.montar_tab_geral()
+        self.gerar_tab_historico()
+        self.montar_tab_historico()
+        
+        if self.is_rep_cliente:
             self.tab_orcamentos = ttk.Frame(self.note, padding=10)
             self.tab_emprestimos = ttk.Frame(self.note, padding=10)
-            self.note.add(self.tab_orcamentos, text = "Orçamentos")
-            self.note.add(self.tab_emprestimos, text = "Empréstimos")
+            self.note.add(self.tab_orcamentos, text="Orçamentos")
+            self.note.add(self.tab_emprestimos, text="Empréstimos")
+            self.gerar_tab_orcamentos()
+            self.gerar_tab_emprestimos()
+            self.montar_tab_orcamentos()
+            self.montar_tab_emprestimos()
+            
+        self.desativar_campos()
 
+
+    def gerar_tab_geral(self):
+        # TAB Geral ~~~~~~~~~~~~~~~~
         self.geral_fr1 = ttk.Frame(self.tab_geral)
         self.geral_fr2 = ttk.Frame(self.tab_geral)
-        self.geral_fr3 = ttk.Frame(self.tab_geral)
-        self.geral_fr4 = ttk.Frame(self.tab_geral)
-
-
-        # TAB Geral ~~~~~~~~~~~~~~~~
 
         # TODO - obter valor da base de dados
+        # Criar widgets para este separador -------------------------------------------------------
         self.txt_numero_contacto = ttk.Entry(self.geral_fr1, font=("Helvetica-Neue", 12), width=5)
         self.btn_buscar_contacto = ttk.Button(self.geral_fr1, width=1, text="+", command=lambda *x: self.create_window_contacts(criar_novo_contacto="Cliente")) # TODO - abrir ficha de cliente
         self.txt_nome = ttk.Entry(self.geral_fr1, font=("Helvetica-Neue", 12), width=35)
@@ -209,12 +191,12 @@ class repairDetailWindow(ttk.Frame):
 
         self.ltxt_descr_equipamento = LabelText(self.geral_fr2, "Descrição:", style="Panel_Body.TLabel", height=2, width=40)
 
-        if rep_cliente:
+        if self.is_rep_cliente:
             estado = f'Estado: {"Marcas de acidente"}'  # TODO: obter string do estado do equipamento
             self.ltxt_obs_estado_equipamento = LabelText(self.geral_fr2, estado, style="Panel_Body.TLabel", height=2)
             self.ltxt_local_intervencao = LabelEntry(self.geral_fr2, "Local da intervenção:", style="Panel_Body.TLabel", width=25)
             self.ltxt_acessorios = LabelText(self.geral_fr2, "Acessórios entregues:", style="Panel_Body.TLabel")
-            if garantia:
+            if self.is_garantia:
                 self.ltxt_data_compra = LabelEntry(self.geral_fr2, "Data de compra:", style="Panel_Body.TLabel", width=10)
                 self.ltxt_num_fatura = LabelEntry(self.geral_fr2, "Nº da fatura:", style="Panel_Body.TLabel", width=15)
                 self.ltxt_garantia = LabelEntry(self.geral_fr2, "Garantia em:", style="Panel_Body.TLabel")
@@ -227,31 +209,32 @@ class repairDetailWindow(ttk.Frame):
         self.ltxt_descr_avaria = LabelText(self.geral_fr2, "Avaria/Serviço:", style="Panel_Body.TLabel")
         self.ltxt_notas = LabelText(self.geral_fr2, "Notas:", style="Panel_Body.TLabel")
 
-        if rep_stock:
+        if self.is_rep_cliente:
+            self.lbl_avaria_reprod_loja = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Avaria reproduzida na loja")
+            self.lbl_find_my = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Find my iPhone ativo.")
+            self.lbl_efetuar_copia = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Efetuar cópia de segurança.")
+            self.ltxt_senha = LabelEntry(self.geral_fr2, "Senha:", style="Panel_Body.TLabel", width=22)
+        else:
             self.ltxt_num_fatura_fornecedor = LabelEntry(self.geral_fr2, "Nº fatura fornecedor:", style="Panel_Body.TLabel", width=15)
             self.ltxt_data_fatura_fornecedor = LabelEntry(self.geral_fr2, "Data fatura fornecedor:", style="Panel_Body.TLabel", width=10)
             self.ltxt_nar = LabelEntry(self.geral_fr2, "NAR:", style="Panel_Body.TLabel", width=7)
             self.ltxt_num_guia_rececao = LabelEntry(self.geral_fr2, "Guia de receção:", style="Panel_Body.TLabel", width=6)
             self.ltxt_data_entrada_stock = LabelEntry(self.geral_fr2, "Data de entrada em stock:", style="Panel_Body.TLabel", width=15)
             self.ltxt_num_quebra_stock = LabelEntry(self.geral_fr2, "Nº de quebra de stock:", style="Panel_Body.TLabel", width=6)
-        else:
-            self.lbl_avaria_reprod_loja = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Avaria reproduzida na loja")
-            self.lbl_find_my = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Find my iPhone ativo.")
-            self.lbl_efetuar_copia = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Efetuar cópia de segurança.")
 
-            self.ltxt_senha = LabelEntry(self.geral_fr2, "Senha:", style="Panel_Body.TLabel", width=22)
 
+        # Preencher com dados da base de dados -------------------------------------------------
         self.txt_numero_contacto.insert(0, self.numero_contacto)
         self.txt_nome.insert(0, self.nome)
 
 
         self.ltxt_descr_equipamento.set('Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
-        if rep_cliente:
+        if self.is_rep_cliente:
             self.ltxt_obs_estado_equipamento.set('Texto de exemplo para experimentar como sai na prática.\n Equipamento muito danificado!...')
             self.ltxt_local_intervencao.set('Aquele Tal Centro Técnico')
             self.ltxt_acessorios.set('Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
             self.ltxt_senha.set('12343112121')
-            if garantia:
+            if self.is_garantia:
                 self.ltxt_data_compra.set('29-07-2035')
                 self.ltxt_num_fatura.set('FCR 1234567890/2035')
                 self.ltxt_garantia.set('NPK International Online Store')
@@ -268,37 +251,9 @@ class repairDetailWindow(ttk.Frame):
         self.ltxt_descr_avaria.set('Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
         self.ltxt_notas.set('Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
 
-        # Desativar todos os campos de texto para não permitir alterações.
-        self.txt_numero_contacto.configure(state="disabled")
-        self.txt_nome.configure(state="disabled")
 
-        widgets = ( self.ltxt_descr_equipamento,
-                    self.ltxt_cod_artigo,
-                    self.ltxt_num_serie,
-                    self.ltxt_descr_avaria,
-                    self.ltxt_notas)
-        for widget in widgets:
-            widget.disable()
-
-        if rep_cliente:
-            if garantia:
-                self.ltxt_garantia.disable()
-                self.ltxt_data_compra.disable()
-                self.ltxt_num_fatura.disable()
-            self.ltxt_obs_estado_equipamento.disable()
-            self.ltxt_local_intervencao.disable()
-            self.ltxt_acessorios.disable()
-            self.ltxt_senha.disable()
-        else:
-            widgets = ( self.ltxt_num_fatura_fornecedor,
-                        self.ltxt_data_fatura_fornecedor,
-                        self.ltxt_num_guia_rececao,
-                        self.ltxt_data_entrada_stock,
-                        self.ltxt_num_quebra_stock,
-                        self.ltxt_nar)
-            for widget in widgets:
-                widget.disable()
-
+    def montar_tab_geral(self):
+        # Montar todos os campos na grid -------------------------------------------------------------
         self.txt_numero_contacto.grid(column=0, row=0)
         self.btn_buscar_contacto.grid(column=1, row=0)
         self.txt_nome.grid(column=2, sticky='we', row=0)
@@ -309,14 +264,14 @@ class repairDetailWindow(ttk.Frame):
         self.geral_fr1.grid_columnconfigure(3, weight=1)
         self.geral_fr1.grid_columnconfigure(2, weight=1)
 
-        if rep_cliente:
+        if self.is_rep_cliente:
             self.ltxt_descr_equipamento.grid(column=0, row=0, columnspan=2, rowspan=4, sticky='we', padx=4)
             self.ltxt_obs_estado_equipamento.grid(column=2, row=0, columnspan=2, rowspan=4, sticky='we', padx=4)
             self.ltxt_cod_artigo.grid(column=4, row=0, rowspan=2,  sticky='we', padx=4)
             self.ltxt_num_serie.grid(column=4, row=2, rowspan=2, sticky='we', padx=4)
             ttk.Separator(self.geral_fr2).grid(column=0, row=4, columnspan=5, sticky='we', pady=10)
 
-            if garantia:
+            if self.is_garantia:
                 self.ltxt_garantia.grid(column=0, row=5, columnspan=2, rowspan=2, sticky='we', padx=4)
                 self.ltxt_data_compra.grid(column=2, row=5, rowspan=2, sticky='we', padx=4)
                 self.ltxt_num_fatura.grid(column=3, row=5, rowspan=2, sticky='we', padx=4)
@@ -364,31 +319,80 @@ class repairDetailWindow(ttk.Frame):
             self.geral_fr2.grid_columnconfigure(2, weight=1)
             self.geral_fr2.grid_columnconfigure(3, weight=1)
 
-
         self.geral_fr1.pack(side='top', expand=False, fill='x')
         ttk.Separator(self.tab_geral).pack(side='top', expand=False, fill='x', pady=10)
         self.geral_fr2.pack(side='top', expand=True, fill='both')
 
-        """
-        ttk.Separator(self.tab_geral).pack(side='top', expand=True, fill='both', pady=10)
-        self.geral_fr3.pack(side='top', expand=True, fill='both')
-        ttk.Separator(self.tab_geral).pack(side='top', expand=True, fill='both', pady=10)
-        self.geral_fr4.pack(side='top', expand=True, fill='both')
-        """
+
+    def gerar_tab_historico(self):
+        self.historico_fr1 = ttk.Frame(self.tab_historico)
+        self.historico_fr2 = ttk.Frame(self.tab_historico)
 
 
-        # TAB Histórico ~~~~~~~~~~~~~~~
+    def montar_tab_historico(self):
+        self.historico_fr1.pack(side='top', expand=False, fill='x')
+        ttk.Separator(self.tab_historico).pack(side='top', expand=False, fill='x', pady=10)
+        self.historico_fr2.pack(side='top', expand=True, fill='both')
 
 
-        # TAB Orçamentos (ocultar se reparação de stock) ~~~~~~~~~~~~~~~~~~~~~~~~~~~ TODO
+    def gerar_tab_orcamentos(self):
+        self.orcamentos_fr1 = ttk.Frame(self.tab_orcamentos)
+        self.orcamentos_fr2 = ttk.Frame(self.tab_orcamentos)
 
 
-        # TAB Empréstimos (ocultar se reparação de stock) ~~~~~~~~~~~~~~~~~~~~ TODO
+    def montar_tab_orcamentos(self):
+        self.orcamentos_fr1.pack(side='top', expand=False, fill='x')
+        ttk.Separator(self.tab_orcamentos).pack(side='top', expand=False, fill='x', pady=10)
+        self.orcamentos_fr2.pack(side='top', expand=True, fill='both')
 
 
+    def gerar_tab_emprestimos(self):
+        self.emprestimos_fr1 = ttk.Frame(self.tab_emprestimos)
+        self.emprestimos_fr2 = ttk.Frame(self.tab_emprestimos)
+    
+
+    def montar_tab_emprestimos(self):
+        self.emprestimos_fr1.pack(side='top', expand=False, fill='x')
+        ttk.Separator(self.tab_emprestimos).pack(side='top', expand=False, fill='x', pady=10)
+        self.emprestimos_fr2.pack(side='top', expand=True, fill='both')
+
+
+    def desativar_campos(self):
+        # Desativar todos os campos de texto para não permitir alterações. ------------------------
+        self.txt_numero_contacto.configure(state="disabled")
+        self.txt_nome.configure(state="disabled")
+
+        widgets = ( self.ltxt_descr_equipamento,
+                    self.ltxt_cod_artigo,
+                    self.ltxt_num_serie,
+                    self.ltxt_descr_avaria,
+                    self.ltxt_notas)
+        for widget in widgets:
+            widget.disable()
+
+        if self.is_rep_cliente:
+            if self.is_garantia:
+                self.ltxt_garantia.disable()
+                self.ltxt_data_compra.disable()
+                self.ltxt_num_fatura.disable()
+            self.ltxt_obs_estado_equipamento.disable()
+            self.ltxt_local_intervencao.disable()
+            self.ltxt_acessorios.disable()
+            self.ltxt_senha.disable()
+        else:
+            widgets = ( self.ltxt_num_fatura_fornecedor,
+                        self.ltxt_data_fatura_fornecedor,
+                        self.ltxt_num_guia_rececao,
+                        self.ltxt_data_entrada_stock,
+                        self.ltxt_num_quebra_stock,
+                        self.ltxt_nar)
+            for widget in widgets:
+                widget.disable()
+
+
+    def mostrar_painel_principal(self):
         self.note.pack(side='top', expand=True, fill='both')
         self.note.enable_traversal()
-
 
 
     def montar_rodape(self):
@@ -403,7 +407,6 @@ class repairDetailWindow(ttk.Frame):
         self.direita = ttk.Label(self.bottomframe, anchor='e', text=txt_direita, font=self.rodapeFont, foreground=self.rodapeTxtColor)
         self.esquerda.pack(side="left")
         self.direita.pack(side="right")
-
 
 
     def configurar_frames_e_estilos(self):

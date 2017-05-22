@@ -544,9 +544,6 @@ class App(baseApp):
 
 
     def gerar_painel_entrada(self):
-
-        #entryfr1-----------------------------
-        #criar funções para usar estes campos, ora para adicionar, ora para editar, ora para visualizar registos
         self.ef_var_tipo = tk.IntVar()
         self.ef_var_estado = tk.IntVar()
         self.ef_var_garantia = tk.IntVar()
@@ -559,6 +556,7 @@ class App(baseApp):
         self.ef_var_modo_entrega = tk.StringVar()
         self.ef_var_modo_entrega.set("Levantamento nas n/ instalações")
 
+        #entryfr1-----------------------------
         self.ef_cabecalho = ttk.Frame(self.entryfr1, padding=4)
         self.ef_lbl_titulo = ttk.Label(self.ef_cabecalho, style="Panel_Title.TLabel", text="Adicionar Reparação:\n")
         self.ef_lbl_tipo = ttk.Label(self.ef_cabecalho, text="Tipo de processo:", style="Panel_Body.TLabel")
@@ -566,7 +564,6 @@ class App(baseApp):
         self.ef_radio_tipo_stock = ttk.Radiobutton(self.ef_cabecalho, text="Stock", style="Panel_Body.TRadiobutton", variable=self.ef_var_tipo, value=TIPO_REP_STOCK, command=self.radio_tipo_command)
         self.btn_adicionar = ttk.Button(self.ef_cabecalho, default="active", style="Active.TButton", text="Adicionar", command=None)
         self.btn_cancelar = ttk.Button(self.ef_cabecalho, text="Cancelar", command=self.fechar_painel_entrada)
-
 
         self.ef_lbl_titulo.grid(column=0, row=0, columnspan=3, sticky='w')
         self.ef_lbl_tipo.grid(column=0, row=1, sticky='e')
