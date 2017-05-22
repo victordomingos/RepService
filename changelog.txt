@@ -7,7 +7,8 @@ Histórico de versões:
 v.0.9 - 31/05/2017
  * Adicionados mais campos de informação ao painel de detalhes de reparação.
  * O código da classe de detalhes de reparação foi reorganizado.
- * 
+ * Adicionada morada para entrega no formulário de introdução de reparação,
+   na janela de detalhes de reparação e no botão "Copiar".
 
 ---
 v.0.8 - 17/05/2017
