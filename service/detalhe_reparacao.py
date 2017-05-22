@@ -23,7 +23,7 @@ class repairDetailWindow(ttk.Frame):
         self.estado = ESTADOS[EM_PROCESSAMENTO] #TODO: Obter estado a partir da base de dados
 
         self.is_garantia = True  # todo - verificar se é garantia
-
+        self.modo_entrega = 2 # todo - obter da base de dados
 
         if self.is_rep_cliente:
             self.numero_contacto = "12345" #TODO numero de cliente
@@ -210,10 +210,17 @@ class repairDetailWindow(ttk.Frame):
         self.ltxt_notas = LabelText(self.geral_fr2, "Notas:", style="Panel_Body.TLabel")
 
         if self.is_rep_cliente:
-            self.lbl_avaria_reprod_loja = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Avaria reproduzida na loja")
-            self.lbl_find_my = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Find my iPhone ativo.")
-            self.lbl_efetuar_copia = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Efetuar cópia de segurança.")
             self.ltxt_senha = LabelEntry(self.geral_fr2, "Senha:", style="Panel_Body.TLabel", width=22)
+            self.lbl_avaria_reprod_loja = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Avaria reproduzida na loja")
+            self.lbl_find_my = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Find my iPhone ativo")
+            self.lbl_efetuar_copia = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Efetuar cópia de segurança")
+            if self.modo_entrega == 0:
+                self.lbl_modo_entrega = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Levantamento nas n/ instalações")
+            elif self.modo_entrega == 1:
+                self.lbl_modo_entrega = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Enviar para a morada da ficha de cliente")
+            else:
+                self.lbl_modo_entrega = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Enviar para a morada abaixo indicada")
+                self.ltxt_morada_entrega = LabelText(self.geral_fr2, "Morada a utilizar na entrega:", style="Panel_Body.TLabel")
         else:
             self.ltxt_num_fatura_fornecedor = LabelEntry(self.geral_fr2, "Nº fatura fornecedor:", style="Panel_Body.TLabel", width=15)
             self.ltxt_data_fatura_fornecedor = LabelEntry(self.geral_fr2, "Data fatura fornecedor:", style="Panel_Body.TLabel", width=10)
@@ -238,6 +245,8 @@ class repairDetailWindow(ttk.Frame):
                 self.ltxt_data_compra.set('29-07-2035')
                 self.ltxt_num_fatura.set('FCR 1234567890/2035')
                 self.ltxt_garantia.set('NPK International Online Store')
+            if self.modo_entrega > 1:
+                self.ltxt_morada_entrega.set("José manuel da silva fictício\nRua imaginária da conceição esplendorosa, nº 31, 3º andar frente\n1234-567 CIDADE MARAVILHOSA BRG\nPortugal")
         else:
             self.ltxt_num_fatura_fornecedor.set('C23918237323812371237/2017')
             self.ltxt_data_fatura_fornecedor.set('01-04-1974')
@@ -279,22 +288,26 @@ class repairDetailWindow(ttk.Frame):
             self.ltxt_local_intervencao.grid(column=4, row=5, rowspan=2, sticky='we', padx=4)
             ttk.Separator(self.geral_fr2).grid(column=0, row=7, columnspan=5, sticky='we', pady=10)
             self.ltxt_descr_avaria.grid(column=0, row=8, columnspan=3, rowspan=4, sticky='we', padx=4)
-
-            self.lbl_avaria_reprod_loja.grid(column=4, row=9, columnspan=2, sticky='we', padx=4)
-            self.lbl_efetuar_copia.grid(column=4, row=10, columnspan=2, sticky='we', padx=4)
-            self.lbl_find_my.grid(column=4, row=11, columnspan=2, sticky='we', padx=4)
+            
             self.ltxt_senha.grid(column=3, row=8, rowspan=2, sticky='we', padx=4)
 
-            ttk.Separator(self.geral_fr2).grid(column=0, row=12, columnspan=5, sticky='we', pady=10)
-            self.ltxt_acessorios.grid(column=0, row=13, columnspan=2, rowspan=3, sticky='wes', padx=4)
-            self.ltxt_notas.grid(column=2, row=13, columnspan=3, rowspan=3, sticky='wes', padx=4)
+            self.lbl_avaria_reprod_loja.grid(column=4, row=8, columnspan=2, sticky='we', padx=4)
+            self.lbl_efetuar_copia.grid(column=4, row=9, columnspan=2, sticky='we', padx=4)
+            self.lbl_find_my.grid(column=4, row=10, columnspan=2, sticky='we', padx=4)
+            self.lbl_modo_entrega.grid(column=4, row=11, columnspan=2, sticky='we', padx=4)
 
-            self.geral_fr2.grid_columnconfigure(0, weight=2)
+            ttk.Separator(self.geral_fr2).grid(column=0, row=13, columnspan=5, sticky='we', pady=10)
 
-            for i in range(1,5):
+            if self.modo_entrega <= 1:
+                self.ltxt_acessorios.grid(column=0, row=14, columnspan=1, rowspan=3, sticky='wes', padx=4)
+                self.ltxt_notas.grid(column=1, row=14, columnspan=3, rowspan=3, sticky='wes', padx=4)
+            else:
+                self.ltxt_acessorios.grid(column=0, row=14, columnspan=1, rowspan=3, sticky='wes', padx=4)
+                self.ltxt_notas.grid(column=1, row=14, columnspan=2, rowspan=3, sticky='wes', padx=4)
+                self.ltxt_morada_entrega.grid(column=3, row=14, columnspan=2, rowspan=3, sticky='wes', padx=4)
+
+            for i in range(5):
                 self.geral_fr2.grid_columnconfigure(i, weight=1)
-            self.geral_fr2.grid_columnconfigure(2, weight=2)
-            self.geral_fr2.grid_columnconfigure(3, weight=2)
 
         else:
             self.ltxt_descr_equipamento.grid(column=0, row=0, columnspan=2, rowspan=6, sticky='wens', padx=4)
@@ -379,6 +392,8 @@ class repairDetailWindow(ttk.Frame):
             self.ltxt_local_intervencao.disable()
             self.ltxt_acessorios.disable()
             self.ltxt_senha.disable()
+            if self.modo_entrega > 1:
+                self.ltxt_morada_entrega
         else:
             widgets = ( self.ltxt_num_fatura_fornecedor,
                         self.ltxt_data_fatura_fornecedor,
