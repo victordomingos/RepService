@@ -4,7 +4,14 @@ Histórico de versões:
 ====================
 
 ---
+v.0.9 - 31/05/2017
+ * Adicionados mais campos de informação ao painel de detalhes de reparação.
+ * O código da classe de detalhes de reparação foi reorganizado.
+ * 
+
+---
 v.0.8 - 17/05/2017
+ * Criada estrutura da janela de detalhes de reparação, com parte dos widgets.
  * Corrigido um bug que fazia com que alguns registos nas tabelas ficassem
    fora da área visível da janela.
  * Corrigido um bug que impedia a abertura de um comando do menu.
@@ -20,8 +27,6 @@ v.0.8 - 17/05/2017
  * O tamanho do texto dos botões nas barras de ferramentas das janelas
    secundárias foi ligeiramente reduzido.
  * Foi simplificado o código relativo à aplicação de estilos dos widgets.
- * Criada estrutura da janela de detalhes de reparação, com parte dos widgets.
-
 
 ---
 v.0.7 - 30/04/2017
