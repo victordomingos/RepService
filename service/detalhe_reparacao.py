@@ -41,7 +41,7 @@ class repairDetailWindow(ttk.Frame):
         self.montar_barra_de_ferramentas()
         self.gerar_painel_principal()
         self.mostrar_painel_principal()
-        
+
         self.montar_rodape()
         self.composeFrames()
 
@@ -101,12 +101,16 @@ class repairDetailWindow(ttk.Frame):
             self.mbtn_copiar.menu.add_command(label="Morada", command=None)
             self.mbtn_copiar.menu.add_command(label="Código Postal", command=None)
             self.mbtn_copiar.menu.add_command(label="Localidade", command=None)
+            if self.modo_entrega >= 1:
+                self.mbtn_copiar.menu.add_separator()
+                self.mbtn_copiar.menu.add_command(label="Morada para entrega", command=None)
+                self.mbtn_copiar.menu.add_separator()
 
         self.mbtn_copiar.menu.add_command(label="Email", command=None)
         self.mbtn_copiar.menu.add_command(label="Telefone", command=None)
         self.mbtn_copiar.menu.add_separator()
-        self.mbtn_copiar.menu.add_command(label="Número de série", command=None)
         self.mbtn_copiar.menu.add_command(label="Descrição do equipamento", command=None)
+        self.mbtn_copiar.menu.add_command(label="Número de série", command=None)
         # ----------- fim de Botão com menu "Copiar" -------------
 
 
@@ -162,7 +166,7 @@ class repairDetailWindow(ttk.Frame):
         self.montar_tab_geral()
         self.gerar_tab_historico()
         self.montar_tab_historico()
-        
+
         if self.is_rep_cliente:
             self.tab_orcamentos = ttk.Frame(self.note, padding=10)
             self.tab_emprestimos = ttk.Frame(self.note, padding=10)
@@ -172,7 +176,7 @@ class repairDetailWindow(ttk.Frame):
             self.gerar_tab_emprestimos()
             self.montar_tab_orcamentos()
             self.montar_tab_emprestimos()
-            
+
         self.desativar_campos()
 
 
@@ -288,7 +292,7 @@ class repairDetailWindow(ttk.Frame):
             self.ltxt_local_intervencao.grid(column=4, row=5, rowspan=2, sticky='we', padx=4)
             ttk.Separator(self.geral_fr2).grid(column=0, row=7, columnspan=5, sticky='we', pady=10)
             self.ltxt_descr_avaria.grid(column=0, row=8, columnspan=3, rowspan=4, sticky='we', padx=4)
-            
+
             self.ltxt_senha.grid(column=3, row=8, rowspan=2, sticky='we', padx=4)
 
             self.lbl_avaria_reprod_loja.grid(column=4, row=8, columnspan=2, sticky='we', padx=4)
@@ -299,12 +303,12 @@ class repairDetailWindow(ttk.Frame):
             ttk.Separator(self.geral_fr2).grid(column=0, row=13, columnspan=5, sticky='we', pady=10)
 
             if self.modo_entrega <= 1:
-                self.ltxt_acessorios.grid(column=0, row=14, columnspan=1, rowspan=3, sticky='wes', padx=4)
-                self.ltxt_notas.grid(column=1, row=14, columnspan=3, rowspan=3, sticky='wes', padx=4)
+                self.ltxt_acessorios.grid(column=0, row=14, columnspan=2, rowspan=3, sticky='wes', padx=4)
+                self.ltxt_notas.grid(column=2, row=14, columnspan=3, rowspan=3, sticky='wes', padx=4)
             else:
                 self.ltxt_acessorios.grid(column=0, row=14, columnspan=1, rowspan=3, sticky='wes', padx=4)
-                self.ltxt_notas.grid(column=1, row=14, columnspan=2, rowspan=3, sticky='wes', padx=4)
-                self.ltxt_morada_entrega.grid(column=3, row=14, columnspan=2, rowspan=3, sticky='wes', padx=4)
+                self.ltxt_notas.grid(column=1, row=14, columnspan=3, rowspan=3, sticky='wes', padx=4)
+                self.ltxt_morada_entrega.grid(column=4, row=14, columnspan=1, rowspan=3, sticky='wes', padx=4)
 
             for i in range(5):
                 self.geral_fr2.grid_columnconfigure(i, weight=1)
@@ -362,7 +366,7 @@ class repairDetailWindow(ttk.Frame):
     def gerar_tab_emprestimos(self):
         self.emprestimos_fr1 = ttk.Frame(self.tab_emprestimos)
         self.emprestimos_fr2 = ttk.Frame(self.tab_emprestimos)
-    
+
 
     def montar_tab_emprestimos(self):
         self.emprestimos_fr1.pack(side='top', expand=False, fill='x')
