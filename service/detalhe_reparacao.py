@@ -393,7 +393,7 @@ class repairDetailWindow(ttk.Frame):
             self.ltxt_acessorios.disable()
             self.ltxt_senha.disable()
             if self.modo_entrega > 1:
-                self.ltxt_morada_entrega
+                self.ltxt_morada_entrega.disable()
         else:
             widgets = ( self.ltxt_num_fatura_fornecedor,
                         self.ltxt_data_fatura_fornecedor,
