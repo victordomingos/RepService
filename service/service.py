@@ -555,6 +555,7 @@ class App(baseApp):
         self.ef_var_local_intervencao.set("Loja X")
         self.ef_var_modo_entrega = tk.StringVar()
         self.ef_var_modo_entrega.set("Levantamento nas n/ instalações")
+        self.ef_var_portes = tk.IntVar()
 
         #entryfr1-----------------------------
         self.ef_cabecalho = ttk.Frame(self.entryfr1, padding=4)
@@ -632,7 +633,6 @@ class App(baseApp):
 
 
         #entryfr3-----------------------------
-            #estabelecimento_compra (mostrar apenas se garantia for "sim, outro estabelecimento") c4
         self.ef_lf_equipamento = ttk.Labelframe(self.entryfr3, padding=4, style="Panel_Section_Title.TLabelframe", text="\nDados do equipamento")
         self.ef_ltxt_descr_equipamento = LabelText(self.ef_lf_equipamento, "Descrição:", style="Panel_Body.TLabel", width=30, height=2)
         self.ef_lbl_estado_equipamento = ttk.Label(self.ef_lf_equipamento, style="Panel_Body.TLabel", text="Estado:")
@@ -723,11 +723,11 @@ class App(baseApp):
             #Notas: text 3 linhas
             # local intervenção lbl + combobox(contactos>fornecedores)
         self.ef_lf_outros_dados = ttk.Labelframe(self.entryfr5, padding=4, style="Panel_Section_Title.TLabelframe", text="\nOutros dados")
-        self.ef_ltxt_acessorios_entregues = LabelText(self.ef_lf_outros_dados, "Acessórios entregues:", style="Panel_Body.TLabel", height=4)
-        self.ef_ltxt_notas = LabelText(self.ef_lf_outros_dados, "Notas:", style="Panel_Body.TLabel", width=30, height=4)
+        self.ef_ltxt_acessorios_entregues = LabelText(self.ef_lf_outros_dados, "Acessórios entregues:", style="Panel_Body.TLabel", width=12, height=4)
+        self.ef_ltxt_notas = LabelText(self.ef_lf_outros_dados, "Notas:", style="Panel_Body.TLabel", width=25, height=4)
 
-        self.ef_lbl_modo_entrega = ttk.Label(self.ef_lf_outros_dados, style="Panel_Body.TLabel", text="Local de intervenção:")
-        self.ef_combo_modo_entrega = ttk.Combobox(self.ef_lf_outros_dados,
+        self.ef_lbl_modo_entrega = ttk.Label(self.ef_lf_outros_dados, style="Panel_Body.TLabel", text="Morada a utilizar na entrega:")
+        self.ef_combo_modo_entrega = ttk.Combobox(self.ef_lf_outros_dados, 
                                                 textvariable=self.ef_var_modo_entrega,
                                                 values=("Levantamento nas n/ instalações",
                                                     "Enviar para a morada da ficha de cliente",
@@ -736,7 +736,6 @@ class App(baseApp):
 
         self.ef_lbl_local_intervencao = ttk.Label(self.ef_lf_outros_dados, style="Panel_Body.TLabel",  text="Local de intervenção:")
         self.ef_combo_local_intervencao = ttk.Combobox(self.ef_lf_outros_dados,
-                                                       width=21,
                                                        textvariable=self.ef_var_local_intervencao,
                                                        values=("Loja X",
                                                                "Importador Nacional A",
@@ -746,35 +745,48 @@ class App(baseApp):
                                                                "Centro de assistência K"),
                                                        state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
 
-        self.ef_ltxt_morada_entrega = LabelText(self.ef_lf_outros_dados, "Morada a utilizar na entrega:", width=30, style="Panel_Body.TLabel", height=4)
+        self.ef_lbl_portes = ttk.Label(self.ef_lf_outros_dados, style="Panel_Body.TLabel", text="Cliente pagou portes?")
+        self.ef_radio_portes_sim = ttk.Radiobutton(self.ef_lf_outros_dados, text="Sim", style="Panel_Body.TRadiobutton", variable=self.ef_var_portes, value=1, command=self.radio_portes_command)
+        self.ef_radio_portes_nao = ttk.Radiobutton(self.ef_lf_outros_dados, text="Não", style="Panel_Body.TRadiobutton", variable=self.ef_var_portes, value=0, command=self.radio_portes_command)
+        self.ef_radio_portes_oferta = ttk.Radiobutton(self.ef_lf_outros_dados, text="Oferta", style="Panel_Body.TRadiobutton", variable=self.ef_var_portes, value=2, command=self.radio_portes_command)
+
+
+        self.ef_ltxt_morada_entrega = LabelText(self.ef_lf_outros_dados, "Morada a utilizar na entrega:", style="Panel_Body.TLabel", height=4)
 
         self.ef_ltxt_acessorios_entregues.grid(column=0, row=0, rowspan=5, padx=5, sticky='wens')
         self.ef_ltxt_notas.grid(column=1, row=0, rowspan=5, padx=5, sticky='wens')
-        self.ef_lbl_modo_entrega.grid(column=2, row=0, padx=5, sticky='nw')
-        self.ef_combo_modo_entrega.grid(column=2, row=1, padx=5, sticky='nwe')
+        self.ef_lbl_local_intervencao.grid(column=2, row=0, padx=5, sticky='nw')
+        self.ef_combo_local_intervencao.grid(column=2, row=1, padx=5, sticky='nwe')
+        self.ef_lbl_modo_entrega.grid(column=3, row=0, columnspan=3, padx=5, sticky='nw')
+        self.ef_combo_modo_entrega.grid(column=3, row=1, columnspan=3, padx=5, sticky='nwe')
         self.ef_combo_modo_entrega.bind('<<ComboboxSelected>>', self.adicionar_morada_entrega)
-        self.ef_lbl_local_intervencao.grid(column=2, row=3, padx=5, sticky='nw')
-        self.ef_combo_local_intervencao.grid(column=2, row=4, padx=5, sticky='nw')
         self.ef_lf_outros_dados.grid(column=0,row=0, sticky='wes')
         self.entryfr5.columnconfigure(0, weight=1)
 
         self.ef_lf_outros_dados.columnconfigure(0, weight=1)
-        self.ef_lf_outros_dados.columnconfigure(1, weight=1)
+        self.ef_lf_outros_dados.columnconfigure(1, weight=2)
         self.ef_lf_outros_dados.columnconfigure(2, weight=1)
-
-
+        self.ef_lf_outros_dados.columnconfigure(3, weight=0)
+        self.ef_lf_outros_dados.columnconfigure(4, weight=0)
+        self.ef_lf_outros_dados.columnconfigure(5, weight=1)
+        
         #--- acabaram os 'entryfr', apenas código geral para o entryframe a partir daqui ---
         self.entryframe.bind_all("<Command-Escape>", self.fechar_painel_entrada)
 
 
-    def adicionar_morada_entrega(self, event):
+    def adicionar_morada_entrega(self, *event):
         if self.ef_combo_modo_entrega.get() == "Enviar para outra morada...":
-            self.ef_ltxt_morada_entrega.grid(column=3, row=0, rowspan=5, padx=5, sticky='wens')
-            self.ef_lf_outros_dados.columnconfigure(3, weight=1)
+            self.ef_lbl_portes.grid(column=3, row=3, columnspan=3, padx=5, sticky='wens')
+            self.ef_radio_portes_sim.grid(column=3, row=4, padx=5, sticky='wn')
+            self.ef_radio_portes_nao.grid(column=4, row=4, padx=5, sticky='wn')
+            self.ef_radio_portes_oferta.grid(column=5, row=4, padx=5, sticky='wn')
+            
+            self.ef_ltxt_morada_entrega.grid(column=6, row=0, rowspan=5, padx=5, sticky='wens')
+            self.ef_lf_outros_dados.columnconfigure(6, weight=2)
             self.ef_ltxt_morada_entrega.scrolledtext.focus()
         else:
             self.ef_ltxt_morada_entrega.grid_remove()
-            self.ef_lf_outros_dados.columnconfigure(3, weight=0)
+            self.ef_lf_outros_dados.columnconfigure(6, weight=0)
 
 
     def radio_tipo_command(self, *event):
@@ -822,7 +834,12 @@ class App(baseApp):
             self.ef_combo_local_intervencao.grid_remove()
             self.ef_ltxt_morada_entrega.grid_remove()
             
-            self.ef_ltxt_notas.grid(column=0, row=0, columnspan=4, rowspan=5, padx=5, sticky='wens')
+            self.ef_lbl_portes.grid_remove()
+            self.ef_radio_portes_sim.grid_remove()
+            self.ef_radio_portes_nao.grid_remove()
+            self.ef_radio_portes_oferta.grid_remove()
+            
+            self.ef_ltxt_notas.grid(column=0, row=0, columnspan=7, rowspan=5, padx=5, sticky='wens')
             self.ef_ltxt_num_serie.label.configure(text="Nº de série")
             self.ef_ltxt_cod_artigo.label.configure(text="Código de artigo")
             self.ef_ltxt_cod_artigo.grid(column=2, row=0, rowspan=2, padx=5, sticky='we')
@@ -886,7 +903,7 @@ class App(baseApp):
             self.ef_combo_modo_entrega.grid()
             self.ef_lbl_local_intervencao.grid()
             self.ef_combo_local_intervencao.grid()
-
+            self.adicionar_morada_entrega()
             self.ef_txt_num_cliente.focus()
 
 
@@ -911,7 +928,10 @@ class App(baseApp):
         print("RadioButton Cópia de Segurança Changed. New value:", self.ef_var_efetuar_copia.get()) # obter o valor do campo "cópia"
 
     def radio_find_my(self, *event):
-        print("RadioButton Find my iPhone Changed. New value:", self.ef_var_find_my.get()) # obter o valor do campo "cópia"
+        print("RadioButton Find my iPhone Changed. New value:", self.ef_var_find_my.get()) # obter o valor do campo "Find my"
+
+    def radio_portes_command(self, *event):
+        print("RadioButton Portes Changed. New value:", self.ef_var_estado.get()) # obter o valor do campo "portes"
 
 
     def gerar_menu(self):
