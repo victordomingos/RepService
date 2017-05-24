@@ -203,8 +203,6 @@ class App(baseApp):
             pass
 
 
-
-
     def selectItem(self, *event):
         """
         Obter reparação selecionada (após clique de rato na linha correspondente)
@@ -726,6 +724,18 @@ class App(baseApp):
         self.ef_ltxt_acessorios_entregues = LabelText(self.ef_lf_outros_dados, "Acessórios entregues:", style="Panel_Body.TLabel", width=12, height=4)
         self.ef_ltxt_notas = LabelText(self.ef_lf_outros_dados, "Notas:", style="Panel_Body.TLabel", width=25, height=4)
 
+        self.ef_lbl_local_intervencao = ttk.Label(self.ef_lf_outros_dados, style="Panel_Body.TLabel",  text="Local de intervenção:")
+        self.ef_combo_local_intervencao = ttk.Combobox(self.ef_lf_outros_dados,
+                                                        textvariable=self.ef_var_local_intervencao,
+                                                        values=("Loja X",
+                                                                "Importador Nacional A",
+                                                                "Distribuidor Ibérico Y",
+                                                                "Centro de assistência N",
+                                                                "Centro de assistência P",
+                                                                "Centro de assistência K"),
+                                                        state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
+
+
         self.ef_lbl_modo_entrega = ttk.Label(self.ef_lf_outros_dados, style="Panel_Body.TLabel", text="Morada a utilizar na entrega:")
         self.ef_combo_modo_entrega = ttk.Combobox(self.ef_lf_outros_dados, 
                                                 textvariable=self.ef_var_modo_entrega,
@@ -734,16 +744,6 @@ class App(baseApp):
                                                     "Enviar para outra morada..."),
                                                 state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
 
-        self.ef_lbl_local_intervencao = ttk.Label(self.ef_lf_outros_dados, style="Panel_Body.TLabel",  text="Local de intervenção:")
-        self.ef_combo_local_intervencao = ttk.Combobox(self.ef_lf_outros_dados,
-                                                       textvariable=self.ef_var_local_intervencao,
-                                                       values=("Loja X",
-                                                               "Importador Nacional A",
-                                                               "Distribuidor Ibérico Y",
-                                                               "Centro de assistência N",
-                                                               "Centro de assistência P",
-                                                               "Centro de assistência K"),
-                                                       state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
 
         self.ef_lbl_portes = ttk.Label(self.ef_lf_outros_dados, style="Panel_Body.TLabel", text="Cliente pagou portes?")
         self.ef_radio_portes_sim = ttk.Radiobutton(self.ef_lf_outros_dados, text="Sim", style="Panel_Body.TRadiobutton", variable=self.ef_var_portes, value=1, command=self.radio_portes_command)
@@ -780,11 +780,21 @@ class App(baseApp):
             self.ef_radio_portes_sim.grid(column=3, row=4, padx=5, sticky='wn')
             self.ef_radio_portes_nao.grid(column=4, row=4, padx=5, sticky='wn')
             self.ef_radio_portes_oferta.grid(column=5, row=4, padx=5, sticky='wn')
-            
             self.ef_ltxt_morada_entrega.grid(column=6, row=0, rowspan=5, padx=5, sticky='wens')
             self.ef_lf_outros_dados.columnconfigure(6, weight=2)
             self.ef_ltxt_morada_entrega.scrolledtext.focus()
+        elif self.ef_combo_modo_entrega.get() == "Enviar para a morada da ficha de cliente":
+            self.ef_lbl_portes.grid(column=3, row=3, columnspan=3, padx=5, sticky='wens')
+            self.ef_radio_portes_sim.grid(column=3, row=4, padx=5, sticky='wn')
+            self.ef_radio_portes_nao.grid(column=4, row=4, padx=5, sticky='wn')
+            self.ef_radio_portes_oferta.grid(column=5, row=4, padx=5, sticky='wn')
+            self.ef_ltxt_morada_entrega.grid_remove()
+            self.ef_lf_outros_dados.columnconfigure(6, weight=0)
         else:
+            self.ef_lbl_portes.grid_remove()
+            self.ef_radio_portes_sim.grid_remove()
+            self.ef_radio_portes_nao.grid_remove()
+            self.ef_radio_portes_oferta.grid_remove()
             self.ef_ltxt_morada_entrega.grid_remove()
             self.ef_lf_outros_dados.columnconfigure(6, weight=0)
 
