@@ -9,6 +9,7 @@ v.0.9 - 31/05/2017
  * O código da classe de detalhes de reparação foi reorganizado.
  * Adicionada morada para entrega no formulário de introdução de reparação,
    na janela de detalhes de reparação e no botão "Copiar".
+ * Adicionada indicação de pagamento de portes nos casos aplicáveis.
 
 ---
 v.0.8 - 17/05/2017
