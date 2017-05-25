@@ -215,6 +215,21 @@ class repairDetailWindow(ttk.Frame):
 
         if self.is_rep_cliente:
             self.ltxt_senha = LabelEntry(self.geral_fr2, "Senha:", style="Panel_Body.TLabel", width=22)
+            varias_linhas = "• Avaria reproduzida na loja"
+            varias_linhas += "\n• Find my iPhone ativo"
+            varias_linhas += "\n• Efetuar cópia de segurança"
+
+            if self.modo_entrega == 0:
+                varias_linhas += "\n• Levantamento nas n/ instalações"
+            elif self.modo_entrega == 1:
+                varias_linhas += "\n• Enviar para a morada da ficha de cliente"
+            else:
+                varias_linhas += "\n• Enviar para a morada abaixo indicada"
+                self.ltxt_morada_entrega = LabelText(self.geral_fr2, "Morada a utilizar na entrega:", style="Panel_Body.TLabel")
+
+            self.lbl_varias_linhas = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text=varias_linhas)
+
+            """
             self.lbl_avaria_reprod_loja = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Avaria reproduzida na loja")
             self.lbl_find_my = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Find my iPhone ativo")
             self.lbl_efetuar_copia = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Efetuar cópia de segurança")
@@ -225,6 +240,7 @@ class repairDetailWindow(ttk.Frame):
             else:
                 self.lbl_modo_entrega = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Enviar para a morada abaixo indicada")
                 self.ltxt_morada_entrega = LabelText(self.geral_fr2, "Morada a utilizar na entrega:", style="Panel_Body.TLabel")
+            """
         else:
             self.ltxt_num_fatura_fornecedor = LabelEntry(self.geral_fr2, "Nº fatura fornecedor:", style="Panel_Body.TLabel", width=15)
             self.ltxt_data_fatura_fornecedor = LabelEntry(self.geral_fr2, "Data fatura fornecedor:", style="Panel_Body.TLabel", width=10)
@@ -295,11 +311,13 @@ class repairDetailWindow(ttk.Frame):
 
             self.ltxt_senha.grid(column=3, row=8, rowspan=2, sticky='we', padx=4)
 
+            self.lbl_varias_linhas.grid(column=4, row=8, columnspan=2, rowspan=4, sticky='we', padx=4)
+            """
             self.lbl_avaria_reprod_loja.grid(column=4, row=8, columnspan=2, sticky='we', padx=4)
             self.lbl_efetuar_copia.grid(column=4, row=9, columnspan=2, sticky='we', padx=4)
             self.lbl_find_my.grid(column=4, row=10, columnspan=2, sticky='we', padx=4)
             self.lbl_modo_entrega.grid(column=4, row=11, columnspan=2, sticky='we', padx=4)
-
+            """
             ttk.Separator(self.geral_fr2).grid(column=0, row=13, columnspan=5, sticky='we', pady=10)
 
             if self.modo_entrega <= 1:
