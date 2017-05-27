@@ -150,6 +150,7 @@ class baseApp(ttk.Frame):
                     self.entryframe.update()
 
             self.entryframe.place_forget()
+            
 
 
     def composeFrames(self):

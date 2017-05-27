@@ -22,6 +22,7 @@ class ContactsWindow(baseApp):
         self.contacto_newDetailsWindow = {}
         self.contact_detail_windows_count = 0
         self.contacto_selecionado = None
+        self.ultimo_contacto = None
 
         self.master.minsize(CONTACTOS_MIN_WIDTH, CONTACTOS_MIN_HEIGHT)
         self.master.maxsize(CONTACTOS_MAX_WIDTH, CONTACTOS_MAX_HEIGHT)
@@ -116,9 +117,30 @@ class ContactsWindow(baseApp):
 
     def fechar_painel_entrada(self, *event):
         self.estado.painel_novo_contacto_aberto = False
-        #self.clear_text()
+        self.clear_text()
         self.hide_entryform()
         #root.bind_all("<Command-n>")
+
+    def clear_text(self):
+        self.entryframe.focus()
+        self.ef_var_tipo_is_cliente.set(True)
+        self.ef_var_tipo_is_fornecedor.set(False)
+        self.ef_var_tipo_is_loja.set(False)
+        self.ef_combo_pais.current(178)
+
+        widgets = (self.ef_ltxt_nome,
+                   self.ef_ltxt_empresa,
+                   self.ef_ltxt_nif,
+                   self.ef_ltxt_telefone,
+                   self.ef_ltxt_tlm,
+                   self.ef_ltxt_tel_empresa,
+                   self.ef_ltxt_email,
+                   self.ef_lstxt_morada,
+                   self.ef_ltxt_cod_postal,
+                   self.ef_ltxt_localidade,
+                   self.ef_lstxt_notas)
+        for widget in widgets:
+            widget.clear()
 
 
     def gerar_painel_entrada(self):
@@ -143,8 +165,8 @@ class ContactsWindow(baseApp):
         self.ef_chkbtn_tipo_fornecedor = ttk.Checkbutton(self.ef_cabecalho, text="Fornecedor ou centro técnico", style="Panel_Body.Checkbutton", variable=self.ef_var_tipo_is_fornecedor)
         self.ef_chkbtn_tipo_loja = ttk.Checkbutton(self.ef_cabecalho, text="Loja do nosso grupo", style="Panel_Body.Checkbutton", variable=self.ef_var_tipo_is_loja)
 
-        self.btn_adicionar = ttk.Button(self.ef_cabecalho, default="active",  style="Active.TButton", text="Adicionar", command=self.adicionar_contacto)
-        self.btn_cancelar = ttk.Button(self.ef_cabecalho, text="Cancelar", command=self.fechar_painel_entrada)
+        self.btn_adicionar = ttk.Button(self.ef_cabecalho, default="active",  style="Active.TButton", text="Adicionar", command=self.on_save_contact)
+        self.btn_cancelar = ttk.Button(self.ef_cabecalho, text="Cancelar", command=self.on_contact_cancel)
 
 
         self.ef_lbl_titulo.grid(column=0, row=0, columnspan=3, sticky='w')
@@ -237,7 +259,7 @@ class ContactsWindow(baseApp):
         reparação, adiciona o contacto ao campo correspondente.
         """
         # guardar na base de dados e obter o nº do último contacto adicionado
-
+        
         if self.estado.tipo_novo_contacto == "Cliente":
             print("Usar este cliente")
             self.estado.contacto_para_nova_reparacao = "123"
@@ -352,6 +374,49 @@ class ContactsWindow(baseApp):
         else:
             self.MenuFicheiro.entryconfigure("Novo contacto", state="active")
             #root.bind_all("<Command-Option-n>")
+
+
+    def on_save_contact(self, event=None):
+            # reparacao = recolher todos os dados do formulário  #TODO
+            contacto = "teste"
+            self.ultimo_contacto = save_contact(contacto) #TODO - None se falhar
+            if self.ultimo_contacto:
+                self.on_contact_save_success()
+            else:
+                wants_to_try_again_save = messagebox.askquestion(message='Não foi possível guardar este contacto na base de dados. Deseja tentar novamente?', 
+                                                                                                default='yes',
+                                                                                                parent=self)  
+                if wants_to_try_again_save == 'yes':
+                    self.on_save_contact()
+                else:
+                    self.on_contact_cancel()
+                            
+
+    def on_contact_save_success(self):
+        print("Contacto guardado com sucesso")
+        self.fechar_painel_entrada()
+        self.adicionar_contacto()
+        """
+        self.ultimo_contacto = "1234" #TODO - criar um mecanismo para obter o número da reparação acabada de introduzir na base de dados
+        wants_to_create = messagebox.askquestion(message='O novo contacto foi guardado com sucesso. Deseja criar uma nova reparação?', default='yes', parent=self)  
+        if wants_to_create == 'yes':
+                imprimir_folhas_de_reparacao(self.ultima_reparacao)
+                self.fechar_painel_entrada()
+        else:
+                self.entryframe.focus()
+        """
+
+    # TODO
+    def on_contact_cancel(self, event=None):
+        # caso haja informação introduzida no formulário TODO: verificar primeiro
+        wants_to_cancel = messagebox.askyesno(message='Tem a certeza que deseja cancelar a introdução de dados? Toda a informação não guardada será eliminada de forma irreversível.', 
+                                                                                    default='no',
+                                                                                    parent=self)
+        if wants_to_cancel:
+            self.fechar_painel_entrada()
+        else:
+            self.entryframe.focus()
+
 
 
     def inserir_dados_de_exemplo(self):

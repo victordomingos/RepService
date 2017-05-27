@@ -27,8 +27,8 @@ from tkinter import messagebox
 from tkinter.scrolledtext import ScrolledText
 import datetime
 import textwrap
-import sys
-import io
+#import sys
+#import io
 
 from about_window import *
 from base_app import *
@@ -38,6 +38,8 @@ from contactos import *
 from remessas import *
 from detalhe_reparacao import *
 from detalhe_mensagem import *
+from imprimir import *
+from db_operations import *
 
 
 __app_name__ = "RepService 2017"
@@ -64,6 +66,7 @@ class App(baseApp):
 
         self.reparacao_selecionada = None
         self.mensagem_selecionada = None
+        self.ultima_reparacao = None
 
 
         self.gerar_painel_mensagens()
@@ -535,10 +538,54 @@ class App(baseApp):
 
 
     def fechar_painel_entrada(self, *event):
-        #self.clear_text()
         self.hide_entryform()
+        self.clear_text()
+        root.focus_force()
+        self.tree.focus()
         estado.painel_nova_reparacao_aberto = self.is_entryform_visible
         #root.bind_all("<Command-n>")
+
+
+    def clear_text(self):
+        self.entryframe.focus()
+        self.ef_var_tipo.set(0)
+        self.ef_var_estado.set(0)
+        self.ef_var_garantia.set(0)
+        self.ef_var_repr_loja.set(0)
+        self.ef_var_efetuar_copia.set(0)
+        self.ef_var_find_my.set(0)
+        self.ef_var_local_intervencao.set("Loja X")
+        self.ef_var_modo_entrega.set("Levantamento nas n/ instalações")
+        self.ef_var_portes.set(0)
+        self.ef_txt_num_cliente.delete(0, 'end')
+        self.ef_txt_nome_cliente.delete(0, 'end')
+        self.ef_lbl_telefone_info.configure(text="")
+        self.ef_lbl_email_info.configure(text="")
+        self.ef_txt_num_fornecedor.delete(0, 'end')
+        self.ef_txt_nome_fornecedor.delete(0, 'end')
+        self.ef_lbl_telefone_info_fornecedor.configure(text="")
+        self.ef_lbl_email_info_fornecedor.configure(text="")
+        self.ef_ltxt_descr_equipamento.clear()
+        self.ef_ltxt_obs_estado_equipamento.clear()
+        self.ef_ltxt_cod_artigo.clear()
+        self.ef_ltxt_num_serie.clear()
+        self.ef_ltxt_data_compra.clear()
+        self.ef_ltxt_num_fatura.clear()
+        self.ef_ltxt_local_compra.clear()
+        self.ef_ltxt_num_fatura_fornecedor.clear()
+        self.ef_ltxt_data_fatura_fornecedor.clear()
+        self.ef_ltxt_nar.clear()
+        self.ef_ltxt_num_guia_rececao.clear()
+        self.ef_ltxt_data_entrada_stock.clear()
+        self.ef_ltxt_num_quebra_stock.clear()
+        self.ef_text_descr_avaria_servico.delete('1.0', 'end')
+        self.ef_ltxt_senha.clear()
+        self.ef_ltxt_acessorios_entregues.clear()
+        self.ef_ltxt_notas.clear()
+        self.ef_ltxt_morada_entrega.clear()
+        self.radio_tipo_command()
+        self.radio_garantia_command()
+        self.adicionar_morada_entrega()
 
 
     def gerar_painel_entrada(self):
@@ -561,8 +608,8 @@ class App(baseApp):
         self.ef_lbl_tipo = ttk.Label(self.ef_cabecalho, text="Tipo de processo:", style="Panel_Body.TLabel")
         self.ef_radio_tipo_cliente = ttk.Radiobutton(self.ef_cabecalho, text="Cliente", style="Panel_Body.TRadiobutton", variable=self.ef_var_tipo, value=TIPO_REP_CLIENTE, command=self.radio_tipo_command)
         self.ef_radio_tipo_stock = ttk.Radiobutton(self.ef_cabecalho, text="Stock", style="Panel_Body.TRadiobutton", variable=self.ef_var_tipo, value=TIPO_REP_STOCK, command=self.radio_tipo_command)
-        self.btn_adicionar = ttk.Button(self.ef_cabecalho, default="active", style="Active.TButton", text="Adicionar", command=None)
-        self.btn_cancelar = ttk.Button(self.ef_cabecalho, text="Cancelar", command=self.fechar_painel_entrada)
+        self.btn_adicionar = ttk.Button(self.ef_cabecalho, default="active", style="Active.TButton", text="Adicionar", command=self.on_save_repair)
+        self.btn_cancelar = ttk.Button(self.ef_cabecalho, text="Cancelar", command=self.on_repair_cancel)
 
         self.ef_lbl_titulo.grid(column=0, row=0, columnspan=3, sticky='w')
         self.ef_lbl_tipo.grid(column=0, row=1, sticky='e')
@@ -1023,6 +1070,47 @@ class App(baseApp):
             #root.bind_all("<Command-n>")
 
 
+    def on_save_repair(self, event=None):
+        # reparacao = recolher todos os dados do formulário  #TODO
+        reparacao = "teste"
+        self.ultima_reparacao = save_repair(reparacao) #TODO - None se falhar
+        if self.ultima_reparacao:
+            self.on_repair_save_success()
+        else:
+            wants_to_try_again_save = messagebox.askquestion(message='Não foi possível guardar o processo de reparação. Deseja tentar novamente?', 
+                                                    default='yes',
+                                                    parent=self)  
+            if wants_to_try_again_save == 'yes':
+                self.on_save_repair()
+            else:
+                self.on_repair_cancel()
+                
+
+    def on_repair_save_success(self):
+        self.ultima_reparacao = "1234" #TODO - criar um mecanismo para obter o número da reparação acabada de introduzir na base de dados
+        wants_to_print = messagebox.askquestion(message='O processo de reparação foi guardado com sucesso. Deseja imprimir?', 
+                                                default='yes',
+                                                parent=self)  
+        if wants_to_print == 'yes':
+            imprimir_folhas_de_reparacao(self.ultima_reparacao)
+            self.fechar_painel_entrada()
+        else:
+            self.entryframe.focus()
+
+
+    # TODO
+    def on_repair_cancel(self, event=None):
+        # caso haja informação introduzida no formulário TODO: verificar primeiro
+        wants_to_cancel = messagebox.askyesno(message='Tem a certeza que deseja cancelar a introdução de dados? Toda a informação não guardada será eliminada de forma irreversível.', 
+                                              default='no',
+                                              parent=self)
+        if wants_to_cancel:
+            self.fechar_painel_entrada()
+        else:
+            self.entryframe.focus()
+
+
+
     def inserir_msg(self, processo, utilizador, data, texto):
         processo = str(processo)
         str_data = f"{data.day}/{data.month}/{data.year} às {data.hour}:{int(data.minute):02}"
@@ -1063,9 +1151,10 @@ class App(baseApp):
             self.inserir_msg(processo3, utilizadores[3], now, insert_txt3)
 
 
+
 if __name__ == "__main__":
-    sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')
-    sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
+    #sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')
+    #sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
     root = tk.Tk()
     estado = AppStatus()
     estado.janela_principal = App(root)

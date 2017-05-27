@@ -12,6 +12,7 @@ import tkinter as tk
 from tkinter import ttk
 import tkinter.font
 from tkinter.scrolledtext import ScrolledText
+#import os
 
 
 
@@ -118,10 +119,20 @@ class LabelEntry(ttk.Frame):
         self.label.pack(side="top", fill="x", expand=True)
         self.entry.pack(side="top", fill="x", expand=True)
 
-    def get(self): return self.entry.get()
-    def set(self, text): self.entry.insert(0, text)
-    def disable(self): self.entry.configure(state="disabled")
-    def enable(self): self.entry.configure(state="enabled")
+    def clear(self): 
+        self.entry.delete(0, 'end')
+
+    def get(self): 
+        return self.entry.get()
+
+    def set(self, text): 
+        self.entry.insert(0, text)
+
+    def disable(self): 
+        self.entry.configure(state="disabled")
+
+    def enable(self): 
+        self.entry.configure(state="enabled")
 
 
 class LabelText(ttk.Frame):
@@ -144,9 +155,17 @@ class LabelText(ttk.Frame):
         self.label.pack(side="top", fill="x", expand=False)
         self.scrolledtext.pack(side="top", fill="both", expand=True)
 
-    def get(self): return self.scrolledtext.get()
-    def set(self, text): self.scrolledtext.insert('insert', text)
-    def enable(self): self.scrolledtext.configure(state="enabled", bg="white")
+    def get(self):
+        return self.scrolledtext.get()
+
+    def set(self, text):
+        self.scrolledtext.insert('insert', text)
+
+    def clear(self): 
+        self.scrolledtext.delete('1.0', 'end')
+        
+    def enable(self): 
+        self.scrolledtext.configure(state="enabled", bg="white")
     
     def disable(self):
         self.scrolledtext.configure(state="disabled", 
@@ -171,3 +190,5 @@ class StatusBar(ttk.Frame):
     def clear(self):
         self.label.config(text="")
         self.label.update_idletasks()
+
+
