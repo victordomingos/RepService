@@ -10,6 +10,9 @@ v.0.9 - 31/05/2017
  * Adicionada morada para entrega no formulário de introdução de reparação,
    na janela de detalhes de reparação e no botão "Copiar".
  * Adicionada indicação de pagamento de portes nos casos aplicáveis.
+ * Adicionado método para limpar os formulários de introdução de dados.
+ * Adicionadas caixas de diálogo para confirmação de impressão (nova reparação)
+   e cancelamento de introdução dados.
 
 ---
 v.0.8 - 17/05/2017
