@@ -368,7 +368,8 @@ class RemessasWindow(baseApp):
         self.ef_var_reparacoes_a_enviar.set("Selecionar reparações...")
 
         self.ef_txt_num_reparacao.delete(0, 'end')
-
+        self.tree_lista_processos_remessa.delete(*self.tree_lista_processos_remessa.get_children())
+        
         """
         widgets = (self.ef_ltxt_nome,
                     self.ef_ltxt_empresa,
@@ -391,9 +392,7 @@ class RemessasWindow(baseApp):
         self.ef_txt_num_reparacao.grid(column=0, row=1, padx=5, sticky='we')
         self.ef_btn_adicionar_rep.grid(column=1, row=1, padx=5, sticky='w')
         self.ef_combo_selecionar_rep.grid(column=2, row=1,  padx=5, sticky='we')
-        self.entryfr3.grid_columnconfigure(0, weight=0)
-        self.entryfr3.grid_columnconfigure(1, weight=0)
-        self.entryfr3.grid_columnconfigure(2, weight=1)
+       
 
 
 
