@@ -18,6 +18,12 @@ def save_contact(contacto):
     return db_last_contact_number
 
 
+def save_remessa(remessa):
+    print("a guardar a remessa", remessa)
+    db_last_remessa_number = "1984"
+    return db_last_remessa_number
+
+
 def obter_lista_fornecedores():
     print("A obter lista atualizada de fornecedores e/ou centros técnicos.")
     #TODO:

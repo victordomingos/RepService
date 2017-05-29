@@ -6,12 +6,9 @@ Victor Domingos e distribuída sob os termos da licença Creative Commons
 Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
 
-import os.path
-import os
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font
-import webbrowser
 
 from global_setup import *
 
@@ -29,8 +26,6 @@ class thanks_window:
     def __init__(self):
         self.about_w = 320
         self.about_h = 370
-        os.chdir(os.path.dirname(__file__))
-        file_path = os.getcwd() + "/credits.txt"
 
         self.thanksRoot = tk.Toplevel()
         self.thanksRoot.title("Agradecimentos")
@@ -48,16 +43,11 @@ class thanks_window:
         self.thanksframe = ttk.Frame(self.thanksRoot, padding="10 10 10 10")
         self.thanksframe_bottom = ttk.Frame(self.thanksRoot, padding="10 10 10 10")
 
-
-        file = open(file_path, "r")
-        self.texto = file.read()
-        file.close()
         self.campo_texto = tk.Text(self.thanksframe, height=20)
-        self.campo_texto.insert("end", self.texto)
+        self.campo_texto.insert("end", "\n".join(CREDITS))
         self.campo_texto.tag_configure("center", justify='center')
         self.campo_texto.tag_add("center", 1.0, "end")
         self.campo_texto.pack(side='top')
-
 
         self.close_button = ttk.Button(self.thanksframe_bottom, text="Obrigado!", command=self.thanksRoot.destroy)
         self.close_button.pack()
@@ -113,11 +103,9 @@ class about_window:
         #---------- MEIO -----------
 
 
-
         #---------- FUNDO -----------
         self.copyright_lbl = ttk.Label(self.pframe_fundo, font=self.copyfont, text="\n\n\n© 2017 Victor Domingos")
         self.license_lbl = ttk.Label(self.pframe_fundo, font=self.copyfont, text=__license__)
-
 
         self.app_lbl.pack()
         self.assin_lbl.pack()
@@ -141,7 +129,6 @@ class about_window:
         window.destroy()
         return "break"
     
-
 
 def thanks(*event):
     janela_thanks = thanks_window()

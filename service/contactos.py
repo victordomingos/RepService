@@ -199,13 +199,10 @@ class ContactsWindow(baseApp):
         self.ef_ltxt_localidade = LabelEntry(self.ef_lf_top, "Localidade", style="Panel_Body.TLabel")
 
         self.ef_lbl_pais = ttk.Label(self.ef_lf_top, text="País", style="Panel_Body.TLabel")
-        with open(f"{APP_PATH}/paises.txt", 'r', encoding='utf-8') as f:
-            linhas = f.readlines()
-        self.paises = [linha.strip() for linha in linhas]
         self.paises_value = tk.StringVar()
-
-        self.ef_combo_pais = ttk.Combobox(self.ef_lf_top, textvariable=self.paises_value, state='readonly')
-        self.ef_combo_pais['values'] = self.paises
+        self.ef_combo_pais = ttk.Combobox(self.ef_lf_top, values=TODOS_OS_PAISES,
+                                          textvariable=self.paises_value, 
+                                          state='readonly')
         self.ef_combo_pais.current(178)
         self.ef_combo_pais.bind("<Key>", self.procurar_em_combobox)
 
@@ -245,7 +242,7 @@ class ContactsWindow(baseApp):
         """
         tecla_pressionada = event.char.upper()
         if tecla_pressionada in ascii_uppercase:
-            for index, pais in enumerate(self.paises):
+            for index, pais in enumerate(TODOS_OS_PAISES):
                 if pais[0] == tecla_pressionada:
                     self.ef_combo_pais.current(index)
                     break
@@ -382,8 +379,8 @@ class ContactsWindow(baseApp):
                 self.on_contact_save_success()
             else:
                 wants_to_try_again_save = messagebox.askquestion(message='Não foi possível guardar este contacto na base de dados. Deseja tentar novamente?', 
-                                                                                                default='yes',
-                                                                                                parent=self)  
+                                                                 default='yes',
+                                                                 parent=self)  
                 if wants_to_try_again_save == 'yes':
                     self.on_save_contact()
                 else:

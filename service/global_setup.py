@@ -1,7 +1,14 @@
 #!/usr/bin/env python3.6
 # encoding: utf-8
+"""
+Este módulo é parte integrante da aplicação RepService, desenvolvida por
+Victor Domingos e distribuída sob os termos da licença Creative Commons
+Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+"""
 
+import os
 import os.path
+
 
 ROOT_GEOMETRIA = '1060x800+0+0'
 MASTER_MIN_WIDTH = 970
@@ -97,3 +104,64 @@ TIPO_CONTACTO_LOJA = 2
 os.chdir(os.path.dirname(__file__))
 APP_PATH = os.getcwd()
 ICON_PATH = APP_PATH + "/images/icons/"
+
+
+TODOS_OS_PAISES = ("Angola", "Alemanha", "Afeganistão", "África do Sul", 
+    "Albânia", "Andorra", "Anguilla", "Antártida", "Antígua & Barbuda",
+    "Arábia Saudita", "Argélia", "Argentina", "Arménia", "Aruba", "Austrália",
+    "Áustria", "Azerbaijão", "Brasil", "Bélgica", "Bahamas", "Bahrein",
+    "Bangladesh", "Barbados", "Bielorrússia", "Belize", "Benin", "Bermudas",
+    "Bolívia", "Bonaire, St. Eustatius & Saba", "Bósnia-Herzegovina",
+    "Botsuana", "Brunei", "Bulgária", "Burkina Faso", "Burundi", "Butão",
+    "Cabo Verde", "Camarões", "Camboja", "Canadá", "Cazaquistão", "Chade",
+    "Chile", "China", "Chipre", "Colômbia", "Congo", "Coreia do Norte", 
+    "Coreia do Sul", "Costa do Marfim", "Costa Rica", "Croácia", "Cuba",
+    "Curaçao", "Dinamarca", "Djibuti", "Dominica", "Espanha", "Estados Unidos",
+    "Egito", "El Salvador", "Emirados Árabes Unidos", "Equador", "Eritréia",
+    "Eslováquia", "Eslovénia", "Estónia", "Etiópia", "França", 
+    "Federação Russa", "Fiji", "Filipinas", "Finlândia", "Gabão", "Gâmbia",
+    "Gana", "Geórgia", "Gibraltar", "Granada", "Grécia", "Gronelândia",
+    "Guadalupe", "Guam (Território dos Estados Unidos)", "Guatemala",
+    "Guernsey", "Guiana", "Guiana Francesa", "Guiné", "Guiné Equatorial",
+    "Guiné-Bissau", "Haiti", "Holanda", "Honduras", "Hong-Kong", "Hungria",
+    "Iémen", "Ilha Bouvet (Território da Noruega)", "Ilha do Homem",
+    "Ilha Natal", "Ilha Pitcairn", "Ilha Reunião", "Ilhas Aland",
+    "Ilhas Cayman", "Ilhas Cocos", "Ilhas Comores", "Ilhas Cook",
+    "Ilhas Faroes", "Ilhas Falkland (Malvinas)",
+    "Ilhas Geórgia do Sul e Sandwich do Sul", 
+    "Ilhas Heard e McDonald (Território da Austrália)",
+    "Ilhas Marianas do Norte", "Ilhas Marshall",
+    "Ilhas Menores dos Estados Unidos", "Ilhas Norfolk", "Ilhas Seychelles",
+    "Ilhas Solomão", "Ilhas Svalbard & Jan Mayen", "Ilhas Tokelau",
+    "Ilhas Turks e Caicos", "Ilhas Virgens (Estados Unidos)",
+    "Ilhas Virgens (Inglaterra)", "Ilhas Wallis & Futuna", "Índia",
+    "Indonésia", "Irão", "Iraque", "Irlanda", "Islândia", "Israel", "Itália",
+    "Jamaica", "Japão", "Jersey", "Jordânia", "Kiribati", "Kuait",
+    "Luxemburgo", "Laos", "Letónia", "Lesoto", "Líbano", "Libéria", "Líbia",
+    "Liechtenstein", "Lituânia", "Macau", "Macedónia (República Jugoslava)",
+    "Madagascar", "Malásia", "Malaui", "Maldivas", "Mali", "Malta", "Marrocos",
+    "Martinica", "Maurício", "Mauritânia", "Mayotte", "México", "Micronésia",
+    "Moçambique", "Moldova", "Mónaco", "Mongólia", "Montenegro", "Montserrat",
+    "Birmânia (Myanmar)", "Namíbia", "Nauru", "Nepal", "Nicarágua", "Níger",
+    "Nigéria", "Niue", "Noruega", "Nova Caledónia", "Nova Zelândia", "Omã",
+    "Portugal", "Palau", "Panamá", "Papua-Nova Guiné", "Paquistão", "Paraguai",
+    "Peru", "Polinésia Francesa", "Polónia", "Porto Rico", "Qatar", "Quénia",
+    "Quirguistão", "Reino Unido", "República Centro-Africana",
+    "República Democrática do Congo", "República Dominicana",
+    "República Checa", "Roménia", "Ruanda", "Saara Ocidental",
+    "Saint Vincent e Granadinas", "Samoa Ocidental", "San Marino",
+    "Santa Helena", "Santa Lúcia", "São Bartolomeu", "São Cristóvão e Névis",
+    "San Martin", "São Tomé e Príncipe", "Senegal", "Serra Leoa", "Sérvia",
+    "Singapura", "Síria", "Somália", "Sri Lanka", "St. Maarten",
+    "St.Pierre & Miquelon", "Suazilândia", "Sudão", "Sudão do Sul", "Suécia",
+    "Suíça", "Suriname", "Tadjiquistão", "Tailândia", "Taiwan", "Tanzânia",
+    "Território Britânico do Oceano Índico", "Territórios do Sul da França",
+    "Territórios Palestinos Ocupados", "Timor Leste", "Togo", "Tonga",
+    "Trinidad & Tobago", "Tunísia", "Turquemenistão", "Turquia", "Tuvalu",
+    "Ucrânia", "Uganda", "Uruguai", "Uzbequistão", "Vanuatu", "Vaticano",
+    "Venezuela", "Vietname", "Zâmbia", "Zimbábue")
+
+
+CREDITS = ("António Cascalheira", "Bjorn Pettersen", "Brian Oakley",
+    "Jackjr300", "Jannick", "Jay Loden", "Márcio Araújo", "Nelson Brochado",
+    "Pat Thoyts", "Patrick Seemann", "Ruocheng Wang")

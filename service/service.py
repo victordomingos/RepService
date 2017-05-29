@@ -851,48 +851,50 @@ class App(baseApp):
         """
         tipo = self.ef_var_tipo.get()
         if tipo == TIPO_REP_STOCK:
-            self.ef_lf_cliente.grid_remove()
             self.ef_lf_fornecedor.grid(column=0,row=0, sticky='we')
 
             self.ef_ltxt_descr_equipamento.scrolledtext.configure(height=7)
             self.ef_ltxt_descr_equipamento.grid_configure(rowspan=8)
 
-            self.ef_lbl_estado_equipamento.grid_remove()
-            self.ef_radio_estado_marcas_uso.grid_remove()
-            self.ef_radio_estado_bom.grid_remove()
-            self.ef_radio_estado_marcas_acidente.grid_remove()
-            self.ef_radio_estado_faltam_pecas.grid_remove()
-            self.ef_ltxt_obs_estado_equipamento.grid_remove()
-            self.ef_lbl_garantia.grid_remove()
-            self.ef_radio_garantia_fora_garantia.grid_remove()
-            self.ef_radio_garantia_neste.grid_remove()
-            self.ef_radio_garantia_noutro.grid_remove()
-            self.ef_ltxt_data_compra.grid_remove()
-            self.ef_ltxt_num_fatura.grid_remove()
-            self.ef_ltxt_local_compra.grid_remove()
+            widgets = ( self.ef_lf_cliente,
+                        self.ef_lbl_estado_equipamento,
+                        self.ef_radio_estado_marcas_uso,
+                        self.ef_radio_estado_bom,
+                        self.ef_radio_estado_marcas_acidente,
+                        self.ef_radio_estado_faltam_pecas,
+                        self.ef_ltxt_obs_estado_equipamento,
+                        self.ef_lbl_garantia,
+                        self.ef_radio_garantia_fora_garantia,
+                        self.ef_radio_garantia_neste,
+                        self.ef_radio_garantia_noutro,
+                        self.ef_ltxt_data_compra,
+                        self.ef_ltxt_num_fatura,
+                        self.ef_ltxt_local_compra,
 
-            self.ef_chkbtn_avaria_reprod_loja.grid_remove()
-            self.ef_ltxt_senha.grid_remove()
-            self.ef_lbl_find_my.grid_remove()
-            self.ef_radio_find_my_sim.grid_remove()
-            self.ef_radio_find_my_nao.grid_remove()
-            self.ef_radio_find_my_nao_aplic.grid_remove()
-            self.ef_lbl_efetuar_copia.grid_remove()
-            self.ef_radio_efetuar_copia_nao.grid_remove()
-            self.ef_radio_efetuar_copia_sim.grid_remove()
-            self.ef_radio_efetuar_copia_n_aplic.grid_remove()
+                        self.ef_chkbtn_avaria_reprod_loja,
+                        self.ef_ltxt_senha,
+                        self.ef_lbl_find_my,
+                        self.ef_radio_find_my_sim,
+                        self.ef_radio_find_my_nao,
+                        self.ef_radio_find_my_nao_aplic,
+                        self.ef_lbl_efetuar_copia,
+                        self.ef_radio_efetuar_copia_nao,
+                        self.ef_radio_efetuar_copia_sim,
+                        self.ef_radio_efetuar_copia_n_aplic,
 
-            self.ef_ltxt_acessorios_entregues.grid_remove()
-            self.ef_lbl_modo_entrega.grid_remove()
-            self.ef_combo_modo_entrega.grid_remove()
-            self.ef_lbl_local_intervencao.grid_remove()
-            self.ef_combo_local_intervencao.grid_remove()
-            self.ef_ltxt_morada_entrega.grid_remove()
-            
-            self.ef_lbl_portes.grid_remove()
-            self.ef_radio_portes_sim.grid_remove()
-            self.ef_radio_portes_nao.grid_remove()
-            self.ef_radio_portes_oferta.grid_remove()
+                        self.ef_ltxt_acessorios_entregues,
+                        self.ef_lbl_modo_entrega,
+                        self.ef_combo_modo_entrega,
+                        self.ef_lbl_local_intervencao,
+                        self.ef_combo_local_intervencao,
+                        self.ef_ltxt_morada_entrega,
+                        
+                        self.ef_lbl_portes,
+                        self.ef_radio_portes_sim,
+                        self.ef_radio_portes_nao,
+                        self.ef_radio_portes_oferta)
+            for widget in widgets:
+                widget.grid_remove()
             
             self.ef_ltxt_notas.grid(column=0, row=0, columnspan=7, rowspan=5, padx=5, sticky='wens')
             self.ef_ltxt_num_serie.label.configure(text="Nº de série")
@@ -907,57 +909,60 @@ class App(baseApp):
             self.ef_ltxt_num_quebra_stock.grid(column=4, row=4, rowspan=2, padx=5, sticky='we')
             self.ef_txt_num_fornecedor.focus()
         else:
-            self.ef_lf_fornecedor.grid_remove()
-            self.ef_lf_cliente.grid()
-
             self.ef_ltxt_descr_equipamento.scrolledtext.configure(height=4)
             self.ef_ltxt_descr_equipamento.grid_configure(rowspan=5)
-
-            self.ef_lbl_estado_equipamento.grid()
-            self.ef_radio_estado_marcas_uso.grid()
-            self.ef_radio_estado_bom.grid()
-            self.ef_radio_estado_marcas_acidente.grid()
-            self.ef_radio_estado_faltam_pecas.grid()
-            self.ef_ltxt_obs_estado_equipamento.grid()
-            self.ef_lbl_garantia.grid()
-            self.ef_radio_garantia_fora_garantia.grid()
-            self.ef_radio_garantia_neste.grid()
-            self.ef_radio_garantia_noutro.grid()
-            self.ef_ltxt_data_compra.grid()
-            self.ef_ltxt_num_fatura.grid()
+            
+            widgets = ( self.ef_lbl_estado_equipamento,
+                        self.ef_radio_estado_marcas_uso,
+                        self.ef_radio_estado_bom,
+                        self.ef_radio_estado_marcas_acidente,
+                        self.ef_radio_estado_faltam_pecas,
+                        self.ef_ltxt_obs_estado_equipamento,
+                        self.ef_lbl_garantia,
+                        self.ef_radio_garantia_fora_garantia,
+                        self.ef_radio_garantia_neste,
+                        self.ef_radio_garantia_noutro,
+                        self.ef_ltxt_data_compra,
+                        self.ef_ltxt_num_fatura,
+                        self.ef_lf_cliente,
+                        self.ef_chkbtn_avaria_reprod_loja,
+                        self.ef_ltxt_senha,
+                        self.ef_lbl_find_my,
+                        self.ef_radio_find_my_sim,
+                        self.ef_radio_find_my_nao,
+                        self.ef_radio_find_my_nao_aplic,
+                        self.ef_lbl_efetuar_copia,
+                        self.ef_radio_efetuar_copia_nao,
+                        self.ef_radio_efetuar_copia_sim,
+                        self.ef_radio_efetuar_copia_n_aplic,
+                        self.ef_ltxt_acessorios_entregues,
+                        self.ef_lbl_modo_entrega,
+                        self.ef_combo_modo_entrega,
+                        self.ef_lbl_local_intervencao,
+                        self.ef_combo_local_intervencao)
+            for widget in widgets:
+                widget.grid()
 
             self.radio_garantia_command()
-
-            self.ef_chkbtn_avaria_reprod_loja.grid()
-            self.ef_ltxt_senha.grid()
-            self.ef_lbl_find_my.grid()
-            self.ef_radio_find_my_sim.grid()
-            self.ef_radio_find_my_nao.grid()
-            self.ef_radio_find_my_nao_aplic.grid()
-            self.ef_lbl_efetuar_copia.grid()
-            self.ef_radio_efetuar_copia_nao.grid()
-            self.ef_radio_efetuar_copia_sim.grid()
-            self.ef_radio_efetuar_copia_n_aplic.grid()
-
-            self.ef_ltxt_nar.grid_remove()
-            self.ef_ltxt_num_fatura_fornecedor.grid_remove()
-            self.ef_ltxt_data_fatura_fornecedor.grid_remove()
-            self.ef_ltxt_num_guia_rececao.grid_remove()
-            self.ef_ltxt_data_entrada_stock.grid_remove()
-            self.ef_ltxt_num_quebra_stock.grid_remove()
+            
+            widgets = ( self.ef_lf_fornecedor,
+                        self.ef_ltxt_nar,
+                        self.ef_ltxt_num_fatura_fornecedor,
+                        self.ef_ltxt_data_fatura_fornecedor,
+                        self.ef_ltxt_num_guia_rececao,
+                        self.ef_ltxt_data_entrada_stock,
+                        self.ef_ltxt_num_quebra_stock)
+            for widget in widgets:
+                widget.grid_remove()
+                
             self.ef_ltxt_num_serie.label.configure(text="\nNº de série")
             self.ef_ltxt_cod_artigo.label.configure(text="\nCódigo de artigo")
             self.ef_ltxt_cod_artigo.grid(column=0, row=5, padx=5, sticky='we')
             self.ef_ltxt_num_serie.grid(column=1, row=5, padx=5, sticky='we')
 
             self.ef_lf_outros_dados.configure(text="\nOutros dados")
-            self.ef_ltxt_acessorios_entregues.grid()
             self.ef_ltxt_notas.grid(column=1, row=0, columnspan=1, rowspan=5, padx=5, sticky='wens')
             
-            self.ef_lbl_modo_entrega.grid()
-            self.ef_combo_modo_entrega.grid()
-            self.ef_lbl_local_intervencao.grid()
-            self.ef_combo_local_intervencao.grid()
             self.adicionar_morada_entrega()
             self.ef_txt_num_cliente.focus()
 

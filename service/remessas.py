@@ -7,11 +7,13 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
 import tkinter as tk
 from tkinter import ttk
+
 from extra_tk_classes import *
 from base_app import *
 from service import *
 from detalhe_remessa import *
 from db_operations import *
+from imprimir import *
 
 
 class RemessasWindow(baseApp):
@@ -140,8 +142,8 @@ class RemessasWindow(baseApp):
         self.ef_lbl_tipo = ttk.Label(self.ef_cabecalho, text="Tipo:", style="Panel_Body.TLabel")
         self.ef_radio_tipo_saida = ttk.Radiobutton(self.ef_cabecalho, text="Envio", style="Panel_Body.TRadiobutton", variable=self.ef_var_tipo, value=TIPO_REMESSA_ENVIO, command=self.radio_tipo_command)
         self.ef_radio_tipo_entrada = ttk.Radiobutton(self.ef_cabecalho, text="Receção", style="Panel_Body.TRadiobutton", variable=self.ef_var_tipo, value=TIPO_REMESSA_RECECAO, command=self.radio_tipo_command)
-        self.btn_adicionar = ttk.Button(self.ef_cabecalho, default="active", style="Active.TButton", text="Adicionar", command=None)
-        self.btn_cancelar = ttk.Button(self.ef_cabecalho, text="Cancelar", command=self.fechar_painel_entrada)
+        self.btn_adicionar = ttk.Button(self.ef_cabecalho, default="active", style="Active.TButton", text="Adicionar", command=self.on_save_remessa)
+        self.btn_cancelar = ttk.Button(self.ef_cabecalho, text="Cancelar", command=self.on_remessa_cancel)
 
 
         self.ef_lbl_titulo.grid(column=0, row=0, columnspan=3, sticky="w")
@@ -369,44 +371,49 @@ class RemessasWindow(baseApp):
 
         self.ef_txt_num_reparacao.delete(0, 'end')
         self.tree_lista_processos_remessa.delete(*self.tree_lista_processos_remessa.get_children())
-        
-        """
-        widgets = (self.ef_ltxt_nome,
-                    self.ef_ltxt_empresa,
-                    self.ef_ltxt_nif,
-                    self.ef_ltxt_telefone,
-                    self.ef_ltxt_tlm,
-                    self.ef_ltxt_tel_empresa,
-                    self.ef_ltxt_email,
-                    self.ef_lstxt_morada,
-                    self.ef_ltxt_cod_postal,
-                    self.ef_ltxt_localidade,
-                    self.ef_lstxt_notas)
-        for widget in widgets:
-            widget.clear()
-        """
-
-        """
-       
-        self.ef_lbl_num_rep.grid(column=0, row=0, padx=5, sticky='we')
-        self.ef_txt_num_reparacao.grid(column=0, row=1, padx=5, sticky='we')
-        self.ef_btn_adicionar_rep.grid(column=1, row=1, padx=5, sticky='w')
-        self.ef_combo_selecionar_rep.grid(column=2, row=1,  padx=5, sticky='we')
-       
 
 
+    def on_save_remessa(self, event=None):
+            # remessa = recolher todos os dados do formulário  #TODO
+            remessa = "teste"
+            self.ultima_remessa = save_remessa(remessa) #TODO - None se falhar
+            if self.ultima_remessa:
+                self.on_remessa_save_success()
+            else:
+                wants_to_try_again_save = messagebox.askquestion(message='Não foi possível guardar esta remessa na base de dados. Deseja tentar novamente?', 
+                                                                default='yes',
+                                                                parent=self)  
+                if wants_to_try_again_save == 'yes':
+                    self.on_save_remessa()
+                else:
+                    self.on_remessa_cancel()
+                            
 
-        #  treeview entryfr4:
-        self.ef_lista = ttk.Frame(self.entryfr4, padding=4)
-        self.tree_lista_processos_remessa = ttk.Treeview(self.ef_lista, height=15, selectmode='browse')
-        self.tree_lista_processos_remessa['columns'] = ('Nº', 'Equipamento', 'S/N')
-        self.tree_lista_processos_remessa.pack(side=tk.TOP, expand=True, fill='both')
-        self.tree_lista_processos_remessa.column('#0', anchor=tk.W, minwidth=0, stretch=0, width=0)
-        self.tree_lista_processos_remessa.column('Nº', anchor=tk.E, minwidth=46, stretch=0, width=46)
-        self.tree_lista_processos_remessa.column('Equipamento', minwidth=180, stretch=1, width=180)
-        self.tree_lista_processos_remessa.column('S/N', anchor=tk.E, minwidth=140, stretch=0, width=140)
-        """
+    def on_remessa_save_success(self):
+        print("Remessa guardada com sucesso")
+        self.ultima_remessa = "333" #TODO - criar um mecanismo para obter o número da reparação acabada de introduzir na base de dados
+        wants_to_print = messagebox.askquestion(message='A remessa foi guardada com sucesso. Deseja imprimir?', 
+                                                default='yes',
+                                                parent=self)  
+        if wants_to_print == 'yes':
+            imprimir_guia_de_remessa(self.ultima_remessa)
+            self.fechar_painel_entrada()
+        else:
+            self.fechar_painel_entrada()
+            #self.entryframe.focus()
 
+
+    # TODO
+    def on_remessa_cancel(self, event=None):
+        # caso haja informação introduzida no formulário TODO: verificar primeiro
+        wants_to_cancel = messagebox.askyesno(message='Tem a certeza que deseja cancelar a introdução de dados? Toda a informação não guardada será eliminada de forma irreversível.', 
+                                              default='no',
+                                              parent=self)
+        if wants_to_cancel:
+            self.fechar_painel_entrada()
+        else:
+            self.entryframe.focus()
+    
 
 
     def inserir_dados_de_exemplo(self):

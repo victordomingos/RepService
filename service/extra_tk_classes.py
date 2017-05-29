@@ -12,8 +12,6 @@ import tkinter as tk
 from tkinter import ttk
 import tkinter.font
 from tkinter.scrolledtext import ScrolledText
-#import os
-
 
 
 class AutocompleteEntry(ttk.Entry):
