@@ -107,14 +107,13 @@ class RemessasWindow(baseApp):
         self.topframe.columnconfigure(2, weight=1)
 
 
-
     def mostrar_painel_entrada(self, *event):
         self.estado.painel_nova_remessa_aberto = True
         #self.MenuFicheiro.entryconfig("Novo contacto", state="disabled")
         #root.unbind_all("<Command-n>")
         self.show_entryform()
+        self.my_statusbar.set(self.str_num_processos)
         self.ef_radio_tipo_saida.focus()
-
 
 
     def fechar_painel_entrada(self, *event):
@@ -125,16 +124,12 @@ class RemessasWindow(baseApp):
 
 
     def gerar_painel_entrada(self):
-
         #entryfr1-----------------------------
-        #TODO:adicionar campos, notebook, etc
-        #criar funções para usar esses campos, ora para adicionar, ora para editar, ora para visualizar registos
         self.ef_var_tipo = tk.IntVar()
         self.ef_var_tipo.set(0)
         self.ef_var_destino = tk.IntVar()
-        self.str_num_processos = tk.StringVar()
         self.num_processos = 0
-        self.str_num_processos.set(f"Número de processos a enviar: {self.num_processos}")
+        self.str_num_processos = f"Número de processos a enviar: {self.num_processos}"
         self.ef_var_reparacoes_a_enviar = tk.IntVar()
         self.ef_var_reparacoes_a_enviar.set("Selecionar reparações...")
 
@@ -212,9 +207,7 @@ class RemessasWindow(baseApp):
         self.entryfr4.grid_rowconfigure(0, weight=1)
         self.configurarTree_lista_processos_remessa()
 
-        # Rodapé entryfr5: Num. processos "a enviar" (tipo:saída)/ "recebidos" (tipo:Entrada): XXXXX (contar linhas treeview)
-        self.lbl_num_processos = ttk.Label(self.entryfr5, textvariable=self.str_num_processos)
-        self.lbl_num_processos.pack()
+        # Rodapé entryfr5:
 
         #--- acabaram os 'entryfr', apenas código geral para o entryframe a partir daqui ---
         #self.entryframe.bind_all("<Command-Escape>", self.fechar_painel_entrada)
@@ -343,10 +336,11 @@ class RemessasWindow(baseApp):
         tipo = self.ef_var_tipo.get()
         if tipo == TIPO_REMESSA_RECECAO:
             self.ef_lbl_destino.configure(text="Origem:")
-            self.str_num_processos.set(f"Número de processos a receber: {self.num_processos}")
+            self.str_num_processos = f"Número de processos a receber: {self.num_processos}"
         else:
             self.ef_lbl_destino.configure(text="Destino:")
-            self.str_num_processos.set(f"Número de processos a enviar: {self.num_processos}")
+            self.str_num_processos = f"Número de processos a enviar: {self.num_processos}"
+        self.my_statusbar.set(self.str_num_processos)
 
 
     def liga_desliga_menu_novo(self, *event):
@@ -369,10 +363,12 @@ class RemessasWindow(baseApp):
         self.ef_var_tipo.set(TIPO_REMESSA_ENVIO)
         self.ef_var_destino.set("Selecionar centro técnico...") #TODO
         self.num_processos = 0
-        self.str_num_processos.set(f"Número de processos a enviar: {self.num_processos}")
+        self.str_num_processos = f"Número de processos a enviar: {self.num_processos}"
+        self.my_statusbar.set(self.str_num_processos)
         self.ef_var_reparacoes_a_enviar.set("Selecionar reparações...")
 
         self.ef_txt_num_reparacao.delete(0, 'end')
+
         """
         widgets = (self.ef_ltxt_nome,
                     self.ef_ltxt_empresa,
@@ -390,25 +386,7 @@ class RemessasWindow(baseApp):
         """
 
         """
-        self.ef_combo_selecionar_rep = ttk.Combobox(self.entryfr3,
-                                                    textvariable=self.ef_var_reparacoes_a_enviar,
-                                                    values=("12234 - iPhone 7 128GB Space grey - José manuel da Silva Castro",
-                                                            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-                                                            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
-                                                            "25720 - Beats X - NPK - Network Project for Knowledge",
-                                                            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-                                                            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
-                                                            "25720 - Beats X - NPK - Network Project for Knowledge",
-                                                            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-                                                            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
-                                                            "25720 - Beats X - NPK - Network Project for Knowledge",
-                                                            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-                                                            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
-                                                            "25720 - Beats X - NPK - Network Project for Knowledge",
-                                                            ),
-                                                    state='readonly')
-
-
+       
         self.ef_lbl_num_rep.grid(column=0, row=0, padx=5, sticky='we')
         self.ef_txt_num_reparacao.grid(column=0, row=1, padx=5, sticky='we')
         self.ef_btn_adicionar_rep.grid(column=1, row=1, padx=5, sticky='w')

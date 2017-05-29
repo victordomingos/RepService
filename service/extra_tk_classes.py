@@ -187,8 +187,7 @@ class StatusBar(ttk.Frame):
     def set(self,texto):
         self.label.config(text=texto)
         self.label.update_idletasks()
+        
     def clear(self):
         self.label.config(text="")
         self.label.update_idletasks()
-
-
