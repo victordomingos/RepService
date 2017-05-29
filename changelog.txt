@@ -13,6 +13,8 @@ v.0.9 - 31/05/2017
  * Adicionados métodos para limpar os formulários de introdução de dados.
  * Adicionadas caixas de diálogo para confirmação de impressão (nova reparação)
    e cancelamento de introdução dados.
+ * No formulário de nova remessa, o número de processos a enviar agora é
+   apresentado na própria barra de estado, conforme esperado.
  * Adicionados placeholders para algumas funções auxiliares.
 
 ---
