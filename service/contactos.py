@@ -12,6 +12,7 @@ from extra_tk_classes import *
 from base_app import *
 from service import *
 from detalhe_contacto import *
+from db_operations import *
 
 
 class ContactsWindow(baseApp):
@@ -45,7 +46,6 @@ class ContactsWindow(baseApp):
             self.mostrar_painel_entrada()
 
 
-
     def gerar_menu(self):
         self.menu = tk.Menu(self.master)
         #----------------Menu contextual tabela principal---------------------
@@ -60,8 +60,6 @@ class ContactsWindow(baseApp):
         #self.contextMenu.add_separator()
         #self.contextMenu.add_command(label="Registar cheque recebido", command=self.pag_recebido)
         #self.contextMenu.add_command(label="Registar cheque depositado", command=self.chq_depositado)
-
-
 
 
     def montar_tabela(self):

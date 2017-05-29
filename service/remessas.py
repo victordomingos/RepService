@@ -11,6 +11,7 @@ from extra_tk_classes import *
 from base_app import *
 from service import *
 from detalhe_remessa import *
+from db_operations import *
 
 
 class RemessasWindow(baseApp):
@@ -118,7 +119,7 @@ class RemessasWindow(baseApp):
 
     def fechar_painel_entrada(self, *event):
         self.estado.painel_nova_remessa_aberto = False
-        #self.clear_text()
+        self.clear_text()
         self.hide_entryform()
         #root.bind_all("<Command-n>")
 
@@ -137,7 +138,7 @@ class RemessasWindow(baseApp):
         self.ef_var_reparacoes_a_enviar = tk.IntVar()
         self.ef_var_reparacoes_a_enviar.set("Selecionar reparações...")
 
-        self.ef_var_destino.set("Centro técnico N")
+        self.ef_var_destino.set("Selecionar centro técnico...")
 
         self.ef_cabecalho = ttk.Frame(self.entryfr1, padding=4)
         self.ef_lbl_titulo = ttk.Label(self.ef_cabecalho, style="Panel_Title.TLabel", text="Adicionar Remessa:\n")
@@ -167,12 +168,7 @@ class RemessasWindow(baseApp):
         self.ef_combo_destino = ttk.Combobox(self.entryfr2,
                                              width=21,
                                              textvariable=self.ef_var_destino,
-                                             values=("Loja X",
-                                                     "Importador Nacional A",
-                                                     "Distribuidor Ibérico Y",
-                                                     "Centro de assistência N",
-                                                     "Centro de assistência P",
-                                                     "Centro de assistência K"),
+                                             postcommand=self.atualizar_combo_lista_destino,
                                              state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
         self.ef_lbl_destino.grid(column=0, row=0, padx=5, sticky='we')
         self.ef_combo_destino.grid(column=0, row=1, padx=5, sticky='we')
@@ -186,20 +182,7 @@ class RemessasWindow(baseApp):
         # Atualizar lista quando um dos processos é selecionado e quando é alterado o tipo de remessa.
         self.ef_combo_selecionar_rep = ttk.Combobox(self.entryfr3,
                                                     textvariable=self.ef_var_reparacoes_a_enviar,
-                                                    values=("12234 - iPhone 7 128GB Space grey - José manuel da Silva Castro",
-                                                            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-                                                            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
-                                                            "25720 - Beats X - NPK - Network Project for Knowledge",
-                                                            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-                                                            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
-                                                            "25720 - Beats X - NPK - Network Project for Knowledge",
-                                                            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-                                                            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
-                                                            "25720 - Beats X - NPK - Network Project for Knowledge",
-                                                            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-                                                            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
-                                                            "25720 - Beats X - NPK - Network Project for Knowledge",
-                                                            ),
+                                                    postcommand = self.atualizar_combo_lista_reparacoes,
                                                     state='readonly')
 
 
@@ -235,6 +218,25 @@ class RemessasWindow(baseApp):
 
         #--- acabaram os 'entryfr', apenas código geral para o entryframe a partir daqui ---
         #self.entryframe.bind_all("<Command-Escape>", self.fechar_painel_entrada)
+
+    def atualizar_combo_lista_destino(self):
+        """ Atualizar a lista de destinatários de remessas na 
+            combobox correspondente, obtendo info a partir da base de dados.
+        """
+        self.ef_combo_destino['values'] = obter_lista_fornecedores()
+            
+        
+    def atualizar_combo_lista_reparacoes(self):
+        """ Atualizar a lista de reparações por enviar ou por receber na 
+            combobox correspondente, obtendo info a partir da base de dados.
+        """
+        tipo = self.ef_var_tipo.get()
+        if tipo == TIPO_REMESSA_RECECAO:
+            self.ef_combo_selecionar_rep['values'] = obter_lista_processos_por_receber()
+        else:
+            self.ef_combo_selecionar_rep['values'] = obter_lista_processos_por_enviar()
+
+        
 
     def configurarTree_lista_processos_remessa(self):
         # Ordenar por coluna ao clicar no respetivo cabeçalho
@@ -360,6 +362,74 @@ class RemessasWindow(baseApp):
         else:
             self.MenuFicheiro.entryconfigure("Nova remessa", state="active")
             #root.bind_all("<Command-Option-n>")
+
+
+    def clear_text(self):
+        self.entryframe.focus()
+        self.ef_var_tipo.set(TIPO_REMESSA_ENVIO)
+        self.ef_var_destino.set("Selecionar centro técnico...") #TODO
+        self.num_processos = 0
+        self.str_num_processos.set(f"Número de processos a enviar: {self.num_processos}")
+        self.ef_var_reparacoes_a_enviar.set("Selecionar reparações...")
+
+        self.ef_txt_num_reparacao.delete(0, 'end')
+        """
+        widgets = (self.ef_ltxt_nome,
+                    self.ef_ltxt_empresa,
+                    self.ef_ltxt_nif,
+                    self.ef_ltxt_telefone,
+                    self.ef_ltxt_tlm,
+                    self.ef_ltxt_tel_empresa,
+                    self.ef_ltxt_email,
+                    self.ef_lstxt_morada,
+                    self.ef_ltxt_cod_postal,
+                    self.ef_ltxt_localidade,
+                    self.ef_lstxt_notas)
+        for widget in widgets:
+            widget.clear()
+        """
+
+        """
+        self.ef_combo_selecionar_rep = ttk.Combobox(self.entryfr3,
+                                                    textvariable=self.ef_var_reparacoes_a_enviar,
+                                                    values=("12234 - iPhone 7 128GB Space grey - José manuel da Silva Castro",
+                                                            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
+                                                            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
+                                                            "25720 - Beats X - NPK - Network Project for Knowledge",
+                                                            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
+                                                            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
+                                                            "25720 - Beats X - NPK - Network Project for Knowledge",
+                                                            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
+                                                            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
+                                                            "25720 - Beats X - NPK - Network Project for Knowledge",
+                                                            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
+                                                            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
+                                                            "25720 - Beats X - NPK - Network Project for Knowledge",
+                                                            ),
+                                                    state='readonly')
+
+
+        self.ef_lbl_num_rep.grid(column=0, row=0, padx=5, sticky='we')
+        self.ef_txt_num_reparacao.grid(column=0, row=1, padx=5, sticky='we')
+        self.ef_btn_adicionar_rep.grid(column=1, row=1, padx=5, sticky='w')
+        self.ef_combo_selecionar_rep.grid(column=2, row=1,  padx=5, sticky='we')
+        self.entryfr3.grid_columnconfigure(0, weight=0)
+        self.entryfr3.grid_columnconfigure(1, weight=0)
+        self.entryfr3.grid_columnconfigure(2, weight=1)
+
+
+
+        #  treeview entryfr4:
+        self.ef_lista = ttk.Frame(self.entryfr4, padding=4)
+        self.tree_lista_processos_remessa = ttk.Treeview(self.ef_lista, height=15, selectmode='browse')
+        self.tree_lista_processos_remessa['columns'] = ('Nº', 'Equipamento', 'S/N')
+        self.tree_lista_processos_remessa.pack(side=tk.TOP, expand=True, fill='both')
+        self.tree_lista_processos_remessa.column('#0', anchor=tk.W, minwidth=0, stretch=0, width=0)
+        self.tree_lista_processos_remessa.column('Nº', anchor=tk.E, minwidth=46, stretch=0, width=46)
+        self.tree_lista_processos_remessa.column('Equipamento', minwidth=180, stretch=1, width=180)
+        self.tree_lista_processos_remessa.column('S/N', anchor=tk.E, minwidth=140, stretch=0, width=140)
+        """
+
 
 
     def inserir_dados_de_exemplo(self):

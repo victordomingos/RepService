@@ -142,7 +142,6 @@ class App(baseApp):
         self.popupMenuMsg(event)
 
 
-
     def selectItemMsg(self, *event):
         """
         Obter mensagem selecionada (após clique de rato na linha correspondente)
@@ -774,14 +773,8 @@ class App(baseApp):
         self.ef_lbl_local_intervencao = ttk.Label(self.ef_lf_outros_dados, style="Panel_Body.TLabel",  text="Local de intervenção:")
         self.ef_combo_local_intervencao = ttk.Combobox(self.ef_lf_outros_dados,
                                                         textvariable=self.ef_var_local_intervencao,
-                                                        values=("Loja X",
-                                                                "Importador Nacional A",
-                                                                "Distribuidor Ibérico Y",
-                                                                "Centro de assistência N",
-                                                                "Centro de assistência P",
-                                                                "Centro de assistência K"),
+                                                        postcommand=self.atualizar_combo_local_intervencao,
                                                         state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
-
 
         self.ef_lbl_modo_entrega = ttk.Label(self.ef_lf_outros_dados, style="Panel_Body.TLabel", text="Morada a utilizar na entrega:")
         self.ef_combo_modo_entrega = ttk.Combobox(self.ef_lf_outros_dados, 
@@ -791,12 +784,10 @@ class App(baseApp):
                                                     "Enviar para outra morada..."),
                                                 state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
 
-
         self.ef_lbl_portes = ttk.Label(self.ef_lf_outros_dados, style="Panel_Body.TLabel", text="Cliente pagou portes?")
         self.ef_radio_portes_sim = ttk.Radiobutton(self.ef_lf_outros_dados, text="Sim", style="Panel_Body.TRadiobutton", variable=self.ef_var_portes, value=1, command=self.radio_portes_command)
         self.ef_radio_portes_nao = ttk.Radiobutton(self.ef_lf_outros_dados, text="Não", style="Panel_Body.TRadiobutton", variable=self.ef_var_portes, value=0, command=self.radio_portes_command)
         self.ef_radio_portes_oferta = ttk.Radiobutton(self.ef_lf_outros_dados, text="Oferta", style="Panel_Body.TRadiobutton", variable=self.ef_var_portes, value=2, command=self.radio_portes_command)
-
 
         self.ef_ltxt_morada_entrega = LabelText(self.ef_lf_outros_dados, "Morada a utilizar na entrega:", style="Panel_Body.TLabel", height=4)
 
@@ -844,6 +835,13 @@ class App(baseApp):
             self.ef_radio_portes_oferta.grid_remove()
             self.ef_ltxt_morada_entrega.grid_remove()
             self.ef_lf_outros_dados.columnconfigure(6, weight=0)
+
+
+    def atualizar_combo_local_intervencao(self):
+        """ Atualizar a lista de locais de intervenção na combobox 
+            correspondente, obtendo info a partir da base de dados.
+        """
+        self.ef_combo_local_intervencao['values'] = obter_lista_fornecedores()
 
 
     def radio_tipo_command(self, *event):
