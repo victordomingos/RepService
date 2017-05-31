@@ -9,6 +9,7 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font
+import Pmw
 
 from extra_tk_classes import *
 from global_setup import *
@@ -56,6 +57,8 @@ class baseApp(ttk.Frame):
         self.master = master
         self.estilo = ttk.Style()
         self.is_entryform_visible = False
+
+        self.dicas = Pmw.Balloon(self.master, label_background='#f6f6f6', hull_highlightbackground='#b3b3b3')
 
         self.mainframe = ttk.Frame(master)
         self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 5")

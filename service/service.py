@@ -27,6 +27,7 @@ from tkinter import messagebox
 from tkinter.scrolledtext import ScrolledText
 import datetime
 import textwrap
+import Pmw
 #import sys
 #import io
 
@@ -46,7 +47,7 @@ __app_name__ = "RepService 2017"
 __author__ = "Victor Domingos"
 __copyright__ = "Copyright 2017 Victor Domingos"
 __license__ = "Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)"
-__version__ = "v0.9 development"
+__version__ = "v0.10 development"
 __email__ = "web@victordomingos.com"
 __status__ = "Development"
 
@@ -67,7 +68,6 @@ class App(baseApp):
         self.reparacao_selecionada = None
         self.mensagem_selecionada = None
         self.ultima_reparacao = None
-
 
         self.gerar_painel_mensagens()
         self.gerar_menu()
@@ -240,6 +240,7 @@ class App(baseApp):
     def montar_barra_de_ferramentas(self):
         self.btn_add = ttk.Button(self.topframe, text="➕", width=6, command=self.show_entryform)
         self.btn_add.grid(column=0, row=0)
+        self.dicas.bind(self.btn_add, 'Criar novo processo de reparação. (⌘N)')
         self.label_add = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Nova reparação")
         self.label_add.grid(column=0, row=1)
 
@@ -263,12 +264,14 @@ class App(baseApp):
 
         self.mbtn_mostrar.grid(column=1, row=0)
         self.label_mbtn_mostrar.grid(column=1, row=1)
+        self.dicas.bind(self.mbtn_mostrar, 'Mostrar apenas uma parte dos processos,\nfiltrando-os com base do seu estado atual.')
+
         # ----------- fim de Botão com menu "Mostrar" -------------
 
-        self.btn_hoje = ttk.Button(self.topframe, text=" ℹ️️", width=3, command=lambda: self.create_window_detalhe_rep(num_reparacao=self.reparacao_selecionada))
-        self.btn_hoje.grid(column=6, row=0)
+        self.btn_detalhes = ttk.Button(self.topframe, text=" ℹ️️", width=3, command=lambda: self.create_window_detalhe_rep(num_reparacao=self.reparacao_selecionada))
+        self.btn_detalhes.grid(column=6, row=0)
         ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Detalhes").grid(column=6, row=1)
-
+        self.dicas.bind(self.btn_detalhes, 'Apresentar detalhes do processo\nde reparação selecionado. (⌘I)')
 
         # ----------- Botão com menu "Alterar estado" --------------
         self.label_mbtn_alterar = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Alterar estado")
@@ -291,35 +294,38 @@ class App(baseApp):
         self.mbtn_alterar.menu.add_command(label=ESTADOS[SEM_INFORMACAO], command=None)
         self.mbtn_alterar.grid(column=7, row=0)
         self.label_mbtn_alterar.grid(column=7, row=1)
+        self.dicas.bind(self.mbtn_alterar, 'Alterar o estado do processo\nde reparação selecionado.')
         # ----------- fim de Botão com menu "Alterar estado" -------------
 
-
-        self.btn_pag = ttk.Button(self.topframe, text=" ✅", width=3, command=None)
-        self.btn_pag.grid(column=8, row=0)
-        self.label_pag = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Entregar")
-        self.label_pag.grid(column=8, row=1)
+        self.btn_entregar = ttk.Button(self.topframe, text=" ✅", width=3, command=None)
+        self.btn_entregar.grid(column=8, row=0)
+        self.label_entregar = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Entregar")
+        self.label_entregar.grid(column=8, row=1)
+        self.dicas.bind(self.btn_entregar, 'Marcar o processo de reparação\nselecionado como entregue.')
 
         self.btn_messages = ttk.Button(self.topframe, text=" ☝️️", width=3, command=self.abrir_painel_mensagens)
         self.label_messages = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Mensagens")
         self.btn_messages.grid(row=0, column=13)
         self.label_messages.grid(column=13, row=1)
+        self.dicas.bind(self.btn_messages, 'Mostrar/ocultar o painel de mensagens. (⌘1)')
 
         self.btn_contacts = ttk.Button(self.topframe, text=" ✉️️", width=3, command=self.create_window_contacts)
         self.label_contacts = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Contactos")
         self.btn_contacts.grid(row=0, column=14)
         self.label_contacts.grid(column=14, row=1)
-
+        self.dicas.bind(self.btn_contacts, 'Mostrar/ocultar a janela de contactos. (⌘2)')
 
         self.btn_remessas = ttk.Button(self.topframe,text=" ⬆️️", width=3, command=self.create_window_remessas)
         self.label_remessas = ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Remessas")
         self.btn_remessas.grid(row=0,column=15)
         self.label_remessas.grid(column=15, row=1)
-
+        self.dicas.bind(self.btn_remessas, 'Mostrar/ocultar a janela de remessas. (⌘3)')
 
         self.text_input_pesquisa = ttk.Entry(self.topframe, width=12)
 
         self.text_input_pesquisa.grid(column=16, row=0)
         ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Pesquisar").grid(column=16, row=1)
+        self.dicas.bind(self.text_input_pesquisa, 'Para iniciar a pesquisa, digite\numa palavra ou frase. (⌘F)')
 
         #letras_etc = ascii_letters + "01234567890-., "
         #for char in letras_etc:
@@ -463,12 +469,15 @@ class App(baseApp):
 
         self.btn_msg_mostrar = ttk.Button(self.mensagens_frame_btn, style="secondary_msg.TButton", text="Mostrar")
         self.btn_msg_mostrar.grid(column=0, sticky=tk.W, row=1, in_=self.mensagens_frame_btn)
+        self.dicas.bind(self.btn_msg_mostrar, 'Mostrar o conteúdo da mensagem\nselecionada.')
 
         self.btn_msg_apagar_um = ttk.Button(self.mensagens_frame_btn, style="secondary_msg.TButton", text="Apagar")
         self.btn_msg_apagar_um.grid(column=1, sticky=tk.E, row=1, in_=self.mensagens_frame_btn)
+        self.dicas.bind(self.btn_msg_apagar_um, 'Eliminar a mensagem selecionada\n(esta ação é irreversível).')
 
         self.btn_msg_apagar_tudo = ttk.Button(self.mensagens_frame_btn, style="secondary_msg.TButton", text="Apagar tudo")
         self.btn_msg_apagar_tudo.grid(column=3, sticky=tk.E, row=1, in_=self.mensagens_frame_btn)
+        self.dicas.bind(self.btn_msg_apagar_tudo, 'Apagar todas as mensagens\n(esta ação é irreversível).')
 
         self.mensagens_frame_btn.grid_columnconfigure(0, weight=0)
         self.mensagens_frame_btn.grid_columnconfigure(1, weight=0)
