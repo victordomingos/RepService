@@ -637,7 +637,9 @@ class App(baseApp):
         #entryfr2-----------------------------
         self.ef_lf_cliente = ttk.Labelframe(self.entryfr2, padding=4, style="Panel_Section_Title.TLabelframe", text="Dados do cliente")
         self.ef_txt_num_cliente = ttk.Entry(self.ef_lf_cliente, font=("Helvetica-Neue", 12), width=5)
+        self.dicas.bind(self.ef_txt_num_cliente, 'Introduzir o número de cliente. (⌘T)')
         self.ef_btn_buscar_cliente = ttk.Button(self.ef_lf_cliente, width=1, text="+", command=lambda *x: self.create_window_contacts(criar_novo_contacto="Cliente"))
+        self.dicas.bind(self.ef_btn_buscar_cliente, 'Criar novo contacto.\nUtilize esta opção caso o cliente não tenha\nainda ficha criada nesta base de dados. (⌘T)')
         self.ef_txt_nome_cliente = ttk.Entry(self.ef_lf_cliente, font=("Helvetica-Neue", 12), width=45)
         self.ef_lbl_telefone_lbl = ttk.Label(self.ef_lf_cliente, style="Panel_Body.TLabel", text="Tel.:")
         self.ef_lbl_telefone_info = ttk.Label(self.ef_lf_cliente, style="Panel_Body.TLabel", text="00 351 000 000 000")
@@ -646,7 +648,9 @@ class App(baseApp):
 
         self.ef_lf_fornecedor = ttk.Labelframe(self.entryfr2, padding=4, style="Panel_Section_Title.TLabelframe", text="Dados do fornecedor")
         self.ef_txt_num_fornecedor = ttk.Entry(self.ef_lf_fornecedor, font=("Helvetica-Neue", 12), width=5)
+        self.dicas.bind(self.ef_txt_num_fornecedor, 'Introduzir o número de fornecedor. (⌘T)')
         self.ef_btn_buscar_fornecedor = ttk.Button(self.ef_lf_fornecedor, width=1, text="+", command=lambda *x: self.create_window_contacts(criar_novo_contacto="Fornecedor"))
+        self.dicas.bind(self.ef_btn_buscar_fornecedor, 'Criar novo contacto.\nUtilize esta opção caso o fornecedor ou centro técnico\nnão tenha ainda ficha criada nesta base de dados. (⌘T)')
         self.ef_txt_nome_fornecedor = ttk.Entry(self.ef_lf_fornecedor, font=("Helvetica-Neue", 12), width=45)
         self.ef_lbl_telefone_lbl_fornecedor = ttk.Label(self.ef_lf_fornecedor, style="Panel_Body.TLabel", text="Tel.:")
         self.ef_lbl_telefone_info_fornecedor = ttk.Label(self.ef_lf_fornecedor, style="Panel_Body.TLabel", text="00 351 000 000 000")
@@ -786,7 +790,7 @@ class App(baseApp):
                                                         state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
 
         self.ef_lbl_modo_entrega = ttk.Label(self.ef_lf_outros_dados, style="Panel_Body.TLabel", text="Morada a utilizar na entrega:")
-        self.ef_combo_modo_entrega = ttk.Combobox(self.ef_lf_outros_dados, 
+        self.ef_combo_modo_entrega = ttk.Combobox(self.ef_lf_outros_dados,
                                                 textvariable=self.ef_var_modo_entrega,
                                                 values=("Levantamento nas n/ instalações",
                                                     "Enviar para a morada da ficha de cliente",
@@ -816,7 +820,7 @@ class App(baseApp):
         self.ef_lf_outros_dados.columnconfigure(3, weight=0)
         self.ef_lf_outros_dados.columnconfigure(4, weight=0)
         self.ef_lf_outros_dados.columnconfigure(5, weight=1)
-        
+
         #--- acabaram os 'entryfr', apenas código geral para o entryframe a partir daqui ---
         self.entryframe.bind_all("<Command-Escape>", self.fechar_painel_entrada)
 
@@ -847,7 +851,7 @@ class App(baseApp):
 
 
     def atualizar_combo_local_intervencao(self):
-        """ Atualizar a lista de locais de intervenção na combobox 
+        """ Atualizar a lista de locais de intervenção na combobox
             correspondente, obtendo info a partir da base de dados.
         """
         self.ef_combo_local_intervencao['values'] = obter_lista_fornecedores()
@@ -897,14 +901,14 @@ class App(baseApp):
                         self.ef_lbl_local_intervencao,
                         self.ef_combo_local_intervencao,
                         self.ef_ltxt_morada_entrega,
-                        
+
                         self.ef_lbl_portes,
                         self.ef_radio_portes_sim,
                         self.ef_radio_portes_nao,
                         self.ef_radio_portes_oferta)
             for widget in widgets:
                 widget.grid_remove()
-            
+
             self.ef_ltxt_notas.grid(column=0, row=0, columnspan=7, rowspan=5, padx=5, sticky='wens')
             self.ef_ltxt_num_serie.label.configure(text="Nº de série")
             self.ef_ltxt_cod_artigo.label.configure(text="Código de artigo")
@@ -920,7 +924,7 @@ class App(baseApp):
         else:
             self.ef_ltxt_descr_equipamento.scrolledtext.configure(height=4)
             self.ef_ltxt_descr_equipamento.grid_configure(rowspan=5)
-            
+
             widgets = ( self.ef_lbl_estado_equipamento,
                         self.ef_radio_estado_marcas_uso,
                         self.ef_radio_estado_bom,
@@ -953,7 +957,7 @@ class App(baseApp):
                 widget.grid()
 
             self.radio_garantia_command()
-            
+
             widgets = ( self.ef_lf_fornecedor,
                         self.ef_ltxt_nar,
                         self.ef_ltxt_num_fatura_fornecedor,
@@ -963,7 +967,7 @@ class App(baseApp):
                         self.ef_ltxt_num_quebra_stock)
             for widget in widgets:
                 widget.grid_remove()
-                
+
             self.ef_ltxt_num_serie.label.configure(text="\nNº de série")
             self.ef_ltxt_cod_artigo.label.configure(text="\nCódigo de artigo")
             self.ef_ltxt_cod_artigo.grid(column=0, row=5, padx=5, sticky='we')
@@ -971,7 +975,7 @@ class App(baseApp):
 
             self.ef_lf_outros_dados.configure(text="\nOutros dados")
             self.ef_ltxt_notas.grid(column=1, row=0, columnspan=1, rowspan=5, padx=5, sticky='wens')
-            
+
             self.adicionar_morada_entrega()
             self.ef_txt_num_cliente.focus()
 
@@ -1089,20 +1093,20 @@ class App(baseApp):
         if self.ultima_reparacao:
             self.on_repair_save_success()
         else:
-            wants_to_try_again_save = messagebox.askquestion(message='Não foi possível guardar o processo de reparação. Deseja tentar novamente?', 
+            wants_to_try_again_save = messagebox.askquestion(message='Não foi possível guardar o processo de reparação. Deseja tentar novamente?',
                                                     default='yes',
-                                                    parent=self)  
+                                                    parent=self)
             if wants_to_try_again_save == 'yes':
                 self.on_save_repair()
             else:
                 self.on_repair_cancel()
-                
+
 
     def on_repair_save_success(self):
         self.ultima_reparacao = "1234" #TODO - criar um mecanismo para obter o número da reparação acabada de introduzir na base de dados
-        wants_to_print = messagebox.askquestion(message='O processo de reparação foi guardado com sucesso. Deseja imprimir?', 
+        wants_to_print = messagebox.askquestion(message='O processo de reparação foi guardado com sucesso. Deseja imprimir?',
                                                 default='yes',
-                                                parent=self)  
+                                                parent=self)
         if wants_to_print == 'yes':
             imprimir_folhas_de_reparacao(self.ultima_reparacao)
             self.fechar_painel_entrada()
@@ -1113,7 +1117,7 @@ class App(baseApp):
     # TODO
     def on_repair_cancel(self, event=None):
         # caso haja informação introduzida no formulário TODO: verificar primeiro
-        wants_to_cancel = messagebox.askyesno(message='Tem a certeza que deseja cancelar a introdução de dados? Toda a informação não guardada será eliminada de forma irreversível.', 
+        wants_to_cancel = messagebox.askyesno(message='Tem a certeza que deseja cancelar a introdução de dados? Toda a informação não guardada será eliminada de forma irreversível.',
                                               default='no',
                                               parent=self)
         if wants_to_cancel:

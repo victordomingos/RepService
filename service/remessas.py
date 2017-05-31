@@ -91,7 +91,7 @@ class RemessasWindow(baseApp):
         self.btn_saida = ttk.Button(self.topframe, style="secondary.TButton", text="Saída", command=None)
         self.btn_saida.grid(column=1, row=0)
         self.dicas.bind(self.btn_saida, 'Mostrar apenas remessas de saída \n(envio de artigos para fornecedores \ne/ou centros técnicos).')
-        
+
         self.btn_add = ttk.Button(self.topframe, text=" ➕", width=3, command=self.show_entryform)
         self.btn_add.grid(column=3, row=0)
         self.dicas.bind(self.btn_add, 'Criar nova remessa. (⌘N)')
@@ -174,11 +174,15 @@ class RemessasWindow(baseApp):
                                              state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
         self.ef_lbl_destino.grid(column=0, row=0, padx=5, sticky='we')
         self.ef_combo_destino.grid(column=0, row=1, padx=5, sticky='we')
+        self.dicas.bind(self.ef_combo_destino, 'Clique aqui para selecionar a partir\nde uma lista o fornecedor ou centro técnico.')
 
         # Entryfr3
         self.ef_lbl_num_rep = ttk.Label(self.entryfr3, text="\nNº rep.:", style="Panel_Body.TLabel")
         self.ef_txt_num_reparacao = ttk.Entry(self.entryfr3, width=7)
+        self.dicas.bind(self.ef_txt_num_reparacao, 'Clique aqui para escrever o número de um\nprocesso de reparação a incluir na remessa.')
+
         self.ef_btn_adicionar_rep = ttk.Button(self.entryfr3, text="Inserir")
+        self.dicas.bind(self.ef_btn_adicionar_rep, 'Clique aqui para incluir na remessa\no processo de reparação selecionado.')
 
         # TODO:Ir buscar à base de dados os processos a aguardar envio/receção?
         # Atualizar lista quando um dos processos é selecionado e quando é alterado o tipo de remessa.
@@ -186,6 +190,7 @@ class RemessasWindow(baseApp):
                                                     textvariable=self.ef_var_reparacoes_a_enviar,
                                                     postcommand = self.atualizar_combo_lista_reparacoes,
                                                     state='readonly')
+        self.dicas.bind(self.ef_combo_selecionar_rep, 'Clique aqui para selecionar a partir de\numa lista um processo de reparação\na incluir na remessa.')
 
 
         self.ef_lbl_num_rep.grid(column=0, row=0, padx=5, sticky='we')
@@ -220,14 +225,14 @@ class RemessasWindow(baseApp):
         #self.entryframe.bind_all("<Command-Escape>", self.fechar_painel_entrada)
 
     def atualizar_combo_lista_destino(self):
-        """ Atualizar a lista de destinatários de remessas na 
+        """ Atualizar a lista de destinatários de remessas na
             combobox correspondente, obtendo info a partir da base de dados.
         """
         self.ef_combo_destino['values'] = obter_lista_fornecedores()
-            
-        
+
+
     def atualizar_combo_lista_reparacoes(self):
-        """ Atualizar a lista de reparações por enviar ou por receber na 
+        """ Atualizar a lista de reparações por enviar ou por receber na
             combobox correspondente, obtendo info a partir da base de dados.
         """
         tipo = self.ef_var_tipo.get()
@@ -236,7 +241,7 @@ class RemessasWindow(baseApp):
         else:
             self.ef_combo_selecionar_rep['values'] = obter_lista_processos_por_enviar()
 
-        
+
 
     def configurarTree_lista_processos_remessa(self):
         # Ordenar por coluna ao clicar no respetivo cabeçalho
@@ -385,21 +390,21 @@ class RemessasWindow(baseApp):
             if self.ultima_remessa:
                 self.on_remessa_save_success()
             else:
-                wants_to_try_again_save = messagebox.askquestion(message='Não foi possível guardar esta remessa na base de dados. Deseja tentar novamente?', 
+                wants_to_try_again_save = messagebox.askquestion(message='Não foi possível guardar esta remessa na base de dados. Deseja tentar novamente?',
                                                                 default='yes',
-                                                                parent=self)  
+                                                                parent=self)
                 if wants_to_try_again_save == 'yes':
                     self.on_save_remessa()
                 else:
                     self.on_remessa_cancel()
-                            
+
 
     def on_remessa_save_success(self):
         print("Remessa guardada com sucesso")
         self.ultima_remessa = "333" #TODO - criar um mecanismo para obter o número da reparação acabada de introduzir na base de dados
-        wants_to_print = messagebox.askquestion(message='A remessa foi guardada com sucesso. Deseja imprimir?', 
+        wants_to_print = messagebox.askquestion(message='A remessa foi guardada com sucesso. Deseja imprimir?',
                                                 default='yes',
-                                                parent=self)  
+                                                parent=self)
         if wants_to_print == 'yes':
             imprimir_guia_de_remessa(self.ultima_remessa)
             self.fechar_painel_entrada()
@@ -411,14 +416,14 @@ class RemessasWindow(baseApp):
     # TODO
     def on_remessa_cancel(self, event=None):
         # caso haja informação introduzida no formulário TODO: verificar primeiro
-        wants_to_cancel = messagebox.askyesno(message='Tem a certeza que deseja cancelar a introdução de dados? Toda a informação não guardada será eliminada de forma irreversível.', 
+        wants_to_cancel = messagebox.askyesno(message='Tem a certeza que deseja cancelar a introdução de dados? Toda a informação não guardada será eliminada de forma irreversível.',
                                               default='no',
                                               parent=self)
         if wants_to_cancel:
             self.fechar_painel_entrada()
         else:
             self.entryframe.focus()
-    
+
 
 
     def inserir_dados_de_exemplo(self):
