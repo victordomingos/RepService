@@ -6,14 +6,13 @@ Aplicação de base de dados para registo em loja de processos de garantia e rep
 ## Dependências
 Esta aplicação é desenvolvida em Python 3.6 e tkinter, a partir de uma ideia original de Márcio Araújo.
 
-Requer, ou melhor, prevê-se que venha a requerer, os seguintes módulos externos:
+Requer, na versão atual o(s) seguinte(s) módulo(s) externo(s):
 
-- SQLalchemy 1.1.5
-- PyMySQL 0.7.10
-- ReportLab 3.4.0
+- Python MegaWidgets 2.0.1
+
 
 O desenvolvimento e testes têm sido realizados apenas em Mac, no entanto deverá ser bastante simples a adaptação para funcionar sem problemas em Windows ou Linux. Em sistemas operativos antigos, alguns ícones Unicode poderão não aparecer corretamente. Em ambiente Mac, é altamente recomendável usar o ActiveTCL 8.5.18, conforme as notas de lançamento da linguagem Python, de modo a assegurar a compatibilidade e estabilidade do tkinter no OS X.
 
-## Como usar
 
+## Como usar
 Para iniciar a aplicação, basta executar o ficheiro `service/service.py` com o interpretador Python 3.6 ou superior.

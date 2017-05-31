@@ -3,6 +3,11 @@
 Histórico de versões:
 ====================
 
+
+---
+v.0.10 - 14/06/2017
+ * Adicionadas dicas a alguns botões da janela principal.
+
 ---
 v.0.9 - 30/05/2017
  * Adicionados mais campos de informação ao painel de detalhes de reparação.
