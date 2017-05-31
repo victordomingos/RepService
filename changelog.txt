@@ -6,7 +6,7 @@ Histórico de versões:
 
 ---
 v.0.10 - 14/06/2017
- * Adicionadas dicas a alguns botões da janela principal.
+ * Adicionadas dicas aos botões e campos de pesquisa das barras de ferramentas.
 
 ---
 v.0.9 - 30/05/2017
