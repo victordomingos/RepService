@@ -27,7 +27,13 @@ class repairDetailWindow(ttk.Frame):
         self.is_garantia = True  # todo - verificar se é garantia
         self.modo_entrega = 2 # todo - obter da base de dados
 
-        self.dicas = Pmw.Balloon(self.master, label_background='#f6f6f6', hull_highlightbackground='#b3b3b3')
+        self.dicas = Pmw.Balloon(self.master, label_background='#f6f6f6',
+                                              hull_highlightbackground='#b3b3b3',
+                                              state='balloon',
+                                              relmouse='both',
+                                              yoffset=18,
+                                              xoffset=-2,
+                                              initwait=1300)
 
         if self.is_rep_cliente:
             self.numero_contacto = "12345" #TODO numero de cliente

@@ -58,7 +58,13 @@ class baseApp(ttk.Frame):
         self.estilo = ttk.Style()
         self.is_entryform_visible = False
 
-        self.dicas = Pmw.Balloon(self.master, label_background='#f6f6f6', hull_highlightbackground='#b3b3b3')
+        self.dicas = Pmw.Balloon(self.master, label_background='#f6f6f6',
+                                              hull_highlightbackground='#b3b3b3',
+                                              state='balloon',
+                                              relmouse='both',
+                                              yoffset=18,
+                                              xoffset=-2,
+                                              initwait=1300)
 
         self.mainframe = ttk.Frame(master)
         self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 5")
