@@ -86,15 +86,20 @@ class RemessasWindow(baseApp):
 
         self.btn_entrada = ttk.Button(self.topframe, style="secondary.TButton", text="Entrada", command=None)
         self.btn_entrada.grid(column=0, row=0)
+        self.dicas.bind(self.btn_entrada, 'Mostrar apenas remessas de entrada \n(receção de artigos enviados por\nfornecedores e/ou centros técnicos).')
 
         self.btn_saida = ttk.Button(self.topframe, style="secondary.TButton", text="Saída", command=None)
         self.btn_saida.grid(column=1, row=0)
-
+        self.dicas.bind(self.btn_saida, 'Mostrar apenas remessas de saída \n(envio de artigos para fornecedores \ne/ou centros técnicos).')
+        
         self.btn_add = ttk.Button(self.topframe, text=" ➕", width=3, command=self.show_entryform)
         self.btn_add.grid(column=3, row=0)
+        self.dicas.bind(self.btn_add, 'Criar nova remessa. (⌘N)')
 
         self.text_input_pesquisa = ttk.Entry(self.topframe, width=12)
         self.text_input_pesquisa.grid(column=4, row=0)
+        self.dicas.bind(self.text_input_pesquisa, 'Para iniciar a pesquisa, digite\numa palavra ou frase. (⌘F)')
+
 
         #letras_etc = ascii_letters + "01234567890-., "
         #for char in letras_etc:

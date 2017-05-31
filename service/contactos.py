@@ -82,15 +82,19 @@ class ContactsWindow(baseApp):
     def montar_barra_de_ferramentas(self):
         self.btn_clientes = ttk.Button(self.topframe, style="secondary.TButton", text="Clientes", command=None)
         self.btn_clientes.grid(column=0, row=0)
+        self.dicas.bind(self.btn_clientes, 'Mostrar apenas clientes.')
 
         self.btn_fornecedores = ttk.Button(self.topframe, style="secondary.TButton", text="Fornecedores", command=None)
         self.btn_fornecedores.grid(column=1, row=0)
+        self.dicas.bind(self.btn_fornecedores, 'Mostrar apenas fornecedores\ne centros técnicos.')
 
         self.btn_add = ttk.Button(self.topframe, text=" ➕", width=3, command=self.show_entryform)
         self.btn_add.grid(column=3, row=0)
+        self.dicas.bind(self.btn_add, 'Criar novo contacto.')
 
         self.text_input_pesquisa = ttk.Entry(self.topframe, width=12)
         self.text_input_pesquisa.grid(column=4, row=0)
+        self.dicas.bind(self.text_input_pesquisa, 'Para iniciar a pesquisa, digite\numa palavra ou frase. (⌘F)')
 
         #letras_etc = ascii_letters + "01234567890-., "
         #for char in letras_etc:

@@ -5,8 +5,10 @@ Este módulo é parte integrante da aplicação RepService, desenvolvida por
 Victor Domingos e distribuída sob os termos da licença Creative Commons
 Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
+
 import tkinter as tk
 from tkinter import ttk
+import Pmw
 from global_setup import *
 from extra_tk_classes import *
 
@@ -24,6 +26,8 @@ class repairDetailWindow(ttk.Frame):
 
         self.is_garantia = True  # todo - verificar se é garantia
         self.modo_entrega = 2 # todo - obter da base de dados
+
+        self.dicas = Pmw.Balloon(self.master, label_background='#f6f6f6', hull_highlightbackground='#b3b3b3')
 
         if self.is_rep_cliente:
             self.numero_contacto = "12345" #TODO numero de cliente
@@ -52,10 +56,13 @@ class repairDetailWindow(ttk.Frame):
         # Reincidência apenas aparece se reparação está entregue, anulado, abandonado, sem_informacao
         if self.estado >= ESTADOS[ENTREGUE]:
             self.btn_reincidencia = ttk.Button(self.topframe, text="➕ Reincidência", width=4, command=None)
+            self.dicas.bind(self.btn_reincidencia, 'Criar novo processo de reincidência\ncom base nesta reparação.')
 
         # Botão para registar entrega apenas aparece se reparação ainda não está entregue
         if self.estado != ESTADOS[ENTREGUE]:
             self.btn_entregar = ttk.Button(self.topframe, text=" ✅", width=4, command=None)
+            self.dicas.bind(self.btn_entregar, 'Marcar esta reparação como entregue.')
+
 
         # ----------- Botão com menu "Alterar estado" --------------
         self.mbtn_alterar_estado = ttk.Menubutton(self.topframe, style="TMenubutton", text="Estado")
@@ -75,6 +82,7 @@ class repairDetailWindow(ttk.Frame):
         self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[ANULADO], command=None)
         self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[ABANDONADO], command=None)
         self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[SEM_INFORMACAO], command=None)
+        self.dicas.bind(self.mbtn_alterar_estado, 'Alterar o estado deste processo de reparação.')
         # ----------- fim de Botão com menu "Alterar estado" -------------
 
 
@@ -87,6 +95,7 @@ class repairDetailWindow(ttk.Frame):
         self.mbtn_alterar_prioridade.menu.add_command(label="Normal", command=None)
         self.mbtn_alterar_prioridade.menu.add_command(label="Alta", command=None)
         self.mbtn_alterar_prioridade.menu.add_command(label="Urgente", command=None)
+        self.dicas.bind(self.mbtn_alterar_prioridade, 'Alterar a prioridade deste processo de reparação.')
         # ----------- fim de Botão com menu "Alterar Prioridade" -------------
 
 
@@ -111,6 +120,7 @@ class repairDetailWindow(ttk.Frame):
         self.mbtn_copiar.menu.add_separator()
         self.mbtn_copiar.menu.add_command(label="Descrição do equipamento", command=None)
         self.mbtn_copiar.menu.add_command(label="Número de série", command=None)
+        self.dicas.bind(self.mbtn_copiar, 'Clique para selecionar e copiar\ndados referentes a este processo\npara a área de trânsferência.')
         # ----------- fim de Botão com menu "Copiar" -------------
 
 
@@ -131,9 +141,12 @@ class repairDetailWindow(ttk.Frame):
         self.mbtn_imprimir.menu.add_separator()
         self.mbtn_imprimir.menu.add_command(label="Documento de empréstimo", command=None)
         self.mbtn_imprimir.menu.add_command(label="Recibo de pagamento: caução de empréstimo", command=None)
+        self.dicas.bind(self.mbtn_imprimir, 'Clique para selecionar\no tipo de documento a imprimir.')
         # ----------- fim de Botão com menu "Imprimir" -------------
 
         self.btn_comunicacao = ttk.Button(self.topframe, text="✉️", width=4, command=None)
+        self.dicas.bind(self.btn_comunicacao, 'Clique para selecionar\no tipo de comunicação a enviar e registar.')
+
 
         self.lbl_titulo.grid(column=0, row=0, rowspan=2)
         self.mbtn_alterar_estado.grid(column=4, row=0)
