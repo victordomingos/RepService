@@ -324,9 +324,9 @@ class RemessasWindow(baseApp):
 
         self.remessa_newDetailsWindow[self.remessa_detail_windows_count].bind(
             "<Command-w>", self.close_detail_remessa_window)
-        self.remessa_newDetailsWindow[self.remessa_detail_windows_count].wm_protocol(
-            "WM_DELETE_WINDOW",
-            lambda: self.remessa_newDetailsWindow[self.remessa_detail_windows_count].event_generate("<Command-w>") )
+        #self.remessa_newDetailsWindow[self.remessa_detail_windows_count].wm_protocol(
+        #    "WM_DELETE_WINDOW",
+        #    lambda: self.remessa_newDetailsWindow[self.remessa_detail_windows_count].event_generate("<Command-w>") )
 
         self.janela_detalhes_remessa = remessaDetailWindow(self.remessa_newDetailsWindow[self.remessa_detail_windows_count], num_remessa)
         self.remessa_newDetailsWindow[self.remessa_detail_windows_count].focus()

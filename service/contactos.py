@@ -13,6 +13,7 @@ from base_app import *
 from service import *
 from detalhe_contacto import *
 from db_operations import *
+from string import ascii_uppercase
 
 
 class ContactsWindow(baseApp):
@@ -342,9 +343,9 @@ class ContactsWindow(baseApp):
 
         self.contacto_newDetailsWindow[self.contact_detail_windows_count].bind(
             "<Command-w>", self.close_detail_contacto_window)
-        self.contacto_newDetailsWindow[self.contact_detail_windows_count].wm_protocol(
-            "WM_DELETE_WINDOW",
-            lambda: self.contacto_newDetailsWindow[self.contact_detail_windows_count].event_generate("<Command-w>") )
+        #self.contacto_newDetailsWindow[self.contact_detail_windows_count].wm_protocol(
+        #    "WM_DELETE_WINDOW",
+        #    lambda: self.contacto_newDetailsWindow[self.contact_detail_windows_count].event_generate("<Command-w>") )
 
         self.janela_detalhes_contacto = contactDetailWindow(self.contacto_newDetailsWindow[self.contact_detail_windows_count], num_contacto)
         self.contacto_newDetailsWindow[self.contact_detail_windows_count].focus()
