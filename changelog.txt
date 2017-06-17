@@ -5,11 +5,13 @@ Histórico de versões:
 
 
 ---
-v.0.10 - 14/06/2017
+v.0.10 - 17/06/2017
  * Adicionadas dicas aos botões e campos de pesquisa das barras de ferramentas.
  * Adicionadas dicas a alguns controlos em formulários para clarificar a sua
    funcionalidade.
  * Criada janela de detalhes de mensagem/evento.
+ * Adicionado à tabela de reparações um campo para especificar se o processo
+   corresponde ou não a uma reincidência.
 
 ---
 v.0.9 - 30/05/2017
