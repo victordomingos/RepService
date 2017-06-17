@@ -47,7 +47,7 @@ __app_name__ = "RepService 2017"
 __author__ = "Victor Domingos"
 __copyright__ = "Copyright 2017 Victor Domingos"
 __license__ = "Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)"
-__version__ = "v0.10 development"
+__version__ = "v0.11 development"
 __email__ = "web@victordomingos.com"
 __status__ = "Development"
 
