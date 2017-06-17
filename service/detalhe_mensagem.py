@@ -76,7 +76,7 @@ class msgDetailWindow(ttk.Frame):
         self.lbl_resultado_evento = ttk.Label(self.centerframe, text="Resultado:", style="Panel_Body.TLabel")
         self.lbl_resultado_evento_ = ttk.Label(self.centerframe, text=self.resultado, style="Panel_Body.TLabel")
 
-        self.ltxt_detalhe = LabelText(self.centerframe, "\n\nDetalhe", width=35, height=3, style="Panel_Body.TLabel")
+        self.ltxt_detalhe = LabelText(self.centerframe, "\n\nDetalhes:", width=35, height=3, style="Panel_Body.TLabel")
         self.ltxt_detalhe.set(self.detalhe)
 
         self.lbl_nome.grid(column=0, row=1, sticky='e')
@@ -113,9 +113,9 @@ class msgDetailWindow(ttk.Frame):
 
 
     def configurar_frames_e_estilos(self):
-        #self.master.minsize(W_DETALHE_MSG_MIN_WIDTH, W_DETALHE_MSG_MIN_HEIGHT)
-        #self.master.maxsize(W_DETALHE_MSG_MAX_WIDTH, W_DETALHE_MSG_MIN_HEIGHT)
-        #self.master.geometry(W_DETALHE_MSG_GEOMETRIA)
+        self.master.minsize(W_DETALHE_MSG_MIN_WIDTH, W_DETALHE_MSG_MIN_HEIGHT)
+        self.master.maxsize(W_DETALHE_MSG_MAX_WIDTH, W_DETALHE_MSG_MAX_HEIGHT)
+        self.master.geometry(W_DETALHE_MSG_GEOMETRIA)
         self.master.title(f'Mensagem nº {self.num_mensagem}')
         self.mainframe = ttk.Frame(self.master)
         self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 20")

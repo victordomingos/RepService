@@ -46,11 +46,11 @@ W_DETALHE_CONTACTO_MIN_HEIGHT = 380
 W_DETALHE_CONTACTO_MAX_WIDTH = 1024
 W_DETALHE_CONTACTO_MAX_HEIGHT = 800
 
-W_DETALHE_MSG_GEOMETRIA = '480x256'
-W_DETALHE_MSG_MIN_WIDTH = 430
-W_DETALHE_MSG_MIN_HEIGHT = 256
-W_DETALHE_MSG_MAX_WIDTH = 480
-W_DETALHE_MSG_MAX_HEIGHT = 400
+W_DETALHE_MSG_GEOMETRIA = '468x280'
+W_DETALHE_MSG_MIN_WIDTH = 468
+W_DETALHE_MSG_MIN_HEIGHT = 280
+W_DETALHE_MSG_MAX_WIDTH = 600
+W_DETALHE_MSG_MAX_HEIGHT = 280
 
 
 SLOW_MACHINE = False # Alterar para True no caso de se tratar de uma máquina lenta (animações no entryframe)
@@ -106,7 +106,7 @@ APP_PATH = os.getcwd()
 ICON_PATH = APP_PATH + "/images/icons/"
 
 
-TODOS_OS_PAISES = ("Angola", "Alemanha", "Afeganistão", "África do Sul", 
+TODOS_OS_PAISES = ("Angola", "Alemanha", "Afeganistão", "África do Sul",
     "Albânia", "Andorra", "Anguilla", "Antártida", "Antígua & Barbuda",
     "Arábia Saudita", "Argélia", "Argentina", "Arménia", "Aruba", "Austrália",
     "Áustria", "Azerbaijão", "Brasil", "Bélgica", "Bahamas", "Bahrein",
@@ -114,11 +114,11 @@ TODOS_OS_PAISES = ("Angola", "Alemanha", "Afeganistão", "África do Sul",
     "Bolívia", "Bonaire, St. Eustatius & Saba", "Bósnia-Herzegovina",
     "Botsuana", "Brunei", "Bulgária", "Burkina Faso", "Burundi", "Butão",
     "Cabo Verde", "Camarões", "Camboja", "Canadá", "Cazaquistão", "Chade",
-    "Chile", "China", "Chipre", "Colômbia", "Congo", "Coreia do Norte", 
+    "Chile", "China", "Chipre", "Colômbia", "Congo", "Coreia do Norte",
     "Coreia do Sul", "Costa do Marfim", "Costa Rica", "Croácia", "Cuba",
     "Curaçao", "Dinamarca", "Djibuti", "Dominica", "Espanha", "Estados Unidos",
     "Egito", "El Salvador", "Emirados Árabes Unidos", "Equador", "Eritréia",
-    "Eslováquia", "Eslovénia", "Estónia", "Etiópia", "França", 
+    "Eslováquia", "Eslovénia", "Estónia", "Etiópia", "França",
     "Federação Russa", "Fiji", "Filipinas", "Finlândia", "Gabão", "Gâmbia",
     "Gana", "Geórgia", "Gibraltar", "Granada", "Grécia", "Gronelândia",
     "Guadalupe", "Guam (Território dos Estados Unidos)", "Guatemala",
@@ -128,7 +128,7 @@ TODOS_OS_PAISES = ("Angola", "Alemanha", "Afeganistão", "África do Sul",
     "Ilha Natal", "Ilha Pitcairn", "Ilha Reunião", "Ilhas Aland",
     "Ilhas Cayman", "Ilhas Cocos", "Ilhas Comores", "Ilhas Cook",
     "Ilhas Faroes", "Ilhas Falkland (Malvinas)",
-    "Ilhas Geórgia do Sul e Sandwich do Sul", 
+    "Ilhas Geórgia do Sul e Sandwich do Sul",
     "Ilhas Heard e McDonald (Território da Austrália)",
     "Ilhas Marianas do Norte", "Ilhas Marshall",
     "Ilhas Menores dos Estados Unidos", "Ilhas Norfolk", "Ilhas Seychelles",
