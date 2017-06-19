@@ -321,23 +321,7 @@ class RemessasWindow(baseApp):
         self.remessa_detail_windows_count += 1
         self.remessa_newDetailsWindow[self.remessa_detail_windows_count] = tk.Toplevel()
         self.remessa_newDetailsWindow[self.remessa_detail_windows_count].title(f'Detalhe de remessa: {num_remessa}')
-
-        self.remessa_newDetailsWindow[self.remessa_detail_windows_count].bind(
-            "<Command-w>", self.close_detail_remessa_window)
-        #self.remessa_newDetailsWindow[self.remessa_detail_windows_count].wm_protocol(
-        #    "WM_DELETE_WINDOW",
-        #    lambda: self.remessa_newDetailsWindow[self.remessa_detail_windows_count].event_generate("<Command-w>") )
-
         self.janela_detalhes_remessa = remessaDetailWindow(self.remessa_newDetailsWindow[self.remessa_detail_windows_count], num_remessa)
-        self.remessa_newDetailsWindow[self.remessa_detail_windows_count].focus()
-
-
-    def close_detail_remessa_window(self, event):
-        """ will test for some condition before closing, save if necessary and
-            then call destroy()
-        """
-        window = event.widget.winfo_toplevel()
-        window.destroy()
 
 
     def radio_tipo_command(self, *event):

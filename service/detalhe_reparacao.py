@@ -18,6 +18,8 @@ class repairDetailWindow(ttk.Frame):
     def __init__(self, master, num_reparacao, *args,**kwargs):
         super().__init__(master,*args,**kwargs)
         self.master = master
+        self.master.bind("<Command-w>", self.on_btn_fechar)
+        self.master.focus()
         self.num_reparacao = num_reparacao
         self.tipo_processo = "Cliente" if bool((self.num_reparacao%2)==0) else "Stock"  #TODO: Substituir isto por função que busca tipo na info da base de dados
 
@@ -126,7 +128,7 @@ class repairDetailWindow(ttk.Frame):
         self.mbtn_copiar.menu.add_separator()
         self.mbtn_copiar.menu.add_command(label="Descrição do equipamento", command=None)
         self.mbtn_copiar.menu.add_command(label="Número de série", command=None)
-        self.dicas.bind(self.mbtn_copiar, 'Clique para selecionar e copiar\ndados referentes a este processo\npara a área de trânsferência.')
+        self.dicas.bind(self.mbtn_copiar, 'Clique para selecionar e copiar\ndados referentes a este processo\npara a Área de Transferência.')
         # ----------- fim de Botão com menu "Copiar" -------------
 
 
@@ -444,6 +446,14 @@ class repairDetailWindow(ttk.Frame):
                         self.ltxt_nar)
             for widget in widgets:
                 widget.disable()
+
+
+    def on_btn_fechar(self, event):
+        """ will test for some condition before closing, save if necessary and
+            then call destroy()
+        """
+        window = event.widget.winfo_toplevel()
+        window.destroy()
 
 
     def mostrar_painel_principal(self):

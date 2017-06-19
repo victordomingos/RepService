@@ -17,12 +17,22 @@ class remessaDetailWindow(ttk.Frame):
         super().__init__(master,*args,**kwargs)
         self.num_remessa = num_remessa
         self.master = master
+        self.master.bind("<Command-w>", self.on_btn_fechar)
+        self.master.focus()
 
         self.configurar_frames_e_estilos()
         self.montar_barra_de_ferramentas()
         self.montar_painel_principal()
         self.montar_rodape()
         self.composeFrames()
+
+
+    def on_btn_fechar(self, event):
+        """ will test for some condition before closing, save if necessary and
+            then call destroy()
+        """
+        window = event.widget.winfo_toplevel()
+        window.destroy()
 
 
     def montar_barra_de_ferramentas(self):

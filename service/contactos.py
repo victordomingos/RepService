@@ -334,31 +334,12 @@ class ContactsWindow(baseApp):
         self.contacto_selecionado = contacto
 
 
-
-
     def create_window_detalhe_contacto(self, *event, num_contacto=None):
         self.contact_detail_windows_count += 1
         self.contacto_newDetailsWindow[self.contact_detail_windows_count] = tk.Toplevel()
         self.contacto_newDetailsWindow[self.contact_detail_windows_count].title(f'Detalhe de contacto: {num_contacto}')
-
-        self.contacto_newDetailsWindow[self.contact_detail_windows_count].bind(
-            "<Command-w>", self.close_detail_contacto_window)
-        #self.contacto_newDetailsWindow[self.contact_detail_windows_count].wm_protocol(
-        #    "WM_DELETE_WINDOW",
-        #    lambda: self.contacto_newDetailsWindow[self.contact_detail_windows_count].event_generate("<Command-w>") )
-
         self.janela_detalhes_contacto = contactDetailWindow(self.contacto_newDetailsWindow[self.contact_detail_windows_count], num_contacto)
         self.contacto_newDetailsWindow[self.contact_detail_windows_count].focus()
-
-
-
-    def close_detail_contacto_window(self, event):
-        """ will test for some condition before closing, save if necessary and
-            then call destroy()
-        """
-        window = event.widget.winfo_toplevel()
-        window.destroy()
-
 
 
     def liga_desliga_menu_novo(self, *event):

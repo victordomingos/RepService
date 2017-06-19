@@ -19,6 +19,8 @@ class msgDetailWindow(ttk.Frame):
         super().__init__(master,*args,**kwargs)
         self.num_mensagem = num_mensagem
         self.master = master
+        self.master.bind("<Command-w>", self.on_btn_fechar)
+        self.master.focus()
         self.num_rep = 12345 # TODO - obter número da reparação
         self.nome = "José Manuel da Cunha Fantástico"
         self.artigo = "Um artigo que se encontra em reparação"
@@ -43,7 +45,17 @@ class msgDetailWindow(ttk.Frame):
         self.composeFrames()
         self.desativar_campos()
 
-
+    
+    
+    def on_btn_fechar(self, event):
+        #self.master.close_detail_msg_window(event)
+        """ will test for some condition before closing, save if necessary and
+            then call destroy()
+        """
+        window = event.widget.winfo_toplevel()
+        window.destroy()
+        
+        
     def montar_barra_de_ferramentas(self):
         self.lbl_titulo = ttk.Label(self.topframe, style="Panel_Title.TLabel", foreground=self.btnTxtColor, text=f"Reparação nº {self.num_rep}")
 
@@ -53,8 +65,9 @@ class msgDetailWindow(ttk.Frame):
         self.btn_ocultar_msg = ttk.Button(self.topframe, text="Ocultar", style="secondary.TButton", command=None)
         self.dicas.bind(self.btn_ocultar_msg, 'Clique para fechar a janela\ne não voltar a mostrar esta mensagem.')
 
-        self.btn_fechar = ttk.Button(self.topframe, text="Fechar", style="secondary.TButton", command=None)
+        self.btn_fechar = ttk.Button(self.topframe, text="Fechar", style="secondary.TButton")
         self.dicas.bind(self.btn_fechar, 'Clique para fechar a janela e manter\nesta mensagem visível na lista de mensagens.')
+        self.btn_fechar.bind("<ButtonRelease>", self.on_btn_fechar)
 
         self.lbl_titulo.grid(column=0, row=0, rowspan=2, padx=10)
         self.btn_abrir_rep.grid(column=7, row=0)
@@ -108,8 +121,6 @@ class msgDetailWindow(ttk.Frame):
 
         self.txt = ttk.Label(self.bottomframe, anchor='n', text=txt, font=self.rodapeFont, foreground=self.rodapeTxtColor)
         self.txt.pack(side="top")
-
-
 
 
     def configurar_frames_e_estilos(self):

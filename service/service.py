@@ -415,21 +415,7 @@ class App(baseApp):
 
         self.rep_detail_windows_count += 1
         self.rep_newDetailsWindow[self.rep_detail_windows_count] = tk.Toplevel()
-        self.rep_newDetailsWindow[self.rep_detail_windows_count].bind("<Command-w>", self.close_detail_repair_window)
-        #self.rep_newDetailsWindow[self.rep_detail_windows_count].wm_protocol("WM_DELETE_WINDOW",
-        #    lambda: self.rep_newDetailsWindow[self.rep_detail_windows_count].event_generate("<Command-w>") )
-
         self.janela_detalhes_rep = repairDetailWindow(self.rep_newDetailsWindow[self.rep_detail_windows_count], num_reparacao)
-        self.rep_newDetailsWindow[self.rep_detail_windows_count].focus()
-
-
-    def close_detail_repair_window(self, event):
-        """ will test for some condition before closing, save if necessary and
-            then call destroy()
-        """
-        window = event.widget.winfo_toplevel()
-        window.destroy()
-
 
 
     def create_window_detalhe_msg(self, *event, num_mensagem=None):
@@ -440,21 +426,7 @@ class App(baseApp):
 
         self.msg_detail_windows_count += 1
         self.msg_newDetailsWindow[self.msg_detail_windows_count] = tk.Toplevel()
-        self.msg_newDetailsWindow[self.msg_detail_windows_count].bind("<Command-w>", self.close_detail_msg_window)
-        #self.msg_newDetailsWindow[self.msg_detail_windows_count].wm_protocol("WM_DELETE_WINDOW",
-        #    lambda: self.msg_newDetailsWindow[self.msg_detail_windows_count].event_generate("<Command-w>") )
-
         self.janela_detalhes_msg = msgDetailWindow(self.msg_newDetailsWindow[self.msg_detail_windows_count], num_mensagem)
-        self.msg_newDetailsWindow[self.msg_detail_windows_count].focus()
-
-
-    def close_detail_msg_window(self, event):
-        """ will test for some condition before closing, save if necessary and
-            then call destroy()
-        """
-        window = event.widget.winfo_toplevel()
-        window.destroy()
-        return "break"
 
 
     def gerar_painel_mensagens(self):
