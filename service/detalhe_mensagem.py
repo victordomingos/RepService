@@ -11,6 +11,7 @@ from tkinter import ttk
 
 from extra_tk_classes import *
 from global_setup import *
+from detalhe_reparacao import *
 
 
 class msgDetailWindow(ttk.Frame):
@@ -30,14 +31,6 @@ class msgDetailWindow(ttk.Frame):
         self.remetente = "Utilizador que registou o evento"
         self.data = "12/05/2021 18:01"
 
-        self.dicas = Pmw.Balloon(self.master, label_background='#f6f6f6',
-                                 hull_highlightbackground='#b3b3b3',
-                                 state='balloon',
-                                 relmouse='both',
-                                 yoffset=18,
-                                 xoffset=-2,
-                                 initwait=1300)
-
         self.configurar_frames_e_estilos()
         self.montar_painel_principal()
         self.montar_barra_de_ferramentas()
@@ -45,25 +38,41 @@ class msgDetailWindow(ttk.Frame):
         self.composeFrames()
         self.desativar_campos()
 
-    
-    
-    def on_btn_fechar(self, event):
-        #self.master.close_detail_msg_window(event)
-        """ will test for some condition before closing, save if necessary and
-            then call destroy()
+
+    def on_btn_abrir_rep(self, event):
+        """ Abre a janela de detalhes do processo a que se refere esta mensagem.
         """
+        self.rep_DetailsWindow = tk.Toplevel()
+        self.janela_detalhes_rep = repairDetailWindow(self.rep_DetailsWindow, self.num_rep)
+
+
+    def on_btn_apagar_msg(self, event):
+        """ Apaga a mensagem (remove-a da lista de mensagens) e fecha esta
+            janela.
+        """
+        #TODO: Apagar a mensagem
         window = event.widget.winfo_toplevel()
         window.destroy()
-        
-        
+
+
+    def on_btn_fechar(self, event):
+        #self.master.close_detail_msg_window(event)
+        """ Fecha esta janela. """
+        window = event.widget.winfo_toplevel()
+        window.destroy()
+
+
     def montar_barra_de_ferramentas(self):
         self.lbl_titulo = ttk.Label(self.topframe, style="Panel_Title.TLabel", foreground=self.btnTxtColor, text=f"Reparação nº {self.num_rep}")
 
         self.btn_abrir_rep = ttk.Button(self.topframe, text="Ver Reparação", style="secondary.TButton", command=None)
         self.dicas.bind(self.btn_abrir_rep, 'Clique para abrir a janela de detalhes\nda reparação a que se refere esta mensagem.')
+        self.btn_abrir_rep.bind("<ButtonRelease>", self.on_btn_abrir_rep)
 
-        self.btn_ocultar_msg = ttk.Button(self.topframe, text="Ocultar", style="secondary.TButton", command=None)
-        self.dicas.bind(self.btn_ocultar_msg, 'Clique para fechar a janela\ne não voltar a mostrar esta mensagem.')
+        self.btn_apagar_msg = ttk.Button(self.topframe, text="Apagar", style="secondary.TButton", command=None)
+        self.dicas.bind(self.btn_apagar_msg, 'Clique para fechar a janela\ne não voltar a mostrar esta mensagem.')
+        self.btn_apagar_msg.bind("<ButtonRelease>", self.on_btn_apagar_msg)
+
 
         self.btn_fechar = ttk.Button(self.topframe, text="Fechar", style="secondary.TButton")
         self.dicas.bind(self.btn_fechar, 'Clique para fechar a janela e manter\nesta mensagem visível na lista de mensagens.')
@@ -71,7 +80,7 @@ class msgDetailWindow(ttk.Frame):
 
         self.lbl_titulo.grid(column=0, row=0, rowspan=2, padx=10)
         self.btn_abrir_rep.grid(column=7, row=0)
-        self.btn_ocultar_msg.grid(column=8, row=0)
+        self.btn_apagar_msg.grid(column=8, row=0)
         self.btn_fechar.grid(column=9, row=0)
         self.topframe.grid_columnconfigure(5, weight=1)
 
@@ -127,6 +136,14 @@ class msgDetailWindow(ttk.Frame):
         self.master.minsize(W_DETALHE_MSG_MIN_WIDTH, W_DETALHE_MSG_MIN_HEIGHT)
         self.master.maxsize(W_DETALHE_MSG_MAX_WIDTH, W_DETALHE_MSG_MAX_HEIGHT)
         self.master.geometry(W_DETALHE_MSG_GEOMETRIA)
+        self.dicas = Pmw.Balloon(self.master, label_background='#f6f6f6',
+                                 hull_highlightbackground='#b3b3b3',
+                                 state='balloon',
+                                 relmouse='both',
+                                 yoffset=18,
+                                 xoffset=-2,
+                                 initwait=1300)
+
         self.master.title(f'Mensagem nº {self.num_mensagem}')
         self.mainframe = ttk.Frame(self.master)
         self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 20")
