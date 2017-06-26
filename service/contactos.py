@@ -206,7 +206,7 @@ class ContactsWindow(baseApp):
         self.ef_lbl_pais = ttk.Label(self.ef_lf_top, text="País", style="Panel_Body.TLabel")
         self.paises_value = tk.StringVar()
         self.ef_combo_pais = ttk.Combobox(self.ef_lf_top, values=TODOS_OS_PAISES,
-                                          textvariable=self.paises_value, 
+                                          textvariable=self.paises_value,
                                           state='readonly')
         self.ef_combo_pais.current(178)
         self.ef_combo_pais.bind("<Key>", self.procurar_em_combobox)
@@ -259,7 +259,7 @@ class ContactsWindow(baseApp):
         reparação, adiciona o contacto ao campo correspondente.
         """
         # guardar na base de dados e obter o nº do último contacto adicionado
-        
+
         if self.estado.tipo_novo_contacto == "Cliente":
             print("Usar este cliente")
             self.estado.contacto_para_nova_reparacao = "123"
@@ -364,14 +364,14 @@ class ContactsWindow(baseApp):
             if self.ultimo_contacto:
                 self.on_contact_save_success()
             else:
-                wants_to_try_again_save = messagebox.askquestion(message='Não foi possível guardar este contacto na base de dados. Deseja tentar novamente?', 
+                wants_to_try_again_save = messagebox.askquestion(message='Não foi possível guardar este contacto na base de dados. Deseja tentar novamente?',
                                                                  default='yes',
-                                                                 parent=self)  
+                                                                 parent=self)
                 if wants_to_try_again_save == 'yes':
                     self.on_save_contact()
                 else:
                     self.on_contact_cancel()
-                            
+
 
     def on_contact_save_success(self):
         print("Contacto guardado com sucesso")
@@ -379,7 +379,7 @@ class ContactsWindow(baseApp):
         self.adicionar_contacto()
         """
         self.ultimo_contacto = "1234" #TODO - criar um mecanismo para obter o número da reparação acabada de introduzir na base de dados
-        wants_to_create = messagebox.askquestion(message='O novo contacto foi guardado com sucesso. Deseja criar uma nova reparação?', default='yes', parent=self)  
+        wants_to_create = messagebox.askquestion(message='O novo contacto foi guardado com sucesso. Deseja criar uma nova reparação?', default='yes', parent=self)
         if wants_to_create == 'yes':
                 imprimir_folhas_de_reparacao(self.ultima_reparacao)
                 self.fechar_painel_entrada()
@@ -390,7 +390,7 @@ class ContactsWindow(baseApp):
     # TODO
     def on_contact_cancel(self, event=None):
         # caso haja informação introduzida no formulário TODO: verificar primeiro
-        wants_to_cancel = messagebox.askyesno(message='Tem a certeza que deseja cancelar a introdução de dados? Toda a informação não guardada será eliminada de forma irreversível.', 
+        wants_to_cancel = messagebox.askyesno(message='Tem a certeza que deseja cancelar a introdução de dados? Toda a informação não guardada será eliminada de forma irreversível.',
                                                                                     default='no',
                                                                                     parent=self)
         if wants_to_cancel:

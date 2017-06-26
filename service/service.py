@@ -353,7 +353,7 @@ class App(baseApp):
             estado.janela_remessas = tk.Toplevel(self.master)
             self.janela_remessas = RemessasWindow(estado.janela_remessas, estado)
             estado.janela_remessas_aberta = True
-            #estado.janela_remessas.wm_protocol("WM_DELETE_WINDOW", lambda: self.close_window_remessas())
+            estado.janela_remessas.wm_protocol("WM_DELETE_WINDOW", self.close_window_remessas)
         else:
             if not criar_nova_remessa:
                 self.close_window_remessas()
@@ -380,7 +380,7 @@ class App(baseApp):
             estado.janela_contactos = tk.Toplevel(self.master)
             self.janela_contactos = ContactsWindow(estado.janela_contactos, estado)
             estado.janela_contactos_aberta = True
-            #estado.janela_contactos.wm_protocol("WM_DELETE_WINDOW", lambda: self.close_window_contactos())
+            estado.janela_contactos.wm_protocol("WM_DELETE_WINDOW", self.close_window_contactos)
         else:
             if not criar_novo_contacto:
                 self.close_window_contactos()
