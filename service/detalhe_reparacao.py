@@ -28,6 +28,7 @@ class repairDetailWindow(ttk.Frame):
 
         self.is_garantia = True  # todo - verificar se é garantia
         self.modo_entrega = 2 # todo - obter da base de dados
+        self.portes = 0 #todo - obter da base de dados
 
         self.dicas = Pmw.Balloon(self.master, label_background='#f6f6f6',
                                               hull_highlightbackground='#b3b3b3',
@@ -247,6 +248,15 @@ class repairDetailWindow(ttk.Frame):
             else:
                 varias_linhas += "\n• Enviar para a morada abaixo indicada"
                 self.ltxt_morada_entrega = LabelText(self.geral_fr2, "Morada a utilizar na entrega:", style="Panel_Body.TLabel")
+
+            if self.modo_entrega != 0:
+                if self.portes == 0:
+                    varias_linhas += "\n• Cliente ainda não pagou portes"
+                elif self.portes == 1:
+                    varias_linhas += "\n• Cliente já pagou portes"
+                elif self.portes == 2:
+                    varias_linhas += "\n• Oferta de portes grátis"
+
 
             self.lbl_varias_linhas = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text=varias_linhas)
 
