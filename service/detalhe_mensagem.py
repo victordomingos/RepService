@@ -73,15 +73,16 @@ class msgDetailWindow(ttk.Frame):
         self.dicas.bind(self.btn_apagar_msg, 'Clique para fechar a janela\ne não voltar a mostrar esta mensagem.')
         self.btn_apagar_msg.bind("<ButtonRelease>", self.on_btn_apagar_msg)
 
-
+        """
         self.btn_fechar = ttk.Button(self.topframe, text="Fechar", style="secondary.TButton")
         self.dicas.bind(self.btn_fechar, 'Clique para fechar a janela e manter\nesta mensagem visível na lista de mensagens.')
         self.btn_fechar.bind("<ButtonRelease>", self.on_btn_fechar)
-
+        """
+        
         self.lbl_titulo.grid(column=0, row=0, rowspan=2, padx=10)
         self.btn_abrir_rep.grid(column=7, row=0)
         self.btn_apagar_msg.grid(column=8, row=0)
-        self.btn_fechar.grid(column=9, row=0)
+        #self.btn_fechar.grid(column=9, row=0)
         self.topframe.grid_columnconfigure(5, weight=1)
 
 
