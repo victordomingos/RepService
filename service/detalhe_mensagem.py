@@ -79,7 +79,7 @@ class msgDetailWindow(ttk.Frame):
         self.btn_fechar.bind("<ButtonRelease>", self.on_btn_fechar)
         """
         
-        self.lbl_titulo.grid(column=0, row=0, rowspan=2, padx=10)
+        self.lbl_titulo.grid(column=0, row=0, rowspan=2)
         self.btn_abrir_rep.grid(column=7, row=0)
         self.btn_apagar_msg.grid(column=8, row=0)
         #self.btn_fechar.grid(column=9, row=0)
