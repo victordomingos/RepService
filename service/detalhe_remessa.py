@@ -27,7 +27,7 @@ class remessaDetailWindow(ttk.Frame):
         self.tipo = "saída"
         self.numero_contacto = "90000" #TODO numero de fornecedor
         self.nome = "That International Provider of Great Stuff, Inc." #TODO Nome do fornecedor
-            
+
         self.artigo = "Um artigo que se encontra em reparação"
         self.estado_atual = "Em processamento"
         self.resultado = "Orçamento aprovado"
@@ -36,9 +36,8 @@ class remessaDetailWindow(ttk.Frame):
         self.data = "12/05/2021 18:01"
 
         self.master.title(f'Remessa nº {self.num_remessa}')
-        
+
         self.configurar_frames_e_estilos()
-        self.montar_tabela()
         self.montar_painel_principal()
         self.montar_barra_de_ferramentas()
         self.montar_rodape()
@@ -93,17 +92,7 @@ class remessaDetailWindow(ttk.Frame):
         self.txt_nome.insert(0, self.nome)
 
 
-        self.txt_numero_contacto.grid(row=1, column=0)
-        self.txt_nome.grid(row=1, column=1, columnspan=2, sticky="we")
-        self.centerframe.grid_columnconfigure(0, weight=0)
-        self.centerframe.grid_columnconfigure(1, weight=1)
-        self.centerframe.grid_columnconfigure(2, weight=0)
-
-        self.desativar_campos()
-
-
-    def montar_tabela(self):
-        self.tree = ttk.Treeview(self.centerframe, height=10, selectmode='browse')
+        self.tree = ttk.Treeview(self.treeframe, height=10, selectmode='browse')
         self.tree['columns'] = ('Nº', 'Cliente', 'Equipamento', 'Serviço')
         #self.tree.pack(side='top', expand=True, fill='both')
         self.tree.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
@@ -111,25 +100,33 @@ class remessaDetailWindow(ttk.Frame):
         self.tree.column('Cliente', minwidth=80, stretch=1, width=120)
         self.tree.column('Equipamento', minwidth=80, stretch=1, width=170)
         self.tree.column('Serviço', minwidth=80, stretch=1, width=210)
-        self.configurarTree()
-        #self.leftframe.grid_columnconfigure(0, weight=1)
-        #self.leftframe.grid_columnconfigure(1, weight=0)
-        #self.leftframe.grid_rowconfigure(0, weight=1)
-
-        self.bind_tree()
-
-
-    def configurarTree(self):
         # Ordenar por coluna ao clicar no respetivo cabeçalho
         for col in self.tree['columns']:
             self.tree.heading(col, text=col.title(),
             command=lambda c=col: self.sortBy(self.tree, c, 0))
 
         # Barra de deslocação para a tabela
-        self.tree.grid(column=0, row=0, sticky="nsew", in_=self.centerframe)
-        self.vsb = AutoScrollbar(self.centerframe, orient="vertical", command=self.tree.yview)
+        self.tree.grid(column=0, row=0, sticky="nsew", in_=self.treeframe)
+        self.vsb = AutoScrollbar(self.treeframe, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=self.vsb.set)
-        self.vsb.grid(column=1, row=0, sticky="ns", in_=self.centerframe)
+        self.vsb.grid(column=1, row=0, sticky="ns", in_=self.treeframe)
+
+        #self.leftframe.grid_columnconfigure(0, weight=1)
+        #self.leftframe.grid_columnconfigure(1, weight=0)
+        #self.leftframe.grid_rowconfigure(0, weight=1)
+
+        self.bind_tree()
+
+        self.txt_numero_contacto.grid(row=1, column=0)
+        self.txt_nome.grid(row=1, column=1, columnspan=2, sticky="we")
+
+        self.treeframe.grid_columnconfigure(0, weight=1)
+        self.treeframe.grid_rowconfigure(0, weight=1)
+
+        self.centerframe.grid_columnconfigure(0, weight=0)
+        self.centerframe.grid_columnconfigure(1, weight=1)
+        self.centerframe.grid_columnconfigure(2, weight=1)
+        self.desativar_campos()
 
 
     def bind_tree(self):
@@ -190,8 +187,8 @@ class remessaDetailWindow(ttk.Frame):
         destino =  tree_linha["values"][2]
         self.my_statusbar.set(f"{remessa} • {destino}")
         self.remessa_selecionada = remessa
-        
-        
+
+
 
     # ------ Permitir que a tabela possa ser ordenada clicando no cabeçalho ----------------------
     def isNumeric(self, s):
@@ -283,6 +280,7 @@ class remessaDetailWindow(ttk.Frame):
         self.mainframe = ttk.Frame(self.master)
         self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 20")
         self.centerframe = ttk.Frame(self.mainframe, padding="5 8 5 5")
+        self.treeframe = ttk.Frame(self.centerframe, padding="0 8 0 0")
         self.bottomframe = ttk.Frame(self.mainframe, padding="3 1 3 1")
 
         self.estilo = ttk.Style()
@@ -296,5 +294,6 @@ class remessaDetailWindow(ttk.Frame):
     def composeFrames(self):
         self.topframe.pack(side=tk.TOP, fill=tk.X, expand=False)
         self.bottomframe.pack(side=tk.BOTTOM, fill=tk.X)
+        self.treeframe.grid(column=0, row=3, columnspan=3, sticky="nsew")
         self.centerframe.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.mainframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
