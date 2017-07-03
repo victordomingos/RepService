@@ -5,11 +5,12 @@ Histórico de versões:
 
 
 ---
-v.0.11 - 30/06/2017
+v.0.11 - 03/07/2017
  * Adicionadas callbacks aos vários botões da janela de detalhes de mensagem.
  * Foi simplificado o código relativo à geração das janelas de detalhes.
  * Adicionada indicação sobre pagamento ou oferta de portes à janela de detalhes
-   de reparação. 
+   de reparação.
+ * Criada janela de detalhes de remessa.
 
 ---
 v.0.10 - 17/06/2017
