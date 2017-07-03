@@ -33,7 +33,10 @@ class remessaDetailWindow(ttk.Frame):
         self.resultado = "Orçamento aprovado"
         self.detalhe = "Texto completo do evento ou mensagem conforme escrito pelo utilizador."
         self.remetente = "Utilizador que registou o evento"
-        self.data = "12/05/2021 18:01"
+        self.data_remessa = "12/05/2021 18:01"
+        self.data_alteracao = "12/05/2021 18:01"
+        self.obs = "Anotações com mais detalhes sobre esta remessa.\nTexto livre :-)"
+        self.soma = 3 # TODO numero de processos nesta remessa.
 
         self.master.title(f'Remessa nº {self.num_remessa}')
 
@@ -51,6 +54,14 @@ class remessaDetailWindow(ttk.Frame):
         window.destroy()
 
 
+    def on_btn_anotar(self, event):
+        """ 
+        Acrescenta um novo apontamento à lista de observações desta
+        remessa, com o respetivo timestamp como prefixo.
+        """
+        pass
+        
+
     def montar_barra_de_ferramentas(self):
         self.lbl_titulo = ttk.Label(self.topframe, style="Panel_Title.TLabel", foreground=self.btnTxtColor, text=f"Remessa de {self.tipo} nº {self.num_remessa}")
 
@@ -62,16 +73,16 @@ class remessaDetailWindow(ttk.Frame):
         self.btn_apagar_msg = ttk.Button(self.topframe, text="Apagar", style="secondary.TButton", command=None)
         self.dicas.bind(self.btn_apagar_msg, 'Clique para fechar a janela\ne não voltar a mostrar esta mensagem.')
         self.btn_apagar_msg.bind("<ButtonRelease>", self.on_btn_apagar_msg)
-
-
-        self.btn_fechar = ttk.Button(self.topframe, text="Fechar", style="secondary.TButton")
-        self.dicas.bind(self.btn_fechar, 'Clique para fechar a janela e manter\nesta mensagem visível na lista de mensagens.')
-        self.btn_fechar.bind("<ButtonRelease>", self.on_btn_fechar)
         """
+
+        self.btn_anotar = ttk.Button(self.topframe, text="Adicionar nota", style="secondary.TButton")
+        self.dicas.bind(self.btn_anotar, 'Clique para acrescentar um novo apontamento\nà lista de observações desta remessa.')
+        self.btn_anotar.bind("<ButtonRelease>", self.on_btn_anotar)
+
         self.lbl_titulo.grid(column=0, row=0, rowspan=2)
         #self.btn_abrir_rep.grid(column=7, row=0)
         #self.btn_apagar_msg.grid(column=8, row=0)
-        #self.btn_fechar.grid(column=9, row=0)
+        self.btn_anotar.grid(column=9, row=0)
         self.topframe.grid_columnconfigure(5, weight=1)
 
 
@@ -80,6 +91,8 @@ class remessaDetailWindow(ttk.Frame):
         #self.ltxt_detalhe.disable()
         self.txt_numero_contacto.configure(state="disabled")
         self.txt_nome.configure(state="disabled")
+        self.ltxt_obs.disable()
+        self.ltxt_data_remessa.disable()
 
 
     def montar_painel_principal(self):
@@ -115,17 +128,34 @@ class remessaDetailWindow(ttk.Frame):
         #self.leftframe.grid_columnconfigure(1, weight=0)
         #self.leftframe.grid_rowconfigure(0, weight=1)
 
-        self.bind_tree()
+        self.lbl_soma_processos = ttk.Label(self.centerframe, text=f"Nº de processos nesta remessa: {self.soma}", style="Panel_Body.TLabel")
+
+        self.ltxt_obs = LabelText(self.centerframe, "Observações:", width=35, height=3, style="Panel_Body.TLabel")
+        self.ltxt_obs.set(self.obs)
+
+        if self.tipo == "saída":
+            txt = "envio"
+        else:
+            txt = "receção"
+        txt = f"Data de {txt}:"
+        self.ltxt_data_remessa = LabelEntry(self.centerframe, txt, width=20, style="Panel_Body.TLabel")
+        self.ltxt_data_remessa.set(self.data_remessa)
 
         self.txt_numero_contacto.grid(row=1, column=0)
         self.txt_nome.grid(row=1, column=1, columnspan=2, sticky="we")
-
+        self.ltxt_obs.grid(column=0, row=5, columnspan=2, sticky='we')
+        self.ltxt_data_remessa.grid(column=2, row=5, sticky='ne')
+        self.lbl_soma_processos.grid(column=2, row=4, columnspan=2, sticky='ne', pady="5 25", padx=3)
+        
+        self.treeframe.grid(column=0, row=3, columnspan=3, sticky="nsew")
+        
         self.treeframe.grid_columnconfigure(0, weight=1)
         self.treeframe.grid_rowconfigure(0, weight=1)
 
         self.centerframe.grid_columnconfigure(0, weight=0)
         self.centerframe.grid_columnconfigure(1, weight=1)
-        self.centerframe.grid_columnconfigure(2, weight=1)
+        self.centerframe.grid_columnconfigure(2, weight=0)
+        self.bind_tree()
         self.desativar_campos()
 
 
@@ -253,7 +283,6 @@ class remessaDetailWindow(ttk.Frame):
         self.update_idletasks()
 
 
-
     def montar_rodape(self):
         #TODO - obter dados da base de dados
         txt = "Remessa criada por Victor Domingos em 12/05/2021 18:01."
@@ -294,6 +323,5 @@ class remessaDetailWindow(ttk.Frame):
     def composeFrames(self):
         self.topframe.pack(side=tk.TOP, fill=tk.X, expand=False)
         self.bottomframe.pack(side=tk.BOTTOM, fill=tk.X)
-        self.treeframe.grid(column=0, row=3, columnspan=3, sticky="nsew")
         self.centerframe.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.mainframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
