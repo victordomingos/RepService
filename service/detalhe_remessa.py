@@ -7,11 +7,11 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
 import tkinter as tk
 import Pmw
+import textwrap
 from tkinter import ttk
 from global_setup import *
 from extra_tk_classes import *
-
-
+from detalhe_reparacao import *
 
 
 class remessaDetailWindow(ttk.Frame):
@@ -19,7 +19,12 @@ class remessaDetailWindow(ttk.Frame):
     def __init__(self, master, num_remessa, *args,**kwargs):
         super().__init__(master,*args,**kwargs)
         self.num_remessa = num_remessa
+        self.reparacao_selecionada = ""
         self.master = master
+        self.rep_newDetailsWindow = {}
+        self.rep_detail_windows_count = 0
+        self.estilo = ttk.Style()
+
         self.master.bind("<Command-w>", self.on_btn_fechar)
         self.master.focus()
         # Todo - obter da base de dados
@@ -45,7 +50,12 @@ class remessaDetailWindow(ttk.Frame):
         self.montar_barra_de_ferramentas()
         self.montar_rodape()
         self.composeFrames()
+        self.inserir_dados_de_exemplo()
+        self.alternar_cores(self.tree, inverso=False, fundo1='grey96')
+
         self.desativar_campos()
+
+
 
 
     def on_btn_fechar(self, event):
@@ -55,12 +65,15 @@ class remessaDetailWindow(ttk.Frame):
 
 
     def on_btn_anotar(self, event):
-        """ 
+        """
         Acrescenta um novo apontamento à lista de observações desta
         remessa, com o respetivo timestamp como prefixo.
         """
         pass
-        
+
+    def on_btn_imprimir(self, event):
+        imprimir_guia_de_remessa(self.num_remessa)
+
 
     def montar_barra_de_ferramentas(self):
         self.lbl_titulo = ttk.Label(self.topframe, style="Panel_Title.TLabel", foreground=self.btnTxtColor, text=f"Remessa de {self.tipo} nº {self.num_remessa}")
@@ -79,10 +92,15 @@ class remessaDetailWindow(ttk.Frame):
         self.dicas.bind(self.btn_anotar, 'Clique para acrescentar um novo apontamento\nà lista de observações desta remessa.')
         self.btn_anotar.bind("<ButtonRelease>", self.on_btn_anotar)
 
+        self.btn_imprimir = ttk.Button(self.topframe, text="Imprimir", style="secondary.TButton")
+        self.dicas.bind(self.btn_anotar, 'Clique para imprimir esta remessa.')
+        self.btn_anotar.bind("<ButtonRelease>", self.on_btn_imprimir)
+
         self.lbl_titulo.grid(column=0, row=0, rowspan=2)
         #self.btn_abrir_rep.grid(column=7, row=0)
         #self.btn_apagar_msg.grid(column=8, row=0)
-        self.btn_anotar.grid(column=9, row=0)
+        self.btn_anotar.grid(column=8, row=0)
+        self.btn_imprimir.grid(column=9, row=0)
         self.topframe.grid_columnconfigure(5, weight=1)
 
 
@@ -104,15 +122,16 @@ class remessaDetailWindow(ttk.Frame):
         self.txt_numero_contacto.insert(0, self.numero_contacto)
         self.txt_nome.insert(0, self.nome)
 
-
-        self.tree = ttk.Treeview(self.treeframe, height=10, selectmode='browse')
+        self.estilo.configure('Reparacoes_Remessa.Treeview', rowheight=28)
+        self.tree = ttk.Treeview(self.treeframe, height=10, selectmode='browse', style="Reparacoes_Remessa.Treeview")
         self.tree['columns'] = ('Nº', 'Cliente', 'Equipamento', 'Serviço')
         #self.tree.pack(side='top', expand=True, fill='both')
         self.tree.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
         self.tree.column('Nº', anchor='e', minwidth=46, stretch=0, width=46)
         self.tree.column('Cliente', minwidth=80, stretch=1, width=120)
         self.tree.column('Equipamento', minwidth=80, stretch=1, width=170)
-        self.tree.column('Serviço', minwidth=80, stretch=1, width=210)
+        self.tree.column('Serviço', minwidth=80, stretch=1, width=290)
+
         # Ordenar por coluna ao clicar no respetivo cabeçalho
         for col in self.tree['columns']:
             self.tree.heading(col, text=col.title(),
@@ -146,9 +165,9 @@ class remessaDetailWindow(ttk.Frame):
         self.ltxt_obs.grid(column=0, row=5, columnspan=2, sticky='we')
         self.ltxt_data_remessa.grid(column=2, row=5, sticky='ne')
         self.lbl_soma_processos.grid(column=2, row=4, columnspan=2, sticky='ne', pady="5 25", padx=3)
-        
+
         self.treeframe.grid(column=0, row=3, columnspan=3, sticky="nsew")
-        
+
         self.treeframe.grid_columnconfigure(0, weight=1)
         self.treeframe.grid_rowconfigure(0, weight=1)
 
@@ -161,7 +180,7 @@ class remessaDetailWindow(ttk.Frame):
 
     def bind_tree(self):
         self.tree.bind('<<TreeviewSelect>>', self.selectItem_popup)
-        self.tree.bind('<Double-1>', lambda x: self.create_window_detalhe_remessa(num_remessa=self.remessa_selecionada))
+        self.tree.bind('<Double-1>', lambda x: self.create_window_detalhe_rep(num_reparacao=self.reparacao_selecionada))
         self.tree.bind("<Button-2>", self.popupMenu)
         self.tree.bind("<Button-3>", self.popupMenu)
         self.update_idletasks()
@@ -208,15 +227,15 @@ class remessaDetailWindow(ttk.Frame):
 
     def selectItem(self, *event):
         """
-        Obter remessa selecionada (após clique de rato na linha correspondente)
+        Obter reparação selecionada (após clique de rato na linha correspondente)
         """
         curItem = self.tree.focus()
         tree_linha = self.tree.item(curItem)
 
-        remessa = tree_linha["values"][0]
-        destino =  tree_linha["values"][2]
-        self.my_statusbar.set(f"{remessa} • {destino}")
-        self.remessa_selecionada = remessa
+        num_reparacao = tree_linha["values"][0]
+        #equipamento =  tree_linha["values"][2]
+        #self.my_statusbar.set(f"{num_reparacao} • {equipamento}")
+        self.reparacao_selecionada = num_reparacao
 
 
 
@@ -296,9 +315,9 @@ class remessaDetailWindow(ttk.Frame):
 
 
     def configurar_frames_e_estilos(self):
-        self.master.minsize(W_DETALHE_REMESSA_MIN_WIDTH, W_DETALHE_REMESSA_MIN_HEIGHT)
-        self.master.maxsize(W_DETALHE_REMESSA_MAX_WIDTH, W_DETALHE_REMESSA_MAX_HEIGHT)
-        self.master.geometry(W_DETALHE_REMESSA_GEOMETRIA)
+        #self.master.minsize(W_DETALHE_REMESSA_MIN_WIDTH, W_DETALHE_REMESSA_MIN_HEIGHT)
+        #self.master.maxsize(W_DETALHE_REMESSA_MAX_WIDTH, W_DETALHE_REMESSA_MAX_HEIGHT)
+        #self.master.geometry(W_DETALHE_REMESSA_GEOMETRIA)
         self.dicas = Pmw.Balloon(self.master, label_background='#f6f6f6',
                                  hull_highlightbackground='#b3b3b3',
                                  state='balloon',
@@ -325,3 +344,16 @@ class remessaDetailWindow(ttk.Frame):
         self.bottomframe.pack(side=tk.BOTTOM, fill=tk.X)
         self.centerframe.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.mainframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
+
+
+    def create_window_detalhe_rep(self, num_reparacao=None):
+        self.rep_detail_windows_count += 1
+        self.rep_newDetailsWindow[self.rep_detail_windows_count] = tk.Toplevel()
+        self.janela_detalhes_rep = repairDetailWindow(self.rep_newDetailsWindow[self.rep_detail_windows_count], num_reparacao)
+
+
+    def inserir_dados_de_exemplo(self):
+        for i in range(1,30):
+            self.tree.insert("", "end", text="", values=(str(i), "José Manuel da Silva Rodrigues", "Artigo Muito Jeitoso (Early 2015)", "Substituição de ecrã"))
+            self.tree.insert("", "end", text="", values=(str(i+1),"Joana Manuela Rodrigues", "Outro Artigo Bem Jeitoso", "Bateria não carrega"))
+            self.tree.insert("", "end", text="", values=(str(i+2),"Maria Apolinário Gomes Fernandes", "Smartphone Daqueles Bons", textwrap.fill("O equipamento não liga, na sequência de exposição a líquidos. Testar e verificar se é possível reparar. Caso contrário, apresentar orçamento para a sua substituição.", width=50)))
