@@ -12,6 +12,7 @@ from tkinter import ttk
 from global_setup import *
 from extra_tk_classes import *
 from detalhe_reparacao import *
+from imprimir import *
 
 
 class remessaDetailWindow(ttk.Frame):
@@ -122,15 +123,15 @@ class remessaDetailWindow(ttk.Frame):
         self.txt_numero_contacto.insert(0, self.numero_contacto)
         self.txt_nome.insert(0, self.nome)
 
-        self.estilo.configure('Reparacoes_Remessa.Treeview', rowheight=28)
+        self.estilo.configure('Reparacoes_Remessa.Treeview', rowheight=56)
         self.tree = ttk.Treeview(self.treeframe, height=10, selectmode='browse', style="Reparacoes_Remessa.Treeview")
         self.tree['columns'] = ('Nº', 'Cliente', 'Equipamento', 'Serviço')
         #self.tree.pack(side='top', expand=True, fill='both')
         self.tree.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
-        self.tree.column('Nº', anchor='e', minwidth=46, stretch=0, width=46)
-        self.tree.column('Cliente', minwidth=80, stretch=1, width=120)
-        self.tree.column('Equipamento', minwidth=80, stretch=1, width=170)
-        self.tree.column('Serviço', minwidth=80, stretch=1, width=290)
+        self.tree.column('Nº', anchor='ne', minwidth=46, stretch=0, width=46)
+        self.tree.column('Cliente', anchor='nw', minwidth=80, stretch=1, width=120)
+        self.tree.column('Equipamento', anchor='nw', minwidth=80, stretch=1, width=170)
+        self.tree.column('Serviço', anchor='nw', minwidth=80, stretch=1, width=290)
 
         # Ordenar por coluna ao clicar no respetivo cabeçalho
         for col in self.tree['columns']:
@@ -174,6 +175,7 @@ class remessaDetailWindow(ttk.Frame):
         self.centerframe.grid_columnconfigure(0, weight=0)
         self.centerframe.grid_columnconfigure(1, weight=1)
         self.centerframe.grid_columnconfigure(2, weight=0)
+        self.centerframe.grid_rowconfigure(3, weight=1)
         self.bind_tree()
         self.desativar_campos()
 
@@ -315,9 +317,9 @@ class remessaDetailWindow(ttk.Frame):
 
 
     def configurar_frames_e_estilos(self):
-        #self.master.minsize(W_DETALHE_REMESSA_MIN_WIDTH, W_DETALHE_REMESSA_MIN_HEIGHT)
-        #self.master.maxsize(W_DETALHE_REMESSA_MAX_WIDTH, W_DETALHE_REMESSA_MAX_HEIGHT)
-        #self.master.geometry(W_DETALHE_REMESSA_GEOMETRIA)
+        self.master.minsize(W_DETALHE_REMESSA_MIN_WIDTH, W_DETALHE_REMESSA_MIN_HEIGHT)
+        self.master.maxsize(W_DETALHE_REMESSA_MAX_WIDTH, W_DETALHE_REMESSA_MAX_HEIGHT)
+        self.master.geometry(W_DETALHE_REMESSA_GEOMETRIA)
         self.dicas = Pmw.Balloon(self.master, label_background='#f6f6f6',
                                  hull_highlightbackground='#b3b3b3',
                                  state='balloon',
@@ -353,7 +355,7 @@ class remessaDetailWindow(ttk.Frame):
 
 
     def inserir_dados_de_exemplo(self):
-        for i in range(1,30):
+        for i in range(1,30,3):
             self.tree.insert("", "end", text="", values=(str(i), "José Manuel da Silva Rodrigues", "Artigo Muito Jeitoso (Early 2015)", "Substituição de ecrã"))
             self.tree.insert("", "end", text="", values=(str(i+1),"Joana Manuela Rodrigues", "Outro Artigo Bem Jeitoso", "Bateria não carrega"))
             self.tree.insert("", "end", text="", values=(str(i+2),"Maria Apolinário Gomes Fernandes", "Smartphone Daqueles Bons", textwrap.fill("O equipamento não liga, na sequência de exposição a líquidos. Testar e verificar se é possível reparar. Caso contrário, apresentar orçamento para a sua substituição.", width=50)))
