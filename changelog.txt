@@ -7,10 +7,11 @@ Histórico de versões:
 ---
 v.0.12 - 15/07/2017
  * Adicionados botões à barra de ferramentas da janela de detalhes de remessa.
+ * Adicionada contagem do nº de processos de reparação presentes na remessa.
  * Criada função para teste da tabela da janela de detalhes de remessa.
  * Alguns ajustes na tabela de reparações na janela detalhes de remessa e nas
    dimensões dessa janela.
-
+ 
 ---
 v.0.11 - 03/07/2017
  * Adicionadas callbacks aos vários botões da janela de detalhes de mensagem.
