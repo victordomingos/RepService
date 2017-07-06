@@ -129,9 +129,9 @@ class remessaDetailWindow(ttk.Frame):
         #self.tree.pack(side='top', expand=True, fill='both')
         self.tree.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
         self.tree.column('Nº', anchor='ne', minwidth=46, stretch=0, width=46)
-        self.tree.column('Cliente', anchor='nw', minwidth=80, stretch=1, width=120)
-        self.tree.column('Equipamento', anchor='nw', minwidth=80, stretch=1, width=170)
-        self.tree.column('Serviço', anchor='nw', minwidth=80, stretch=1, width=290)
+        self.tree.column('Cliente', anchor='nw', minwidth=120, stretch=1, width=200)
+        self.tree.column('Equipamento', anchor='nw', minwidth=120, stretch=1, width=220)
+        self.tree.column('Serviço', anchor='nw', minwidth=120, stretch=1, width=290)
 
         # Ordenar por coluna ao clicar no respetivo cabeçalho
         for col in self.tree['columns']:
