@@ -353,7 +353,8 @@ class remessaDetailWindow(ttk.Frame):
 
 
     def inserir_dados_de_exemplo(self):
-        for i in range(1,36,3):
-            self.tree.insert("", "end", text="", values=(str(i), "José Manuel da Silva Rodrigues", "Artigo Muito Jeitoso (Early 2015)", "Substituição de ecrã"))
-            self.tree.insert("", "end", text="", values=(str(i+1),"Joana Manuela Rodrigues", "Outro Artigo Bem Jeitoso", "Bateria não carrega"))
-            self.tree.insert("", "end", text="", values=(str(i+2),"Maria Apolinário Gomes Fernandes", "Smartphone Daqueles Bons", textwrap.fill("O equipamento não liga, na sequência de exposição a líquidos. Testar e verificar se é possível reparar. Caso contrário, apresentar orçamento para a sua substituição.", width=50)))
+        for i in range(1,36,4):
+            self.tree.insert("", "end", text="", values=(str(i), "José N. P. K. da Silva Rodrigues", "Artigo Muito Jeitoso (Early 2015)", "Substituição de ecrã"))
+            self.tree.insert("", "end", text="", values=(str(i+1),"Joana Manuela Fantástica Rodrigues", "Outro Artigo Bem Jeitoso", "Bateria não carrega"))
+            self.tree.insert("", "end", text="", values=(str(i+2),"Maria Gomes Simpática", "Smartphone Daqueles Bons", textwrap.fill("O equipamento não liga, na sequência de exposição a líquidos. Testar e verificar se é possível reparar. Caso contrário, apresentar orçamento para a sua substituição.", width=50)))
+            self.tree.insert("", "end", text="", values=(str(i+3),"Aristides Apolinário Belo Esteves", "Smartphone Daqueles Fraquinhos", textwrap.fill("A bateria dura pouco tempo.", width=50)))
