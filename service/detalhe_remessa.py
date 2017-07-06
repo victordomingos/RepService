@@ -42,7 +42,7 @@ class remessaDetailWindow(ttk.Frame):
         self.data_remessa = "12/05/2021 18:01"
         self.data_alteracao = "12/05/2021 18:01"
         self.obs = "Anotações com mais detalhes sobre esta remessa.\nTexto livre :-)"
-        self.soma = 3 # TODO numero de processos nesta remessa.
+        self.soma = 0
 
         self.master.title(f'Remessa nº {self.num_remessa}')
 
@@ -52,11 +52,10 @@ class remessaDetailWindow(ttk.Frame):
         self.montar_rodape()
         self.composeFrames()
         self.inserir_dados_de_exemplo()
+
         self.alternar_cores(self.tree, inverso=False, fundo1='grey96')
-
+        self.atualizar_soma()
         self.desativar_campos()
-
-
 
 
     def on_btn_fechar(self, event):
@@ -72,34 +71,38 @@ class remessaDetailWindow(ttk.Frame):
         """
         pass
 
+
     def on_btn_imprimir(self, event):
         imprimir_guia_de_remessa(self.num_remessa)
 
 
+    def contar_linhas(self):
+        """ Obtém o número de linhas da tabela de processos desta remessa. """
+        linhas = self.tree.get_children("")
+        return len(linhas)
+
+
+    def atualizar_soma(self):
+        """
+        Atualiza o texto referente ao número de processos na remessa atual.
+        """
+        self.soma = self.contar_linhas()
+        texto = f"Nº de processos nesta remessa: {self.soma}"
+        self.lbl_soma_processos.config(text=texto)
+
+
     def montar_barra_de_ferramentas(self):
         self.lbl_titulo = ttk.Label(self.topframe, style="Panel_Title.TLabel", foreground=self.btnTxtColor, text=f"Remessa de {self.tipo} nº {self.num_remessa}")
-
-        """
-        self.btn_abrir_rep = ttk.Button(self.topframe, text="Ver Reparação", style="secondary.TButton", command=None)
-        self.dicas.bind(self.btn_abrir_rep, 'Clique para abrir a janela de detalhes\nda reparação a que se refere esta mensagem.')
-        self.btn_abrir_rep.bind("<ButtonRelease>", self.on_btn_abrir_rep)
-
-        self.btn_apagar_msg = ttk.Button(self.topframe, text="Apagar", style="secondary.TButton", command=None)
-        self.dicas.bind(self.btn_apagar_msg, 'Clique para fechar a janela\ne não voltar a mostrar esta mensagem.')
-        self.btn_apagar_msg.bind("<ButtonRelease>", self.on_btn_apagar_msg)
-        """
 
         self.btn_anotar = ttk.Button(self.topframe, text="Adicionar nota", style="secondary.TButton")
         self.dicas.bind(self.btn_anotar, 'Clique para acrescentar um novo apontamento\nà lista de observações desta remessa.')
         self.btn_anotar.bind("<ButtonRelease>", self.on_btn_anotar)
 
         self.btn_imprimir = ttk.Button(self.topframe, text="Imprimir", style="secondary.TButton")
-        self.dicas.bind(self.btn_anotar, 'Clique para imprimir esta remessa.')
+        self.dicas.bind(self.btn_imprimir, 'Clique para imprimir esta remessa.')
         self.btn_anotar.bind("<ButtonRelease>", self.on_btn_imprimir)
 
         self.lbl_titulo.grid(column=0, row=0, rowspan=2)
-        #self.btn_abrir_rep.grid(column=7, row=0)
-        #self.btn_apagar_msg.grid(column=8, row=0)
         self.btn_anotar.grid(column=8, row=0)
         self.btn_imprimir.grid(column=9, row=0)
         self.topframe.grid_columnconfigure(5, weight=1)
@@ -107,7 +110,6 @@ class remessaDetailWindow(ttk.Frame):
 
     def desativar_campos(self):
         # Desativar todos os campos de texto para não permitir alterações. ------------------------
-        #self.ltxt_detalhe.disable()
         self.txt_numero_contacto.configure(state="disabled")
         self.txt_nome.configure(state="disabled")
         self.ltxt_obs.disable()
@@ -123,7 +125,7 @@ class remessaDetailWindow(ttk.Frame):
         self.txt_numero_contacto.insert(0, self.numero_contacto)
         self.txt_nome.insert(0, self.nome)
 
-        self.estilo.configure('Reparacoes_Remessa.Treeview', rowheight=56)
+        self.estilo.configure('Reparacoes_Remessa.Treeview', rowheight=42)
         self.tree = ttk.Treeview(self.treeframe, height=10, selectmode='browse', style="Reparacoes_Remessa.Treeview")
         self.tree['columns'] = ('Nº', 'Cliente', 'Equipamento', 'Serviço')
         #self.tree.pack(side='top', expand=True, fill='both')
@@ -144,9 +146,6 @@ class remessaDetailWindow(ttk.Frame):
         self.tree.configure(yscrollcommand=self.vsb.set)
         self.vsb.grid(column=1, row=0, sticky="ns", in_=self.treeframe)
 
-        #self.leftframe.grid_columnconfigure(0, weight=1)
-        #self.leftframe.grid_columnconfigure(1, weight=0)
-        #self.leftframe.grid_rowconfigure(0, weight=1)
 
         self.lbl_soma_processos = ttk.Label(self.centerframe, text=f"Nº de processos nesta remessa: {self.soma}", style="Panel_Body.TLabel")
 
@@ -315,7 +314,6 @@ class remessaDetailWindow(ttk.Frame):
         self.txt.pack(side="top")
 
 
-
     def configurar_frames_e_estilos(self):
         self.master.minsize(W_DETALHE_REMESSA_MIN_WIDTH, W_DETALHE_REMESSA_MIN_HEIGHT)
         self.master.maxsize(W_DETALHE_REMESSA_MAX_WIDTH, W_DETALHE_REMESSA_MAX_HEIGHT)
@@ -355,7 +353,7 @@ class remessaDetailWindow(ttk.Frame):
 
 
     def inserir_dados_de_exemplo(self):
-        for i in range(1,30,3):
+        for i in range(1,36,3):
             self.tree.insert("", "end", text="", values=(str(i), "José Manuel da Silva Rodrigues", "Artigo Muito Jeitoso (Early 2015)", "Substituição de ecrã"))
             self.tree.insert("", "end", text="", values=(str(i+1),"Joana Manuela Rodrigues", "Outro Artigo Bem Jeitoso", "Bateria não carrega"))
             self.tree.insert("", "end", text="", values=(str(i+2),"Maria Apolinário Gomes Fernandes", "Smartphone Daqueles Bons", textwrap.fill("O equipamento não liga, na sequência de exposição a líquidos. Testar e verificar se é possível reparar. Caso contrário, apresentar orçamento para a sua substituição.", width=50)))
