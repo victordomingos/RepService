@@ -11,6 +11,7 @@ v.0.12 - 15/07/2017
  * Criada função para teste da tabela da janela de detalhes de remessa.
  * Alguns ajustes na tabela de reparações na janela detalhes de remessa e nas
    dimensões dessa janela.
+ * Criada janela de detalhes de contactos.
  
 ---
 v.0.11 - 03/07/2017
