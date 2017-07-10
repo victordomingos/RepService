@@ -28,8 +28,8 @@ from tkinter.scrolledtext import ScrolledText
 import datetime
 import textwrap
 import Pmw
-#import sys
-#import io
+import sys  # For Atom compatibility
+import io  # For Atom compatibility
 
 from about_window import *
 from base_app import *
@@ -1141,8 +1141,8 @@ class App(baseApp):
 
 
 if __name__ == "__main__":
-    #sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')
-    #sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
+    sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')  # For Atom compatibility
+    sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')  # For Atom compatibility
     root = tk.Tk()
     estado = AppStatus()
     estado.janela_principal = App(root)

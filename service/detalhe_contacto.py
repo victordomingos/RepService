@@ -8,8 +8,10 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 import tkinter as tk
 from tkinter import ttk
 import Pmw
+import textwrap
 from global_setup import *
 from extra_tk_classes import *
+from detalhe_reparacao import *
 
 
 class contactDetailWindow(ttk.Frame):
@@ -20,13 +22,17 @@ class contactDetailWindow(ttk.Frame):
         self.master.bind("<Command-w>", self.on_btn_fechar)
         self.master.focus()
         self.num_contacto = num_contacto
+        self.reparacao_selecionada = ""
+        self.rep_newDetailsWindow = {}
+        self.rep_detail_windows_count = 0
+        self.soma_reparacoes = 0
+        self.soma_reincidencias = 0
 
         self.var_tipo_is_cliente = tk.IntVar()
         self.var_tipo_is_loja = tk.IntVar()
         self.var_tipo_is_fornecedor = tk.IntVar()
-        
-        
-        
+
+
         self.nome = "Nome do contacto"
         self.empresa = ""
         self.nif = "999999990"
@@ -38,19 +44,12 @@ class contactDetailWindow(ttk.Frame):
         self.cod_postal = "0101-101"
         self.localidade = "Vila Nova de Milcódigos-Fonte"
         self.pais = "Portugal"
-        
+
         self.notas = "Alguns apontamentos adicionais sobre este contacto.\nEtc."
-        
-        
-        
+
         self.var_tipo_is_cliente.set(True)  # Todo
         self.var_tipo_is_fornecedor.set(True)  # TODO
         self.var_tipo_is_loja.set(False)  # TODO
-
-
-
-
-
 
 
         self.configurar_frames_e_estilos()
@@ -60,6 +59,9 @@ class contactDetailWindow(ttk.Frame):
 
         self.montar_rodape()
         self.composeFrames()
+        self.inserir_dados_de_exemplo()
+        self.atualizar_soma()
+        self.alternar_cores(self.tree)
 
 
     def montar_barra_de_ferramentas(self):
@@ -112,7 +114,7 @@ class contactDetailWindow(ttk.Frame):
         self.montar_tab_notas()
 
         if self.var_tipo_is_cliente.get():
-            self.tab_reparacoes = ttk.Frame(self.note, padding=10)
+            self.tab_reparacoes = ttk.Frame(self.note, padding=0)
             self.note.add(self.tab_reparacoes, text="Reparações")
             self.gerar_tab_reparacoes()
             self.montar_tab_reparacoes()
@@ -145,7 +147,7 @@ class contactDetailWindow(ttk.Frame):
         # Preencher com dados da base de dados -------------------------------------------------
         self.ef_ltxt_nome.set(self.nome)
         #TODO - preencher o resto dos campos do formulário...
-        
+
 
     def montar_tab_geral(self):
         # Montar todos os campos na grid -------------------------------------------------------------
@@ -183,7 +185,6 @@ class contactDetailWindow(ttk.Frame):
         self.ef_combo_pais.bind("<Key>", self.procurar_em_combobox)
 
 
-
     def montar_tab_morada(self):
         self.ef_lstxt_morada.grid(column=0, row=4, columnspan=3, rowspan=2, padx=5, sticky='we')
 
@@ -200,7 +201,6 @@ class contactDetailWindow(ttk.Frame):
         self.morada_fr1.pack(side='top', expand=False, fill='x')
 
 
-
     def gerar_tab_notas(self):
         self.notas_fr1 = ttk.Frame(self.tab_notas)
         #self.notas_fr2 = ttk.Frame(self.tab_notas)
@@ -209,7 +209,7 @@ class contactDetailWindow(ttk.Frame):
         self.ef_chkbtn_tipo_cliente = ttk.Checkbutton(self.ef_cabecalho, text="Cliente", style="Panel_Body.Checkbutton", variable=self.var_tipo_is_cliente)
         self.ef_chkbtn_tipo_fornecedor = ttk.Checkbutton(self.ef_cabecalho, text="Fornecedor ou centro técnico", style="Panel_Body.Checkbutton", variable=self.var_tipo_is_fornecedor)
         self.ef_chkbtn_tipo_loja = ttk.Checkbutton(self.ef_cabecalho, text="Loja do nosso grupo", style="Panel_Body.Checkbutton", variable=self.var_tipo_is_loja)
-        
+
         self.ef_lstxt_notas = LabelText(self.notas_fr1, "\nNotas:", height=3, style="Panel_Body.TLabel")
 
 
@@ -217,7 +217,7 @@ class contactDetailWindow(ttk.Frame):
         self.ef_lstxt_notas.grid(column=0, row=9, columnspan=3, rowspan=4, padx=5, sticky='we')
         self.ef_cabecalho.columnconfigure(2, weight=1)
         #self.notas_fr1.columnconfigure(0, weight=1)
- 
+
         self.ef_lbl_tipo.grid(column=0, row=1, sticky='e')
         self.ef_chkbtn_tipo_cliente.grid(column=1, row=1, sticky='w')
         self.ef_chkbtn_tipo_fornecedor.grid(column=1, row=2, sticky='w')
@@ -233,13 +233,46 @@ class contactDetailWindow(ttk.Frame):
 
     def gerar_tab_reparacoes(self):
         self.reparacoes_fr1 = ttk.Frame(self.tab_reparacoes)
-        self.reparacoes_fr2 = ttk.Frame(self.tab_reparacoes)
+        self.treeframe = ttk.Frame(self.reparacoes_fr1, padding="0 0 0 0")
+
+        self.tree = ttk.Treeview(self.treeframe, height=10, selectmode='browse', style="Reparacoes_Remessa.Treeview")
+        self.tree['columns'] = ('Nº', 'Data', 'Equipamento', 'Serviço', 'Resultado', 'Reincid.')
+        self.tree.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
+        self.tree.column('Nº', anchor='ne', minwidth=46, stretch=0, width=46)
+        self.tree.column('Data', anchor='nw', minwidth=85, stretch=0, width=85)
+        self.tree.column('Equipamento', anchor='nw', minwidth=120, stretch=1, width=120)
+        self.tree.column('Serviço', anchor='nw', minwidth=120, stretch=1, width=120)
+        self.tree.column('Resultado', anchor='nw', minwidth=120, stretch=1, width=120)
+        self.tree.column('Reincid.', anchor='nw', minwidth=46, stretch=0, width=46)
+
+        for col in self.tree['columns']:
+            self.tree.heading(col, text=col.title(),
+                                   command=lambda c=col: self.sortBy(self.tree, c, 0))
+
+
+        # Barra de deslocação para a tabela
+        self.tree.grid(column=0, row=0, sticky="nsew", in_=self.treeframe)
+        self.vsb = AutoScrollbar(self.treeframe, orient="vertical", command=self.tree.yview)
+        self.tree.configure(yscrollcommand=self.vsb.set)
+        self.vsb.grid(column=1, row=0, sticky="ns", in_=self.treeframe)
+
+        self.bind_tree()
+        self.alternar_cores(self.tree)
+
+        self.lbl_soma_processos = ttk.Label(self.reparacoes_fr1, text=f"Nº de processos deste contacto: {self.soma_reparacoes} ({self.soma_reincidencias} reincidências)", style="Panel_Body.TLabel")
 
 
     def montar_tab_reparacoes(self):
-        self.reparacoes_fr1.pack(side='top', expand=False, fill='x')
-        ttk.Separator(self.tab_reparacoes).pack(side='top', expand=False, fill='x', pady=10)
-        self.reparacoes_fr2.pack(side='top', expand=True, fill='both')
+        self.reparacoes_fr1.pack(side='top', expand=True, fill='both')
+        self.treeframe.grid(column=0, row=0, sticky="nsew")
+        self.treeframe.grid_columnconfigure(0, weight=1)
+        self.treeframe.grid_rowconfigure(0, weight=1)
+
+        self.lbl_soma_processos.grid(column=0, row=2, sticky='ne', pady="5 25", padx=3)
+
+        self.reparacoes_fr1.grid_columnconfigure(0, weight=1)
+        self.reparacoes_fr1.grid_rowconfigure(0, weight=1)
+        self.atualizar_soma()
 
 
     def desativar_campos(self):
@@ -293,12 +326,170 @@ class contactDetailWindow(ttk.Frame):
         self.direita.pack(side="right")
 
 
+    def bind_tree(self):
+        self.tree.bind('<<TreeviewSelect>>', self.selectItem_popup)
+        self.tree.bind('<Double-1>', lambda x: self.create_window_detalhe_rep(num_reparacao=self.reparacao_selecionada))
+        self.tree.bind("<Button-2>", self.popupMenu)
+        self.tree.bind("<Button-3>", self.popupMenu)
+        self.update_idletasks()
+
+
+    def unbind_tree(self):
+        self.tree.bind('<<TreeviewSelect>>', None)
+        self.tree.bind('<Double-1>', None)
+        self.tree.bind("<Button-2>", None)
+        self.tree.bind("<Button-3>", None)
+        self.update_idletasks()
+
+
+    # ------ Permitir que a tabela possa ser ordenada clicando no cabeçalho ----------------------
+    def isNumeric(self, s):
+        """
+        test if a string s is numeric
+        """
+        if s == "":
+            return False
+
+        for c in s:
+            if c in "1234567890.":
+                numeric = True
+            else:
+                return False
+        return numeric
+
+    def changeNumeric(self, data):
+        """
+        if the data to be sorted is numeric change to float
+        """
+        new_data = []
+        if self.isNumeric(data[0][0]):
+            # change child to a float
+            for child, col in data:
+                new_data.append((float(child), col))
+            return new_data
+        return data
+
+
+    def sortBy(self, tree, col, descending):
+        """
+        sort tree contents when a column header is clicked
+        """
+        # grab values to sort
+        data = [(tree.set(child, col), child) for child in tree.get_children('')]
+        # if the data to be sorted is numeric change to float
+        data =  self.changeNumeric(data)
+        # now sort the data in place
+        data.sort(reverse=descending)
+        for ix, item in enumerate(data):
+            tree.move(item[1], '', ix)
+        # switch the heading so that it will sort in the opposite direction
+        tree.heading(col, command=lambda col=col: self.sortBy(tree, col, int(not descending)))
+        self.alternar_cores(tree)
+    # ------ Fim das funções relacionadas c/ o ordenamento da tabela -----------------------------
+
+
+    def selectItem_popup(self, event):
+        """ # Hacking moment: Uma função que junta duas funções, para assegurar a sequência...
+        """
+        self.selectItem()
+        self.popupMenu(event)
+
+
+    def popupMenu(self, event):
+        """action in event of button 3 on tree view"""
+        # select row under mouse
+        self.selectItem()
+
+        iid = self.tree.identify_row(event.y)
+        x, y = event.x_root, event.y_root
+        if iid:
+            if x!=0 and y!=0:
+                # mouse pointer over item
+                self.tree.selection_set(iid)
+                self.tree.focus(iid)
+                self.contextMenu.post(event.x_root, event.y_root)
+                print("popupMenu(): x,y = ", event.x_root, event.y_root)
+            else:
+                print("popupMenu(): wrong values for event - x=0, y=0")
+        else:
+            print(iid)
+            print("popupMenu(): Else - No code here yet! (mouse not over item)")
+            # mouse pointer not over item
+            # occurs when items do not fill frame
+            # no action required
+            pass
+
+
+    def selectItem(self, *event):
+        """
+        Obter reparação selecionada (após clique de rato na linha correspondente)
+        """
+        curItem = self.tree.focus()
+        tree_linha = self.tree.item(curItem)
+
+        num_reparacao = tree_linha["values"][0]
+        #equipamento =  tree_linha["values"][2]
+        #self.my_statusbar.set(f"{num_reparacao} • {equipamento}")
+        self.reparacao_selecionada = num_reparacao
+
+
+    def alternar_cores(self, tree, inverso=False, fundo1='grey98', fundo2='white'):
+        tree = tree
+        if inverso == False:
+            impar = True
+        else:
+            impar = False
+
+        for i in tree.get_children():
+            if impar == True:
+                tree.item(i, tags=("par",))
+                impar = False
+            else:
+                tree.item(i, tags=("impar",))
+                impar = True
+
+        tree.tag_configure('par', background=fundo1)
+        tree.tag_configure('impar', background=fundo2)
+        self.update_idletasks()
+
+
+    def create_window_detalhe_rep(self, num_reparacao=None):
+        self.rep_detail_windows_count += 1
+        self.rep_newDetailsWindow[self.rep_detail_windows_count] = tk.Toplevel()
+        self.janela_detalhes_rep = repairDetailWindow(self.rep_newDetailsWindow[self.rep_detail_windows_count], num_reparacao)
+
+
+    def contar_linhas(self):
+        """ Obtém o número de linhas da tabela de processos desta remessa. """
+        linhas = self.tree.get_children("")
+        return len(linhas)
+
+
+    def contar_reincidencias(self):
+        """ Obtém o número processos deste contacto referentes a reincidências. """
+        soma_reincidencias = 0
+        for child in self.tree.get_children():
+            if self.tree.item(child)["values"][5] != "":
+                soma_reincidencias += 1
+        return soma_reincidencias
+
+
+    def atualizar_soma(self):
+        """
+        Atualiza o texto referente ao número de processos na remessa atual.
+        """
+        self.soma_reparacoes = self.contar_linhas()
+        self.soma_reincidencias = self.contar_reincidencias()
+        texto = f"Nº de processos deste contacto: {self.soma_reparacoes} ({self.soma_reincidencias} reincidências)"
+        self.lbl_soma_processos.config(text=texto)
+
+
     def configurar_frames_e_estilos(self):
         #self.master.minsize(W_DETALHE_REP_MIN_WIDTH, W_DETALHE_REP_MIN_HEIGHT)
         #self.master.maxsize(W_DETALHE_REP_MAX_WIDTH, W_DETALHE_REP_MAX_HEIGHT)
         #self.master.geometry(W_DETALHE_REP_GEOMETRIA)
         self.master.title(f"Contacto nº{self.num_contacto}")
-        
+
         self.dicas = Pmw.Balloon(self.master, label_background='#f6f6f6',
                                     hull_highlightbackground='#b3b3b3',
                                     state='balloon',
@@ -316,6 +507,7 @@ class contactDetailWindow(ttk.Frame):
         self.estilo.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
         self.estilo.configure("Panel_Body.TLabel", font=("Lucida Grande", 11))
         self.estilo.configure("TMenubutton", font=("Lucida Grande", 11))
+        self.estilo.configure('Reparacoes_Remessa.Treeview', rowheight=42)
 
         self.btnFont = tk.font.Font(family="Lucida Grande", size=10)
         self.btnTxtColor = "grey22"
@@ -326,3 +518,11 @@ class contactDetailWindow(ttk.Frame):
         self.centerframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
         self.bottomframe.pack(side=tk.BOTTOM, fill=tk.X)
         self.mainframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
+
+
+    def inserir_dados_de_exemplo(self):
+        for i in range(1,36,4):
+            self.tree.insert("", "end", text="", values=(str(i), "12/07/2017", "Artigo Muito Jeitoso (Early 2015)", "Substituição de ecrã", "Substituído em Garantia", ""))
+            self.tree.insert("", "end", text="", values=(str(i+1),"Joana Manuela Fantástica Rodrigues", "Outro Artigo Bem Jeitoso", "Bateria não carrega", "Bateria substituída em garantia", ""))
+            self.tree.insert("", "end", text="", values=(str(i+2),"Maria Gomes Simpática", "Smartphone Daqueles Bons", textwrap.fill("O equipamento não liga, na sequência de exposição a líquidos. Testar e verificar se é possível reparar. Caso contrário, apresentar orçamento para a sua substituição.", width=50), "Sem reparação.", "123456"))
+            self.tree.insert("", "end", text="", values=(str(i+3),"Aristides Apolinário Belo Esteves", "Smartphone Daqueles Fraquinhos", textwrap.fill("A bateria dura pouco tempo.", width=50), "Reparado conforme orçamento", ""))

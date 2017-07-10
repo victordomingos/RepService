@@ -24,7 +24,6 @@ class remessaDetailWindow(ttk.Frame):
         self.master = master
         self.rep_newDetailsWindow = {}
         self.rep_detail_windows_count = 0
-        self.estilo = ttk.Style()
 
         self.master.bind("<Command-w>", self.on_btn_fechar)
         self.master.focus()
@@ -121,11 +120,10 @@ class remessaDetailWindow(ttk.Frame):
         self.txt_numero_contacto = ttk.Entry(self.centerframe, font=("Helvetica-Neue", 12), width=5)
         self.txt_nome = ttk.Entry(self.centerframe, font=("Helvetica-Neue", 12), width=35)
 
-        # Preencher com dados da base de dados -------------------------------------------------
+        # TODO Preencher com dados da base de dados -------------------------------------------------
         self.txt_numero_contacto.insert(0, self.numero_contacto)
         self.txt_nome.insert(0, self.nome)
 
-        self.estilo.configure('Reparacoes_Remessa.Treeview', rowheight=42)
         self.tree = ttk.Treeview(self.treeframe, height=10, selectmode='browse', style="Reparacoes_Remessa.Treeview")
         self.tree['columns'] = ('Nº', 'Cliente', 'Equipamento', 'Serviço')
         #self.tree.pack(side='top', expand=True, fill='both')
@@ -334,6 +332,7 @@ class remessaDetailWindow(ttk.Frame):
         self.estilo = ttk.Style()
         self.estilo.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
         self.estilo.configure("Active.TButton", foreground="white")
+        self.estilo.configure('Reparacoes_Remessa.Treeview', rowheight=42)
 
         self.btnFont = tk.font.Font(family="Lucida Grande", size=10)
         self.btnTxtColor = "grey22"
