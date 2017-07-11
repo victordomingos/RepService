@@ -12,7 +12,11 @@ v.0.12 - 15/07/2017
  * Alguns ajustes na tabela de reparações na janela detalhes de remessa e nas
    dimensões dessa janela.
  * Criada janela de detalhes de contactos.
- 
+ * Nas janelas que fazem uso de separadores (detalhes de contacto e detalhes de
+   reparação), caso o utilizador não tenha redimensionado a janela, ao mudar de
+   separador, o tamanho da janela é ajustado automaticamente em função dos seus
+   widgets.
+
 ---
 v.0.11 - 03/07/2017
  * Adicionadas callbacks aos vários botões da janela de detalhes de mensagem.
