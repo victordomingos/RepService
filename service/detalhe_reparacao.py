@@ -180,6 +180,7 @@ class repairDetailWindow(ttk.Frame):
 
         # Preparar o notebook da secção principal ------------------------
         self.note = ttk.Notebook(self.centerframe, padding="3 20 3 3")
+        self.note.bind_all("<<NotebookTabChanged>>", self._on_tab_changed)
         self.tab_geral = ttk.Frame(self.note, padding=10)
         self.tab_historico = ttk.Frame(self.note, padding=10)
         self.note.add(self.tab_geral, text="Geral")
@@ -200,6 +201,13 @@ class repairDetailWindow(ttk.Frame):
             self.montar_tab_emprestimos()
 
         self.desativar_campos()
+
+
+    def _on_tab_changed(self, event):
+        event.widget.update_idletasks()
+        tab = event.widget.nametowidget(event.widget.select())
+        event.widget.configure(height=tab.winfo_reqheight(), 
+                                width=tab.winfo_reqwidth() )
 
 
     def gerar_tab_geral(self):

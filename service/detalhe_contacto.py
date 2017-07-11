@@ -100,6 +100,8 @@ class contactDetailWindow(ttk.Frame):
 
         # Preparar o notebook da secção principal ------------------------
         self.note = ttk.Notebook(self.centerframe, padding="3 20 3 3")
+        self.note.bind_all("<<NotebookTabChanged>>", self._on_tab_changed)
+
         self.tab_geral = ttk.Frame(self.note, padding=10)
         self.tab_notas = ttk.Frame(self.note, padding=10)
         self.note.add(self.tab_geral, text="Contactos")
@@ -116,6 +118,13 @@ class contactDetailWindow(ttk.Frame):
             self.montar_tab_reparacoes()
 
         self.desativar_campos()
+
+
+    def _on_tab_changed(self, event):
+        event.widget.update_idletasks()
+        tab = event.widget.nametowidget(event.widget.select())
+        event.widget.configure(height=tab.winfo_reqheight(), 
+                               width=tab.winfo_reqwidth() )
 
 
     def gerar_tab_geral(self):
@@ -475,9 +484,9 @@ class contactDetailWindow(ttk.Frame):
 
 
     def configurar_frames_e_estilos(self):
-        #self.master.minsize(W_DETALHE_REP_MIN_WIDTH, W_DETALHE_REP_MIN_HEIGHT)
+        self.master.minsize(W_DETALHE_CONTACTO_MIN_WIDTH, W_DETALHE_CONTACTO_MIN_HEIGHT)
         #self.master.maxsize(W_DETALHE_REP_MAX_WIDTH, W_DETALHE_REP_MAX_HEIGHT)
-        #self.master.geometry(W_DETALHE_REP_GEOMETRIA)
+        #self.master.geometry(W_DETALHE_CONTACTO_GEOMETRIA)
         self.master.title(f"Contacto nº{self.num_contacto}")
 
         self.dicas = Pmw.Balloon(self.master, label_background='#f6f6f6',
