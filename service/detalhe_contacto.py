@@ -121,10 +121,25 @@ class contactDetailWindow(ttk.Frame):
 
 
     def _on_tab_changed(self, event):
-        event.widget.update_idletasks()
-        tab = event.widget.nametowidget(event.widget.select())
-        event.widget.configure(height=tab.winfo_reqheight(), 
-                               width=tab.winfo_reqwidth() )
+        w = event.widget  # get the current widget
+        w.update_idletasks()
+        tab = w.nametowidget(w.select())  # get the tab widget where we're going to
+        tab_name = self.note.tab(self.note.select(), "text")   # get the tab widget where we're going to
+        if tab_name == "Reparações":
+            w.update_idletasks()
+            self.master.state("zoomed")
+            self.master.minsize(820, W_DETALHE_CONTACTO_MIN_HEIGHT)
+        elif tab_name == "Informação Adicional":
+            self.master.minsize(W_DETALHE_CONTACTO_MIN_WIDTH, 360)
+            w.update_idletasks()
+            self.master.state("normal")
+            w.configure(height=tab.winfo_reqheight(), width=tab.winfo_reqwidth())
+        else:
+            self.master.minsize(W_DETALHE_CONTACTO_MIN_WIDTH, W_DETALHE_CONTACTO_MIN_HEIGHT)
+            w.update_idletasks()
+            self.master.state("normal")
+            w.configure(height=tab.winfo_reqheight(), width=tab.winfo_reqwidth())
+
 
 
     def gerar_tab_geral(self):
@@ -235,14 +250,14 @@ class contactDetailWindow(ttk.Frame):
         self.reparacoes_fr1 = ttk.Frame(self.tab_reparacoes)
         self.treeframe = ttk.Frame(self.reparacoes_fr1, padding="0 0 0 0")
 
-        self.tree = ttk.Treeview(self.treeframe, height=8, selectmode='browse', style="Reparacoes_Remessa.Treeview")
+        self.tree = ttk.Treeview(self.treeframe, height=1, selectmode='browse', style="Reparacoes_Remessa.Treeview")
         self.tree['columns'] = ('Nº', 'Data', 'Equipamento', 'Serviço', 'Resultado', 'Reincid.')
         self.tree.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
         self.tree.column('Nº', anchor='ne', minwidth=50, stretch=0, width=50)
         self.tree.column('Data', anchor='nw', minwidth=80, stretch=0, width=80)
-        self.tree.column('Equipamento', anchor='nw', minwidth=140, stretch=1, width=140)
-        self.tree.column('Serviço', anchor='nw', minwidth=180, stretch=1, width=180)
-        self.tree.column('Resultado', anchor='nw', minwidth=120, stretch=1, width=120)
+        self.tree.column('Equipamento', anchor='nw', minwidth=200, stretch=1, width=200)
+        self.tree.column('Serviço', anchor='nw', minwidth=200, stretch=1, width=200)
+        self.tree.column('Resultado', anchor='nw', minwidth=200, stretch=1, width=200)
         self.tree.column('Reincid.', anchor='nw', minwidth=50, stretch=0, width=50)
 
         for col in self.tree['columns']:
@@ -449,7 +464,7 @@ class contactDetailWindow(ttk.Frame):
 
         tree.tag_configure('par', background=fundo1)
         tree.tag_configure('impar', background=fundo2)
-        self.update_idletasks()
+        #self.update_idletasks()
 
 
     def create_window_detalhe_rep(self, num_reparacao=None):
@@ -485,8 +500,8 @@ class contactDetailWindow(ttk.Frame):
 
     def configurar_frames_e_estilos(self):
         self.master.minsize(W_DETALHE_CONTACTO_MIN_WIDTH, W_DETALHE_CONTACTO_MIN_HEIGHT)
-        #self.master.maxsize(W_DETALHE_REP_MAX_WIDTH, W_DETALHE_REP_MAX_HEIGHT)
-        #self.master.geometry(W_DETALHE_CONTACTO_GEOMETRIA)
+        self.master.maxsize(W_DETALHE_CONTACTO_MAX_WIDTH, W_DETALHE_CONTACTO_MAX_HEIGHT)
+        #self.master.geometry(W_DETALHE_CONTACTO_GEOMETRIA)  # Se ativada esta linha, deixa de atualizar as medidas da janela ao mudar de separador
         self.master.title(f"Contacto nº{self.num_contacto}")
 
         self.dicas = Pmw.Balloon(self.master, label_background='#f6f6f6',
@@ -520,8 +535,8 @@ class contactDetailWindow(ttk.Frame):
 
 
     def inserir_dados_de_exemplo(self):
-        for i in range(200100,200136,4):
-            self.tree.insert("", "end", text="", values=(str(i), "12/07/2017", textwrap.fill("Artigo Muito Jeitoso (Early 2015)", width=25), textwrap.fill("Substituição de ecrã", width=20), "Substituído em Garantia", ""))
-            self.tree.insert("", "end", text="", values=(str(i+1),"02/01/2016", textwrap.fill("Outro Artigo Bem Jeitoso", width=25), "Bateria não carrega", textwrap.fill("Bateria substituída em garantia", width=20), ""))
-            self.tree.insert("", "end", text="", values=(str(i+2),"13/08/2013", textwrap.fill("Smartphone Daqueles Bons", width=20), textwrap.fill("O equipamento não liga, na sequência de exposição a líquidos. Testar e verificar se é possível reparar. Caso contrário, apresentar orçamento para a sua substituição.", width=30), "Sem reparação.", "123456"))
-            self.tree.insert("", "end", text="", values=(str(i+3),"01/01/2001", textwrap.fill("Smartphone Daqueles Fraquinhos", width=25), textwrap.fill("A bateria dura pouco tempo.", width=30), textwrap.fill("Reparado conforme orçamento", width=20), ""))
+        for i in range(200100,200106,4):
+            #self.tree.insert("", "end", text="", values=(str(i), "12/07/2017", textwrap.fill("Artigo Muito Jeitoso (Early 2015)", width=35), textwrap.fill("Substituição de ecrã", width=35), "Substituído em Garantia", ""))
+            self.tree.insert("", "end", text="", values=(str(i+1),"02/01/2016", textwrap.fill("Outro Artigo Bem Jeitoso", width=35), "Bateria não carrega", textwrap.fill("Bateria substituída em garantia", width=35), ""))
+            self.tree.insert("", "end", text="", values=(str(i+2),"13/08/2013", textwrap.fill("Smartphone Daqueles Bons", width=35), textwrap.fill("O equipamento não liga, na sequência de exposição a líquidos. Testar e verificar se é possível reparar. Caso contrário, apresentar orçamento para a sua substituição.", width=35), "Sem reparação.", "123456"))
+            self.tree.insert("", "end", text="", values=(str(i+3),"01/01/2001", textwrap.fill("Smartphone Daqueles Fraquinhos", width=35), textwrap.fill("A bateria dura pouco tempo.", width=35), textwrap.fill("Reparado conforme orçamento", width=35), ""))
