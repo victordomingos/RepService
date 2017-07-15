@@ -496,7 +496,7 @@ class repairDetailWindow(ttk.Frame):
     def configurar_frames_e_estilos(self):
         self.master.minsize(W_DETALHE_REP_MIN_WIDTH, W_DETALHE_REP_MIN_HEIGHT)
         self.master.maxsize(W_DETALHE_REP_MAX_WIDTH, W_DETALHE_REP_MAX_HEIGHT)
-        #self.master.geometry(W_DETALHE_REP_GEOMETRIA)
+        #self.master.geometry(W_DETALHE_REP_GEOMETRIA)  # Se ativada esta linha, deixa de atualizar as medidas da janela ao mudar de separador
         self.master.title(f"Reparação nº{self.num_reparacao} ({self.tipo_processo})")
 
         self.mainframe = ttk.Frame(self.master)
