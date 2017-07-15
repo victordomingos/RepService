@@ -5,6 +5,10 @@ Histórico de versões:
 
 
 ---
+v.0.13 - 22/07/2017
+ * 
+
+---
 v.0.12 - 15/07/2017
  * Adicionados botões à barra de ferramentas da janela de detalhes de remessa.
  * Adicionada contagem do nº de processos de reparação presentes na remessa.
