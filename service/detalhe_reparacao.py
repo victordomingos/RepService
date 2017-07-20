@@ -9,6 +9,7 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 import tkinter as tk
 from tkinter import ttk
 import Pmw
+
 from global_setup import *
 from extra_tk_classes import *
 
@@ -57,6 +58,7 @@ class repairDetailWindow(ttk.Frame):
 
         self.montar_rodape()
         self.composeFrames()
+        self.inserir_dados_de_exemplo()
 
 
     def montar_barra_de_ferramentas(self):
@@ -399,14 +401,96 @@ class repairDetailWindow(ttk.Frame):
 
 
     def gerar_tab_historico(self):
+        self.ef_var_notificar = tk.IntVar()
+        self.ef_var_notificar.set(0)
+        self.ef_var_resultado = tk.StringVar()
+        self.ef_var_resultado.set(RESULTADOS[SEM_INFORMACAO])
+
         self.historico_fr1 = ttk.Frame(self.tab_historico)
         self.historico_fr2 = ttk.Frame(self.tab_historico)
 
+        self.ef_lbl_resultado = ttk.Label(self.historico_fr1, style="Panel_Body.TLabel",  text="Definir resultado:")
+        self.ef_combo_resultado = ttk.Combobox(self.historico_fr1,
+                                               textvariable=self.ef_var_resultado,
+                                               values = RESULTADOS,
+                                               width=32,
+                                               state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
+
+        self.ef_combo_resultado.bind('<<ComboboxSelected>>', self._on_combo_resultado_select)
+        self.hfr1_chkbtn_notificar = ttk.Checkbutton(self.historico_fr1, variable=self.ef_var_notificar, style="Panel_Body.Checkbutton", text="Notificar equipa")
+
+        self.ef_ltxt_detalhes_evento = LabelText(self.historico_fr1, "Detalhes:", style="Panel_Body.TLabel", width=30, height=2)
+
+        self.btn_adicionar = ttk.Button(self.historico_fr1, default="active", style="Active.TButton", text="Adicionar", command=self._on_save_evento)
+        self.btn_cancelar = ttk.Button(self.historico_fr1, text="Cancelar", command=self._on_cancel_evento)
+
+        self.treeframe = ttk.Frame(self.historico_fr2, padding="0 8 0 0")
+        self.tree = ttk.Treeview(self.treeframe, height=6, selectmode='browse', style="Reparacoes_Historico.Treeview")
+        self.tree['columns'] = ('Nº', 'Descrição do evento', 'Estado', 'Utilizador', 'Data')
+        self.tree.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
+        self.tree.column('Nº', anchor='ne', minwidth=46, stretch=0, width=46)
+        self.tree.column('Descrição do evento', anchor='nw', minwidth=260, stretch=1, width=260)
+        self.tree.column('Estado', anchor='nw', minwidth=200, stretch=1, width=200)
+        self.tree.column('Utilizador', anchor='nw', minwidth=140, stretch=1, width=140)
+        self.tree.column('Data', anchor='nw', minwidth=80, stretch=1, width=80)
+        
+        # Ordenar por coluna ao clicar no respetivo cabeçalho
+        #for col in self.tree['columns']:
+        #    self.tree.heading(col, text=col.title(),
+        #    command=lambda c=col: self.sortBy(self.tree, c, 0))
+
+        for col in self.tree['columns']:
+            self.tree.heading(col, text=col.title())
+
+
+        # Barra de deslocação para a tabela
+        self.tree.grid(column=0, row=0, sticky="nsew", in_=self.treeframe)
+        self.vsb = AutoScrollbar(self.treeframe, orient="vertical", command=self.tree.yview)
+        self.tree.configure(yscrollcommand=self.vsb.set)
+        self.vsb.grid(column=1, row=0, sticky="ns", in_=self.treeframe)
+
+        #self.bind_tree()
+        #self.desativar_campos()
+
+
 
     def montar_tab_historico(self):
-        self.historico_fr1.pack(side='top', expand=False, fill='x')
-        ttk.Separator(self.tab_historico).pack(side='top', expand=False, fill='x', pady=10)
+        self.ef_lbl_resultado.grid(column=0, row=0, sticky="nw")
+        self.ef_combo_resultado.grid(column=0, row=1, sticky="nw")
+        self.hfr1_chkbtn_notificar.grid(column=1, row=1, sticky="nw")
+        self.ef_ltxt_detalhes_evento.grid(column=0, row=2, columnspan=3, rowspan=3, sticky="nwe")
+        
+        self.btn_adicionar.grid(column=2, row=0, sticky="nwe")
+        self.btn_cancelar.grid(column=2, row=1, sticky="nwe")
+
+        self.historico_fr1.grid_columnconfigure(0, weight=0)
+        self.historico_fr1.grid_columnconfigure(1, weight=1)
+        self.historico_fr1.grid_columnconfigure(2, weight=0)
+
+        
+        self.treeframe.grid(column=0, row=0, sticky="nsew")
+        
+        self.treeframe.grid_columnconfigure(0, weight=1)
+        self.treeframe.grid_rowconfigure(0, weight=1)
+
+        
         self.historico_fr2.pack(side='top', expand=True, fill='both')
+        ttk.Separator(self.tab_historico).pack(side='top', expand=False, fill='x', pady=10)
+        self.historico_fr1.pack(side='top', expand=False, fill='x')
+
+
+
+
+    def _on_combo_resultado_select(self, event):
+        print(f"Novo resultado: {self.ef_combo_resultado.get()}")
+
+
+    def _on_save_evento(self, event):
+        print(f"Guardando novo evento...")
+
+
+    def _on_cancel_evento(self, event):
+        print(f"Cancelando introdução de dados...")
 
 
     def gerar_tab_orcamentos(self):
@@ -474,6 +558,85 @@ class repairDetailWindow(ttk.Frame):
         window.destroy()
 
 
+    def bind_tree(self):
+        self.tree.bind('<<TreeviewSelect>>', self.selectItem_popup)
+        self.tree.bind('<Double-1>', lambda x: self.create_window_detalhe_rep(num_reparacao=self.reparacao_selecionada))
+        self.tree.bind("<Button-2>", self.popupMenu)
+        self.tree.bind("<Button-3>", self.popupMenu)
+        self.update_idletasks()
+
+
+    def unbind_tree(self):
+        self.tree.bind('<<TreeviewSelect>>', None)
+        self.tree.bind('<Double-1>', None)
+        self.tree.bind("<Button-2>", None)
+        self.tree.bind("<Button-3>", None)
+        self.update_idletasks()
+
+    def selectItem_popup(self, event):
+        """ # Hacking moment: Uma função que junta duas funções, para assegurar a sequência...
+        """
+        self.selectItem()
+        self.popupMenu(event)
+
+
+    def popupMenu(self, event):
+        """action in event of button 3 on tree view"""
+        # select row under mouse
+        self.selectItem()
+
+        iid = self.tree.identify_row(event.y)
+        x, y = event.x_root, event.y_root
+        if iid:
+            if x!=0 and y!=0:
+                # mouse pointer over item
+                self.tree.selection_set(iid)
+                self.tree.focus(iid)
+                self.contextMenu.post(event.x_root, event.y_root)
+                print("popupMenu(): x,y = ", event.x_root, event.y_root)
+            else:
+                print("popupMenu(): wrong values for event - x=0, y=0")
+        else:
+            print(iid)
+            print("popupMenu(): Else - No code here yet! (mouse not over item)")
+            # mouse pointer not over item
+            # occurs when items do not fill frame
+            # no action required
+            pass
+
+
+    def selectItem(self, *event):
+        """
+        Obter reparação selecionada (após clique de rato na linha correspondente)
+        """
+        curItem = self.tree.focus()
+        tree_linha = self.tree.item(curItem)
+
+        num_reparacao = tree_linha["values"][0]
+        #equipamento =  tree_linha["values"][2]
+        #self.my_statusbar.set(f"{num_reparacao} • {equipamento}")
+        self.reparacao_selecionada = num_reparacao
+        
+    def alternar_cores(self, tree, inverso=False, fundo1='grey98', fundo2='white'):
+        tree = tree
+        if inverso == False:
+            impar = True
+        else:
+            impar = False
+
+        for i in tree.get_children():
+            if impar == True:
+                tree.item(i, tags=("par",))
+                impar = False
+            else:
+                tree.item(i, tags=("impar",))
+                impar = True
+
+        tree.tag_configure('par', background=fundo1)
+        tree.tag_configure('impar', background=fundo2)
+        self.update_idletasks()
+
+
     def mostrar_painel_principal(self):
         self.note.pack(side='top', expand=True, fill='both')
         self.note.enable_traversal()
@@ -508,6 +671,8 @@ class repairDetailWindow(ttk.Frame):
         self.estilo.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
         self.estilo.configure("Panel_Body.TLabel", font=("Lucida Grande", 11))
         self.estilo.configure("TMenubutton", font=("Lucida Grande", 11))
+        self.estilo.configure('Reparacoes_Historico.Treeview', rowheight=42)
+
 
         self.btnFont = tk.font.Font(family="Lucida Grande", size=10)
         self.btnTxtColor = "grey22"
@@ -518,3 +683,14 @@ class repairDetailWindow(ttk.Frame):
         self.centerframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
         self.bottomframe.pack(side=tk.BOTTOM, fill=tk.X)
         self.mainframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
+
+
+
+
+
+    def inserir_dados_de_exemplo(self):
+        for i in range(1,36,4):
+            self.tree.insert("", "end", text="", values=(str(i), "Cliente informou que já desativou Find My iPhone.", "Em processamento", "Victor Domingos", "12/07/2021"))
+            self.tree.insert("", "end", text="", values=(str(i+1), "Cliente aprovou orçamento.", "Em processamento", "Victor Domingos", "12/07/2021"))
+            self.tree.insert("", "end", text="", values=(str(i+2), "Cliente recusou o orçamento porque vai optar por comprar novo.", "Em processamento", "Victor Domingos", "12/07/2021"))
+            self.tree.insert("", "end", text="", values=(str(i+3), "Centro técnico informou que não é possível reparar pois já não há peças originais.", "Em processamento", "Victor Domingos", "12/07/2021"))

@@ -81,6 +81,28 @@ ESTADOS = ("Em processamento",
            "Anulado",
            "Sem informação"
            )
+        
+#Resultados de eventos (como serão registados na base de dados)
+SEM_INFORMACAO = 0
+GARANTIA_APROVADA_REPARADO = 1
+GARANTIA_APROVADA_SUBSTITUIDO = 2
+GARANTIA_APROVADA_NOTA_DE_CREDITO = 3
+GARANTIA_RECUSADA = 4
+ORCAMENTO_ACEITE = 5
+ORCAMENTO_RECUSADO = 6
+INTERVENCAO_IMPOSSIVEL = 7
+
+#Lista de estados (mesma sequência, para quando precisamos de uma string)
+RESULTADOS = ("Sem informação",
+              "Garantia aprovada - artigo reparado",
+              "Garantia aprovada - artigo substituído",
+              "Garantia aprovada - emitida nota de crédito",
+              "Garantia recusada",
+              "Orçamento aceite",
+              "Orçamento recusado",
+              "Intervenção impossível",
+              )
+
 
 EQUIP_MARCAS_USO = 0
 EQUIP_BOM_ESTADO = 1

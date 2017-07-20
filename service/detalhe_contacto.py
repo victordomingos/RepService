@@ -9,6 +9,7 @@ import tkinter as tk
 from tkinter import ttk
 import Pmw
 import textwrap
+
 from global_setup import *
 from extra_tk_classes import *
 from detalhe_reparacao import *

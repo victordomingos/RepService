@@ -5,31 +5,24 @@ Aplicação de base de dados para registo de processos de garantia e reparaçõe
 Permite manter um registo dos artigos entregues pelos clientes, do seu
 percurso durante a tramitação do processo e da comunicação realizada.
 
-Os processos que requerem atenção, devido a atrasos na entrega ou na receção
-de comunicação de cliente são destacados na lista principal, por forma a
-permitir uma intervenção em conformidade.
+Os processos que requerem atenção, devido a atrasos na entrega ou na receção de
+comunicação de cliente são destacados na lista principal, por forma a permitir
+uma intervenção em conformidade.
 
-Desenvolvido em Python 3 (com muitas noites passadas em claro), a partir de
-uma ideia original de Márcio Araújo, por:
+Desenvolvido em Python 3 por Victor Domingos (http://victordomingos.com), com
+muitas noites em claro, a partir de uma ideia original de Márcio Araújo.
 
-    Victor Domingos
-    http://victordomingos.com
-
-
-© 2017 Victor Domingos
-Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+© 2017 Victor Domingos, Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
 
 import tkinter as tk
 import tkinter.font
-from tkinter import ttk
-from tkinter import messagebox
+from tkinter import ttk, messagebox
 from tkinter.scrolledtext import ScrolledText
 import datetime
 import textwrap
 import Pmw
-import sys  # For Atom compatibility
-import io  # For Atom compatibility
+import io, sys  # For Atom compatibility
 
 from about_window import *
 from base_app import *
@@ -678,7 +671,25 @@ class App(baseApp):
 
         self.ef_ltxt_cod_artigo = LabelEntry(self.ef_lf_equipamento, "\nCódigo de artigo:", style="Panel_Body.TLabel", width=15)
         self.ef_ltxt_num_serie = LabelEntry(self.ef_lf_equipamento, "\nNº de série:", style="Panel_Body.TLabel", width=15)
+
         self.ef_ltxt_data_compra = LabelEntry(self.ef_lf_equipamento, "\nData de compra:", style="Panel_Body.TLabel", width=15)
+        
+        """now = time.localtime(time.time())
+        now_value = f"{now[2]}-{now[1]}-{now[0]}"
+        now_validate = f"{now[2]}-{now[1]}-{now[0]}"
+        self.ef_ltxt_data_compra = Pmw.EntryField(self.ef_lf_equipamento,
+                                                 labelpos = 'ne',
+                                                 label_text = '\nData de compra (d-m-aaaa):',
+                                                 value = now_value,
+                                                 validate = {'validator' : 'date',
+                                                             'min' : '1-1-1976',
+                                                             'max' : now_validate,
+                                                             'minstrict' : 0, 
+                                                             'maxstrict' : 0,
+                                                             'fmt' : 'dmy',
+                                                             'separator' : '-'},
+                                                 )
+        """
         self.ef_ltxt_num_fatura = LabelEntry(self.ef_lf_equipamento, "\nNº da fatura:", style="Panel_Body.TLabel", width=15)
         self.ef_ltxt_local_compra = LabelEntry(self.ef_lf_equipamento, "\nEstabelecimento:", style="Panel_Body.TLabel", width=15)
 

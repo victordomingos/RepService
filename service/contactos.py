@@ -8,12 +8,13 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 
 import tkinter as tk
 from tkinter import ttk
+from string import ascii_uppercase
+
 from extra_tk_classes import *
 from base_app import *
 from service import *
 from detalhe_contacto import *
 from db_operations import *
-from string import ascii_uppercase
 
 
 class ContactsWindow(baseApp):

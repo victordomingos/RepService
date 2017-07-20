@@ -4,8 +4,8 @@
 Este módulo é parte integrante da aplicação RepService, desenvolvida por
 Victor Domingos e distribuída sob os termos da licença Creative Commons
 Attribution-ShareAlike 4.0 International (CC BY-SA 4.0). Contém partes
-desenvolvidas por inicialmente por terceiros, conforme indicado ao longo
-do código.
+desenvolvidas inicialmente por terceiros, conforme indicado ao longo do
+código.
 """
 
 import tkinter as tk

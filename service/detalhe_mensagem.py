@@ -6,8 +6,8 @@ Victor Domingos e distribuída sob os termos da licença Creative Commons
 Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
 import tkinter as tk
-import Pmw
 from tkinter import ttk
+import Pmw
 
 from extra_tk_classes import *
 from global_setup import *
