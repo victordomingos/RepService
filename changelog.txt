@@ -6,7 +6,7 @@ Histórico de versões:
 
 ---
 v.0.13 - 22/07/2017
- * 
+ * Adicionado separador "histórico" à janela de detalhes de reparação.
 
 ---
 v.0.12 - 15/07/2017
