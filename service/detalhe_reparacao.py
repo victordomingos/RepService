@@ -209,7 +209,7 @@ class repairDetailWindow(ttk.Frame):
         event.widget.update_idletasks()
         tab = event.widget.nametowidget(event.widget.select())
         event.widget.configure(height=tab.winfo_reqheight(), 
-                                width=tab.winfo_reqwidth() )
+                                width=tab.winfo_reqwidth() )  
 
 
     def gerar_tab_geral(self):
@@ -401,28 +401,14 @@ class repairDetailWindow(ttk.Frame):
 
 
     def gerar_tab_historico(self):
-        self.ef_var_notificar = tk.IntVar()
-        self.ef_var_notificar.set(0)
-        self.ef_var_resultado = tk.StringVar()
-        self.ef_var_resultado.set(RESULTADOS[SEM_INFORMACAO])
+        self.var_notificar = tk.IntVar()
+        self.var_notificar.set(0)
+        self.var_resultado = tk.StringVar()
+        self.var_resultado.set(RESULTADOS[SEM_INFORMACAO])
 
         self.historico_fr1 = ttk.Frame(self.tab_historico)
         self.historico_fr2 = ttk.Frame(self.tab_historico)
 
-        self.ef_lbl_resultado = ttk.Label(self.historico_fr1, style="Panel_Body.TLabel",  text="Definir resultado:")
-        self.ef_combo_resultado = ttk.Combobox(self.historico_fr1,
-                                               textvariable=self.ef_var_resultado,
-                                               values = RESULTADOS,
-                                               width=32,
-                                               state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
-
-        self.ef_combo_resultado.bind('<<ComboboxSelected>>', self._on_combo_resultado_select)
-        self.hfr1_chkbtn_notificar = ttk.Checkbutton(self.historico_fr1, variable=self.ef_var_notificar, style="Panel_Body.Checkbutton", text="Notificar equipa")
-
-        self.ef_ltxt_detalhes_evento = LabelText(self.historico_fr1, "Detalhes:", style="Panel_Body.TLabel", width=30, height=2)
-
-        self.btn_adicionar = ttk.Button(self.historico_fr1, default="active", style="Active.TButton", text="Adicionar", command=self._on_save_evento)
-        self.btn_cancelar = ttk.Button(self.historico_fr1, text="Cancelar", command=self._on_cancel_evento)
 
         self.treeframe = ttk.Frame(self.historico_fr2, padding="0 8 0 0")
         self.tree = ttk.Treeview(self.treeframe, height=6, selectmode='browse', style="Reparacoes_Historico.Treeview")
@@ -449,19 +435,37 @@ class repairDetailWindow(ttk.Frame):
         self.tree.configure(yscrollcommand=self.vsb.set)
         self.vsb.grid(column=1, row=0, sticky="ns", in_=self.treeframe)
 
+
+        self.hfr1_lbl_titulo = ttk.Label(self.historico_fr1, style="Panel_Title.TLabel", text="Adicionar Evento:\n")
+
+        self.hfr1_lbl_resultado = ttk.Label(self.historico_fr1, style="Panel_Body.TLabel",  text="Definir resultado:")
+        self.ef_combo_resultado = ttk.Combobox(self.historico_fr1,
+                                textvariable=self.var_resultado,
+                                values = RESULTADOS,
+                                width=32,
+                                state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
+
+        self.ef_combo_resultado.bind('<<ComboboxSelected>>', self._on_combo_resultado_select)
+        self.hfr1_chkbtn_notificar = ttk.Checkbutton(self.historico_fr1, variable=self.var_notificar, style="Panel_Body.Checkbutton", text="Notificar equipa")
+
+        self.ef_ltxt_detalhes_evento = LabelText(self.historico_fr1, "Detalhes:", style="Panel_Body.TLabel", width=30, height=2)
+
+        self.btn_adicionar = ttk.Button(self.historico_fr1, default="active", style="Active.TButton", text="Adicionar", command=self._on_save_evento)
+        self.btn_cancelar = ttk.Button(self.historico_fr1, text="Cancelar", command=self._on_cancel_evento)
+
         #self.bind_tree()
         #self.desativar_campos()
 
 
-
     def montar_tab_historico(self):
-        self.ef_lbl_resultado.grid(column=0, row=0, sticky="nw")
-        self.ef_combo_resultado.grid(column=0, row=1, sticky="nw")
-        self.hfr1_chkbtn_notificar.grid(column=1, row=1, sticky="nw")
-        self.ef_ltxt_detalhes_evento.grid(column=0, row=2, columnspan=3, rowspan=3, sticky="nwe")
+        self.hfr1_lbl_titulo.grid(column=0, row=0, sticky="nw", pady="15 3")
+        self.hfr1_lbl_resultado.grid(column=0, row=1, sticky="nw")
+        self.ef_combo_resultado.grid(column=0, row=2, sticky="nw")
+        self.hfr1_chkbtn_notificar.grid(column=1, row=2, sticky="nw")
+        self.ef_ltxt_detalhes_evento.grid(column=0, row=3, columnspan=3, rowspan=3, sticky="nwe")
         
-        self.btn_adicionar.grid(column=2, row=0, sticky="nwe")
-        self.btn_cancelar.grid(column=2, row=1, sticky="nwe")
+        self.btn_adicionar.grid(column=2, row=1, sticky="nwe")
+        self.btn_cancelar.grid(column=2, row=2, sticky="nwe")
 
         self.historico_fr1.grid_columnconfigure(0, weight=0)
         self.historico_fr1.grid_columnconfigure(1, weight=1)
@@ -472,11 +476,13 @@ class repairDetailWindow(ttk.Frame):
         
         self.treeframe.grid_columnconfigure(0, weight=1)
         self.treeframe.grid_rowconfigure(0, weight=1)
+        self.treeframe.grid_columnconfigure(1, weight=0)
+
 
         
         self.historico_fr2.pack(side='top', expand=True, fill='both')
-        ttk.Separator(self.tab_historico).pack(side='top', expand=False, fill='x', pady=10)
-        self.historico_fr1.pack(side='top', expand=False, fill='x')
+        #ttk.Separator(self.tab_historico).pack(side='top', expand=False, fill='x', pady=10)
+        self.historico_fr1.pack(side='top', expand=True, fill='x')
 
 
 
