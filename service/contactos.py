@@ -26,6 +26,7 @@ class ContactsWindow(baseApp):
         self.contact_detail_windows_count = 0
         self.contacto_selecionado = None
         self.ultimo_contacto = None
+        self.ncontactos = 0
 
         self.master.minsize(CONTACTOS_MIN_WIDTH, CONTACTOS_MIN_HEIGHT)
         self.master.maxsize(CONTACTOS_MAX_WIDTH, CONTACTOS_MAX_HEIGHT)
@@ -36,16 +37,28 @@ class ContactsWindow(baseApp):
         self.montar_tabela()
         self.gerar_menu()
 
-        #get status bar
-        self.ncontactos = 2345
-        self.my_statusbar.set(f"{self.ncontactos} contactos")
-
         self.gerar_painel_entrada()
         self.composeFrames()
         self.inserir_dados_de_exemplo()
         self.alternar_cores(self.tree)
+        self.atualizar_soma()
+
         if self.estado.painel_novo_contacto_aberto:
             self.mostrar_painel_entrada()
+
+
+    def contar_linhas(self):
+        """ Obtém o número de linhas da tabela de contactos. """
+        linhas = self.tree.get_children("")
+        return len(linhas)
+
+
+    def atualizar_soma(self):
+        """
+        Atualiza a barra de estado com o número de contactos.
+        """
+        self.ncontactos = self.contar_linhas()
+        self.my_statusbar.set(f"{self.ncontactos} contactos")
 
 
     def gerar_menu(self):
@@ -402,5 +415,5 @@ class ContactsWindow(baseApp):
 
 
     def inserir_dados_de_exemplo(self):
-        for i in range(100):
+        for i in range(1,4001):
             self.tree.insert("", "end", text="", values=(str(i),"Nome do cliente", "+351000000000", "endereco@emaildocliente.com"))

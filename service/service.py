@@ -68,15 +68,17 @@ class App(baseApp):
         self.montar_tabela()
         self.gerar_painel_entrada()
 
-
-        self.nprocessos = 1232 #TODO - contar processos em curso
-        self.my_statusbar.set(f"{self.nprocessos} processos")
+        self.nprocessos = 0
+        self.nmensagens = 0
 
         self.composeFrames()
+
+
         self.inserir_dados_de_exemplo()
         self.alternar_cores(self.tree)
         self.inserir_msgs_de_exemplo()
         self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
+        self.atualizar_soma_processos()
         #self.after(5000, self.teste_GUI)
         #self.create_window_detalhe_rep(self, num_reparacao=3)
 
@@ -93,6 +95,32 @@ class App(baseApp):
             self.close_window_remessas()
             self.fechar_painel_mensagens()
             self.fechar_painel_entrada()
+
+
+    def contar_linhas(self, tree):
+        """ 
+        Obtém uma contagem do número atual de linhas/itens da tabela (tree)
+        passada como argumento.
+        """
+        linhas = tree.get_children("")
+        return len(linhas)
+
+
+    def atualizar_soma_processos(self):
+        """
+        Atualiza a barra de estado com o número de reparações visíveis na tabela
+        principal.
+        """
+        self.nprocessos = self.contar_linhas(self.tree)
+        self.my_statusbar.set(f"{self.nprocessos} processos")
+
+
+    def atualizar_soma_msgs(self):
+        """
+        Atualiza a contagem do número de mensagens.
+        """
+        self.nmensagens = self.contar_linhas(self.msgtree)
+        self.lbl_mensagens_titulo.config(text=f"{self.nmensagens} mensagens")
 
 
     def bind_tree(self):
@@ -426,8 +454,9 @@ class App(baseApp):
         self.mensagens_frame = ttk.Frame(self.messagepane)
         self.mensagens_frame_top = ttk.Frame(self.mensagens_frame, padding="4 10 4 0")
 
-        contar_mensagens = 36 #TODO: implementar método para obter o número de mensagens do utilizador
-        self.lbl_mensagens_titulo = ttk.Label(self.mensagens_frame, text=f"{contar_mensagens} mensagens", anchor='center', font=("Lucida Grande", 18)).pack()
+        contar_mensagens = 0 #TODO: implementar método para obter o número de mensagens do utilizador
+        self.lbl_mensagens_titulo = ttk.Label(self.mensagens_frame, text=f"{contar_mensagens} mensagens", anchor='center', font=("Lucida Grande", 18))
+        self.lbl_mensagens_titulo.pack()
 
         self.mensagens_frame_btn = ttk.Frame(self.mensagens_frame, padding="2 4 2 0")
         self.mensagens_frame_tree = ttk.Frame(self.mensagens_frame, padding="2 0 2 0")
@@ -488,6 +517,7 @@ class App(baseApp):
             self.rightframe.grid()
             # self.inserir_msgs_de_exemplo()  # TODO atualizar_mensagens()
             self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
+            self.atualizar_soma_msgs()
             estado.painel_mensagens_aberto = True
         else:
             self.fechar_painel_mensagens()
@@ -673,7 +703,7 @@ class App(baseApp):
         self.ef_ltxt_num_serie = LabelEntry(self.ef_lf_equipamento, "\nNº de série:", style="Panel_Body.TLabel", width=15)
 
         self.ef_ltxt_data_compra = LabelEntry(self.ef_lf_equipamento, "\nData de compra:", style="Panel_Body.TLabel", width=15)
-        
+
         """now = time.localtime(time.time())
         now_value = f"{now[2]}-{now[1]}-{now[0]}"
         now_validate = f"{now[2]}-{now[1]}-{now[0]}"
@@ -684,7 +714,7 @@ class App(baseApp):
                                                  validate = {'validator' : 'date',
                                                              'min' : '1-1-1976',
                                                              'max' : now_validate,
-                                                             'minstrict' : 0, 
+                                                             'minstrict' : 0,
                                                              'maxstrict' : 0,
                                                              'fmt' : 'dmy',
                                                              'separator' : '-'},
@@ -1121,7 +1151,7 @@ class App(baseApp):
 
 
     def inserir_dados_de_exemplo(self):
-        for i in range(1,200):
+        for i in range(1,5):
             self.tree.insert("", "end", tag="", text="", values=(str(i),"José Manuel da Silva Rodrigues", "Artigo Muito Jeitoso (Early 2015)", "Substituição de ecrã", "Em processamento", "120" ))
             self.tree.insert("", "end", text="", values=(str(i+1),"Joana Manuela Rodrigues", "Outro Artigo Bem Jeitoso", "Bateria não carrega", "Aguarda envio", "120" ))
             self.tree.insert("", "end", tag="baixa", text="", values=(str(i+2),"Maria Apolinário Gomes Fernandes", "Smartphone Daqueles Bons", "Substituição de ecrã", "Enviado", "15" ))

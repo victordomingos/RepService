@@ -29,13 +29,10 @@ class RemessasWindow(baseApp):
         self.remessa_newDetailsWindow = {}
         self.remessa_detail_windows_count = 0
         #self.centerframe = ttk.Frame(self.mainframe, padding="4 0 4 0") #apagar isto
+        self.nremessas = 0
 
         self.montar_barra_de_ferramentas()
         self.montar_tabela()
-
-        #get status bar
-        self.nremessas = 2345
-        self.my_statusbar.set(f"{self.nremessas} remessas")
 
         self.gerar_painel_entrada()
         self.gerar_menu()
@@ -43,6 +40,7 @@ class RemessasWindow(baseApp):
         self.composeFrames()
         self.inserir_dados_de_exemplo()
         self.alternar_cores(self.tree)
+        self.atualizar_soma()
         if self.estado.painel_nova_remessa_aberto:
             self.mostrar_painel_entrada()
 
@@ -62,6 +60,19 @@ class RemessasWindow(baseApp):
         #self.contextMenu.add_command(label="Registar cheque recebido", command=self.pag_recebido)
         #self.contextMenu.add_command(label="Registar cheque depositado", command=self.chq_depositado)
 
+
+    def contar_linhas(self):
+        """ Obtém o número de linhas da tabela de remessas. """
+        linhas = self.tree.get_children("")
+        return len(linhas)
+
+
+    def atualizar_soma(self):
+        """
+        Atualiza a barra de estado com o número de remessas.
+        """
+        self.nremessas = self.contar_linhas()
+        self.my_statusbar.set(f"{self.nremessas} remessas")
 
 
     def montar_tabela(self):
@@ -411,7 +422,7 @@ class RemessasWindow(baseApp):
 
 
     def inserir_dados_de_exemplo(self):
-        for i in range(1,180):
+        for i in range(1,1002,3):
             self.tree.insert("", "end", text="", values=(str(i), "Loja X", "Fornecedor", "3", "2017-12-31"))
             self.tree.insert("", "end", text="", values=(str(i+1), "Centro técnico", "Loja X", "10", "2017-01-12"))
             self.tree.insert("", "end", text="", values=(str(i+2), "Loja X", "Distribuidor internacional", "10", "2017-02-01"))

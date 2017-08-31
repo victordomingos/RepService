@@ -59,6 +59,7 @@ class repairDetailWindow(ttk.Frame):
         self.montar_rodape()
         self.composeFrames()
         self.inserir_dados_de_exemplo()
+        self.alternar_cores(self.tree)
 
 
     def montar_barra_de_ferramentas(self):
@@ -192,6 +193,8 @@ class repairDetailWindow(ttk.Frame):
         self.gerar_tab_historico()
         self.montar_tab_historico()
 
+        # TODO
+        """
         if self.is_rep_cliente:
             self.tab_orcamentos = ttk.Frame(self.note, padding=10)
             self.tab_emprestimos = ttk.Frame(self.note, padding=10)
@@ -201,7 +204,8 @@ class repairDetailWindow(ttk.Frame):
             self.gerar_tab_emprestimos()
             self.montar_tab_orcamentos()
             self.montar_tab_emprestimos()
-
+        """
+        
         self.desativar_campos()
 
 
@@ -210,7 +214,6 @@ class repairDetailWindow(ttk.Frame):
         tab = event.widget.nametowidget(event.widget.select())
         event.widget.configure(height=tab.winfo_reqheight(), 
                                 width=tab.winfo_reqwidth() )  
-
 
     def gerar_tab_geral(self):
         # TAB Geral ~~~~~~~~~~~~~~~~
