@@ -7,6 +7,10 @@ Histórico de versões:
 ---
 v.0.13 - 22/07/2017
  * Adicionado separador "histórico" à janela de detalhes de reparação.
+ * Temporariamente ocultados os separadores "Orçamentos" e "Empréstimos", que 
+   deverão ser adicionados novamente numa fase posterior do desenvolvimento.
+ * Adicionadas funções de contagem de remessas, contactos, mensagens (atualizam
+   p.ex. o texto da barra de estados nas janelas e painéis respetivos).
 
 ---
 v.0.12 - 15/07/2017
