@@ -127,6 +127,9 @@ class LabelEntry(ttk.Frame):
     def set(self, text): 
         self.entry.insert(0, text)
 
+    def set_label(self, text): 
+        self.label.config(text=text)
+
     def disable(self): 
         self.entry.configure(state="disabled")
 
@@ -163,6 +166,9 @@ class LabelText(ttk.Frame):
     def clear(self): 
         self.scrolledtext.delete('1.0', 'end')
         
+    def set_label(self, text): 
+        self.label.config(text=text)
+
     def enable(self): 
         self.scrolledtext.configure(state="enabled", bg="white")
     

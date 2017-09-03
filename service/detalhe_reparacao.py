@@ -449,9 +449,12 @@ class repairDetailWindow(ttk.Frame):
                                 state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
 
         self.ef_combo_resultado.bind('<<ComboboxSelected>>', self._on_combo_resultado_select)
-        self.hfr1_chkbtn_notificar = ttk.Checkbutton(self.historico_fr1, variable=self.var_notificar, style="Panel_Body.Checkbutton", text="Notificar equipa")
+        self.dicas.bind(self.ef_combo_resultado, 'Clique para selecionar o resultado do novo evento.')
 
-        self.ef_ltxt_detalhes_evento = LabelText(self.historico_fr1, "Detalhes:", style="Panel_Body.TLabel", width=30, height=2)
+        self.hfr1_chkbtn_notificar = ttk.Checkbutton(self.historico_fr1, variable=self.var_notificar, style="Panel_Body.Checkbutton", text="Notificar equipa")
+        self.dicas.bind(self.hfr1_chkbtn_notificar, 'Assinale esta opção para enviar uma mensagem\ncom o conteúdo deste evento ao resto da sua equipa.')
+
+        self.ef_ltxt_detalhes_evento = LabelText(self.historico_fr1, "\nDetalhes:", style="Panel_Body.TLabel", width=30, height=2)
 
         self.btn_adicionar = ttk.Button(self.historico_fr1, default="active", style="Active.TButton", text="Adicionar", command=self._on_save_evento)
         self.btn_cancelar = ttk.Button(self.historico_fr1, text="Cancelar", command=self._on_cancel_evento)
@@ -491,7 +494,23 @@ class repairDetailWindow(ttk.Frame):
 
 
     def _on_combo_resultado_select(self, event):
-        print(f"Novo resultado: {self.ef_combo_resultado.get()}")
+        if self.var_resultado.get() == RESULTADOS[GARANTIA_APROVADA_REPARADO]:
+            self.ef_ltxt_detalhes_evento.set_label("\nDetalhes (serviço realizado, descrição e número de série das peças substituídas, etc.):")
+        elif self.var_resultado.get() == RESULTADOS[GARANTIA_APROVADA_SUBSTITUIDO]:
+            self.ef_ltxt_detalhes_evento.set_label("\nDetalhes (número de série do novo artigo, etc.):")
+        elif self.var_resultado.get() == RESULTADOS[GARANTIA_APROVADA_NOTA_DE_CREDITO]:
+            self.ef_ltxt_detalhes_evento.set_label("\nDetalhes (números das notas de crédito do fornecedor e da loja):")
+        elif self.var_resultado.get() == RESULTADOS[GARANTIA_RECUSADA]:
+            self.ef_ltxt_detalhes_evento.set_label("\nDetalhes (motivo indicado pelo fornecedor ou centro técnico):")
+        elif self.var_resultado.get() == RESULTADOS[ORCAMENTO_ACEITE]:
+            self.ef_ltxt_detalhes_evento.set_label("\nDetalhes:")
+        elif self.var_resultado.get() == RESULTADOS[ORCAMENTO_RECUSADO]:
+            self.ef_ltxt_detalhes_evento.set_label("\nDetalhes (motivo apontado pelo cliente):")
+        else:
+            self.ef_ltxt_detalhes_evento.set_label("\nDetalhes:")
+        
+        # TODO: criar regras para atribuição automática de novos estados do processo.
+        # P. ex.: se orçamento aceite, perguntar utilizador se centro técnico foi notificado. Se sim, AGUARDA_RESP_FORNECEDOR, se não cria email modelo a informar centro técnico da decisão.
 
 
     def _on_save_evento(self, event):
