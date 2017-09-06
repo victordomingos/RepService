@@ -9,6 +9,7 @@ v.0.14 - 15/09/2017
  * Corrigido um bug que impedia a expansão e o correto redimensionamento da
    tabela do histórico de reparações (janela detalhes de reparação).
  * Adicionado novamente separador "Empréstimos" (em construção).
+ * Ajustada a altura máxima da janela de detalhes de reparação.
 
 ---
 v.0.13 - 03/09/2017
