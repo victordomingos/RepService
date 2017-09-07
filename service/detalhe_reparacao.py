@@ -178,8 +178,8 @@ class repairDetailWindow(ttk.Frame):
 
         # Preparar o notebook da secção principal ------------------------
         self.note = ttk.Notebook(self.centerframe, padding="3 20 3 3")
-        self.note.bind_all("<<NotebookTabChanged>>", self._on_tab_changed)
-        
+        #self.note.bind_all("<<NotebookTabChanged>>", self._on_tab_changed)
+
         self.tab_geral = ttk.Frame(self.note, padding=10)
         self.tab_historico = ttk.Frame(self.note, padding=10)
         self.note.add(self.tab_geral, text="Geral")
@@ -201,16 +201,16 @@ class repairDetailWindow(ttk.Frame):
             #self.montar_tab_orcamentos()
             self.montar_tab_emprestimos()
 
-        
+
         self.desativar_campos()
 
 
     def _on_tab_changed(self, event):
         event.widget.update_idletasks()
         tab = event.widget.nametowidget(event.widget.select())
-        event.widget.configure(height=tab.winfo_reqheight(), 
-                                width=tab.winfo_reqwidth() ) 
-                                
+        event.widget.configure(height=tab.winfo_reqheight(),
+                                width=tab.winfo_reqwidth() )
+
         """
         w = event.widget  # get the current widget
         w.update_idletasks()
@@ -232,7 +232,7 @@ class repairDetailWindow(ttk.Frame):
             self.master.state("normal")
             w.configure(height=tab.winfo_reqheight(), width=tab.winfo_reqwidth())
         """
-        
+
 
     def gerar_tab_geral(self):
         # TAB Geral ~~~~~~~~~~~~~~~~
@@ -432,7 +432,7 @@ class repairDetailWindow(ttk.Frame):
         self.historico_fr2 = ttk.Frame(self.tab_historico)
 
         self.treeframe_hist = ttk.Frame(self.historico_fr2, padding="0 8 0 0")
-        self.tree_hist = ttk.Treeview(self.treeframe_hist, height=6, selectmode='browse', style="Reparacoes_Historico.Treeview")
+        self.tree_hist = ttk.Treeview(self.treeframe_hist, height=5, selectmode='browse', style="Reparacoes_Historico.Treeview")
         self.tree_hist['columns'] = ('Nº', 'Descrição do evento', 'Estado', 'Utilizador', 'Data')
         self.tree_hist.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
         self.tree_hist.column('Nº', anchor='ne', minwidth=46, stretch=0, width=46)
@@ -440,7 +440,7 @@ class repairDetailWindow(ttk.Frame):
         self.tree_hist.column('Estado', anchor='nw', minwidth=200, stretch=1, width=200)
         self.tree_hist.column('Utilizador', anchor='nw', minwidth=140, stretch=1, width=140)
         self.tree_hist.column('Data', anchor='nw', minwidth=80, stretch=1, width=80)
-        
+
         # Ordenar por coluna ao clicar no respetivo cabeçalho
         #for col in self.tree['columns']:
         #    self.tree.heading(col, text=col.title(),
@@ -458,8 +458,8 @@ class repairDetailWindow(ttk.Frame):
 
         self.bind_tree_hist()
         self.alternar_cores(self.tree_hist)
-        
-        
+
+
         self.hfr1_lbl_titulo = ttk.Label(self.historico_fr1, style="Panel_Title.TLabel", text="Adicionar Evento:\n")
 
         self.hfr1_lbl_resultado = ttk.Label(self.historico_fr1, style="Panel_Body.TLabel",  text="Definir resultado:")
@@ -491,13 +491,13 @@ class repairDetailWindow(ttk.Frame):
         self.treeframe_hist.grid_rowconfigure(0, weight=1)
         self.historico_fr2.grid_columnconfigure(0, weight=1)
         self.historico_fr2.grid_rowconfigure(0, weight=1)
-        
+
         self.hfr1_lbl_titulo.grid(column=0, row=0, sticky="nw", pady="15 3")
         self.hfr1_lbl_resultado.grid(column=0, row=1, sticky="nw")
         self.ef_combo_resultado.grid(column=0, row=2, sticky="nw")
         self.hfr1_chkbtn_notificar.grid(column=1, row=2, sticky="nw")
         self.ef_ltxt_detalhes_evento.grid(column=0, row=3, columnspan=3, rowspan=3, sticky="nwe")
-        
+
         self.btn_adicionar.grid(column=2, row=1, sticky="nwe")
         self.btn_cancelar.grid(column=2, row=2, sticky="nwe")
 
@@ -505,10 +505,10 @@ class repairDetailWindow(ttk.Frame):
         self.historico_fr1.grid_columnconfigure(1, weight=1)
         self.historico_fr1.grid_columnconfigure(2, weight=0)
 
-    
+
 
         #ttk.Separator(self.tab_historico).pack(side='top', expand=False, fill='x', pady=10)
-        self.historico_fr1.pack(side='top', expand=True, fill='x')
+        self.historico_fr1.pack(side='bottom', expand=False, fill='x')
 
 
 
@@ -527,7 +527,7 @@ class repairDetailWindow(ttk.Frame):
             self.ef_ltxt_detalhes_evento.set_label("\nDetalhes (motivo apontado pelo cliente):")
         else:
             self.ef_ltxt_detalhes_evento.set_label("\nDetalhes:")
-        
+
         # TODO: criar regras para atribuição automática de novos estados do processo.
         # P. ex.: se orçamento aceite, perguntar utilizador se centro técnico foi notificado. Se sim, AGUARDA_RESP_FORNECEDOR, se não cria email modelo a informar centro técnico da decisão.
 
@@ -553,7 +553,7 @@ class repairDetailWindow(ttk.Frame):
         self.tree.column('Estado', anchor='nw', minwidth=200, stretch=1, width=200)
         self.tree.column('Utilizador', anchor='nw', minwidth=140, stretch=1, width=140)
         self.tree.column('Data', anchor='nw', minwidth=80, stretch=1, width=80)
-        
+
         # Ordenar por coluna ao clicar no respetivo cabeçalho
         #for col in self.tree['columns']:
         #    self.tree.heading(col, text=col.title(),
@@ -603,15 +603,16 @@ class repairDetailWindow(ttk.Frame):
     def gerar_tab_emprestimos(self):
         self.emprestimos_fr1 = ttk.Frame(self.tab_emprestimos)
         self.emprestimos_fr2 = ttk.Frame(self.tab_emprestimos)
-        
+
         self.treeframe_emprest = ttk.Frame(self.emprestimos_fr1, padding="0 8 0 0")
-        self.tree_emprest = ttk.Treeview(self.treeframe_emprest, height=1, selectmode='browse', style="Reparacoes_Historico.Treeview")
-        self.tree_emprest['columns'] = ('Ref.ª', 'Qtd.', 'Descrição')
+        self.tree_emprest = ttk.Treeview(self.treeframe_emprest, height=3, selectmode='browse', style="Reparacoes_Emprestimo.Treeview")
+        self.tree_emprest['columns'] = ( 'Qtd.', 'Cód.', 'Descrição', 'S/N')
         self.tree_emprest.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
-        self.tree_emprest.column('Ref.ª', anchor='ne', minwidth=66, stretch=0, width=90)
-        self.tree_emprest.column('Qtd.', anchor='nw', minwidth=46, stretch=0, width=46)
-        self.tree_emprest.column('Descrição', anchor='nw', minwidth=200, stretch=1, width=900)
-        
+        self.tree_emprest.column('Qtd.', anchor='e', minwidth=35, stretch=0, width=35)
+        self.tree_emprest.column('Cód.', anchor='w', minwidth=60, stretch=1, width=65)
+        self.tree_emprest.column('Descrição', anchor='w', minwidth=300, stretch=1, width=400)
+        self.tree_emprest.column('S/N', anchor='w', minwidth=85, stretch=1, width=100)
+
         #Ordenar por coluna ao clicar no respetivo cabeçalho
         #for col in self.tree_emprest['columns']:
         #    self.tree_emprest.heading(col, text=col.title(),
@@ -664,7 +665,7 @@ class repairDetailWindow(ttk.Frame):
         ttk.Separator(self.tab_emprestimos).pack(side='top', expand=False, fill='x', pady=10)
         self.emprestimos_fr2.pack(side='top', expand=True, fill='both')
 
-        
+
 
     def desativar_campos(self):
         # Desativar todos os campos de texto para não permitir alterações. ------------------------
@@ -768,7 +769,7 @@ class repairDetailWindow(ttk.Frame):
         #equipamento =  tree_linha["values"][2]
         #self.my_statusbar.set(f"{num_reparacao} • {equipamento}")
         #self.reparacao_selecionada = num_reparacao
-        
+
     def alternar_cores(self, tree, inverso=False, fundo1='grey98', fundo2='white'):
         if inverso == False:
             impar = True
@@ -831,6 +832,7 @@ class repairDetailWindow(ttk.Frame):
         self.estilo.configure("Panel_Body.TLabel", font=("Lucida Grande", 11))
         self.estilo.configure("TMenubutton", font=("Lucida Grande", 11))
         self.estilo.configure('Reparacoes_Historico.Treeview', rowheight=42)
+        self.estilo.configure('Reparacoes_Emprestimo.Treeview', rowheight=20)
 
         self.btnFont = tk.font.Font(family="Lucida Grande", size=10)
         self.btnTxtColor = "grey22"
@@ -843,7 +845,6 @@ class repairDetailWindow(ttk.Frame):
         self.mainframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
 
 
-
     def inserir_dados_de_exemplo(self):
         for i in range(1,36,4):
             self.tree_hist.insert("", "end", text="", values=(str(i), textwrap.fill("Cliente informou que já desativou Find My iPhone.", 45), "Em processamento", "Victor Domingos", "12/07/2021"))
@@ -852,5 +853,7 @@ class repairDetailWindow(ttk.Frame):
             self.tree_hist.insert("", "end", text="", values=(str(i+3), textwrap.fill("Centro técnico informou que não é possível reparar pois já não há peças originais.", 45), "Em processamento", "Victor Domingos", "12/07/2021"))
 
         if self.is_rep_cliente:
-            for i in range(1,350):
-                self.tree_emprest.insert("", "end", text="", values=("MN0234PO/A", "1", textwrap.fill("Equipamento de substituição a utilizar enquanto a reparação não fica concluída", 45)))
+            for i in range(1,5):
+                self.tree_emprest.insert("", "end", text="", values=("1", "MN0234PO/A", "Equipamento de substituição a utilizar enquanto a reparação não fica concluída", "SF1325FVWt5654"))
+                self.tree_emprest.insert("", "end", text="", values=("100", "GHTGAFVABS56152", "Equipamentos genéricos de substituição"))
+                self.tree_emprest.insert("", "end", text="", values=("1", "GHTGAFVABS56152", "Outro equipamento de substituição", "351456789012345678901"))

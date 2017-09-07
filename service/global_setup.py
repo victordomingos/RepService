@@ -32,7 +32,7 @@ W_DETALHE_REP_GEOMETRIA = '830x610'
 W_DETALHE_REP_MIN_WIDTH = 768
 W_DETALHE_REP_MIN_HEIGHT = 580
 W_DETALHE_REP_MAX_WIDTH = 960
-W_DETALHE_REP_MAX_HEIGHT = 760
+W_DETALHE_REP_MAX_HEIGHT = 2000
 
 W_DETALHE_REMESSA_GEOMETRIA = '780x600'
 W_DETALHE_REMESSA_MIN_WIDTH = 600
@@ -81,7 +81,7 @@ ESTADOS = ("Em processamento",
            "Anulado",
            "Sem informação"
            )
-        
+
 #Resultados de eventos (como serão registados na base de dados)
 SEM_INFORMACAO = 0
 GARANTIA_APROVADA_REPARADO = 1
