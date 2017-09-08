@@ -230,7 +230,7 @@ class contactDetailWindow(ttk.Frame):
 
 
     def montar_tab_notas(self):
-        self.ef_lstxt_notas.grid(column=0, row=9, columnspan=3, rowspan=4, padx=5, sticky='we')
+        self.ef_lstxt_notas.grid(column=0, row=9, columnspan=3, rowspan=4, padx=5, sticky='wens')
         self.ef_cabecalho.columnconfigure(2, weight=1)
         #self.notas_fr1.columnconfigure(0, weight=1)
 
@@ -242,7 +242,9 @@ class contactDetailWindow(ttk.Frame):
         self.ef_cabecalho.grid(column=0,row=0, sticky='we')
 
         self.notas_fr1.columnconfigure(0, weight=1)
-        self.notas_fr1.pack(side='top', expand=False, fill='x')
+        self.notas_fr1.rowconfigure(10, weight=1)
+        
+        self.notas_fr1.pack(side='top', expand=True, fill='both')
         #ttk.Separator(self.tab_notas).pack(side='top', expand=False, fill='x', pady=10)
         #self.notas_fr2.pack(side='top', expand=True, fill='both')
 

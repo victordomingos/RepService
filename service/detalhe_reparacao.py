@@ -13,6 +13,7 @@ import textwrap
 
 from global_setup import *
 from extra_tk_classes import *
+from detalhe_contacto import *
 
 
 class repairDetailWindow(ttk.Frame):
@@ -21,6 +22,8 @@ class repairDetailWindow(ttk.Frame):
         super().__init__(master,*args,**kwargs)
         self.master = master
         self.master.bind("<Command-w>", self.on_btn_fechar)
+        self.contacto_newDetailsWindow = {}
+        self.contact_detail_windows_count = 0
         self.master.focus()
         self.num_reparacao = num_reparacao
         self.tipo_processo = "Cliente" if bool((self.num_reparacao%2)==0) else "Stock"  #TODO: Substituir isto por função que busca tipo na info da base de dados
@@ -211,27 +214,14 @@ class repairDetailWindow(ttk.Frame):
         event.widget.configure(height=tab.winfo_reqheight(),
                                 width=tab.winfo_reqwidth() )
 
-        """
-        w = event.widget  # get the current widget
-        w.update_idletasks()
-        tab = w.nametowidget(w.select())  # get the tab widget where we're going to
-        tab_name = self.note.tab(self.note.select(), "text")   # get the tab widget where we're going to
 
-        if tab_name == "Histórico":
-            w.update_idletasks()
-            self.master.state("zoomed")
-            self.master.minsize(820, W_DETALHE_CONTACTO_MIN_HEIGHT)
-        elif tab_name == "Geral":
-            self.master.minsize(W_DETALHE_CONTACTO_MIN_WIDTH, 360)
-            w.update_idletasks()
-            self.master.state("normal")
-            w.configure(height=tab.winfo_reqheight(), width=tab.winfo_reqwidth())
-        else:
-            self.master.minsize(W_DETALHE_CONTACTO_MIN_WIDTH, W_DETALHE_CONTACTO_MIN_HEIGHT)
-            w.update_idletasks()
-            self.master.state("normal")
-            w.configure(height=tab.winfo_reqheight(), width=tab.winfo_reqwidth())
-        """
+    def create_window_detalhe_contacto(self, *event):
+        self.contact_detail_windows_count += 1
+        self.contacto_newDetailsWindow[self.contact_detail_windows_count] = tk.Toplevel()
+        self.contacto_newDetailsWindow[self.contact_detail_windows_count].title(f'Detalhe de contacto: {self.numero_contacto}')
+        self.janela_detalhes_contacto = contactDetailWindow(self.contacto_newDetailsWindow[self.contact_detail_windows_count], self.numero_contacto)
+        self.contacto_newDetailsWindow[self.contact_detail_windows_count].focus()
+
 
 
     def gerar_tab_geral(self):
@@ -242,7 +232,7 @@ class repairDetailWindow(ttk.Frame):
         # TODO - obter valor da base de dados
         # Criar widgets para este separador -------------------------------------------------------
         self.txt_numero_contacto = ttk.Entry(self.geral_fr1, font=("Helvetica-Neue", 12), width=5)
-        self.btn_buscar_contacto = ttk.Button(self.geral_fr1, width=1, text="+", command=lambda *x: self.create_window_contacts(criar_novo_contacto="Cliente")) # TODO - abrir ficha de cliente
+        self.btn_buscar_contacto = ttk.Button(self.geral_fr1, width=1, text="+", command=self.create_window_detalhe_contacto)
         self.txt_nome = ttk.Entry(self.geral_fr1, font=("Helvetica-Neue", 12), width=35)
         self.lbl_telefone = ttk.Label(self.geral_fr1, style="Panel_Body.TLabel", text=f"Tel.:{self.telefone}")
         self.lbl_email = ttk.Label(self.geral_fr1, style="Panel_Body.TLabel", text=f"Email:{self.email}")
@@ -355,6 +345,10 @@ class repairDetailWindow(ttk.Frame):
         self.geral_fr1.grid_columnconfigure(4, weight=1)
         self.geral_fr1.grid_columnconfigure(3, weight=1)
         self.geral_fr1.grid_columnconfigure(2, weight=1)
+        
+        self.geral_fr2.grid_rowconfigure(10, weight=1)
+        self.geral_fr2.grid_rowconfigure(10, weight=1)
+        self.geral_fr2.grid_rowconfigure(15, weight=1)
 
         if self.is_rep_cliente:
             self.ltxt_descr_equipamento.grid(column=0, row=0, columnspan=2, rowspan=4, sticky='we', padx=4)
@@ -370,11 +364,11 @@ class repairDetailWindow(ttk.Frame):
 
             self.ltxt_local_intervencao.grid(column=4, row=5, rowspan=2, sticky='we', padx=4)
             ttk.Separator(self.geral_fr2).grid(column=0, row=7, columnspan=5, sticky='we', pady=10)
-            self.ltxt_descr_avaria.grid(column=0, row=8, columnspan=3, rowspan=4, sticky='we', padx=4)
+            self.ltxt_descr_avaria.grid(column=0, row=8, columnspan=3, rowspan=5, sticky='wesn', padx=4)
 
             self.ltxt_senha.grid(column=3, row=8, rowspan=2, sticky='we', padx=4)
 
-            self.lbl_varias_linhas.grid(column=4, row=8, columnspan=2, rowspan=4, sticky='we', padx=4)
+            self.lbl_varias_linhas.grid(column=4, row=9, columnspan=2, rowspan=4, sticky='wen', padx=4)
             """
             self.lbl_avaria_reprod_loja.grid(column=4, row=8, columnspan=2, sticky='we', padx=4)
             self.lbl_efetuar_copia.grid(column=4, row=9, columnspan=2, sticky='we', padx=4)
@@ -384,12 +378,12 @@ class repairDetailWindow(ttk.Frame):
             ttk.Separator(self.geral_fr2).grid(column=0, row=13, columnspan=5, sticky='we', pady=10)
 
             if self.modo_entrega <= 1:
-                self.ltxt_acessorios.grid(column=0, row=14, columnspan=2, rowspan=3, sticky='wes', padx=4)
-                self.ltxt_notas.grid(column=2, row=14, columnspan=3, rowspan=3, sticky='wes', padx=4)
+                self.ltxt_acessorios.grid(column=0, row=14, columnspan=2, rowspan=3, sticky='wesn', padx=4)
+                self.ltxt_notas.grid(column=2, row=14, columnspan=3, rowspan=3, sticky='wesn', padx=4)
             else:
-                self.ltxt_acessorios.grid(column=0, row=14, columnspan=1, rowspan=3, sticky='wes', padx=4)
-                self.ltxt_notas.grid(column=1, row=14, columnspan=3, rowspan=3, sticky='wes', padx=4)
-                self.ltxt_morada_entrega.grid(column=4, row=14, columnspan=1, rowspan=3, sticky='wes', padx=4)
+                self.ltxt_acessorios.grid(column=0, row=14, columnspan=1, rowspan=3, sticky='wesn', padx=4)
+                self.ltxt_notas.grid(column=1, row=14, columnspan=3, rowspan=3, sticky='wesn', padx=4)
+                self.ltxt_morada_entrega.grid(column=4, row=14, columnspan=1, rowspan=3, sticky='wesn', padx=4)
 
             for i in range(5):
                 self.geral_fr2.grid_columnconfigure(i, weight=1)
@@ -406,17 +400,19 @@ class repairDetailWindow(ttk.Frame):
             self.ltxt_num_quebra_stock.grid(column=4, row=4, rowspan=2, sticky='we', padx=4)
 
             ttk.Separator(self.geral_fr2).grid(column=0, row=7, columnspan=5, sticky='we', pady=10)
-            self.ltxt_descr_avaria.grid(column=0, row=8, columnspan=5, rowspan=4, sticky='we', padx=4)
+            self.ltxt_descr_avaria.grid(column=0, row=8, columnspan=5, rowspan=4, sticky='wesn', padx=4)
             ttk.Separator(self.geral_fr2).grid(column=0, row=12, columnspan=5, sticky='we', pady=10)
-            self.ltxt_notas.grid(column=0, row=13, columnspan=5, rowspan=3, sticky='wes', padx=4)
+            self.ltxt_notas.grid(column=0, row=13, columnspan=5, rowspan=3, sticky='wesn', padx=4)
 
             self.geral_fr2.grid_columnconfigure(0, weight=2)
-
+                        
             for i in range(1,5):
                 self.geral_fr2.grid_columnconfigure(i, weight=1)
             self.geral_fr2.grid_columnconfigure(2, weight=1)
             self.geral_fr2.grid_columnconfigure(3, weight=1)
-
+        
+        
+        
         self.geral_fr1.pack(side='top', expand=False, fill='x')
         ttk.Separator(self.tab_geral).pack(side='top', expand=False, fill='x', pady=10)
         self.geral_fr2.pack(side='top', expand=True, fill='both')

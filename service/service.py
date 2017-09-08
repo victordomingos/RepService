@@ -40,7 +40,7 @@ __app_name__ = "RepService 2017"
 __author__ = "Victor Domingos"
 __copyright__ = "Copyright 2017 Victor Domingos"
 __license__ = "Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)"
-__version__ = "v0.13 development"
+__version__ = "v0.14 development"
 __email__ = "web@victordomingos.com"
 __status__ = "Development"
 
@@ -57,6 +57,8 @@ class App(baseApp):
         self.rep_detail_windows_count = 0
         self.msg_newDetailsWindow = {}
         self.msg_detail_windows_count = 0
+        self.nprocessos = 0
+        self.nmensagens = 0
 
         self.reparacao_selecionada = None
         self.mensagem_selecionada = None
@@ -68,21 +70,19 @@ class App(baseApp):
         self.montar_tabela()
         self.gerar_painel_entrada()
 
-        self.nprocessos = 0
-        self.nmensagens = 0
 
         self.composeFrames()
-
 
         self.inserir_dados_de_exemplo()
         self.alternar_cores(self.tree)
         self.inserir_msgs_de_exemplo()
         self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
         self.atualizar_soma_processos()
-        #self.after(5000, self.teste_GUI)
-        #self.create_window_detalhe_rep(self, num_reparacao=3)
-
-
+        
+        if self.contar_linhas(self.msgtree) > 0:
+            self.after(1200, self.abrir_painel_mensagens)
+        
+        
     def teste_GUI(self):
         for i in range(10):
             print(i)
@@ -120,8 +120,12 @@ class App(baseApp):
         Atualiza a contagem do número de mensagens.
         """
         self.nmensagens = self.contar_linhas(self.msgtree)
-        self.lbl_mensagens_titulo.config(text=f"{self.nmensagens} mensagens")
-
+                
+        if self.nmensagens:
+            self.lbl_mensagens_titulo.config(text=f"Tem {self.nmensagens} mensagens")
+        else:
+            self.lbl_mensagens_titulo.config(text=f"Não tem mensagens.")
+            
 
     def bind_tree(self):
         self.tree.bind('<<TreeviewSelect>>', self.selectItem_popup)
@@ -454,8 +458,7 @@ class App(baseApp):
         self.mensagens_frame = ttk.Frame(self.messagepane)
         self.mensagens_frame_top = ttk.Frame(self.mensagens_frame, padding="4 10 4 0")
 
-        contar_mensagens = 0 #TODO: implementar método para obter o número de mensagens do utilizador
-        self.lbl_mensagens_titulo = ttk.Label(self.mensagens_frame, text=f"{contar_mensagens} mensagens", anchor='center', font=("Lucida Grande", 18))
+        self.lbl_mensagens_titulo = ttk.Label(self.mensagens_frame, text="Tem 0 mensagens", anchor='center', font=("Lucida Grande", 18))
         self.lbl_mensagens_titulo.pack()
 
         self.mensagens_frame_btn = ttk.Frame(self.mensagens_frame, padding="2 4 2 0")

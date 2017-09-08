@@ -102,18 +102,21 @@ class msgDetailWindow(ttk.Frame):
         self.ltxt_detalhe = LabelText(self.centerframe, "\n\nDetalhes:", width=35, height=3, style="Panel_Body.TLabel")
         self.ltxt_detalhe.set(self.detalhe)
 
-        self.lbl_nome.grid(column=0, row=1, sticky='e')
-        self.lbl_nome_.grid(column=1, row=1, sticky='w')
+        self.lbl_nome.grid(column=0, row=1, sticky='ne')
+        self.lbl_nome_.grid(column=1, row=1, sticky='nw')
         self.lbl_artigo.grid(column=0, row=2, sticky='e')
         self.lbl_artigo_.grid(column=1, row=2, sticky='w')
         self.lbl_estado_atual.grid(column=0, row=3, sticky='e')
         self.lbl_estado_atual_.grid(column=1, row=3, sticky='w')
         self.lbl_resultado_evento.grid(column=0, row=4, sticky='e')
         self.lbl_resultado_evento_.grid(column=1, row=4, sticky='w')
-        self.ltxt_detalhe.grid(column=0, row=5, columnspan=2, sticky='we')
+        self.ltxt_detalhe.grid(column=0, row=5, columnspan=2, sticky='wens')
+
         self.centerframe.grid_columnconfigure(0, weight=0)
         self.centerframe.grid_columnconfigure(1, weight=1)
-
+        self.centerframe.grid_rowconfigure(1, weight=0)
+        self.centerframe.grid_rowconfigure(5, weight=1)
+        
         print(f"A mostrar detalhes da mensagem nº {self.num_mensagem}")
 
 
@@ -160,7 +163,7 @@ class msgDetailWindow(ttk.Frame):
 
 
     def composeFrames(self):
-        self.topframe.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.topframe.pack(side=tk.TOP, fill='x', expand=False)
         self.bottomframe.pack(side=tk.BOTTOM, fill=tk.X)
-        self.centerframe.pack(side=tk.TOP, fill=tk.X)
+        self.centerframe.pack(side=tk.TOP, expand=True, fill='both')
         self.mainframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
