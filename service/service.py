@@ -78,13 +78,15 @@ class App(baseApp):
         self.inserir_msgs_de_exemplo()
         self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
         self.atualizar_soma_processos()
-        
+
         if self.contar_linhas(self.msgtree) > 0:
             self.after(1200, self.abrir_painel_mensagens)
+
+        #self.teste_GUI()
         
-        
+
     def teste_GUI(self):
-        for i in range(10):
+        for i in range(3600):
             print(i)
             self.create_window_contacts()
             self.create_window_remessas()
@@ -98,7 +100,7 @@ class App(baseApp):
 
 
     def contar_linhas(self, tree):
-        """ 
+        """
         Obtém uma contagem do número atual de linhas/itens da tabela (tree)
         passada como argumento.
         """
@@ -120,12 +122,12 @@ class App(baseApp):
         Atualiza a contagem do número de mensagens.
         """
         self.nmensagens = self.contar_linhas(self.msgtree)
-                
+
         if self.nmensagens:
             self.lbl_mensagens_titulo.config(text=f"Tem {self.nmensagens} mensagens")
         else:
             self.lbl_mensagens_titulo.config(text=f"Não tem mensagens.")
-            
+
 
     def bind_tree(self):
         self.tree.bind('<<TreeviewSelect>>', self.selectItem_popup)
@@ -1049,7 +1051,7 @@ class App(baseApp):
         self.menuVis.bind_all("<Command-KeyPress-1>", self.abrir_painel_mensagens)
         self.menuVis.bind_all("<Command-KeyPress-2>", self.create_window_contacts)
         self.menuVis.bind_all("<Command-KeyPress-3>", self.create_window_remessas)
-
+        
         self.windowmenu = tk.Menu(self.menu, name='window')
         self.menu.add_cascade(menu=self.windowmenu, label='Janela')
         self.windowmenu.add_separator()

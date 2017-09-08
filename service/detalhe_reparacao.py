@@ -345,28 +345,29 @@ class repairDetailWindow(ttk.Frame):
         self.geral_fr1.grid_columnconfigure(4, weight=1)
         self.geral_fr1.grid_columnconfigure(3, weight=1)
         self.geral_fr1.grid_columnconfigure(2, weight=1)
-        
+
+        self.geral_fr2.grid_rowconfigure(3, weight=1)        
         self.geral_fr2.grid_rowconfigure(10, weight=1)
         self.geral_fr2.grid_rowconfigure(10, weight=1)
         self.geral_fr2.grid_rowconfigure(15, weight=1)
 
         if self.is_rep_cliente:
-            self.ltxt_descr_equipamento.grid(column=0, row=0, columnspan=2, rowspan=4, sticky='we', padx=4)
-            self.ltxt_obs_estado_equipamento.grid(column=2, row=0, columnspan=2, rowspan=4, sticky='we', padx=4)
-            self.ltxt_cod_artigo.grid(column=4, row=0, rowspan=2,  sticky='we', padx=4)
-            self.ltxt_num_serie.grid(column=4, row=2, rowspan=2, sticky='we', padx=4)
-            ttk.Separator(self.geral_fr2).grid(column=0, row=4, columnspan=5, sticky='we', pady=10)
+            self.ltxt_descr_equipamento.grid(column=0, row=0, columnspan=2, rowspan=4, sticky='nwes', padx=4)
+            self.ltxt_obs_estado_equipamento.grid(column=2, row=0, columnspan=2, rowspan=4, sticky='nwes', padx=4)
+            self.ltxt_cod_artigo.grid(column=4, row=0, rowspan=2,  sticky='nwe', padx=4)
+            self.ltxt_num_serie.grid(column=4, row=2, rowspan=2, sticky='nwe', padx=4)
+            ttk.Separator(self.geral_fr2).grid(column=0, row=4, columnspan=5, sticky='nwe', pady=10)
 
             if self.is_garantia:
-                self.ltxt_garantia.grid(column=0, row=5, columnspan=2, rowspan=2, sticky='we', padx=4)
-                self.ltxt_data_compra.grid(column=2, row=5, rowspan=2, sticky='we', padx=4)
-                self.ltxt_num_fatura.grid(column=3, row=5, rowspan=2, sticky='we', padx=4)
+                self.ltxt_garantia.grid(column=0, row=5, columnspan=2, rowspan=2, sticky='nwe', padx=4)
+                self.ltxt_data_compra.grid(column=2, row=5, rowspan=2, sticky='nwe', padx=4)
+                self.ltxt_num_fatura.grid(column=3, row=5, rowspan=2, sticky='nwe', padx=4)
 
-            self.ltxt_local_intervencao.grid(column=4, row=5, rowspan=2, sticky='we', padx=4)
+            self.ltxt_local_intervencao.grid(column=4, row=5, rowspan=2, sticky='nwe', padx=4)
             ttk.Separator(self.geral_fr2).grid(column=0, row=7, columnspan=5, sticky='we', pady=10)
             self.ltxt_descr_avaria.grid(column=0, row=8, columnspan=3, rowspan=5, sticky='wesn', padx=4)
 
-            self.ltxt_senha.grid(column=3, row=8, rowspan=2, sticky='we', padx=4)
+            self.ltxt_senha.grid(column=3, row=8, rowspan=2, sticky='nwe', padx=4)
 
             self.lbl_varias_linhas.grid(column=4, row=9, columnspan=2, rowspan=4, sticky='wen', padx=4)
             """
@@ -390,14 +391,14 @@ class repairDetailWindow(ttk.Frame):
 
         else:
             self.ltxt_descr_equipamento.grid(column=0, row=0, columnspan=2, rowspan=6, sticky='wens', padx=4)
-            self.ltxt_cod_artigo.grid(column=2, row=0, rowspan=2,  sticky='we', padx=4)
-            self.ltxt_num_serie.grid(column=2, row=2, rowspan=2, sticky='we', padx=4)
-            self.ltxt_num_fatura_fornecedor.grid(column=3, row=0, rowspan=2, sticky='we', padx=4)
-            self.ltxt_data_fatura_fornecedor.grid(column=3, row=2, rowspan=2, sticky='we', padx=4)
-            self.ltxt_nar.grid(column=3, row=4, rowspan=2, sticky='we', padx=4)
-            self.ltxt_num_guia_rececao.grid(column=4, row=0, rowspan=2, sticky='we', padx=4)
-            self.ltxt_data_entrada_stock.grid(column=4, row=2, rowspan=2, sticky='we', padx=4)
-            self.ltxt_num_quebra_stock.grid(column=4, row=4, rowspan=2, sticky='we', padx=4)
+            self.ltxt_cod_artigo.grid(column=2, row=0, rowspan=2,  sticky='nwe', padx=4)
+            self.ltxt_num_serie.grid(column=2, row=2, rowspan=2, sticky='nwe', padx=4)
+            self.ltxt_num_fatura_fornecedor.grid(column=3, row=0, rowspan=2, sticky='nwe', padx=4)
+            self.ltxt_data_fatura_fornecedor.grid(column=3, row=2, rowspan=2, sticky='nwe', padx=4)
+            self.ltxt_nar.grid(column=3, row=4, rowspan=2, sticky='nwe', padx=4)
+            self.ltxt_num_guia_rececao.grid(column=4, row=0, rowspan=2, sticky='nwe', padx=4)
+            self.ltxt_data_entrada_stock.grid(column=4, row=2, rowspan=2, sticky='nwe', padx=4)
+            self.ltxt_num_quebra_stock.grid(column=4, row=4, rowspan=2, sticky='nwe', padx=4)
 
             ttk.Separator(self.geral_fr2).grid(column=0, row=7, columnspan=5, sticky='we', pady=10)
             self.ltxt_descr_avaria.grid(column=0, row=8, columnspan=5, rowspan=4, sticky='wesn', padx=4)
@@ -481,7 +482,6 @@ class repairDetailWindow(ttk.Frame):
 
 
     def montar_tab_historico(self):
-        self.historico_fr2.pack(side='top', expand=True, fill='both')
         self.treeframe_hist.grid(column=0, row=0, sticky="nsew")
         self.treeframe_hist.grid_columnconfigure(0, weight=1)
         self.treeframe_hist.grid_rowconfigure(0, weight=1)
@@ -504,7 +504,9 @@ class repairDetailWindow(ttk.Frame):
 
 
         #ttk.Separator(self.tab_historico).pack(side='top', expand=False, fill='x', pady=10)
+        self.historico_fr2.pack(side='top', expand=True, fill='both')
         self.historico_fr1.pack(side='bottom', expand=False, fill='x')
+        
 
 
 
@@ -615,14 +617,14 @@ class repairDetailWindow(ttk.Frame):
         #    command=lambda c=col: self.sortBy(self.tree_emprest, c, 0))
 
         for col in self.tree_emprest['columns']:
-                self.tree_emprest.heading(col, text=col.title())
+            self.tree_emprest.heading(col, text=col.title())
 
 
         # Barra de deslocação para a tabela
         self.tree_emprest.grid(column=0, row=0, sticky="nsew", in_=self.treeframe_emprest)
-        self.vsb = AutoScrollbar(self.treeframe_emprest, orient="vertical", command=self.tree_emprest.yview)
-        self.tree_emprest.configure(yscrollcommand=self.vsb.set)
-        self.vsb.grid(column=1, row=0, sticky="ns", in_=self.treeframe_emprest)
+        self.vsb_emprest = AutoScrollbar(self.treeframe_emprest, orient="vertical", command=self.tree_emprest.yview)
+        self.tree_emprest.configure(yscrollcommand=self.vsb_emprest.set)
+        self.vsb_emprest.grid(column=1, row=0, sticky="ns", in_=self.treeframe_emprest)
 
         """
         self.hfr1_lbl_titulo = ttk.Label(self.historico_fr1, style="Panel_Title.TLabel", text="Adicionar Evento:\n")
@@ -651,15 +653,15 @@ class repairDetailWindow(ttk.Frame):
 
 
     def montar_tab_emprestimos(self):
-        self.emprestimos_fr1.pack(side='top', expand=True, fill='both')
         self.treeframe_emprest.grid(column=0, row=0, sticky="nsew")
         self.treeframe_emprest.grid_columnconfigure(0, weight=1)
         self.treeframe_emprest.grid_rowconfigure(0, weight=1)
         self.emprestimos_fr1.grid_columnconfigure(0, weight=1)
         self.emprestimos_fr1.grid_rowconfigure(0, weight=1)
 
+        self.emprestimos_fr1.pack(side='top', expand=True, fill='both')
         ttk.Separator(self.tab_emprestimos).pack(side='top', expand=False, fill='x', pady=10)
-        self.emprestimos_fr2.pack(side='top', expand=True, fill='both')
+        self.emprestimos_fr2.pack(side='top', expand=False, fill='x')
 
 
 
@@ -851,5 +853,5 @@ class repairDetailWindow(ttk.Frame):
         if self.is_rep_cliente:
             for i in range(1,5):
                 self.tree_emprest.insert("", "end", text="", values=("1", "MN0234PO/A", "Equipamento de substituição a utilizar enquanto a reparação não fica concluída", "SF1325FVWt5654"))
-                self.tree_emprest.insert("", "end", text="", values=("100", "GHTGAFVABS56152", "Equipamentos genéricos de substituição"))
+                self.tree_emprest.insert("", "end", text="", values=("100", "GHTGAFVABS56152", "Equipamentos genéricos de substituição", ""))
                 self.tree_emprest.insert("", "end", text="", values=("1", "GHTGAFVABS56152", "Outro equipamento de substituição", "351456789012345678901"))
