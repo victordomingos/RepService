@@ -14,6 +14,7 @@ import textwrap
 from global_setup import *
 from extra_tk_classes import *
 from detalhe_contacto import *
+from db_operations import *
 
 
 class repairDetailWindow(ttk.Frame):
@@ -40,6 +41,10 @@ class repairDetailWindow(ttk.Frame):
             self.nome = "Norberto Plutarco Keppler" #TODO Nome do cliente
             self.telefone = "+351 900 000 000" #TODO Telefone do cliente
             self.email = "repservice@the-NPK-programming-team.py" #TODO Email do cliente
+            self.var_combo_artigos_emprest = tk.StringVar()
+            self.var_combo_artigos_emprest.set("Selecionar artigo...")
+            self.var_combo_artigos_emprest.trace('w', self._on_combo_artigos_emprest_changed)
+            
         else:
             self.numero_contacto = "90000" #TODO numero de fornecedor
             self.nome = "That International Provider of Great Stuff, Inc." #TODO Nome do fornecedor
@@ -206,6 +211,13 @@ class repairDetailWindow(ttk.Frame):
 
 
         self.desativar_campos()
+
+
+    def atualizar_combo_artigos_emprest(self):
+        """ Atualizar a lista de locais de artigos de empréstimo, obtendo info
+            a partir da base de dados.
+        """
+        self.combo_artigos_emprestimo['values'] = obter_lista_artigos_emprest()
 
 
     def _on_tab_changed(self, event):
@@ -530,6 +542,11 @@ class repairDetailWindow(ttk.Frame):
         # P. ex.: se orçamento aceite, perguntar utilizador se centro técnico foi notificado. Se sim, AGUARDA_RESP_FORNECEDOR, se não cria email modelo a informar centro técnico da decisão.
 
 
+    def _on_combo_artigos_emprest_changed(self, index, value, op):
+        print("Artigo a emprestar alterado para ", self.combo_artigos_emprestimo.get())
+        #todo - o que fazer quando muda o conteúdo da combobox
+
+
     def _on_save_evento(self, *event):
         print(f"Guardando novo evento...")
 
@@ -601,8 +618,17 @@ class repairDetailWindow(ttk.Frame):
     def gerar_tab_emprestimos(self):
         self.emprestimos_fr1 = ttk.Frame(self.tab_emprestimos)
         self.emprestimos_fr2 = ttk.Frame(self.tab_emprestimos)
+        self.emprestimos_fr3 = ttk.Frame(self.tab_emprestimos)
 
-        self.treeframe_emprest = ttk.Frame(self.emprestimos_fr1, padding="0 8 0 0")
+        self.ltxt_num_art = LabelEntry(self.emprestimos_fr1, "\nCód.:", style="Panel_Body.TLabel", width=10)
+        self.lbl_combo_artigos_emprestimo = ttk.Label(self.emprestimos_fr1, style="Panel_Body.TLabel", text="Artigo a adicionar:")
+        self.combo_artigos_emprestimo = ttk.Combobox(self.emprestimos_fr1,
+                                                     textvariable=self.var_combo_artigos_emprest,
+                                                     postcommand=self.atualizar_combo_artigos_emprest,
+                                                     state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
+
+
+        self.treeframe_emprest = ttk.Frame(self.emprestimos_fr2, padding="0 8 0 0")
         self.tree_emprest = ttk.Treeview(self.treeframe_emprest, height=3, selectmode='browse', style="Reparacoes_Emprestimo.Treeview")
         self.tree_emprest['columns'] = ( 'Qtd.', 'Cód.', 'Descrição', 'S/N')
         self.tree_emprest.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
@@ -653,15 +679,21 @@ class repairDetailWindow(ttk.Frame):
 
 
     def montar_tab_emprestimos(self):
+        self.ltxt_num_art.grid(column=0, row=1, rowspan=2, sticky='nw')
+        self.lbl_combo_artigos_emprestimo.grid(column=1, row=1, sticky='nw')
+        self.combo_artigos_emprestimo.grid(column=1, row=2, sticky='new')
+
+        
         self.treeframe_emprest.grid(column=0, row=0, sticky="nsew")
         self.treeframe_emprest.grid_columnconfigure(0, weight=1)
         self.treeframe_emprest.grid_rowconfigure(0, weight=1)
-        self.emprestimos_fr1.grid_columnconfigure(0, weight=1)
-        self.emprestimos_fr1.grid_rowconfigure(0, weight=1)
+        self.emprestimos_fr2.grid_columnconfigure(0, weight=1)
+        self.emprestimos_fr2.grid_rowconfigure(0, weight=1)
 
-        self.emprestimos_fr1.pack(side='top', expand=True, fill='both')
+        self.emprestimos_fr1.pack(side='top', expand=False, fill='x')
+        self.emprestimos_fr2.pack(side='top', expand=True, fill='both')
         ttk.Separator(self.tab_emprestimos).pack(side='top', expand=False, fill='x', pady=10)
-        self.emprestimos_fr2.pack(side='top', expand=False, fill='x')
+        self.emprestimos_fr3.pack(side='top', expand=False, fill='x')
 
 
 
