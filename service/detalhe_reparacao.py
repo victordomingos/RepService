@@ -620,13 +620,14 @@ class repairDetailWindow(ttk.Frame):
         self.emprestimos_fr2 = ttk.Frame(self.tab_emprestimos)
         self.emprestimos_fr3 = ttk.Frame(self.tab_emprestimos)
 
-        self.ltxt_num_art = LabelEntry(self.emprestimos_fr1, "\nCód.:", style="Panel_Body.TLabel", width=10)
+        self.ltxt_num_art = LabelEntry(self.emprestimos_fr1, "Cód.:", style="Panel_Body.TLabel", width=10)
         self.lbl_combo_artigos_emprestimo = ttk.Label(self.emprestimos_fr1, style="Panel_Body.TLabel", text="Artigo a adicionar:")
         self.combo_artigos_emprestimo = ttk.Combobox(self.emprestimos_fr1,
                                                      textvariable=self.var_combo_artigos_emprest,
-                                                     postcommand=self.atualizar_combo_artigos_emprest,
-                                                     state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
+                                                     postcommand=self.atualizar_combo_artigos_emprest
+                                                     )  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
 
+        self.btn_inserir_art_emprest = ttk.Button(self.emprestimos_fr1, text="Inserir", command=self._on_btn_inserir_art_emprest)
 
         self.treeframe_emprest = ttk.Frame(self.emprestimos_fr2, padding="0 8 0 0")
         self.tree_emprest = ttk.Treeview(self.treeframe_emprest, height=3, selectmode='browse', style="Reparacoes_Emprestimo.Treeview")
@@ -682,11 +683,12 @@ class repairDetailWindow(ttk.Frame):
         self.ltxt_num_art.grid(column=0, row=1, rowspan=2, sticky='nw')
         self.lbl_combo_artigos_emprestimo.grid(column=1, row=1, sticky='nw')
         self.combo_artigos_emprestimo.grid(column=1, row=2, sticky='new')
-
+        self.btn_inserir_art_emprest.grid(column=2, row=2, sticky='new')
         
         self.treeframe_emprest.grid(column=0, row=0, sticky="nsew")
         self.treeframe_emprest.grid_columnconfigure(0, weight=1)
         self.treeframe_emprest.grid_rowconfigure(0, weight=1)
+        self.emprestimos_fr1.grid_columnconfigure(1, weight=1)
         self.emprestimos_fr2.grid_columnconfigure(0, weight=1)
         self.emprestimos_fr2.grid_rowconfigure(0, weight=1)
 
@@ -738,6 +740,9 @@ class repairDetailWindow(ttk.Frame):
         """
         window = event.widget.winfo_toplevel()
         window.destroy()
+
+    def _on_btn_inserir_art_emprest(self, event):
+        print("verificando se há artigo selecionado e se houver adicionando o artigo à tabela.")
 
 
     def bind_tree_hist(self):
