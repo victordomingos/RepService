@@ -637,6 +637,8 @@ class repairDetailWindow(ttk.Frame):
                                                      postcommand=self.atualizar_combo_artigos_emprest
                                                      )  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
 
+        self.ltxt_num_serie_art = LabelEntry(self.emprestimos_fr1, "S/N:", style="Panel_Body.TLabel", width=21)
+
         self.btn_inserir_art_emprest = ttk.Button(self.emprestimos_fr1, text="Inserir", command=self._on_btn_inserir_art_emprest)
 
         self.treeframe_emprest = ttk.Frame(self.emprestimos_fr2, padding="0 8 0 0")
@@ -708,7 +710,8 @@ class repairDetailWindow(ttk.Frame):
         self.ltxt_num_art.grid(column=0, row=1, rowspan=2, sticky='nw')
         self.lbl_combo_artigos_emprestimo.grid(column=1, row=1, sticky='nw')
         self.combo_artigos_emprestimo.grid(column=1, row=2, sticky='new')
-        self.btn_inserir_art_emprest.grid(column=2, row=2, sticky='new')
+        self.ltxt_num_serie_art.grid(column=2, row=1, rowspan=2, sticky='new')
+        self.btn_inserir_art_emprest.grid(column=3, row=2, sticky='new')
         
         self.treeframe_emprest.grid(column=0, row=0, sticky="nsew")
         self.treeframe_emprest.grid_columnconfigure(0, weight=1)
