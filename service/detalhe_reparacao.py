@@ -555,6 +555,16 @@ class repairDetailWindow(ttk.Frame):
         print(f"Cancelando introdução de dados...")
 
 
+    def _on_save_emprest(self, *event):
+        print(f"Guardando novo empréstimo...")
+
+
+    def _on_cancel_emprest(self, *event):
+        print(f"Cancelando introdução de dados de empréstimo...")
+
+
+
+
     def gerar_tab_orcamentos(self):
         self.orcamentos_fr1 = ttk.Frame(self.tab_orcamentos)
         self.orcamentos_fr2 = ttk.Frame(self.tab_orcamentos)
@@ -653,6 +663,21 @@ class repairDetailWindow(ttk.Frame):
         self.tree_emprest.configure(yscrollcommand=self.vsb_emprest.set)
         self.vsb_emprest.grid(column=1, row=0, sticky="ns", in_=self.treeframe_emprest)
 
+
+
+        self.ltxt_obs_estado_equipamentos_emprest = LabelText(self.emprestimos_fr3, "Estado dos artigos emprestados", style="Panel_Body.TLabel")
+        self.ltxt_acessorios_emprest = LabelText(self.emprestimos_fr3, "Acessórios entregues:", style="Panel_Body.TLabel")
+        self.ltxt_valor_caucao_emprest = LabelEntry(self.emprestimos_fr3, "Valor de caução pago:", style="Panel_Body.TLabel", width=10)
+        self.btn_guardar_emprest = ttk.Button(self.emprestimos_fr3, default="active", style="Active.TButton", text="Guardar", width=6, command=self._on_save_emprest)
+        self.btn_cancelar_emprest = ttk.Button(self.emprestimos_fr3, text="Cancelar", width=6, command=self._on_cancel_emprest)
+
+
+        self.ltxt_obs_estado_equipamentos_emprest.set('Texto de exemplo para experimentar como sai na prática.\n Equipamento muito danificado!...')
+        self.ltxt_acessorios_emprest.set('Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
+
+
+
+
         """
         self.hfr1_lbl_titulo = ttk.Label(self.historico_fr1, style="Panel_Title.TLabel", text="Adicionar Evento:\n")
 
@@ -688,14 +713,29 @@ class repairDetailWindow(ttk.Frame):
         self.treeframe_emprest.grid(column=0, row=0, sticky="nsew")
         self.treeframe_emprest.grid_columnconfigure(0, weight=1)
         self.treeframe_emprest.grid_rowconfigure(0, weight=1)
+        
+        self.ltxt_acessorios_emprest.grid(column=0, row=0, sticky='wesn', pady=14, padx=4)
+        self.ltxt_obs_estado_equipamentos_emprest.grid(column=1, row=0, sticky='nwes', pady=14, padx=4)
+
+        self.ltxt_valor_caucao_emprest.grid(column=0, row=1, rowspan=2, sticky='nw', padx=4)
+
+        self.btn_guardar_emprest.grid(column=1, row=1, sticky='ne', padx=4)
+        self.btn_cancelar_emprest.grid(column=1, row=2, sticky='ne', padx=4)
+
         self.emprestimos_fr1.grid_columnconfigure(1, weight=1)
+        
         self.emprestimos_fr2.grid_columnconfigure(0, weight=1)
         self.emprestimos_fr2.grid_rowconfigure(0, weight=1)
 
+        self.emprestimos_fr3.grid_columnconfigure(0, weight=1)        
+        self.emprestimos_fr3.grid_columnconfigure(1, weight=1)        
+        self.emprestimos_fr3.grid_rowconfigure(0, weight=1)
+
+
         self.emprestimos_fr1.pack(side='top', expand=False, fill='x')
         self.emprestimos_fr2.pack(side='top', expand=True, fill='both')
-        ttk.Separator(self.tab_emprestimos).pack(side='top', expand=False, fill='x', pady=10)
-        self.emprestimos_fr3.pack(side='top', expand=False, fill='x')
+        #ttk.Separator(self.tab_emprestimos).pack(side='top', expand=False, fill='x', pady=10)
+        self.emprestimos_fr3.pack(side='top', expand=True, fill='both')
 
 
 
