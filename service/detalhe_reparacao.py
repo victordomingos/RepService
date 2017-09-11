@@ -44,7 +44,9 @@ class repairDetailWindow(ttk.Frame):
             self.var_combo_artigos_emprest = tk.StringVar()
             self.var_combo_artigos_emprest.set("Selecionar artigo...")
             self.var_combo_artigos_emprest.trace('w', self._on_combo_artigos_emprest_changed)
-            
+            self.var_combo_meio_pag_emprest = tk.StringVar() 
+            self.var_combo_meio_pag_emprest.set("Selecionar forma de pagamento...")
+
         else:
             self.numero_contacto = "90000" #TODO numero de fornecedor
             self.nome = "That International Provider of Great Stuff, Inc." #TODO Nome do fornecedor
@@ -322,7 +324,7 @@ class repairDetailWindow(ttk.Frame):
 
         self.ltxt_descr_equipamento.set('Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
         if self.is_rep_cliente:
-            self.ltxt_obs_estado_equipamento.set('Texto de exemplo para experimentar como sai na prática.\n Equipamento muito danificado!...')
+            self.ltxt_obs_estado_equipamento.set('Texto de exemplo para experimentar como sai na prática.\n Equipamentos em excelente estado.')
             self.ltxt_local_intervencao.set('Aquele Tal Centro Técnico')
             self.ltxt_acessorios.set('Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
             self.ltxt_senha.set('12343112121')
@@ -358,7 +360,7 @@ class repairDetailWindow(ttk.Frame):
         self.geral_fr1.grid_columnconfigure(3, weight=1)
         self.geral_fr1.grid_columnconfigure(2, weight=1)
 
-        self.geral_fr2.grid_rowconfigure(3, weight=1)        
+        self.geral_fr2.grid_rowconfigure(3, weight=1)
         self.geral_fr2.grid_rowconfigure(10, weight=1)
         self.geral_fr2.grid_rowconfigure(10, weight=1)
         self.geral_fr2.grid_rowconfigure(15, weight=1)
@@ -418,14 +420,14 @@ class repairDetailWindow(ttk.Frame):
             self.ltxt_notas.grid(column=0, row=13, columnspan=5, rowspan=3, sticky='wesn', padx=4)
 
             self.geral_fr2.grid_columnconfigure(0, weight=2)
-                        
+
             for i in range(1,5):
                 self.geral_fr2.grid_columnconfigure(i, weight=1)
             self.geral_fr2.grid_columnconfigure(2, weight=1)
             self.geral_fr2.grid_columnconfigure(3, weight=1)
-        
-        
-        
+
+
+
         self.geral_fr1.pack(side='top', expand=False, fill='x')
         ttk.Separator(self.tab_geral).pack(side='top', expand=False, fill='x', pady=10)
         self.geral_fr2.pack(side='top', expand=True, fill='both')
@@ -518,7 +520,7 @@ class repairDetailWindow(ttk.Frame):
         #ttk.Separator(self.tab_historico).pack(side='top', expand=False, fill='x', pady=10)
         self.historico_fr2.pack(side='top', expand=True, fill='both')
         self.historico_fr1.pack(side='bottom', expand=False, fill='x')
-        
+
 
 
 
@@ -629,26 +631,33 @@ class repairDetailWindow(ttk.Frame):
         self.emprestimos_fr1 = ttk.Frame(self.tab_emprestimos)
         self.emprestimos_fr2 = ttk.Frame(self.tab_emprestimos)
         self.emprestimos_fr3 = ttk.Frame(self.tab_emprestimos)
+        self.emprestimos_fr4 = ttk.Frame(self.tab_emprestimos, padding="0 20 0 0")
+        self.emprestimos_lblfr_pag = ttk.LabelFrame(self.emprestimos_fr4, text="Pagamento de caução")
 
-        self.ltxt_num_art = LabelEntry(self.emprestimos_fr1, "Cód.:", style="Panel_Body.TLabel", width=10)
+        self.ltxt_num_art = LabelEntry(self.emprestimos_fr1, "ID:", style="Panel_Body.TLabel", width=10)
         self.lbl_combo_artigos_emprestimo = ttk.Label(self.emprestimos_fr1, style="Panel_Body.TLabel", text="Artigo a adicionar:")
         self.combo_artigos_emprestimo = ttk.Combobox(self.emprestimos_fr1,
                                                      textvariable=self.var_combo_artigos_emprest,
-                                                     postcommand=self.atualizar_combo_artigos_emprest
+                                                     postcommand=self.atualizar_combo_artigos_emprest,
+                                                     state="readonly"
                                                      )  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
 
-        self.ltxt_num_serie_art = LabelEntry(self.emprestimos_fr1, "S/N:", style="Panel_Body.TLabel", width=21)
+        self.ltxt_qtd = LabelEntry(self.emprestimos_fr1, "Qtd.:", style="Panel_Body.TLabel", width=3)
+        self.ltxt_qtd.entry.config(justify="right")
+        self.ltxt_qtd.set("1")
 
         self.btn_inserir_art_emprest = ttk.Button(self.emprestimos_fr1, text="Inserir", command=self._on_btn_inserir_art_emprest)
+        self.btn_ver_artigos_emprest = ttk.Button(self.emprestimos_fr1, text="Ver artigos", command=self._on_btn_ver_artigos_emprest)
 
         self.treeframe_emprest = ttk.Frame(self.emprestimos_fr2, padding="0 8 0 0")
         self.tree_emprest = ttk.Treeview(self.treeframe_emprest, height=3, selectmode='browse', style="Reparacoes_Emprestimo.Treeview")
-        self.tree_emprest['columns'] = ( 'Qtd.', 'Cód.', 'Descrição', 'S/N')
+        self.tree_emprest['columns'] = ('ID', 'Cód.', 'Descrição', 'S/N', 'Qtd.')
         self.tree_emprest.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
-        self.tree_emprest.column('Qtd.', anchor='e', minwidth=35, stretch=0, width=35)
+        self.tree_emprest.column('ID', anchor='e', minwidth=35, stretch=0, width=35)
         self.tree_emprest.column('Cód.', anchor='w', minwidth=60, stretch=1, width=65)
         self.tree_emprest.column('Descrição', anchor='w', minwidth=300, stretch=1, width=400)
         self.tree_emprest.column('S/N', anchor='w', minwidth=85, stretch=1, width=100)
+        self.tree_emprest.column('Qtd.', anchor='e', minwidth=35, stretch=0, width=35)
 
         #Ordenar por coluna ao clicar no respetivo cabeçalho
         #for col in self.tree_emprest['columns']:
@@ -669,13 +678,23 @@ class repairDetailWindow(ttk.Frame):
 
         self.ltxt_obs_estado_equipamentos_emprest = LabelText(self.emprestimos_fr3, "Estado dos artigos emprestados", style="Panel_Body.TLabel")
         self.ltxt_acessorios_emprest = LabelText(self.emprestimos_fr3, "Acessórios entregues:", style="Panel_Body.TLabel")
-        self.ltxt_valor_caucao_emprest = LabelEntry(self.emprestimos_fr3, "Valor de caução pago:", style="Panel_Body.TLabel", width=10)
-        self.btn_guardar_emprest = ttk.Button(self.emprestimos_fr3, default="active", style="Active.TButton", text="Guardar", width=6, command=self._on_save_emprest)
-        self.btn_cancelar_emprest = ttk.Button(self.emprestimos_fr3, text="Cancelar", width=6, command=self._on_cancel_emprest)
+        
+        self.ltxt_valor_caucao_emprest = LabelEntry(self.emprestimos_lblfr_pag, "Montante pago:", style="Panel_Body.TLabel", width=12)
+        
+        
+        self.lbl_combo_meio_pag_emprest = ttk.Label(self.emprestimos_lblfr_pag, text="Forma de pagamento:", style="Panel_Body.TLabel", )
+        self.combo_meio_pag_emprest = ttk.Combobox(self.emprestimos_lblfr_pag,
+                                                       textvariable=self.var_combo_meio_pag_emprest,
+                                                       values=("Numerário", "Transferência", "Multibanco", "Referência Multibanco", "Cheque (indicar banco e nº de cheque)", "Outra (especificar)"),
+                                                       state="readonly",
+                                                       width=25
+                                                       )
+        
+        self.ltxt_detalhes_pagamento_emprest = LabelEntry(self.emprestimos_lblfr_pag, "Detalhes:", style="Panel_Body.TLabel", width=25)
+        self.ltxt_data_pagamento_emprest = LabelEntry(self.emprestimos_lblfr_pag, "Data pagamento:", style="Panel_Body.TLabel", width=12)
 
-
-        self.ltxt_obs_estado_equipamentos_emprest.set('Texto de exemplo para experimentar como sai na prática.\n Equipamento muito danificado!...')
-        self.ltxt_acessorios_emprest.set('Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
+        self.btn_guardar_emprest = ttk.Button(self.emprestimos_fr4, text="Guardar", default="active", style="Active.TButton", command=self._on_save_emprest)
+        self.btn_cancelar_emprest = ttk.Button(self.emprestimos_fr4, text="Cancelar", command=self._on_cancel_emprest)
 
 
 
@@ -710,35 +729,54 @@ class repairDetailWindow(ttk.Frame):
         self.ltxt_num_art.grid(column=0, row=1, rowspan=2, sticky='nw')
         self.lbl_combo_artigos_emprestimo.grid(column=1, row=1, sticky='nw')
         self.combo_artigos_emprestimo.grid(column=1, row=2, sticky='new')
-        self.ltxt_num_serie_art.grid(column=2, row=1, rowspan=2, sticky='new')
+        self.ltxt_qtd.grid(column=2, row=1, rowspan=2, sticky='nw')
         self.btn_inserir_art_emprest.grid(column=3, row=2, sticky='new')
-        
+        self.btn_ver_artigos_emprest.grid(column=4, row=2, sticky='new', padx="45 0")
+
         self.treeframe_emprest.grid(column=0, row=0, sticky="nsew")
         self.treeframe_emprest.grid_columnconfigure(0, weight=1)
         self.treeframe_emprest.grid_rowconfigure(0, weight=1)
-        
+
         self.ltxt_acessorios_emprest.grid(column=0, row=0, sticky='wesn', pady=14, padx=4)
         self.ltxt_obs_estado_equipamentos_emprest.grid(column=1, row=0, sticky='nwes', pady=14, padx=4)
 
-        self.ltxt_valor_caucao_emprest.grid(column=0, row=1, rowspan=2, sticky='nw', padx=4)
 
-        self.btn_guardar_emprest.grid(column=1, row=1, sticky='ne', padx=4)
-        self.btn_cancelar_emprest.grid(column=1, row=2, sticky='ne', padx=4)
+        self.ltxt_valor_caucao_emprest.grid(column=0, row=1, rowspan=2, sticky='new')
+        self.lbl_combo_meio_pag_emprest.grid(column=1, row=1, sticky='new')
+        self.combo_meio_pag_emprest.grid(column=1, row=2, sticky='new')
+        self.ltxt_detalhes_pagamento_emprest.grid(column=2, row=1, rowspan=2, sticky='new')
+        self.ltxt_data_pagamento_emprest.grid(column=0, row=3, rowspan=2, sticky='new')
+        
+        self.emprestimos_lblfr_pag.grid(column=0, row=0, rowspan=5, padx=4, sticky='new')
+
+        self.btn_guardar_emprest.grid(column=2, row=1, sticky='sew', padx=4)
+        self.btn_cancelar_emprest.grid(column=2, row=2, sticky='sew', padx=4)
+
 
         self.emprestimos_fr1.grid_columnconfigure(1, weight=1)
-        
+
         self.emprestimos_fr2.grid_columnconfigure(0, weight=1)
         self.emprestimos_fr2.grid_rowconfigure(0, weight=1)
 
-        self.emprestimos_fr3.grid_columnconfigure(0, weight=1)        
-        self.emprestimos_fr3.grid_columnconfigure(1, weight=1)        
+        self.emprestimos_fr3.grid_columnconfigure(0, weight=1)
+        self.emprestimos_fr3.grid_columnconfigure(1, weight=1)
         self.emprestimos_fr3.grid_rowconfigure(0, weight=1)
 
+        #self.emprestimos_fr4.grid_columnconfigure(0, weight=1)
+        self.emprestimos_fr4.grid_columnconfigure(0, weight=1)
+        self.emprestimos_fr4.grid_columnconfigure(1, weight=1)
+        self.emprestimos_fr4.grid_columnconfigure(2, weight=0)
 
+        self.emprestimos_fr4.grid_rowconfigure(0, weight=1)
+
+        self.emprestimos_lblfr_pag.grid_columnconfigure(1, weight=1)
+        self.emprestimos_lblfr_pag.grid_columnconfigure(2, weight=1)
+                        
         self.emprestimos_fr1.pack(side='top', expand=False, fill='x')
         self.emprestimos_fr2.pack(side='top', expand=True, fill='both')
-        #ttk.Separator(self.tab_emprestimos).pack(side='top', expand=False, fill='x', pady=10)
         self.emprestimos_fr3.pack(side='top', expand=True, fill='both')
+        #ttk.Separator(self.tab_emprestimos).pack(side='top', expand=False, fill='x', pady=10)
+        self.emprestimos_fr4.pack(side='top', expand=False, fill='x')
 
 
 
@@ -784,8 +822,11 @@ class repairDetailWindow(ttk.Frame):
         window = event.widget.winfo_toplevel()
         window.destroy()
 
-    def _on_btn_inserir_art_emprest(self, event):
+    def _on_btn_inserir_art_emprest(self):
         print("verificando se há artigo selecionado e se houver adicionando o artigo à tabela.")
+
+    def _on_btn_ver_artigos_emprest(self):
+        print("Abrindo a lista de artigos de empréstimos")
 
 
     def bind_tree_hist(self):
@@ -931,7 +972,11 @@ class repairDetailWindow(ttk.Frame):
             self.tree_hist.insert("", "end", text="", values=(str(i+3), textwrap.fill("Centro técnico informou que não é possível reparar pois já não há peças originais.", 45), "Em processamento", "Victor Domingos", "12/07/2021"))
 
         if self.is_rep_cliente:
-            for i in range(1,5):
-                self.tree_emprest.insert("", "end", text="", values=("1", "MN0234PO/A", "Equipamento de substituição a utilizar enquanto a reparação não fica concluída", "SF1325FVWt5654"))
-                self.tree_emprest.insert("", "end", text="", values=("100", "GHTGAFVABS56152", "Equipamentos genéricos de substituição", ""))
-                self.tree_emprest.insert("", "end", text="", values=("1", "GHTGAFVABS56152", "Outro equipamento de substituição", "351456789012345678901"))
+            for i in range(1):
+                self.tree_emprest.insert("", "end", text="", values=("1", "MN0234PO/A", "Equipamento de substituição a utilizar enquanto a reparação não fica concluída", "SF1325FVWt5654", "91"))
+                self.tree_emprest.insert("", "end", text="", values=("100", "GHTGAFVABS56152", "Equipamentos genéricos de substituição", "", "231"))
+                self.tree_emprest.insert("", "end", text="", values=("1", "GHTGAFVABS56152", "Outro equipamento de substituição", "351456789012345678901", "1"))
+
+            self.ltxt_obs_estado_equipamentos_emprest.set('Texto de exemplo para experimentar como sai na prática.\n Equipamento muito danificado!...')
+            self.ltxt_acessorios_emprest.set('Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
+
