@@ -80,7 +80,8 @@ class App(baseApp):
         self.atualizar_soma_processos()
 
         if self.contar_linhas(self.msgtree) > 0:
-            self.after(1200, self.abrir_painel_mensagens)
+            #self.after(1200, self.abrir_painel_mensagens)
+            self.abrir_painel_mensagens()
 
         #self.teste_GUI()
         
