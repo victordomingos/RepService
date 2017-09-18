@@ -221,7 +221,14 @@ class repairDetailWindow(ttk.Frame):
             a partir da base de dados.
         """
         artigos = obter_lista_artigos_emprest()
-        lista_strings = [f'{item} - {artigos[item][0]} - {artigos[item][1]}' for item in artigos.keys()]
+        lista_strings = []
+        for item in artigos.keys():
+            if artigos[item][1] == "":
+                linha = f'{item} - {artigos[item][0]}' 
+            else:
+                linha = f'{item} - {artigos[item][0]} - {artigos[item][1]}' 
+    
+            lista_strings.append(linha)
         self.combo_artigos_emprestimo['values'] = lista_strings
 
 
@@ -558,7 +565,10 @@ class repairDetailWindow(ttk.Frame):
         artigos = obter_lista_artigos_emprest()
         
         if id_artigo_introduzido in artigos.keys():
-            self.var_combo_artigos_emprest.set(f"{id_artigo_introduzido} - {artigos[id_artigo_introduzido][0]} - {artigos[id_artigo_introduzido][1]}")
+            if artigos[id_artigo_introduzido][1] == "":
+                self.var_combo_artigos_emprest.set(f"{id_artigo_introduzido} - {artigos[id_artigo_introduzido][0]}")
+            else:
+                self.var_combo_artigos_emprest.set(f"{id_artigo_introduzido} - {artigos[id_artigo_introduzido][0]} - {artigos[id_artigo_introduzido][1]}")
         else:
             self.combo_artigos_emprestimo.set("O ID introduzido não corresponde a nenhum artigo existente.")
 
