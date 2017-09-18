@@ -44,9 +44,10 @@ class repairDetailWindow(ttk.Frame):
             self.var_combo_artigos_emprest = tk.StringVar()
             self.var_combo_artigos_emprest.set("Selecionar artigo...")
             self.var_combo_artigos_emprest.trace('w', self._on_combo_artigos_emprest_changed)
-            self.var_combo_meio_pag_emprest = tk.StringVar() 
+            self.var_combo_meio_pag_emprest = tk.StringVar()
             self.var_combo_meio_pag_emprest.set("Selecionar forma de pagamento...")
-
+            self.var_id_art_emprest = tk.StringVar()
+            self.var_id_art_emprest.trace('w', self._on_id_art_emprest_changed)
         else:
             self.numero_contacto = "90000" #TODO numero de fornecedor
             self.nome = "That International Provider of Great Stuff, Inc." #TODO Nome do fornecedor
@@ -219,7 +220,9 @@ class repairDetailWindow(ttk.Frame):
         """ Atualizar a lista de locais de artigos de empréstimo, obtendo info
             a partir da base de dados.
         """
-        self.combo_artigos_emprestimo['values'] = obter_lista_artigos_emprest()
+        artigos = obter_lista_artigos_emprest()
+        lista_strings = [f'{item} - {artigos[item][0]} - {artigos[item][1]}' for item in artigos.keys()]
+        self.combo_artigos_emprestimo['values'] = lista_strings
 
 
     def _on_tab_changed(self, event):
@@ -545,8 +548,19 @@ class repairDetailWindow(ttk.Frame):
 
 
     def _on_combo_artigos_emprest_changed(self, index, value, op):
-        print("Artigo a emprestar alterado para ", self.combo_artigos_emprestimo.get())
-        #todo - o que fazer quando muda o conteúdo da combobox
+        if self.var_combo_artigos_emprest.get() != "O ID introduzido não corresponde a nenhum artigo existente.":
+            id_artigo = self.var_combo_artigos_emprest.get().split(" - ")[0]
+            self.var_id_art_emprest.set(id_artigo)
+        
+
+    def _on_id_art_emprest_changed(self, index, value, op):
+        id_artigo_introduzido = self.ltxt_id_art.get()
+        artigos = obter_lista_artigos_emprest()
+        
+        if id_artigo_introduzido in artigos.keys():
+            self.var_combo_artigos_emprest.set(f"{id_artigo_introduzido} - {artigos[id_artigo_introduzido][0]} - {artigos[id_artigo_introduzido][1]}")
+        else:
+            self.combo_artigos_emprestimo.set("O ID introduzido não corresponde a nenhum artigo existente.")
 
 
     def _on_save_evento(self, *event):
@@ -625,7 +639,7 @@ class repairDetailWindow(ttk.Frame):
         self.orcamentos_fr1.pack(side='top', expand=False, fill='x')
         ttk.Separator(self.tab_orcamentos).pack(side='top', expand=False, fill='x', pady=10)
         self.orcamentos_fr2.pack(side='top', expand=True, fill='both')
-
+        
 
     def gerar_tab_emprestimos(self):
         self.emprestimos_fr1 = ttk.Frame(self.tab_emprestimos)
@@ -634,7 +648,9 @@ class repairDetailWindow(ttk.Frame):
         self.emprestimos_fr4 = ttk.Frame(self.tab_emprestimos, padding="0 20 0 0")
         self.emprestimos_lblfr_pag = ttk.LabelFrame(self.emprestimos_fr4, text="Pagamento de caução")
 
-        self.ltxt_num_art = LabelEntry(self.emprestimos_fr1, "ID:", style="Panel_Body.TLabel", width=10)
+        self.ltxt_id_art = LabelEntry(self.emprestimos_fr1, "ID:", style="Panel_Body.TLabel", width=10)
+        self.ltxt_id_art.entry.config(textvariable=self.var_id_art_emprest)
+        
         self.lbl_combo_artigos_emprestimo = ttk.Label(self.emprestimos_fr1, style="Panel_Body.TLabel", text="Artigo a adicionar:")
         self.combo_artigos_emprestimo = ttk.Combobox(self.emprestimos_fr1,
                                                      textvariable=self.var_combo_artigos_emprest,
@@ -726,7 +742,7 @@ class repairDetailWindow(ttk.Frame):
 
 
     def montar_tab_emprestimos(self):
-        self.ltxt_num_art.grid(column=0, row=1, rowspan=2, sticky='nw')
+        self.ltxt_id_art.grid(column=0, row=1, rowspan=2, sticky='nw')
         self.lbl_combo_artigos_emprestimo.grid(column=1, row=1, sticky='nw')
         self.combo_artigos_emprestimo.grid(column=1, row=2, sticky='new')
         self.ltxt_qtd.grid(column=2, row=1, rowspan=2, sticky='nw')

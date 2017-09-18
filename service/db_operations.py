@@ -65,20 +65,26 @@ def obter_lista_fornecedores():
     
     
 def obter_lista_artigos_emprest():
-    print("A obter lista atualizada de artigos de empréstimo.")
+    """ 
+    Devolve um dicionário em que as chaves correspondem ao ID de artigo, sendo
+    o artigo definido através de uma tupla que contém a descrição e o número de 
+    série.
+    """
+    print("A obter lista atualizada de artigos de empréstimo. ")
     #TODO:
-    lista = ["12234 - iPhone 7 128GB Space grey - José manuel da Silva Castro",
-            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
-            "25720 - Beats X - NPK - Network Project for Knowledge",
-            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
-            "25720 - Beats X - NPK - Network Project for Knowledge",
-            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
-            "25720 - Beats X - NPK - Network Project for Knowledge",
-            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
-            "25720 - Beats X - NPK - Network Project for Knowledge"]
-    return lista
+    artigos = {"12234": ("iPhone 7 128GB Space grey", ""),
+               "85738": ("MacBook Pro 15\" Retina", ""),
+               "32738": ("iPod shuffle 2GB", ""),
+               "25720": ("Beats X", "XWD45123456PTXCH"),
+               "85737": ("MacBook Pro 15\" Retina", ""),
+               "32736": ("iPod shuffle 2GB", ""),
+               "25725": ("Beats X - NPK - Network Project for Knowledge", ""),
+               "85734": ("MacBook Pro 15\" Retina", ""),
+               "32733": ("iPod shuffle 2GB", ""),
+               "25722": ("Beats X - NPK - Network Project for Knowledge", ""),
+               "85731": ("MacBook Pro 15\" Retina", "XWD45123456PTXCH"),
+               "32730": ("iPod shuffle 2GB", "WXBG23123GB654P"),
+               "25729": ("Beats X - NPK - Network Project for Knowledge", "")
+            }
+    return artigos
     
