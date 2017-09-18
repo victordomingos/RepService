@@ -5,15 +5,24 @@ Histórico de versões:
 
 
 ---
+v.0.15 - 30/09/2017
+ * Agora a função obter_lista_artigos_emprest() devlve uma estrutura de dados
+   diferente, baseada em dicionários e tuplas.
+ * No separador "Empréstimos", ao selecionar um artigo da combobox, é mostrado
+   automaticamente no campo "ID" o número de artigo correspondente.
+ * No separador "Empréstimos", ao introduzir um ID de artigo, é selecionado
+   automaticamente na combobox o artigo de empréstimo correspondente.
+   
+---
 v.0.14 - 17/09/2017
  * Corrigido um bug que impedia a expansão e o correto redimensionamento da
    tabela do histórico de reparações (janela detalhes de reparação).
  * Corrigido um bug que impedia a expansão e o correto redimensionamento de
    alguns campos de texto no painel geral da janela detalhes de reparação.
  * Corrigido um bug que impedia a expansão e o correto redimensionamento do
-   campos de notas na janela detalhes de contacto.
+   campo de notas na janela detalhes de contacto.
  * Corrigido um bug que impedia a expansão e o correto redimensionamento do
-      campos de notas na janela detalhes de mensagem.
+   campo de notas na janela detalhes de mensagem.
  * Ajustada a altura máxima da janela de detalhes de reparação.
  * Ajustada a altura máxima da janela de detalhes de mensagem.
  * Agora o painel de mensagens abre automaticamente ao iniciar a aplicação no
