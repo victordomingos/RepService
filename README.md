@@ -15,6 +15,7 @@ Esta aplicação é desenvolvida em Python 3.6 e tkinter, a partir de uma ideia 
 Requer, na versão atual o(s) seguinte(s) módulo(s) externo(s):
 
 - Python MegaWidgets 2.0.1
+- SQL Alchemy 1.1.5
 
 
 O desenvolvimento e testes têm sido realizados apenas em Mac, no entanto deverá ser bastante simples a adaptação para funcionar sem problemas em Windows ou Linux. Em sistemas operativos antigos, alguns ícones Unicode poderão não aparecer corretamente. Em ambiente Mac, é altamente recomendável usar o ActiveTCL 8.5.18, conforme as notas de lançamento da linguagem Python, de modo a assegurar a compatibilidade e estabilidade do tkinter no OS X.

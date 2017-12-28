@@ -5,6 +5,10 @@ Histórico de versões:
 
 
 ---
+v.0.16 - 15/01/2018
+ * Bug fixes.
+
+---
 v.0.15 - 28/12/2017
  * Agora a função obter_lista_artigos_emprest() devolve uma estrutura de dados
    diferente, baseada em dicionários e tuplas.
