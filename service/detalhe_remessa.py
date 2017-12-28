@@ -10,10 +10,10 @@ from tkinter import ttk
 import Pmw
 import textwrap
 
+import imprimir
+from extra_tk_classes import AutoScrollbar, LabelEntry, LabelText
+from detalhe_reparacao import repairDetailWindow
 from global_setup import *
-from extra_tk_classes import *
-from detalhe_reparacao import *
-from imprimir import *
 
 
 class remessaDetailWindow(ttk.Frame):

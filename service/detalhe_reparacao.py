@@ -11,10 +11,15 @@ from tkinter import ttk
 import Pmw
 import textwrap
 
+from extra_tk_classes import AutoScrollbar, LabelEntry, LabelText
+from detalhe_contacto import contactDetailWindow
 from global_setup import *
-from extra_tk_classes import *
-from detalhe_contacto import *
-from db_operations import *
+
+
+if USE_LOCAL_DATABASE:
+    import db_local as db
+else:
+    import db_remote as db
 
 
 class repairDetailWindow(ttk.Frame):
@@ -242,8 +247,11 @@ class repairDetailWindow(ttk.Frame):
     def create_window_detalhe_contacto(self, *event):
         self.contact_detail_windows_count += 1
         self.contacto_newDetailsWindow[self.contact_detail_windows_count] = tk.Toplevel()
-        self.contacto_newDetailsWindow[self.contact_detail_windows_count].title(f'Detalhe de contacto: {self.numero_contacto}')
-        self.janela_detalhes_contacto = contactDetailWindow(self.contacto_newDetailsWindow[self.contact_detail_windows_count], self.numero_contacto)
+        self.contacto_newDetailsWindow[self.contact_detail_windows_count].title(
+            f'Detalhe de contacto: {self.numero_contacto}')
+        self.janela_detalhes_contacto = contactDetailWindow(
+            self.contacto_newDetailsWindow[self.contact_detail_windows_count], 
+            self.numero_contacto)
         self.contacto_newDetailsWindow[self.contact_detail_windows_count].focus()
 
 

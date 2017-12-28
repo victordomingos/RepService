@@ -7,8 +7,8 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
 
 import tkinter as tk
-from tkinter import ttk
 import tkinter.font
+from tkinter import ttk
 
 from global_setup import *
 

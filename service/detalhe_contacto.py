@@ -10,9 +10,9 @@ from tkinter import ttk
 import Pmw
 import textwrap
 
+from extra_tk_classes import AutoScrollbar, LabelEntry, LabelText
+from detalhe_reparacao import repairDetailWindow
 from global_setup import *
-from extra_tk_classes import *
-from detalhe_reparacao import *
 
 
 class contactDetailWindow(ttk.Frame):
@@ -473,7 +473,9 @@ class contactDetailWindow(ttk.Frame):
     def create_window_detalhe_rep(self, num_reparacao=None):
         self.rep_detail_windows_count += 1
         self.rep_newDetailsWindow[self.rep_detail_windows_count] = tk.Toplevel()
-        self.janela_detalhes_rep = repairDetailWindow(self.rep_newDetailsWindow[self.rep_detail_windows_count], num_reparacao)
+        self.janela_detalhes_rep = repairDetailWindow(
+            self.rep_newDetailsWindow[self.rep_detail_windows_count],
+            num_reparacao)
 
 
     def contar_linhas(self):

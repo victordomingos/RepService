@@ -53,7 +53,9 @@ W_DETALHE_MSG_MAX_WIDTH = 500
 W_DETALHE_MSG_MAX_HEIGHT = 480
 
 
-SLOW_MACHINE = False # Alterar para True no caso de se tratar de uma máquina lenta (animações no entryframe)
+SLOW_MACHINE = False  # Alterar para True no caso de se tratar de uma máquina lenta (animações no entryframe)
+USE_LOCAL_DATABASE = True  # Alterar para False para utilizar uma ligação remota via web API.
+
 
 #Estados (como serão registados na base de dados)
 EM_PROCESSAMENTO = 0

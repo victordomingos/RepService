@@ -7,14 +7,19 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
 
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from string import ascii_uppercase
 
-from extra_tk_classes import *
-from base_app import *
-from service import *
-from detalhe_contacto import *
-from db_operations import *
+from base_app import baseApp
+from extra_tk_classes import LabelEntry, LabelText
+from detalhe_contacto import contactDetailWindow
+from global_setup import *
+
+
+if USE_LOCAL_DATABASE:
+    import db_local as db
+else:
+    import db_remote as db
 
 
 class ContactsWindow(baseApp):
@@ -352,7 +357,10 @@ class ContactsWindow(baseApp):
         self.contact_detail_windows_count += 1
         self.contacto_newDetailsWindow[self.contact_detail_windows_count] = tk.Toplevel()
         self.contacto_newDetailsWindow[self.contact_detail_windows_count].title(f'Detalhe de contacto: {num_contacto}')
-        self.janela_detalhes_contacto = contactDetailWindow(self.contacto_newDetailsWindow[self.contact_detail_windows_count], num_contacto)
+        self.janela_detalhes_contacto = contactDetailWindow(
+            self.contacto_newDetailsWindow[self.contact_detail_windows_count],
+            num_contacto
+           )
         self.contacto_newDetailsWindow[self.contact_detail_windows_count].focus()
 
 
@@ -374,7 +382,7 @@ class ContactsWindow(baseApp):
     def on_save_contact(self, event=None):
             # reparacao = recolher todos os dados do formulário  #TODO
             contacto = "teste"
-            self.ultimo_contacto = save_contact(contacto) #TODO - None se falhar
+            self.ultimo_contacto = db.save_contact(contacto) #TODO - None se falhar
             if self.ultimo_contacto:
                 self.on_contact_save_success()
             else:

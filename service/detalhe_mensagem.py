@@ -9,9 +9,9 @@ import tkinter as tk
 from tkinter import ttk
 import Pmw
 
-from extra_tk_classes import *
+from extra_tk_classes import LabelText
+from detalhe_reparacao import repairDetailWindow
 from global_setup import *
-from detalhe_reparacao import *
 
 
 class msgDetailWindow(ttk.Frame):

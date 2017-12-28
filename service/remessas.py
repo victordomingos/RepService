@@ -6,14 +6,19 @@ Victor Domingos e distribuída sob os termos da licença Creative Commons
 Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 
-from extra_tk_classes import *
-from base_app import *
-from service import *
-from detalhe_remessa import *
-from db_operations import *
-from imprimir import *
+import imprimir
+from base_app import baseApp
+from extra_tk_classes import AutoScrollbar, LabelEntry, LabelText
+from detalhe_remessa import remessaDetailWindow
+from global_setup import *
+
+
+if USE_LOCAL_DATABASE:
+    import db_local as db
+else:
+    import db_remote as db
 
 
 class RemessasWindow(baseApp):
@@ -239,7 +244,7 @@ class RemessasWindow(baseApp):
         """ Atualizar a lista de destinatários de remessas na
             combobox correspondente, obtendo info a partir da base de dados.
         """
-        self.ef_combo_destino['values'] = obter_lista_fornecedores()
+        self.ef_combo_destino['values'] = db.obter_lista_fornecedores()
 
 
     def atualizar_combo_lista_reparacoes(self):
@@ -248,9 +253,9 @@ class RemessasWindow(baseApp):
         """
         tipo = self.ef_var_tipo.get()
         if tipo == TIPO_REMESSA_RECECAO:
-            self.ef_combo_selecionar_rep['values'] = obter_lista_processos_por_receber()
+            self.ef_combo_selecionar_rep['values'] = db.obter_lista_processos_por_receber()
         else:
-            self.ef_combo_selecionar_rep['values'] = obter_lista_processos_por_enviar()
+            self.ef_combo_selecionar_rep['values'] = db.obter_lista_processos_por_enviar()
 
 
 
@@ -331,8 +336,11 @@ class RemessasWindow(baseApp):
     def create_window_detalhe_remessa(self, *event, num_remessa=None):
         self.remessa_detail_windows_count += 1
         self.remessa_newDetailsWindow[self.remessa_detail_windows_count] = tk.Toplevel()
-        self.remessa_newDetailsWindow[self.remessa_detail_windows_count].title(f'Detalhe de remessa: {num_remessa}')
-        self.janela_detalhes_remessa = remessaDetailWindow(self.remessa_newDetailsWindow[self.remessa_detail_windows_count], num_remessa)
+        self.remessa_newDetailsWindow[self.remessa_detail_windows_count].title(
+            f'Detalhe de remessa: {num_remessa}')
+        self.janela_detalhes_remessa = remessaDetailWindow(
+            self.remessa_newDetailsWindow[self.remessa_detail_windows_count],
+            num_remessa)
 
 
     def radio_tipo_command(self, *event):
@@ -381,7 +389,7 @@ class RemessasWindow(baseApp):
     def on_save_remessa(self, event=None):
             # remessa = recolher todos os dados do formulário  #TODO
             remessa = "teste"
-            self.ultima_remessa = save_remessa(remessa) #TODO - None se falhar
+            self.ultima_remessa = db.save_remessa(remessa) #TODO - None se falhar
             if self.ultima_remessa:
                 self.on_remessa_save_success()
             else:
@@ -401,7 +409,7 @@ class RemessasWindow(baseApp):
                                                 default='yes',
                                                 parent=self)
         if wants_to_print == 'yes':
-            imprimir_guia_de_remessa(self.ultima_remessa)
+            imprimir.imprimir_guia_de_remessa(self.ultima_remessa)
             self.fechar_painel_entrada()
         else:
             self.fechar_painel_entrada()

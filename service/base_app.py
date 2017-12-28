@@ -11,7 +11,7 @@ from tkinter import ttk
 import tkinter.font
 import Pmw
 
-from extra_tk_classes import *
+from extra_tk_classes import StatusBar, AutoScrollbar
 from global_setup import *
 
 

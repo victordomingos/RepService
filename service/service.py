@@ -24,16 +24,21 @@ import textwrap
 import Pmw
 import io, sys  # For Atom compatibility
 
-from about_window import *
-from base_app import *
-from extra_tk_classes import *
+import about_window, contactos, remessas, detalhe_reparacao, detalhe_mensagem
+
+from base_app import baseApp, AppStatus
+from extra_tk_classes import AutocompleteEntry, AutoScrollbar, LabelEntry 
+from extra_tk_classes import LabelText, StatusBar
+
+import imprimir
+
 from global_setup import *
-from contactos import *
-from remessas import *
-from detalhe_reparacao import *
-from detalhe_mensagem import *
-from imprimir import *
-from db_operations import *
+
+
+if USE_LOCAL_DATABASE:
+    import db_local as db
+else:
+    import db_remote as db
 
 
 __app_name__ = "RepService 2017"
@@ -379,7 +384,7 @@ class App(baseApp):
                 estado.painel_nova_remessa_aberto = True
             #self.newWindow2 = tk.Toplevel(self.master)
             estado.janela_remessas = tk.Toplevel(self.master)
-            self.janela_remessas = RemessasWindow(estado.janela_remessas, estado)
+            self.janela_remessas = remessas.RemessasWindow(estado.janela_remessas, estado)
             estado.janela_remessas_aberta = True
             estado.janela_remessas.wm_protocol("WM_DELETE_WINDOW", self.close_window_remessas)
         else:
@@ -406,7 +411,7 @@ class App(baseApp):
                 print("Sim:", criar_novo_contacto)
                 estado.painel_novo_contacto_aberto = True
             estado.janela_contactos = tk.Toplevel(self.master)
-            self.janela_contactos = ContactsWindow(estado.janela_contactos, estado)
+            self.janela_contactos = contactos.ContactsWindow(estado.janela_contactos, estado)
             estado.janela_contactos_aberta = True
             estado.janela_contactos.wm_protocol("WM_DELETE_WINDOW", self.close_window_contactos)
         else:
@@ -443,7 +448,7 @@ class App(baseApp):
 
         self.rep_detail_windows_count += 1
         self.rep_newDetailsWindow[self.rep_detail_windows_count] = tk.Toplevel()
-        self.janela_detalhes_rep = repairDetailWindow(self.rep_newDetailsWindow[self.rep_detail_windows_count], num_reparacao)
+        self.janela_detalhes_rep = detalhe_reparacao.repairDetailWindow(self.rep_newDetailsWindow[self.rep_detail_windows_count], num_reparacao)
 
 
     def create_window_detalhe_msg(self, *event, num_mensagem=None):
@@ -454,7 +459,7 @@ class App(baseApp):
 
         self.msg_detail_windows_count += 1
         self.msg_newDetailsWindow[self.msg_detail_windows_count] = tk.Toplevel()
-        self.janela_detalhes_msg = msgDetailWindow(self.msg_newDetailsWindow[self.msg_detail_windows_count], num_mensagem)
+        self.janela_detalhes_msg = detalhe_mensagem.msgDetailWindow(self.msg_newDetailsWindow[self.msg_detail_windows_count], num_mensagem)
 
 
     def gerar_painel_mensagens(self):
@@ -1060,15 +1065,15 @@ class App(baseApp):
         self.helpmenu = tk.Menu(self.menu)
         self.menu.add_cascade(label="Help", menu=self.helpmenu)
          #       helpmenu.add_command(label="Preferências", command=About)
-        self.helpmenu.add_command(label="Acerca de "+__app_name__, command=about_window)
+        self.helpmenu.add_command(label="Acerca de "+__app_name__, command=about_window.about_window)
         self.helpmenu.add_command(label="Suporte da aplicação "+__app_name__, command=lambda: webbrowser.open("http://victordomingos.com/contactos/", new=1, autoraise=True))
-        self.helpmenu.add_command(label="Agradecimentos", command=thanks_window)
+        self.helpmenu.add_command(label="Agradecimentos", command=about_window.thanks_window)
         self.helpmenu.add_separator()
         self.helpmenu.add_command(label="Visitar página do autor", command=lambda: webbrowser.open("http://victordomingos.com", new=1, autoraise=True))
         #root.createcommand('::tk::mac::ShowPreferences', prefs_function)
         #root.bind('<<about-idle>>', about_dialog)
         #root.bind('<<open-config-dialog>>', config_dialog)
-        root.createcommand('tkAboutDialog', about_window)
+        root.createcommand('tkAboutDialog', about_window.about_window)
 
         #----------------Menu contextual tabela principal---------------------
         self.contextMenu = tk.Menu(self.menu)
@@ -1108,7 +1113,7 @@ class App(baseApp):
     def on_save_repair(self, event=None):
         # reparacao = recolher todos os dados do formulário  #TODO
         reparacao = "teste"
-        self.ultima_reparacao = save_repair(reparacao) #TODO - None se falhar
+        self.ultima_reparacao = db.save_repair(reparacao) #TODO - None se falhar
         if self.ultima_reparacao:
             self.on_repair_save_success()
         else:
@@ -1127,7 +1132,7 @@ class App(baseApp):
                                                 default='yes',
                                                 parent=self)
         if wants_to_print == 'yes':
-            imprimir_folhas_de_reparacao(self.ultima_reparacao)
+            imprimir.imprimir_folhas_de_reparacao(self.ultima_reparacao)
             self.fechar_painel_entrada()
         else:
             self.entryframe.focus()
@@ -1189,7 +1194,7 @@ class App(baseApp):
 
 if __name__ == "__main__":
     sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')  # For Atom compatibility
-    sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')  # For Atom compatibility
+    sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')  # For Atom compatibility        
     root = tk.Tk()
     estado = AppStatus()
     estado.janela_principal = App(root)
@@ -1209,3 +1214,4 @@ if __name__ == "__main__":
     root.unbind_class('TEntry', '<<PasteSelection>>')
 
     root.mainloop()
+    

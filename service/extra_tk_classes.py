@@ -9,8 +9,9 @@ código.
 """
 
 import tkinter as tk
-from tkinter import ttk
 import tkinter.font
+
+from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 
 
