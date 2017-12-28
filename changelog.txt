@@ -12,6 +12,8 @@ v.0.15 - 30/09/2017
    automaticamente no campo "ID" o número de artigo correspondente.
  * No separador "Empréstimos", ao introduzir um ID de artigo, é selecionado
    automaticamente na combobox o artigo de empréstimo correspondente.
+ * Adicionada opção de configuração que permitirá escolher entre uma base de
+   dados local (SQLite, via SQLalchemy?) ou o acesso a uma web API.
    
 ---
 v.0.14 - 17/09/2017
