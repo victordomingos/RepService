@@ -5,8 +5,8 @@ Histórico de versões:
 
 
 ---
-v.0.15 - 30/09/2017
- * Agora a função obter_lista_artigos_emprest() devlve uma estrutura de dados
+v.0.15 - 28/12/2017
+ * Agora a função obter_lista_artigos_emprest() devolve uma estrutura de dados
    diferente, baseada em dicionários e tuplas.
  * No separador "Empréstimos", ao selecionar um artigo da combobox, é mostrado
    automaticamente no campo "ID" o número de artigo correspondente.
