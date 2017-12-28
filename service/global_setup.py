@@ -56,6 +56,10 @@ W_DETALHE_MSG_MAX_HEIGHT = 480
 SLOW_MACHINE = False  # Alterar para True no caso de se tratar de uma máquina lenta (animações no entryframe)
 USE_LOCAL_DATABASE = True  # Alterar para False para utilizar uma ligação remota via web API.
 
+if USE_LOCAL_DATABASE:
+    LOCAL_DATABASE_PATH = '__test_service.db'
+else:
+    REMOTE_API_URL = 'http://localhost:5000'
 
 #Estados (como serão registados na base de dados)
 EM_PROCESSAMENTO = 0

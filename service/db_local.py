@@ -6,6 +6,37 @@ Victor Domingos e distribuída sob os termos da licença Creative Commons
 Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
 
+
+from datetime import datetime
+import os
+
+from sqlalchemy import (create_engine, Table, Column, Integer, String,
+                        ForeignKey, MetaData, DateTime)
+
+from global_setup import LOCAL_DATABASE_PATH
+
+
+def init_database():
+    metadata = MetaData()
+
+    users = Table('users', metadata,
+        Column('id', Integer(), primary_key=True),
+        Column('name', String(255), index=True, nullable=False, unique=True),
+        Column('created_on', DateTime(), default=datetime.now),
+        Column('updated_on', DateTime(), default=datetime.now, onupdate=datetime.now),
+    )
+
+
+
+    engine = create_engine('sqlite:///'+os.path.expanduser(LOCAL_DATABASE_PATH))
+    metadata.create_all(engine)
+
+
+# Testing...
+init_database()
+
+
+
 def save_repair(rep_num):
     print("a guardar o processo de reparação", rep_num)
     db_last_rep_number = "1234"
