@@ -13,27 +13,63 @@ import os
 from sqlalchemy import (create_engine, Table, Column, Integer, String,
                         ForeignKey, MetaData, DateTime)
 
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+from sqlalchemy.orm import sessionmaker
+
+
 from global_setup import LOCAL_DATABASE_PATH
+
+metadata = MetaData()
+Base = declarative_base(metadata=metadata)
+
+
+
+class User(Base):
+    __tablename__ = 'users'
+    
+    id = Column(Integer, autoincrement=True, primary_key=True, nullable=False)
+    username = Column(String, index=True, nullable=False, unique=True)
+    email = Column(String, index=True, nullable=False, unique=True)
+    password = Column(String, nullable=False, unique=False)
+    pwd_last_changed = Column(DateTime(), default=datetime.now)
+    created_on = Column(DateTime(), default=datetime.now)
+    updated_on = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
+
+    def __repr__(self):
+        return f"<User(id={self.id}, name='{self.username}', email='{self.email}', password='{self.password}')>"
 
 
 def init_database():
-    metadata = MetaData()
+    engine = create_engine('sqlite:///'+os.path.expanduser(LOCAL_DATABASE_PATH))
+    metadata.create_all(engine)
 
-    users = Table('users', metadata,
-        Column('id', Integer(), primary_key=True),
-        Column('name', String(255), index=True, nullable=False, unique=True),
+    """
+    repairs = Table('repairs', metadata,
+        Column('id', Integer, primary_key=True),
+        Column('cliente_id', Integer, ForeignKey("contacts.id"),
+        Column('cliente_id', Integer, ForeignKey("contacts.id"),
+        Column('email', String(255), index=True, nullable=False, unique=True),
+        Column('password', String(255), nullable=False, unique=False),
+        Column('pwd_last_changed', DateTime(), default=datetime.now),
         Column('created_on', DateTime(), default=datetime.now),
         Column('updated_on', DateTime(), default=datetime.now, onupdate=datetime.now),
     )
 
+    repairs = Table('contacts', metadata,
+        Column('id', Integer, primary_key=True),
+        Column('cliente_id', Integer, ForeignKey("contacts.id"),
+        Column('email', String(255), index=True, nullable=False, unique=True),
+        Column('password', String(255), nullable=False, unique=False),
+        Column('pwd_last_changed', DateTime(), default=datetime.now),
+        Column('created_on', DateTime(), default=datetime.now),
+        Column('updated_on', DateTime(), default=datetime.now, onupdate=datetime.now),
+    )
+    """
 
 
-    engine = create_engine('sqlite:///'+os.path.expanduser(LOCAL_DATABASE_PATH))
-    metadata.create_all(engine)
 
 
-# Testing...
-init_database()
 
 
 
@@ -131,4 +167,24 @@ def obter_lista_artigos_emprest():
                "25729": ("Beats X - NPK - Network Project for Knowledge", "")
             }
     return artigos
+
+
+
+if __name__ == "__main__":    
+    # Testing...
+    init_database()
+    engine = create_engine('sqlite:///'+os.path.expanduser(LOCAL_DATABASE_PATH))
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    for i in range(100):
+        new_user = User(username="Victor"+str(i), email="test@networkprojectforknowledge.org"+str(i), password="1234")
+        print(new_user)
+        session.add(new_user)
+        session.commit()
+        print(">", new_user)
+    
+
+    our_user = session.query(User).filter_by(username='Victor1').first()
+    print("OUR USER:", our_user)
     
