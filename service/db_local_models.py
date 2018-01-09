@@ -18,7 +18,8 @@ class Loja(Base):
     utilizadores = relationship('Utilizador', secondary='loja_utilizador_link')
     
     def __repr__(self):
-        return f"<Loja(id={self.id}, Nome='{self.nome}', Utilizadores='{self.utilizadores}'>"
+        return f("<Loja(id={self.id}, Nome='{self.nome}', " + 
+                 "Utilizadores='{self.utilizadores}'>")
 
 
 class User(Base):
@@ -33,7 +34,9 @@ class User(Base):
     updated_on = Column(DateTime(), default=func.now, onupdate=func.now)
 
     def __repr__(self):
-        return f"<User(id={self.id}, name='{self.username}', email='{self.email}', password='{self.password}', loja={self.loja})>"
+        return f("<User(id={self.id}, name='{self.username}', " +
+                 "email='{self.email}', password='{self.password}', " +
+                 "loja={self.loja})>")
 
 
 class LojaUtilizadorLink(Base):
@@ -66,7 +69,11 @@ class Contact(Base):
     updated_on = Column(DateTime(), default=func.now, onupdate=func.now)
 
     def __repr__(self):
-        return f"<Contact(id={self.id}, name='{self.nome}', empresa='{self.empresa}', is_cliente='{self.is_cliente}', is_fornecedor='{self.is_fornecedor}', is_loja='{self.is_loja}')>"
+        return f("<Contact(id={self.id}, name='{self.nome}', " +
+                 "empresa='{self.empresa}', " +
+                 "is_cliente='{self.is_cliente}', " +
+                 "is_fornecedor='{self.is_fornecedor}', " +
+                 "is_loja='{self.is_loja}')>")
 
 
 class Artigo(Base):
@@ -76,7 +83,8 @@ class Artigo(Base):
     part_number = Column(String, index=True)
 
     def __repr__(self):
-        return f"<Article(id={self.id}, descr_artigo='{self.descr_artigo}', P/N='{self.part_number}'>"
+        return f("<Article(id={self.id}, descr_artigo='{self.descr_artigo}', " +
+                "P/N='{self.part_number}'>")
 
 
 class Repair(Base):
