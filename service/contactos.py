@@ -17,7 +17,7 @@ from global_setup import *
 
 
 if USE_LOCAL_DATABASE:
-    import db_local as db
+    import db_local_main as db
 else:
     import db_remote as db
 
