@@ -9,6 +9,10 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
 import os
 import os.path
 
+LOGIN_MIN_WIDTH = 360
+LOGIN_MIN_HEIGHT = 200
+LOGIN_MAX_WIDTH = 400
+LOGIN_MAX_HEIGHT = 400
 
 ROOT_GEOMETRIA = '1060x800+0+0'
 MASTER_MIN_WIDTH = 970

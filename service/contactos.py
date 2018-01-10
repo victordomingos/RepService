@@ -147,7 +147,7 @@ class ContactsWindow(baseApp):
         self.entryframe.focus()
         self.ef_var_tipo_is_cliente.set(True)
         self.ef_var_tipo_is_fornecedor.set(False)
-        self.ef_var_tipo_is_loja.set(False)
+        #self.ef_var_tipo_is_loja.set(False)
         self.ef_combo_pais.current(178)
 
         widgets = (self.ef_ltxt_nome,
@@ -177,7 +177,7 @@ class ContactsWindow(baseApp):
         if self.estado.tipo_novo_contacto == "Fornecedor":
             self.ef_var_tipo_is_fornecedor.set(True)
             self.ef_var_tipo_is_cliente.set(False)
-        self.ef_var_tipo_is_loja = tk.IntVar()
+        #self.ef_var_tipo_is_loja = tk.IntVar()
 
         self.ef_cabecalho = ttk.Frame(self.entryfr1, padding=4)
         self.ef_lbl_titulo = ttk.Label(self.ef_cabecalho, style="Panel_Title.TLabel", text="Adicionar Contacto:\n")
@@ -185,7 +185,7 @@ class ContactsWindow(baseApp):
 
         self.ef_chkbtn_tipo_cliente = ttk.Checkbutton(self.ef_cabecalho, text="Cliente", style="Panel_Body.Checkbutton", variable=self.ef_var_tipo_is_cliente)
         self.ef_chkbtn_tipo_fornecedor = ttk.Checkbutton(self.ef_cabecalho, text="Fornecedor ou centro técnico", style="Panel_Body.Checkbutton", variable=self.ef_var_tipo_is_fornecedor)
-        self.ef_chkbtn_tipo_loja = ttk.Checkbutton(self.ef_cabecalho, text="Loja do nosso grupo", style="Panel_Body.Checkbutton", variable=self.ef_var_tipo_is_loja)
+        #self.ef_chkbtn_tipo_loja = ttk.Checkbutton(self.ef_cabecalho, text="Loja do nosso grupo", style="Panel_Body.Checkbutton", variable=self.ef_var_tipo_is_loja)
 
         self.btn_adicionar = ttk.Button(self.ef_cabecalho, default="active",  style="Active.TButton", text="Adicionar", command=self.on_save_contact)
         self.btn_cancelar = ttk.Button(self.ef_cabecalho, text="Cancelar", command=self.on_contact_cancel)
@@ -195,7 +195,7 @@ class ContactsWindow(baseApp):
         self.ef_lbl_tipo.grid(column=0, row=1, sticky='e')
         self.ef_chkbtn_tipo_cliente.grid(column=1, row=1, sticky='w')
         self.ef_chkbtn_tipo_fornecedor.grid(column=1, row=2, sticky='w')
-        self.ef_chkbtn_tipo_loja.grid(column=1, row=3, sticky='w')
+        #self.ef_chkbtn_tipo_loja.grid(column=1, row=3, sticky='w')
 
         self.btn_adicionar.grid(column=3, row=1, sticky='we')
         self.btn_cancelar.grid(column=3, row=2, sticky='we')
