@@ -20,6 +20,7 @@ import tkinter.font
 from tkinter import ttk, messagebox
 from tkinter.scrolledtext import ScrolledText
 import datetime
+import time
 import textwrap
 import Pmw
 import io, sys  # For Atom compatibility
@@ -82,8 +83,8 @@ class App(baseApp):
         self.root_login.title('Login')
         self.root_login.bind_all("<Mod2-q>", self.master.quit)
 
-        self.log_mainframe = ttk.Frame(self.root_login, padding="12 25 12 5")
-        self.log_topframe = ttk.Frame(self.log_mainframe, padding="5 8 5 5")
+        self.log_mainframe = ttk.Frame(self.root_login, padding="12 25 12 0")
+        self.log_topframe = ttk.Frame(self.log_mainframe, padding="5 8 5 0")
         self.log_centerframe = ttk.Frame(self.log_mainframe)
 
 
@@ -103,10 +104,22 @@ class App(baseApp):
         self.log_ltxt_username = LabelEntry(self.log_centerframe, label="Nome de Utilizador", width=30)
         self.log_ltxt_password = LabelEntry(self.log_centerframe, label="Senha", width=30)
         self.log_ltxt_password.entry.config(show="•")
-        self.log_btn_enter = ttk.Button(self.log_centerframe, text="Entrar", default="active", style="Active.TButton", command=self.validate_login)
-        self.log_btn_cancel = ttk.Button(self.log_centerframe, text="Cancelar", command=exit)
-
         self.log_btn_alterar_senha = ttk.Button(self.log_centerframe, text="Alterar senha...", command=self.change_password)
+        self.log_btn_cancel = ttk.Button(self.log_centerframe, text="Cancelar", command=exit)
+        self.log_btn_enter = ttk.Button(self.log_centerframe, text="Entrar", default="active", style="Active.TButton", command=self.validate_login)
+
+
+        self.log_ltxt_username.entry.bind("<Return>", lambda x: self.log_ltxt_password.entry.focus_set())
+        self.log_ltxt_password.entry.bind("<Return>", self.validate_login)
+        self.log_btn_enter.bind("<Return>", self.validate_login)
+        
+        self.log_ltxt_username.entry.bind("<Escape>", lambda x: exit())
+        self.log_ltxt_password.entry.bind("<Escape>", lambda x: exit())
+        self.log_btn_enter.bind("<Escape>", lambda x: exit())
+        self.log_btn_cancel.bind("<Escape>", lambda x: exit())
+        self.log_btn_alterar_senha.bind("<Escape>", lambda x: exit())
+
+
         self.log_ltxt_username.entry.focus_set()
         self.log_ltxt_username.pack(side=tk.TOP, expand=False)
         self.log_ltxt_password.pack(side=tk.TOP, expand=False)
@@ -119,7 +132,28 @@ class App(baseApp):
         root.withdraw()
 
 
-    def validate_login(self):
+    def shake_login_window(self):
+        """ Shakes login window when user name and password don't match.
+        """
+        width = LOGIN_MIN_WIDTH
+        height = LOGIN_MIN_HEIGHT
+        w_x, w_y = self.root_login.winfo_x(), self.root_login.winfo_y()
+
+        for n in range(3):
+            for i in range(0,18-n*6,6):
+                self.root_login.geometry(f"{width}x{height}+{w_x+i}+{w_y}")
+                self.root_login.update()
+            for i in range(18-n*6,-18+n*6,-6):
+                self.root_login.geometry(f"{width}x{height}+{w_x+i}+{w_y}")
+                self.root_login.update()
+            for i in range(-18+n*6,0,6):
+                self.root_login.geometry(f"{width}x{height}+{w_x+i}+{w_y}")
+                self.root_login.update()
+
+        self.root_login.geometry(f"{width}x{height}+{w_x}+{w_y}")
+
+
+    def validate_login(self, *event):
         username = self.log_ltxt_username.get()
         password = self.log_ltxt_password.get()
         
@@ -133,6 +167,7 @@ class App(baseApp):
             self.root_login.destroy()
             
         else:
+            self.shake_login_window()
             self.log_ltxt_username.clear()
             self.log_ltxt_password.clear()
             self.log_ltxt_username.entry.focus_set()
