@@ -115,7 +115,8 @@ class App(baseApp):
         self.log_btn_alterar_senha.pack(side=tk.LEFT)
 
         self.log_centerframe.pack(side=tk.TOP, expand=True, fill='both')
-        self.log_mainframe.pack(side=tk.TOP, expand=True, fill='both')        
+        self.log_mainframe.pack(side=tk.TOP, expand=True, fill='both')
+        root.withdraw()
 
 
     def validate_login(self):
@@ -128,7 +129,9 @@ class App(baseApp):
             self.username = username
             self.password = password
             self.start_main_window()
+            root.deiconify()
             self.root_login.destroy()
+            
         else:
             self.log_ltxt_username.clear()
             self.log_ltxt_password.clear()
