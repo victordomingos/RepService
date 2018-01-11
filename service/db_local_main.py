@@ -22,6 +22,22 @@ def init_database():
     db_base.Base.metadata.create_all(engine)
 
 
+#TODO
+def validate_login(username, password):
+    """ Check if username and password match the info in database. Token stuff
+        is provided here only to ensure code compatibility for future web API
+        access.
+    """
+    if username == "npk" and password == "...":  # change this
+        loggedin = True
+        token = "The amazing NPK Token"
+    else:
+        loggedin = False
+        token = None
+        
+    return loggedin, token
+
+
 def save_repair(rep_num):
     print("a guardar o processo de reparação", rep_num)
     db_last_rep_number = "1234"
@@ -117,27 +133,32 @@ def obter_lista_artigos_emprest():
             }
     return artigos
 
-
-def test_lojas():
-    l = Loja()
     
-def test_users():
-    for i in range(100):
-        new_user = User(username="utilizador"+str(i), email="test@networkprojectforknowledge.org"+str(i), password="1234", loja=123)
-        print(new_user)
-        session.add(new_user)
-        session.commit()
-        print(">", new_user)
+def test_populate():
+    loja = db_models.Loja(nome="That Great NPK Store")
+    utilizador = db_models.User(username="utilizador"+str(i), email="test@networkprojectforknowledge.org"+str(i), password="1234", loja=loja)
+    contacto = db_models.Contact()
+    artigo = db_models.Artigo()
+    reparacao = db_models.Repair()
+    
+    loja.utilizadores.append(utilizador)
+    
+    session.add(loja)
+    session.commit()
+    
+    #print(new_user)
+    #session.add(new_user)
+    #session.commit()
+    #print(">", new_user)
 
-    our_user = session.query(User).filter_by(username='Victor1').first()
-    print("OUR USER:", our_user)
+    #our_user = session.query(User).filter_by(username='Victor1').first()
+    #print("OUR USER:", our_user)
 
 
 if __name__ == "__main__":    
     # Testing...
     init_database()
-    #test_lojas()
-    #test_users()
+    test_populate()
     
     
 

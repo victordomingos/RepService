@@ -30,6 +30,9 @@ class AppStatus:
         self.painel_nova_remessa_aberto = False
         self.contacto_para_nova_reparacao = None
         self.tipo_novo_contacto = None
+        self.username = None
+        self.password = None
+        self.loggedin = False
 
 
 class baseApp(ttk.Frame):
