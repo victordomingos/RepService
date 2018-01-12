@@ -23,8 +23,9 @@ else:
 
 class RemessasWindow(baseApp):
     """ Classe de base para a janela de remessas """
-    def __init__(self, master, estado, *args,**kwargs):
-        super().__init__(master,*args,**kwargs)
+
+    def __init__(self, master, estado, *args, **kwargs):
+        super().__init__(master, *args, **kwargs)
         self.estado = estado
         self.master.minsize(REMESSAS_MIN_WIDTH, REMESSAS_MIN_HEIGHT)
         self.master.maxsize(REMESSAS_MAX_WIDTH, REMESSAS_MAX_HEIGHT)
@@ -33,7 +34,8 @@ class RemessasWindow(baseApp):
         self.remessa_selecionada = None
         self.remessa_newDetailsWindow = {}
         self.remessa_detail_windows_count = 0
-        #self.centerframe = ttk.Frame(self.mainframe, padding="4 0 4 0") #apagar isto
+        # self.centerframe = ttk.Frame(self.mainframe, padding="4 0 4 0")
+        # #apagar isto
         self.nremessas = 0
 
         self.montar_barra_de_ferramentas()
@@ -49,28 +51,26 @@ class RemessasWindow(baseApp):
         if self.estado.painel_nova_remessa_aberto:
             self.mostrar_painel_entrada()
 
-
     def gerar_menu(self):
         self.menu = tk.Menu(self.master)
         #----------------Menu contextual tabela principal---------------------
         self.contextMenu = tk.Menu(self.menu)
-        self.contextMenu.add_command(label="Informações", command=lambda: self.create_window_detalhe_remessa(num_remessa=self.remessa_selecionada))
+        self.contextMenu.add_command(label="Informações", command=lambda: self.create_window_detalhe_remessa(
+            num_remessa=self.remessa_selecionada))
         #self.contextMenu.add_command(label="Abrir no site da transportadora", command=self.abrir_url_browser)
         self.contextMenu.add_separator()
         #self.contextMenu.add_command(label="Copiar número de objeto", command=self.copiar_obj_num)
         #self.contextMenu.add_command(label="Copiar mensagem de expedição", command=self.copiar_msg)
-        #self.contextMenu.add_separator()
+        # self.contextMenu.add_separator()
         #self.contextMenu.add_command(label="Arquivar/restaurar remessa", command=self.del_remessa)
-        #self.contextMenu.add_separator()
+        # self.contextMenu.add_separator()
         #self.contextMenu.add_command(label="Registar cheque recebido", command=self.pag_recebido)
         #self.contextMenu.add_command(label="Registar cheque depositado", command=self.chq_depositado)
-
 
     def contar_linhas(self):
         """ Obtém o número de linhas da tabela de remessas. """
         linhas = self.tree.get_children("")
         return len(linhas)
-
 
     def atualizar_soma(self):
         """
@@ -79,9 +79,9 @@ class RemessasWindow(baseApp):
         self.nremessas = self.contar_linhas()
         self.my_statusbar.set(f"{self.nremessas} remessas")
 
-
     def montar_tabela(self):
-        self.tree = ttk.Treeview(self.leftframe, height=60, selectmode='browse')
+        self.tree = ttk.Treeview(
+            self.leftframe, height=60, selectmode='browse')
         self.tree['columns'] = ('ID', 'Origem', 'Destino', 'Qtd.', 'Data')
         self.tree.pack(side=tk.TOP, fill=tk.BOTH)
         self.tree.column('#0', anchor=tk.W, minwidth=0, stretch=0, width=0)
@@ -96,58 +96,59 @@ class RemessasWindow(baseApp):
         self.leftframe.grid_rowconfigure(0, weight=1)
         self.bind_tree()
 
-
     def montar_barra_de_ferramentas(self):
-        # Barra de ferramentas / botões -------------------------------------------------------------------------------
+        # Barra de ferramentas / botões ---------------------------------------
 
-        self.btn_entrada = ttk.Button(self.topframe, style="secondary.TButton", text="Entrada", command=None)
+        self.btn_entrada = ttk.Button(
+            self.topframe, style="secondary.TButton", text="Entrada", command=None)
         self.btn_entrada.grid(column=0, row=0)
-        self.dicas.bind(self.btn_entrada, 'Mostrar apenas remessas de entrada \n(receção de artigos enviados por\nfornecedores e/ou centros técnicos).')
+        self.dicas.bind(
+            self.btn_entrada, 'Mostrar apenas remessas de entrada \n(receção de artigos enviados por\nfornecedores e/ou centros técnicos).')
 
-        self.btn_saida = ttk.Button(self.topframe, style="secondary.TButton", text="Saída", command=None)
+        self.btn_saida = ttk.Button(
+            self.topframe, style="secondary.TButton", text="Saída", command=None)
         self.btn_saida.grid(column=1, row=0)
-        self.dicas.bind(self.btn_saida, 'Mostrar apenas remessas de saída \n(envio de artigos para fornecedores \ne/ou centros técnicos).')
+        self.dicas.bind(
+            self.btn_saida, 'Mostrar apenas remessas de saída \n(envio de artigos para fornecedores \ne/ou centros técnicos).')
 
-        self.btn_add = ttk.Button(self.topframe, text=" ➕", width=3, command=self.show_entryform)
+        self.btn_add = ttk.Button(
+            self.topframe, text=" ➕", width=3, command=self.show_entryform)
         self.btn_add.grid(column=3, row=0)
         self.dicas.bind(self.btn_add, 'Criar nova remessa. (⌘N)')
 
         self.text_input_pesquisa = ttk.Entry(self.topframe, width=12)
         self.text_input_pesquisa.grid(column=4, row=0)
-        self.dicas.bind(self.text_input_pesquisa, 'Para iniciar a pesquisa, digite\numa palavra ou frase. (⌘F)')
-
+        self.dicas.bind(self.text_input_pesquisa,
+                        'Para iniciar a pesquisa, digite\numa palavra ou frase. (⌘F)')
 
         #letras_etc = ascii_letters + "01234567890-., "
-        #for char in letras_etc:
+        # for char in letras_etc:
         #    keystr = '<KeyRelease-' + char + '>'
         #    self.text_input_pesquisa.bind(keystr, self.ativar_pesquisa)
         #self.text_input_pesquisa.bind('<Button-1>', self.clique_a_pesquisar)
         #self.text_input_pesquisa.bind('<KeyRelease-Escape>', self.cancelar_pesquisa)
         #self.text_input_pesquisa.bind('<KeyRelease-Mod2-a>', self.text_input_pesquisa.select_range(0, END))
 
-        for col in range(1,4):
+        for col in range(1, 4):
             self.topframe.columnconfigure(col, weight=0)
         self.topframe.columnconfigure(2, weight=1)
-
 
     def mostrar_painel_entrada(self, *event):
         self.estado.painel_nova_remessa_aberto = True
         #self.MenuFicheiro.entryconfig("Novo contacto", state="disabled")
-        #root.unbind_all("<Command-n>")
+        # root.unbind_all("<Command-n>")
         self.show_entryform()
         self.my_statusbar.set(self.str_num_processos)
         self.ef_radio_tipo_saida.focus()
-
 
     def fechar_painel_entrada(self, *event):
         self.estado.painel_nova_remessa_aberto = False
         self.clear_text()
         self.hide_entryform()
-        #root.bind_all("<Command-n>")
-
+        # root.bind_all("<Command-n>")
 
     def gerar_painel_entrada(self):
-        #entryfr1-----------------------------
+        # entryfr1-----------------------------
         self.ef_var_tipo = tk.IntVar()
         self.ef_var_tipo.set(0)
         self.ef_var_destino = tk.IntVar()
@@ -159,13 +160,18 @@ class RemessasWindow(baseApp):
         self.ef_var_destino.set("Selecionar centro técnico...")
 
         self.ef_cabecalho = ttk.Frame(self.entryfr1, padding=4)
-        self.ef_lbl_titulo = ttk.Label(self.ef_cabecalho, style="Panel_Title.TLabel", text="Adicionar Remessa:\n")
-        self.ef_lbl_tipo = ttk.Label(self.ef_cabecalho, text="Tipo:", style="Panel_Body.TLabel")
-        self.ef_radio_tipo_saida = ttk.Radiobutton(self.ef_cabecalho, text="Envio", style="Panel_Body.TRadiobutton", variable=self.ef_var_tipo, value=TIPO_REMESSA_ENVIO, command=self.radio_tipo_command)
-        self.ef_radio_tipo_entrada = ttk.Radiobutton(self.ef_cabecalho, text="Receção", style="Panel_Body.TRadiobutton", variable=self.ef_var_tipo, value=TIPO_REMESSA_RECECAO, command=self.radio_tipo_command)
-        self.btn_adicionar = ttk.Button(self.ef_cabecalho, default="active", style="Active.TButton", text="Adicionar", command=self.on_save_remessa)
-        self.btn_cancelar = ttk.Button(self.ef_cabecalho, text="Cancelar", command=self.on_remessa_cancel)
-
+        self.ef_lbl_titulo = ttk.Label(
+            self.ef_cabecalho, style="Panel_Title.TLabel", text="Adicionar Remessa:\n")
+        self.ef_lbl_tipo = ttk.Label(
+            self.ef_cabecalho, text="Tipo:", style="Panel_Body.TLabel")
+        self.ef_radio_tipo_saida = ttk.Radiobutton(self.ef_cabecalho, text="Envio", style="Panel_Body.TRadiobutton",
+                                                   variable=self.ef_var_tipo, value=TIPO_REMESSA_ENVIO, command=self.radio_tipo_command)
+        self.ef_radio_tipo_entrada = ttk.Radiobutton(self.ef_cabecalho, text="Receção", style="Panel_Body.TRadiobutton",
+                                                     variable=self.ef_var_tipo, value=TIPO_REMESSA_RECECAO, command=self.radio_tipo_command)
+        self.btn_adicionar = ttk.Button(self.ef_cabecalho, default="active",
+                                        style="Active.TButton", text="Adicionar", command=self.on_save_remessa)
+        self.btn_cancelar = ttk.Button(
+            self.ef_cabecalho, text="Cancelar", command=self.on_remessa_cancel)
 
         self.ef_lbl_titulo.grid(column=0, row=0, columnspan=3, sticky="w")
         self.ef_lbl_tipo.grid(column=0, row=1, sticky="e")
@@ -174,15 +180,16 @@ class RemessasWindow(baseApp):
         self.btn_adicionar.grid(column=3, row=1, sticky="we")
         self.btn_cancelar.grid(column=3, row=2, sticky="we")
 
-        self.ef_cabecalho.grid(column=0,row=0, sticky='we')
+        self.ef_cabecalho.grid(column=0, row=0, sticky='we')
         self.entryfr1.columnconfigure(0, weight=1)
         self.ef_cabecalho.columnconfigure(0, weight=0)
         self.ef_cabecalho.columnconfigure(2, weight=1)
 
         # self.btn_adicionar.bind('<Button-1>', self.add_remessa)
 
-        #entryfr2-----------------------------
-        self.ef_lbl_destino = ttk.Label(self.entryfr2, width=27, text="Destino:", style="Panel_Body.TLabel")
+        # entryfr2-----------------------------
+        self.ef_lbl_destino = ttk.Label(
+            self.entryfr2, width=27, text="Destino:", style="Panel_Body.TLabel")
         self.ef_combo_destino = ttk.Combobox(self.entryfr2,
                                              width=21,
                                              textvariable=self.ef_var_destino,
@@ -190,44 +197,55 @@ class RemessasWindow(baseApp):
                                              state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
         self.ef_lbl_destino.grid(column=0, row=0, padx=5, sticky='we')
         self.ef_combo_destino.grid(column=0, row=1, padx=5, sticky='we')
-        self.dicas.bind(self.ef_combo_destino, 'Clique aqui para selecionar a partir\nde uma lista o fornecedor ou centro técnico.')
+        self.dicas.bind(self.ef_combo_destino,
+                        'Clique aqui para selecionar a partir\nde uma lista o fornecedor ou centro técnico.')
 
         # Entryfr3
-        self.ef_lbl_num_rep = ttk.Label(self.entryfr3, text="\nNº rep.:", style="Panel_Body.TLabel")
+        self.ef_lbl_num_rep = ttk.Label(
+            self.entryfr3, text="\nNº rep.:", style="Panel_Body.TLabel")
         self.ef_txt_num_reparacao = ttk.Entry(self.entryfr3, width=7)
-        self.dicas.bind(self.ef_txt_num_reparacao, 'Clique aqui para escrever o número de um\nprocesso de reparação a incluir na remessa.')
+        self.dicas.bind(self.ef_txt_num_reparacao,
+                        'Clique aqui para escrever o número de um\nprocesso de reparação a incluir na remessa.')
 
         self.ef_btn_adicionar_rep = ttk.Button(self.entryfr3, text="Inserir")
-        self.dicas.bind(self.ef_btn_adicionar_rep, 'Clique aqui para incluir na remessa\no processo de reparação selecionado.')
+        self.dicas.bind(self.ef_btn_adicionar_rep,
+                        'Clique aqui para incluir na remessa\no processo de reparação selecionado.')
 
         # TODO:Ir buscar à base de dados os processos a aguardar envio/receção?
-        # Atualizar lista quando um dos processos é selecionado e quando é alterado o tipo de remessa.
+        # Atualizar lista quando um dos processos é selecionado e quando é
+        # alterado o tipo de remessa.
         self.ef_combo_selecionar_rep = ttk.Combobox(self.entryfr3,
                                                     textvariable=self.ef_var_reparacoes_a_enviar,
-                                                    postcommand = self.atualizar_combo_lista_reparacoes,
+                                                    postcommand=self.atualizar_combo_lista_reparacoes,
                                                     state='readonly')
-        self.dicas.bind(self.ef_combo_selecionar_rep, 'Clique aqui para selecionar a partir de\numa lista um processo de reparação\na incluir na remessa.')
-
+        self.dicas.bind(self.ef_combo_selecionar_rep,
+                        'Clique aqui para selecionar a partir de\numa lista um processo de reparação\na incluir na remessa.')
 
         self.ef_lbl_num_rep.grid(column=0, row=0, padx=5, sticky='we')
         self.ef_txt_num_reparacao.grid(column=0, row=1, padx=5, sticky='we')
         self.ef_btn_adicionar_rep.grid(column=1, row=1, padx=5, sticky='w')
-        self.ef_combo_selecionar_rep.grid(column=2, row=1,  padx=5, sticky='we')
+        self.ef_combo_selecionar_rep.grid(
+            column=2, row=1, padx=5, sticky='we')
         self.entryfr3.grid_columnconfigure(0, weight=0)
         self.entryfr3.grid_columnconfigure(1, weight=0)
         self.entryfr3.grid_columnconfigure(2, weight=1)
 
-
-
         #  treeview entryfr4:
         self.ef_lista = ttk.Frame(self.entryfr4, padding=4)
-        self.tree_lista_processos_remessa = ttk.Treeview(self.ef_lista, height=15, selectmode='browse')
-        self.tree_lista_processos_remessa['columns'] = ('Nº', 'Equipamento', 'S/N')
-        self.tree_lista_processos_remessa.pack(side=tk.TOP, expand=True, fill='both')
-        self.tree_lista_processos_remessa.column('#0', anchor=tk.W, minwidth=0, stretch=0, width=0)
-        self.tree_lista_processos_remessa.column('Nº', anchor=tk.E, minwidth=46, stretch=0, width=46)
-        self.tree_lista_processos_remessa.column('Equipamento', minwidth=180, stretch=1, width=180)
-        self.tree_lista_processos_remessa.column('S/N', anchor=tk.E, minwidth=140, stretch=0, width=140)
+        self.tree_lista_processos_remessa = ttk.Treeview(
+            self.ef_lista, height=15, selectmode='browse')
+        self.tree_lista_processos_remessa['columns'] = (
+            'Nº', 'Equipamento', 'S/N')
+        self.tree_lista_processos_remessa.pack(
+            side=tk.TOP, expand=True, fill='both')
+        self.tree_lista_processos_remessa.column(
+            '#0', anchor=tk.W, minwidth=0, stretch=0, width=0)
+        self.tree_lista_processos_remessa.column(
+            'Nº', anchor=tk.E, minwidth=46, stretch=0, width=46)
+        self.tree_lista_processos_remessa.column(
+            'Equipamento', minwidth=180, stretch=1, width=180)
+        self.tree_lista_processos_remessa.column(
+            'S/N', anchor=tk.E, minwidth=140, stretch=0, width=140)
         self.configurarTree_lista_processos_remessa()
         self.ef_lista.grid(column=0, row=0, sticky='we')
         self.ef_lista.grid_columnconfigure(0, weight=1)
@@ -246,39 +264,41 @@ class RemessasWindow(baseApp):
         """
         self.ef_combo_destino['values'] = db.obter_lista_fornecedores()
 
-
     def atualizar_combo_lista_reparacoes(self):
         """ Atualizar a lista de reparações por enviar ou por receber na
             combobox correspondente, obtendo info a partir da base de dados.
         """
         tipo = self.ef_var_tipo.get()
         if tipo == TIPO_REMESSA_RECECAO:
-            self.ef_combo_selecionar_rep['values'] = db.obter_lista_processos_por_receber()
+            self.ef_combo_selecionar_rep['values'] = db.obter_lista_processos_por_receber(
+            )
         else:
-            self.ef_combo_selecionar_rep['values'] = db.obter_lista_processos_por_enviar()
-
-
+            self.ef_combo_selecionar_rep['values'] = db.obter_lista_processos_por_enviar(
+            )
 
     def configurarTree_lista_processos_remessa(self):
         # Ordenar por coluna ao clicar no respetivo cabeçalho
         for col in self.tree_lista_processos_remessa['columns']:
             self.tree_lista_processos_remessa.heading(col, text=col.title(),
-            command=lambda c=col: self.sortBy(self.tree_lista_processos_remessa, c, 0))
+                                                      command=lambda c=col: self.sortBy(self.tree_lista_processos_remessa, c, 0))
 
         # Barra de deslocação para a tabela
-        self.tree_lista_processos_remessa.grid(column=0, row=0, sticky=tk.N+tk.W+tk.E, in_=self.ef_lista)
-        self.vsb_lista = AutoScrollbar(self.ef_lista, orient="vertical", command=self.tree_lista_processos_remessa.yview)
-        self.tree_lista_processos_remessa.configure(yscrollcommand=self.vsb_lista.set)
-        self.vsb_lista.grid(column=1, row=0, sticky=tk.N+tk.S, in_=self.ef_lista)
-
+        self.tree_lista_processos_remessa.grid(
+            column=0, row=0, sticky=tk.N + tk.W + tk.E, in_=self.ef_lista)
+        self.vsb_lista = AutoScrollbar(
+            self.ef_lista, orient="vertical", command=self.tree_lista_processos_remessa.yview)
+        self.tree_lista_processos_remessa.configure(
+            yscrollcommand=self.vsb_lista.set)
+        self.vsb_lista.grid(column=1, row=0, sticky=tk.N +
+                            tk.S, in_=self.ef_lista)
 
     def bind_tree(self):
         self.tree.bind('<<TreeviewSelect>>', self.selectItem_popup)
-        self.tree.bind('<Double-1>', lambda x: self.create_window_detalhe_remessa(num_remessa=self.remessa_selecionada))
+        self.tree.bind('<Double-1>', lambda x: self.create_window_detalhe_remessa(
+            num_remessa=self.remessa_selecionada))
         self.tree.bind("<Button-2>", self.popupMenu)
         self.tree.bind("<Button-3>", self.popupMenu)
         self.update_idletasks()
-
 
     def unbind_tree(self):
         self.tree.bind('<<TreeviewSelect>>', None)
@@ -287,13 +307,11 @@ class RemessasWindow(baseApp):
         self.tree.bind("<Button-3>", None)
         self.update_idletasks()
 
-
     def selectItem_popup(self, event):
         """ # Hacking moment: Uma função que junta duas funções, para assegurar a sequência...
         """
         self.selectItem()
         self.popupMenu(event)
-
 
     def popupMenu(self, event):
         """action in event of button 3 on tree view"""
@@ -303,7 +321,7 @@ class RemessasWindow(baseApp):
         iid = self.tree.identify_row(event.y)
         x, y = event.x_root, event.y_root
         if iid:
-            if x!=0 and y!=0:
+            if x != 0 and y != 0:
                 # mouse pointer over item
                 self.tree.selection_set(iid)
                 self.tree.focus(iid)
@@ -319,7 +337,6 @@ class RemessasWindow(baseApp):
             # no action required
             pass
 
-
     def selectItem(self, *event):
         """
         Obter remessa selecionada (após clique de rato na linha correspondente)
@@ -328,20 +345,19 @@ class RemessasWindow(baseApp):
         tree_linha = self.tree.item(curItem)
 
         remessa = tree_linha["values"][0]
-        destino =  tree_linha["values"][2]
+        destino = tree_linha["values"][2]
         self.my_statusbar.set(f"{remessa} • {destino}")
         self.remessa_selecionada = remessa
 
-
     def create_window_detalhe_remessa(self, *event, num_remessa=None):
         self.remessa_detail_windows_count += 1
-        self.remessa_newDetailsWindow[self.remessa_detail_windows_count] = tk.Toplevel()
+        self.remessa_newDetailsWindow[self.remessa_detail_windows_count] = tk.Toplevel(
+        )
         self.remessa_newDetailsWindow[self.remessa_detail_windows_count].title(
             f'Detalhe de remessa: {num_remessa}')
         self.janela_detalhes_remessa = remessaDetailWindow(
             self.remessa_newDetailsWindow[self.remessa_detail_windows_count],
             num_remessa)
-
 
     def radio_tipo_command(self, *event):
         """
@@ -357,7 +373,6 @@ class RemessasWindow(baseApp):
             self.str_num_processos = f"Número de processos a enviar: {self.num_processos}"
         self.my_statusbar.set(self.str_num_processos)
 
-
     def liga_desliga_menu_novo(self, *event):
         """
         Liga e desliga menus com base na configuração atual da janela. Por exemplo, ao
@@ -367,44 +382,44 @@ class RemessasWindow(baseApp):
         if self.is_entryform_visible == True:
             self.MenuFicheiro.entryconfigure("Nova remessa", state="disabled")
             # TODO - corrigir bug: o atalho de teclado só fica realmente inativo depois de acedermos ao menu ficheiro. Porquê??
-            #root.unbind_all("<Command-Option-n>")
+            # root.unbind_all("<Command-Option-n>")
         else:
             self.MenuFicheiro.entryconfigure("Nova remessa", state="active")
-            #root.bind_all("<Command-Option-n>")
-
+            # root.bind_all("<Command-Option-n>")
 
     def clear_text(self):
         self.entryframe.focus()
         self.ef_var_tipo.set(TIPO_REMESSA_ENVIO)
-        self.ef_var_destino.set("Selecionar centro técnico...") #TODO
+        self.ef_var_destino.set("Selecionar centro técnico...")  # TODO
         self.num_processos = 0
         self.str_num_processos = f"Número de processos a enviar: {self.num_processos}"
         self.my_statusbar.set(self.str_num_processos)
         self.ef_var_reparacoes_a_enviar.set("Selecionar reparações...")
 
         self.ef_txt_num_reparacao.delete(0, 'end')
-        self.tree_lista_processos_remessa.delete(*self.tree_lista_processos_remessa.get_children())
-
+        self.tree_lista_processos_remessa.delete(
+            *self.tree_lista_processos_remessa.get_children())
 
     def on_save_remessa(self, event=None):
             # remessa = recolher todos os dados do formulário  #TODO
-            remessa = "teste"
-            self.ultima_remessa = db.save_remessa(remessa) #TODO - None se falhar
-            if self.ultima_remessa:
-                self.on_remessa_save_success()
+        remessa = "teste"
+        self.ultima_remessa = db.save_remessa(remessa)  # TODO - None se falhar
+        if self.ultima_remessa:
+            self.on_remessa_save_success()
+        else:
+            wants_to_try_again_save = messagebox.askquestion(message='Não foi possível guardar esta remessa na base de dados. Deseja tentar novamente?',
+                                                             default='yes',
+                                                             parent=self)
+            if wants_to_try_again_save == 'yes':
+                self.on_save_remessa()
             else:
-                wants_to_try_again_save = messagebox.askquestion(message='Não foi possível guardar esta remessa na base de dados. Deseja tentar novamente?',
-                                                                default='yes',
-                                                                parent=self)
-                if wants_to_try_again_save == 'yes':
-                    self.on_save_remessa()
-                else:
-                    self.on_remessa_cancel()
-
+                self.on_remessa_cancel()
 
     def on_remessa_save_success(self):
         print("Remessa guardada com sucesso")
-        self.ultima_remessa = "333" #TODO - criar um mecanismo para obter o número da reparação acabada de introduzir na base de dados
+        # TODO - criar um mecanismo para obter o número da reparação acabada de
+        # introduzir na base de dados
+        self.ultima_remessa = "333"
         wants_to_print = messagebox.askquestion(message='A remessa foi guardada com sucesso. Deseja imprimir?',
                                                 default='yes',
                                                 parent=self)
@@ -413,12 +428,12 @@ class RemessasWindow(baseApp):
             self.fechar_painel_entrada()
         else:
             self.fechar_painel_entrada()
-            #self.entryframe.focus()
-
+            # self.entryframe.focus()
 
     # TODO
     def on_remessa_cancel(self, event=None):
-        # caso haja informação introduzida no formulário TODO: verificar primeiro
+        # caso haja informação introduzida no formulário TODO: verificar
+        # primeiro
         wants_to_cancel = messagebox.askyesno(message='Tem a certeza que deseja cancelar a introdução de dados? Toda a informação não guardada será eliminada de forma irreversível.',
                                               default='no',
                                               parent=self)
@@ -427,10 +442,11 @@ class RemessasWindow(baseApp):
         else:
             self.entryframe.focus()
 
-
-
     def inserir_dados_de_exemplo(self):
-        for i in range(1,1002,3):
-            self.tree.insert("", "end", text="", values=(str(i), "Loja X", "Fornecedor", "3", "2017-12-31"))
-            self.tree.insert("", "end", text="", values=(str(i+1), "Centro técnico", "Loja X", "10", "2017-01-12"))
-            self.tree.insert("", "end", text="", values=(str(i+2), "Loja X", "Distribuidor internacional", "10", "2017-02-01"))
+        for i in range(1, 1002, 3):
+            self.tree.insert("", "end", text="", values=(
+                str(i), "Loja X", "Fornecedor", "3", "2017-12-31"))
+            self.tree.insert("", "end", text="", values=(
+                str(i + 1), "Centro técnico", "Loja X", "10", "2017-01-12"))
+            self.tree.insert("", "end", text="", values=(
+                str(i + 2), "Loja X", "Distribuidor internacional", "10", "2017-02-01"))

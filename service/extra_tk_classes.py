@@ -38,9 +38,9 @@ class AutocompleteEntry(ttk.Entry):
 
     def autocomplete(self, delta=0):
         """autocomplete the Entry, delta may be 0/1/-1 to cycle through possible hits"""
-        if delta: # need to delete selection otherwise we would fix the current position
+        if delta:  # need to delete selection otherwise we would fix the current position
             self.delete(self.position, tk.END)
-        else: # set position to end so selection starts where textentry ended
+        else:  # set position to end so selection starts where textentry ended
             self.position = len(self.get())
         # collect hits
         _hits = []
@@ -50,32 +50,32 @@ class AutocompleteEntry(ttk.Entry):
         # if we have a new hit list, keep this in mind
         if _hits != self._hits:
             self._hit_index = 0
-            self._hits=_hits
+            self._hits = _hits
         # only allow cycling if we are in a known hit list
         if _hits == self._hits and self._hits:
             self._hit_index = (self._hit_index + delta) % len(self._hits)
         # now finally perform the auto completion
         if self._hits:
             self.delete(0, tk.END)
-            self.insert(0,self._hits[self._hit_index])
-            self.select_range(self.position,tk.END)
+            self.insert(0, self._hits[self._hit_index])
+            self.select_range(self.position, tk.END)
 
     def handle_keyrelease(self, event):
         """event handler for the keyrelease event on this widget"""
         if event.keysym == "BackSpace":
-            if self.position < self.index(tk.END): # delete the selection
+            if self.position < self.index(tk.END):  # delete the selection
                 self.delete(self.position, tk.END)
             else:
                 self.position = self.index(tk.END)
         if event.keysym == "Left":
-            if self.position < self.index(tk.END): # delete the selection
+            if self.position < self.index(tk.END):  # delete the selection
                 self.delete(self.position, tk.END)
         if event.keysym == "Right":
-            self.position = self.index(tk.END) # go to end (no selection)
+            self.position = self.index(tk.END)  # go to end (no selection)
         if event.keysym == "Down":
-            self.autocomplete(1) # cycle to next hit
+            self.autocomplete(1)  # cycle to next hit
         if event.keysym == "Up":
-            self.autocomplete(-1) # cycle to previous hit
+            self.autocomplete(-1)  # cycle to previous hit
         # perform normal autocomplete if event is a single key
         if len(event.keysym) == 1:
             self.autocomplete()
@@ -87,6 +87,7 @@ class AutoScrollbar(ttk.Scrollbar):
      works if you use the grid geometry manager.
      http://effbot.org/zone/tkinter-autoscrollbar.htm
     """
+
     def set(self, lo, hi):
         if float(lo) <= 0.0 and float(hi) >= 1.0:
             # grid_remove is currently missing from Tkinter!
@@ -95,8 +96,10 @@ class AutoScrollbar(ttk.Scrollbar):
         else:
             self.grid()
         ttk.Scrollbar.set(self, lo, hi)
+
     def pack(self, **kw):
         raise TclError("cannot use pack with this widget")
+
     def place(self, **kw):
         raise TclError("cannot use place with this widget")
 
@@ -105,6 +108,7 @@ class LabelEntry(ttk.Frame):
     """
     Generate a ttk.Entry form field with a text label above it.
     """
+
     def __init__(self, parent, label, default_text="", style=None, width=0):
         ttk.Frame.__init__(self, parent)
 
@@ -119,22 +123,22 @@ class LabelEntry(ttk.Frame):
         self.label.pack(side="top", fill="x", expand=True)
         self.entry.pack(side="top", fill="x", expand=True)
 
-    def clear(self): 
+    def clear(self):
         self.entry.delete(0, 'end')
 
-    def get(self): 
+    def get(self):
         return self.entry.get()
 
-    def set(self, text): 
+    def set(self, text):
         self.entry.insert(0, text)
 
-    def set_label(self, text): 
+    def set_label(self, text):
         self.label.config(text=text)
 
-    def disable(self): 
+    def disable(self):
         self.entry.configure(state="disabled")
 
-    def enable(self): 
+    def enable(self):
         self.entry.configure(state="enabled")
 
 
@@ -142,6 +146,7 @@ class LabelText(ttk.Frame):
     """
     Generate an empty tkinter.scrolledtext form field with a text label above it.
     """
+
     def __init__(self, parent, label, style=None, width=0, height=0):
         ttk.Frame.__init__(self, parent)
         if style:
@@ -150,10 +155,10 @@ class LabelText(ttk.Frame):
             self.label = ttk.Label(self, text=label, anchor="w")
 
         self.scrolledtext = ScrolledText(self, font=("Helvetica-Neue", 12),
-                                        highlightcolor="LightSteelBlue2", 
-                                        wrap='word', 
-                                        width=width, 
-                                        height=height)
+                                         highlightcolor="LightSteelBlue2",
+                                         wrap='word',
+                                         width=width,
+                                         height=height)
 
         self.label.pack(side="top", fill="x", expand=False)
         self.scrolledtext.pack(side="top", fill="both", expand=True)
@@ -164,36 +169,38 @@ class LabelText(ttk.Frame):
     def set(self, text):
         self.scrolledtext.insert('insert', text)
 
-    def clear(self): 
+    def clear(self):
         self.scrolledtext.delete('1.0', 'end')
-        
-    def set_label(self, text): 
+
+    def set_label(self, text):
         self.label.config(text=text)
 
-    def enable(self): 
+    def enable(self):
         self.scrolledtext.configure(state="enabled", bg="white")
-    
+
     def disable(self):
-        self.scrolledtext.configure(state="disabled", 
+        self.scrolledtext.configure(state="disabled",
                                     bg="#fafafa",
-                                    highlightbackground = "#fafafa",
-                                    highlightthickness = 1)
+                                    highlightbackground="#fafafa",
+                                    highlightthickness=1)
 
 
 class StatusBar(ttk.Frame):
     """ Simple Status Bar class - based on ttk.Frame """
-    def __init__(self,master):
-        ttk.Frame.__init__(self,master)
+
+    def __init__(self, master):
+        ttk.Frame.__init__(self, master)
         self.lblStatusColor = "grey22"
         self.statusFont = tkinter.font.Font(family="Lucida Grande", size=11)
-        self.label = ttk.Label(self,anchor=tk.W, font=self.statusFont, foreground=self.lblStatusColor)
+        self.label = ttk.Label(
+            self, anchor=tk.W, font=self.statusFont, foreground=self.lblStatusColor)
         self.label.pack()
         self.pack(side=tk.BOTTOM, fill=tk.X)
 
-    def set(self,texto):
+    def set(self, texto):
         self.label.config(text=texto)
         self.label.update_idletasks()
-        
+
     def clear(self):
         self.label.config(text="")
         self.label.update_idletasks()

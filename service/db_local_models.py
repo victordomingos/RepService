@@ -15,10 +15,10 @@ class Loja(Base):
     __tablename__ = 'loja'
     id = Column(Integer, primary_key=True)
     nome = Column(String)
-    utilizadores = relationship('Utilizador', secondary='loja_utilizador_link')
-    
+    utilizadores = relationship('User', secondary='loja_utilizador_link')
+
     def __repr__(self):
-        return f("<Loja(id={self.id}, Nome='{self.nome}', " + 
+        return f("<Loja(id={self.id}, Nome='{self.nome}', " +
                  "Utilizadores='{self.utilizadores}'>")
 
 
@@ -50,21 +50,24 @@ class Contact(Base):
     id = Column(Integer, primary_key=True)
     nome = Column(String, index=True, nullable=False, unique=True)
     empresa = Column(String, index=True, nullable=False)
-    telefone = Column(String) 
-    telemovel = Column(String)  
-    telefone_empresa = Column(String) 
-    email = Column(String) 
-    morada = Column(String) 
-    cod_postal = Column(String) 
-    localidade = Column(String) 
-    pais = Column(String) 
-    nif = Column(String) 
-    notas = Column(String) 
-    is_cliente = Column(Integer) 
-    is_fornecedor = Column(Integer) 
-    is_loja = Column(Integer) 
+    telefone = Column(String)
+    telemovel = Column(String)
+    telefone_empresa = Column(String)
+    email = Column(String)
+    morada = Column(String)
+    cod_postal = Column(String)
+    localidade = Column(String)
+    pais = Column(String)
+    nif = Column(String)
+    notas = Column(String)
+    is_cliente = Column(Integer)
+    is_fornecedor = Column(Integer)
+    is_loja = Column(Integer)
+    reparacoes = relationship('Repair', backref='contact', uselist=True)
+
     criado_por_utilizador_id = Column(Integer, ForeignKey('user.id'))
-    criado_por_utilizador = relationship(User, backref=backref('users', uselist=True))
+    criado_por_utilizador = relationship(
+        User, backref=backref('contact', uselist=True))
     created_on = Column(DateTime(), default=func.now)
     updated_on = Column(DateTime(), default=func.now, onupdate=func.now)
 
@@ -84,60 +87,71 @@ class Artigo(Base):
 
     def __repr__(self):
         return f("<Article(id={self.id}, descr_artigo='{self.descr_artigo}', " +
-                "P/N='{self.part_number}'>")
+                 "P/N='{self.part_number}'>")
 
 
 class Repair(Base):
     __tablename__ = 'repair'
     id = Column(Integer, primary_key=True)
+
     cliente_id = Column(Integer, ForeignKey('contact.id'))
-    cliente = relationship(Contact, backref=backref('contacts', uselist=True))
+    cliente = relationship("Contact", back_populates="repair")
+
     artigo_id = Column(Integer, ForeignKey('artigo.id'))
-    artigo = relationship(Artigo, backref=backref('artigos', uselist=True))
-    sn = Column(String) 
+    artigo = relationship("Artigo", back_populates="repair")
+
+    sn = Column(String)
+
     fornecedor_id = Column(Integer, ForeignKey('contact.id'))
-    fornecedor = relationship(Contact, backref=backref('contacts', uselist=True))
-    estado_artigo = Column(Integer) 
-    obs_estado = Column(String) 
-    is_garantia = Column(Integer) 
+    fornecedor = relationship("Contact", back_populates="repair")
+
+    estado_artigo = Column(Integer)
+    obs_estado = Column(String)
+    is_garantia = Column(Integer)
     data_compra = Column(DateTime())
-    num_fatura = Column(String) 
-    loja_compra = Column(String) 
-    desc_servico = Column(String) 
-    avaria_reprod_loja = Column(String) 
-    requer_copia_seg = Column(String) 
-    is_find_my_ativo = Column(Integer) 
-    Senha = Column(String) 
-    acessorios_entregues = Column(String) 
-    notas = Column(String) 
-    local_reparacao = Column(Integer) 
-    estado_reparacao = Column(String) 
-    fatura_fornecedor = Column(String) 
-    nar_autorizacao_rep  = Column(String) 
-    data_fatura_fornecedor  = Column(String) 
-    num_guia_rececao = Column(String) 
-    data_guia_rececao = Column(String) 
-    cod_resultado_reparacao = Column(String) 
-    descr_detalhe_reparacao = Column(String) 
-    novo_sn_artigo = Column(String) 
-    notas_entrega = Column(String) 
+    num_fatura = Column(String)
+    loja_compra = Column(String)
+    desc_servico = Column(String)
+    avaria_reprod_loja = Column(String)
+    requer_copia_seg = Column(String)
+    is_find_my_ativo = Column(Integer)
+    Senha = Column(String)
+    acessorios_entregues = Column(String)
+    notas = Column(String)
+    local_reparacao = Column(Integer)
+    estado_reparacao = Column(String)
+    fatura_fornecedor = Column(String)
+    nar_autorizacao_rep = Column(String)
+    data_fatura_fornecedor = Column(String)
+    num_guia_rececao = Column(String)
+    data_guia_rececao = Column(String)
+    cod_resultado_reparacao = Column(String)
+    descr_detalhe_reparacao = Column(String)
+    novo_sn_artigo = Column(String)
+    notas_entrega = Column(String)
+
     utilizador_entrega_id = Column(Integer, ForeignKey('user.id'))
-    utilizador_entrega = relationship(User, backref=backref('users', uselist=True))
-    data_entrega = Column(DateTime())     
-    num_quebra_stock = Column(String) 
+    utilizador_entrega = relationship(
+        User, backref=backref('repair', uselist=True))
+
+    data_entrega = Column(DateTime())
+    num_quebra_stock = Column(String)
     is_stock = Column(Integer)
-    modo_entrega = Column(Integer) 
-    reincidencia_processo_id = Column(Integer) 
-    morada_entrega = Column(String) 
+    modo_entrega = Column(Integer)
+    reincidencia_processo_id = Column(Integer)
+    morada_entrega = Column(String)
+
     criado_por_utilizador_id = Column(Integer, ForeignKey('user.id'))
-    criado_por_utilizador = relationship(User, backref=backref('users', uselist=True))
+    criado_por_utilizador = relationship(
+        User, backref=backref('repair', uselist=True))
     created_on = Column(DateTime(), default=func.now)
     updated_on = Column(DateTime(), default=func.now, onupdate=func.now)
 
     def __repr__(self):
         return f"<Repair(id={self.id})>"
-    
-    
 
 
-    
+class RepairClienteLink(Base):
+    __tablename__ = 'repair_cliente_link'
+    repair_id = Column(Integer, ForeignKey('repair.id'), primary_key=True)
+    cliente_id = Column(Integer, ForeignKey('contact.id'), primary_key=True)

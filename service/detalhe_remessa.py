@@ -18,8 +18,9 @@ from global_setup import *
 
 class remessaDetailWindow(ttk.Frame):
     """ Classe de base para a janela de detalhes de remessa """
-    def __init__(self, master, num_remessa, *args,**kwargs):
-        super().__init__(master,*args,**kwargs)
+
+    def __init__(self, master, num_remessa, *args, **kwargs):
+        super().__init__(master, *args, **kwargs)
         self.num_remessa = num_remessa
         self.reparacao_selecionada = ""
         self.master = master
@@ -31,8 +32,9 @@ class remessaDetailWindow(ttk.Frame):
         # Todo - obter da base de dados
         self.tipo = "entrada"
         self.tipo = "saída"
-        self.numero_contacto = "90000" #TODO numero de fornecedor
-        self.nome = "That International Provider of Great Stuff, Inc." #TODO Nome do fornecedor
+        self.numero_contacto = "90000"  # TODO numero de fornecedor
+        # TODO Nome do fornecedor
+        self.nome = "That International Provider of Great Stuff, Inc."
 
         self.artigo = "Um artigo que se encontra em reparação"
         self.estado_atual = "Em processamento"
@@ -57,12 +59,10 @@ class remessaDetailWindow(ttk.Frame):
         self.atualizar_soma()
         self.desativar_campos()
 
-
     def on_btn_fechar(self, event):
         """ Fecha esta janela. """
         window = event.widget.winfo_toplevel()
         window.destroy()
-
 
     def on_btn_anotar(self, event):
         """
@@ -71,16 +71,13 @@ class remessaDetailWindow(ttk.Frame):
         """
         pass
 
-
     def on_btn_imprimir(self, event):
         imprimir_guia_de_remessa(self.num_remessa)
-
 
     def contar_linhas(self):
         """ Obtém o número de linhas da tabela de processos desta remessa. """
         linhas = self.tree.get_children("")
         return len(linhas)
-
 
     def atualizar_soma(self):
         """
@@ -90,16 +87,20 @@ class remessaDetailWindow(ttk.Frame):
         texto = f"Nº de processos nesta remessa: {self.soma}"
         self.lbl_soma_processos.config(text=texto)
 
-
     def montar_barra_de_ferramentas(self):
-        self.lbl_titulo = ttk.Label(self.topframe, style="Panel_Title.TLabel", foreground=self.btnTxtColor, text=f"Remessa de {self.tipo} nº {self.num_remessa}")
+        self.lbl_titulo = ttk.Label(self.topframe, style="Panel_Title.TLabel",
+                                    foreground=self.btnTxtColor, text=f"Remessa de {self.tipo} nº {self.num_remessa}")
 
-        self.btn_anotar = ttk.Button(self.topframe, text="Adicionar nota", style="secondary.TButton")
-        self.dicas.bind(self.btn_anotar, 'Clique para acrescentar um novo apontamento\nà lista de observações desta remessa.')
+        self.btn_anotar = ttk.Button(
+            self.topframe, text="Adicionar nota", style="secondary.TButton")
+        self.dicas.bind(
+            self.btn_anotar, 'Clique para acrescentar um novo apontamento\nà lista de observações desta remessa.')
         self.btn_anotar.bind("<ButtonRelease>", self.on_btn_anotar)
 
-        self.btn_imprimir = ttk.Button(self.topframe, text="Imprimir", style="secondary.TButton")
-        self.dicas.bind(self.btn_imprimir, 'Clique para imprimir esta remessa.')
+        self.btn_imprimir = ttk.Button(
+            self.topframe, text="Imprimir", style="secondary.TButton")
+        self.dicas.bind(self.btn_imprimir,
+                        'Clique para imprimir esta remessa.')
         self.btn_anotar.bind("<ButtonRelease>", self.on_btn_imprimir)
 
         self.lbl_titulo.grid(column=0, row=0, rowspan=2)
@@ -107,48 +108,54 @@ class remessaDetailWindow(ttk.Frame):
         self.btn_imprimir.grid(column=9, row=0)
         self.topframe.grid_columnconfigure(5, weight=1)
 
-
     def desativar_campos(self):
-        # Desativar todos os campos de texto para não permitir alterações. ------------------------
+        # Desativar todos os campos de texto para não permitir alterações. ----
         self.txt_numero_contacto.configure(state="disabled")
         self.txt_nome.configure(state="disabled")
         self.ltxt_obs.disable()
         self.ltxt_data_remessa.disable()
 
-
     def montar_painel_principal(self):
         print(f"A mostrar detalhes da remessa nº {self.num_remessa}")
-        self.txt_numero_contacto = ttk.Entry(self.centerframe, font=("Helvetica-Neue", 12), width=5)
-        self.txt_nome = ttk.Entry(self.centerframe, font=("Helvetica-Neue", 12), width=35)
+        self.txt_numero_contacto = ttk.Entry(
+            self.centerframe, font=("Helvetica-Neue", 12), width=5)
+        self.txt_nome = ttk.Entry(
+            self.centerframe, font=("Helvetica-Neue", 12), width=35)
 
-        # TODO Preencher com dados da base de dados -------------------------------------------------
+        # TODO Preencher com dados da base de dados ---------------------------
         self.txt_numero_contacto.insert(0, self.numero_contacto)
         self.txt_nome.insert(0, self.nome)
 
-        self.tree = ttk.Treeview(self.treeframe, height=10, selectmode='browse', style="Reparacoes_Remessa.Treeview")
+        self.tree = ttk.Treeview(
+            self.treeframe, height=10, selectmode='browse', style="Reparacoes_Remessa.Treeview")
         self.tree['columns'] = ('Nº', 'Cliente', 'Equipamento', 'Serviço')
         #self.tree.pack(side='top', expand=True, fill='both')
         self.tree.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
         self.tree.column('Nº', anchor='ne', minwidth=46, stretch=0, width=46)
-        self.tree.column('Cliente', anchor='nw', minwidth=120, stretch=1, width=200)
-        self.tree.column('Equipamento', anchor='nw', minwidth=120, stretch=1, width=220)
-        self.tree.column('Serviço', anchor='nw', minwidth=120, stretch=1, width=290)
+        self.tree.column('Cliente', anchor='nw',
+                         minwidth=120, stretch=1, width=200)
+        self.tree.column('Equipamento', anchor='nw',
+                         minwidth=120, stretch=1, width=220)
+        self.tree.column('Serviço', anchor='nw',
+                         minwidth=120, stretch=1, width=290)
 
         # Ordenar por coluna ao clicar no respetivo cabeçalho
         for col in self.tree['columns']:
             self.tree.heading(col, text=col.title(),
-            command=lambda c=col: self.sortBy(self.tree, c, 0))
+                              command=lambda c=col: self.sortBy(self.tree, c, 0))
 
         # Barra de deslocação para a tabela
         self.tree.grid(column=0, row=0, sticky="nsew", in_=self.treeframe)
-        self.vsb = AutoScrollbar(self.treeframe, orient="vertical", command=self.tree.yview)
+        self.vsb = AutoScrollbar(
+            self.treeframe, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=self.vsb.set)
         self.vsb.grid(column=1, row=0, sticky="ns", in_=self.treeframe)
 
+        self.lbl_soma_processos = ttk.Label(
+            self.centerframe, text=f"Nº de processos nesta remessa: {self.soma}", style="Panel_Body.TLabel")
 
-        self.lbl_soma_processos = ttk.Label(self.centerframe, text=f"Nº de processos nesta remessa: {self.soma}", style="Panel_Body.TLabel")
-
-        self.ltxt_obs = LabelText(self.centerframe, "Observações:", width=35, height=3, style="Panel_Body.TLabel")
+        self.ltxt_obs = LabelText(
+            self.centerframe, "Observações:", width=35, height=3, style="Panel_Body.TLabel")
         self.ltxt_obs.set(self.obs)
 
         if self.tipo == "saída":
@@ -156,14 +163,16 @@ class remessaDetailWindow(ttk.Frame):
         else:
             txt = "receção"
         txt = f"Data de {txt}:"
-        self.ltxt_data_remessa = LabelEntry(self.centerframe, txt, width=20, style="Panel_Body.TLabel")
+        self.ltxt_data_remessa = LabelEntry(
+            self.centerframe, txt, width=20, style="Panel_Body.TLabel")
         self.ltxt_data_remessa.set(self.data_remessa)
 
         self.txt_numero_contacto.grid(row=1, column=0)
         self.txt_nome.grid(row=1, column=1, columnspan=2, sticky="we")
         self.ltxt_obs.grid(column=0, row=5, columnspan=2, sticky='we')
         self.ltxt_data_remessa.grid(column=2, row=5, sticky='ne')
-        self.lbl_soma_processos.grid(column=2, row=4, columnspan=2, sticky='ne', pady="5 25", padx=3)
+        self.lbl_soma_processos.grid(
+            column=2, row=4, columnspan=2, sticky='ne', pady="5 25", padx=3)
 
         self.treeframe.grid(column=0, row=3, columnspan=3, sticky="nsew")
 
@@ -177,14 +186,13 @@ class remessaDetailWindow(ttk.Frame):
         self.bind_tree()
         self.desativar_campos()
 
-
     def bind_tree(self):
         self.tree.bind('<<TreeviewSelect>>', self.selectItem_popup)
-        self.tree.bind('<Double-1>', lambda x: self.create_window_detalhe_rep(num_reparacao=self.reparacao_selecionada))
+        self.tree.bind('<Double-1>', lambda x: self.create_window_detalhe_rep(
+            num_reparacao=self.reparacao_selecionada))
         self.tree.bind("<Button-2>", self.popupMenu)
         self.tree.bind("<Button-3>", self.popupMenu)
         self.update_idletasks()
-
 
     def unbind_tree(self):
         self.tree.bind('<<TreeviewSelect>>', None)
@@ -199,7 +207,6 @@ class remessaDetailWindow(ttk.Frame):
         self.selectItem()
         self.popupMenu(event)
 
-
     def popupMenu(self, event):
         """action in event of button 3 on tree view"""
         # select row under mouse
@@ -208,7 +215,7 @@ class remessaDetailWindow(ttk.Frame):
         iid = self.tree.identify_row(event.y)
         x, y = event.x_root, event.y_root
         if iid:
-            if x!=0 and y!=0:
+            if x != 0 and y != 0:
                 # mouse pointer over item
                 self.tree.selection_set(iid)
                 self.tree.focus(iid)
@@ -224,7 +231,6 @@ class remessaDetailWindow(ttk.Frame):
             # no action required
             pass
 
-
     def selectItem(self, *event):
         """
         Obter reparação selecionada (após clique de rato na linha correspondente)
@@ -237,9 +243,7 @@ class remessaDetailWindow(ttk.Frame):
         #self.my_statusbar.set(f"{num_reparacao} • {equipamento}")
         self.reparacao_selecionada = num_reparacao
 
-
-
-    # ------ Permitir que a tabela possa ser ordenada clicando no cabeçalho ----------------------
+    # ------ Permitir que a tabela possa ser ordenada clicando no cabeçalho --
     def isNumeric(self, s):
         """
         test if a string s is numeric
@@ -263,26 +267,27 @@ class remessaDetailWindow(ttk.Frame):
             return new_data
         return data
 
-
     def sortBy(self, tree, col, descending):
         """
         sort tree contents when a column header is clicked
         """
         # grab values to sort
-        data = [(tree.set(child, col), child) for child in tree.get_children('')]
+        data = [(tree.set(child, col), child)
+                for child in tree.get_children('')]
         # if the data to be sorted is numeric change to float
-        data =  self.changeNumeric(data)
+        data = self.changeNumeric(data)
         # now sort the data in place
         data.sort(reverse=descending)
         for ix, item in enumerate(data):
             tree.move(item[1], '', ix)
         # switch the heading so that it will sort in the opposite direction
-        tree.heading(col, command=lambda col=col: self.sortBy(tree, col, int(not descending)))
+        tree.heading(col, command=lambda col=col: self.sortBy(
+            tree, col, int(not descending)))
         self.alternar_cores(tree)
-    # ------ Fim das funções relacionadas c/ o ordenamento da tabela -----------------------------
+    # ------ Fim das funções relacionadas c/ o ordenamento da tabela ---------
 
-
-    def alternar_cores(self, tree, inverso=False, fundo1='grey98', fundo2='white'):
+    def alternar_cores(self, tree, inverso=False,
+                       fundo1='grey98', fundo2='white'):
         tree = tree
         if inverso == False:
             impar = True
@@ -301,21 +306,22 @@ class remessaDetailWindow(ttk.Frame):
         tree.tag_configure('impar', background=fundo2)
         self.update_idletasks()
 
-
     def montar_rodape(self):
-        #TODO - obter dados da base de dados
+        # TODO - obter dados da base de dados
         txt = "Remessa criada por Victor Domingos em 12/05/2021 18:01."
 
         self.rodapeFont = tk.font.Font(family="Lucida Grande", size=9)
         self.rodapeTxtColor = "grey22"
 
-        self.txt = ttk.Label(self.bottomframe, anchor='n', text=txt, font=self.rodapeFont, foreground=self.rodapeTxtColor)
+        self.txt = ttk.Label(self.bottomframe, anchor='n', text=txt,
+                             font=self.rodapeFont, foreground=self.rodapeTxtColor)
         self.txt.pack(side="top")
 
-
     def configurar_frames_e_estilos(self):
-        self.master.minsize(W_DETALHE_REMESSA_MIN_WIDTH, W_DETALHE_REMESSA_MIN_HEIGHT)
-        self.master.maxsize(W_DETALHE_REMESSA_MAX_WIDTH, W_DETALHE_REMESSA_MAX_HEIGHT)
+        self.master.minsize(W_DETALHE_REMESSA_MIN_WIDTH,
+                            W_DETALHE_REMESSA_MIN_HEIGHT)
+        self.master.maxsize(W_DETALHE_REMESSA_MAX_WIDTH,
+                            W_DETALHE_REMESSA_MAX_HEIGHT)
         self.master.geometry(W_DETALHE_REMESSA_GEOMETRIA)
         self.dicas = Pmw.Balloon(self.master, label_background='#f6f6f6',
                                  hull_highlightbackground='#b3b3b3',
@@ -331,13 +337,13 @@ class remessaDetailWindow(ttk.Frame):
         self.bottomframe = ttk.Frame(self.mainframe, padding="3 1 3 1")
 
         self.estilo = ttk.Style()
-        self.estilo.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
+        self.estilo.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=(
+            "Helvetica Neue", 18, "bold"))
         self.estilo.configure("Active.TButton", foreground="white")
         self.estilo.configure('Reparacoes_Remessa.Treeview', rowheight=42)
 
         self.btnFont = tk.font.Font(family="Lucida Grande", size=10)
         self.btnTxtColor = "grey22"
-
 
     def composeFrames(self):
         self.topframe.pack(side=tk.TOP, fill=tk.X, expand=False)
@@ -345,16 +351,20 @@ class remessaDetailWindow(ttk.Frame):
         self.centerframe.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.mainframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
 
-
     def create_window_detalhe_rep(self, num_reparacao=None):
         self.rep_detail_windows_count += 1
-        self.rep_newDetailsWindow[self.rep_detail_windows_count] = tk.Toplevel()
-        self.janela_detalhes_rep = repairDetailWindow(self.rep_newDetailsWindow[self.rep_detail_windows_count], num_reparacao)
-
+        self.rep_newDetailsWindow[self.rep_detail_windows_count] = tk.Toplevel(
+        )
+        self.janela_detalhes_rep = repairDetailWindow(
+            self.rep_newDetailsWindow[self.rep_detail_windows_count], num_reparacao)
 
     def inserir_dados_de_exemplo(self):
-        for i in range(1,36,4):
-            self.tree.insert("", "end", text="", values=(str(i), "José N. P. K. da Silva Rodrigues", "Artigo Muito Jeitoso (Early 2015)", "Substituição de ecrã"))
-            self.tree.insert("", "end", text="", values=(str(i+1),"Joana Manuela Fantástica Rodrigues", "Outro Artigo Bem Jeitoso", "Bateria não carrega"))
-            self.tree.insert("", "end", text="", values=(str(i+2),"Maria Gomes Simpática", "Smartphone Daqueles Bons", textwrap.fill("O equipamento não liga, na sequência de exposição a líquidos. Testar e verificar se é possível reparar. Caso contrário, apresentar orçamento para a sua substituição.", width=50)))
-            self.tree.insert("", "end", text="", values=(str(i+3),"Aristides Apolinário Belo Esteves", "Smartphone Daqueles Fraquinhos", textwrap.fill("A bateria dura pouco tempo.", width=50)))
+        for i in range(1, 36, 4):
+            self.tree.insert("", "end", text="", values=(str(
+                i), "José N. P. K. da Silva Rodrigues", "Artigo Muito Jeitoso (Early 2015)", "Substituição de ecrã"))
+            self.tree.insert("", "end", text="", values=(str(
+                i + 1), "Joana Manuela Fantástica Rodrigues", "Outro Artigo Bem Jeitoso", "Bateria não carrega"))
+            self.tree.insert("", "end", text="", values=(str(i + 2), "Maria Gomes Simpática", "Smartphone Daqueles Bons", textwrap.fill(
+                "O equipamento não liga, na sequência de exposição a líquidos. Testar e verificar se é possível reparar. Caso contrário, apresentar orçamento para a sua substituição.", width=50)))
+            self.tree.insert("", "end", text="", values=(str(i + 3), "Aristides Apolinário Belo Esteves",
+                                                         "Smartphone Daqueles Fraquinhos", textwrap.fill("A bateria dura pouco tempo.", width=50)))

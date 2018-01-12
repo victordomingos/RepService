@@ -35,13 +35,16 @@ class thanks_window:
         self.thanksRoot.update_idletasks()
         w = self.thanksRoot.winfo_screenwidth()
         h = self.thanksRoot.winfo_screenheight()
-        self.size = tuple(int(_) for _ in self.thanksRoot.geometry().split('+')[0].split('x'))
-        self.x = int(w/2 - self.about_w/2)
-        self.y = int(h/3 - self.about_h/2)
+        self.size = tuple(
+            int(_) for _ in self.thanksRoot.geometry().split('+')[0].split('x'))
+        self.x = int(w / 2 - self.about_w / 2)
+        self.y = int(h / 3 - self.about_h / 2)
         self.thanksRoot.configure(background='grey92')
-        self.thanksRoot.geometry("{}x{}+{}+{}".format(self.about_w,self.about_h,self.x,self.y))
+        self.thanksRoot.geometry(
+            "{}x{}+{}+{}".format(self.about_w, self.about_h, self.x, self.y))
         self.thanksframe = ttk.Frame(self.thanksRoot, padding="10 10 10 10")
-        self.thanksframe_bottom = ttk.Frame(self.thanksRoot, padding="10 10 10 10")
+        self.thanksframe_bottom = ttk.Frame(
+            self.thanksRoot, padding="10 10 10 10")
 
         self.campo_texto = tk.Text(self.thanksframe, height=20)
         self.campo_texto.insert("end", "\n".join(CREDITS))
@@ -49,12 +52,12 @@ class thanks_window:
         self.campo_texto.tag_add("center", 1.0, "end")
         self.campo_texto.pack(side='top')
 
-        self.close_button = ttk.Button(self.thanksframe_bottom, text="Obrigado!", command=self.thanksRoot.destroy)
+        self.close_button = ttk.Button(
+            self.thanksframe_bottom, text="Obrigado!", command=self.thanksRoot.destroy)
         self.close_button.pack()
         self.thanksframe.pack(side=tk.TOP)
         self.thanksframe_bottom.pack(side=tk.BOTTOM)
         self.thanksRoot.bind("<Command-w>", self.close_window)
-
 
     def close_window(self, event):
         window = event.widget.winfo_toplevel()
@@ -75,11 +78,13 @@ class about_window:
         self.popupRoot.update_idletasks()
         w = self.popupRoot.winfo_screenwidth()
         h = self.popupRoot.winfo_screenheight()
-        size = tuple(int(_) for _ in self.popupRoot.geometry().split('+')[0].split('x'))
-        x = int(w/2 - self.about_w/2)
-        y = int(h/3 - self.about_h/2)
+        size = tuple(int(_)
+                     for _ in self.popupRoot.geometry().split('+')[0].split('x'))
+        x = int(w / 2 - self.about_w / 2)
+        y = int(h / 3 - self.about_h / 2)
         self.popupRoot.configure(background='grey92')
-        self.popupRoot.geometry("{}x{}+{}+{}".format(self.about_w,self.about_h,x,y))
+        self.popupRoot.geometry(
+            "{}x{}+{}+{}".format(self.about_w, self.about_h, x, y))
 
         self.pframe_topo = ttk.Frame(self.popupRoot, padding="10 10 10 2")
         self.pframe_meio = ttk.Frame(self.popupRoot, padding="10 2 2 10")
@@ -91,26 +96,28 @@ class about_window:
         self.label.pack(side='top')
         self.label.bind('<Button-1>', thanks)
 
-
         self.appfont = tkinter.font.Font(size=15, weight='bold')
         self.copyfont = tkinter.font.Font(size=10)
 
         #---------- TOPO -----------
-        self.app_lbl = ttk.Label(self.pframe_topo, font=self.appfont, text=__app_name__)
-        self.assin_lbl = ttk.Label(self.pframe_topo,text="\nO seu gestor avançado de reparações.\n")
-        self.version_lbl = ttk.Label(self.pframe_topo, font=self.copyfont, text="Versão {}\n\n\n".format(__version__))
+        self.app_lbl = ttk.Label(
+            self.pframe_topo, font=self.appfont, text=__app_name__)
+        self.assin_lbl = ttk.Label(
+            self.pframe_topo, text="\nO seu gestor avançado de reparações.\n")
+        self.version_lbl = ttk.Label(
+            self.pframe_topo, font=self.copyfont, text="Versão {}\n\n\n".format(__version__))
 
         #---------- MEIO -----------
 
-
         #---------- FUNDO -----------
-        self.copyright_lbl = ttk.Label(self.pframe_fundo, font=self.copyfont, text="\n\n\n© 2017 Victor Domingos")
-        self.license_lbl = ttk.Label(self.pframe_fundo, font=self.copyfont, text=__license__)
+        self.copyright_lbl = ttk.Label(
+            self.pframe_fundo, font=self.copyfont, text="\n\n\n© 2017 Victor Domingos")
+        self.license_lbl = ttk.Label(
+            self.pframe_fundo, font=self.copyfont, text=__license__)
 
         self.app_lbl.pack()
         self.assin_lbl.pack()
         self.version_lbl.pack()
-
 
         self.copyright_lbl.pack()
         self.license_lbl.pack()
@@ -122,7 +129,6 @@ class about_window:
         self.popupRoot.bind("<Command-w>", self.close_window)
 
         self.popupRoot.mainloop()
-
 
     def close_window(self, event):
         window = event.widget.winfo_toplevel()

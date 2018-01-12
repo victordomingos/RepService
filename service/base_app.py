@@ -18,6 +18,7 @@ from global_setup import *
 class AppStatus:
     """ Classe com variáveis globais relativas ao estado atual da aplicação.
     """
+
     def __init__(self):
         self.janela_remessas = None   # Guarda referência para o objeto da janela de remessas
         self.janela_contactos = None  # Guarda referência para o objeto da janela de contactos
@@ -30,9 +31,6 @@ class AppStatus:
         self.painel_nova_remessa_aberto = False
         self.contacto_para_nova_reparacao = None
         self.tipo_novo_contacto = None
-        self.username = None
-        self.password = None
-        self.loggedin = False
 
 
 class baseApp(ttk.Frame):
@@ -55,24 +53,24 @@ class baseApp(ttk.Frame):
     São criados alguns objetos e métodos comuns às várias janelas da aplicação:
         - popupMsg() - mensagens breves dentro da janela (tipo notificações)
     """
-    def __init__(self,master,*args,**kwargs):
-        super().__init__(master,*args,**kwargs)
+
+    def __init__(self, master, *args, **kwargs):
+        super().__init__(master, *args, **kwargs)
         self.master = master
         self.estilo = ttk.Style()
         self.is_entryform_visible = False
 
         self.dicas = Pmw.Balloon(self.master, label_background='#f6f6f6',
-                                              hull_highlightbackground='#b3b3b3',
-                                              state='balloon',
-                                              relmouse='both',
-                                              yoffset=18,
-                                              xoffset=-2,
-                                              initwait=1300)
+                                 hull_highlightbackground='#b3b3b3',
+                                 state='balloon',
+                                 relmouse='both',
+                                 yoffset=18,
+                                 xoffset=-2,
+                                 initwait=1300)
 
         self.mainframe = ttk.Frame(master)
         self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 5")
         self.centerframe = ttk.Frame(self.mainframe)
-
 
         self.leftframe = ttk.Frame(self.centerframe)
         self.rightframe = ttk.Frame(self.centerframe)
@@ -89,19 +87,28 @@ class baseApp(ttk.Frame):
         self.btnTxtColor = "grey22"
         self.btnTxtColor_active = "white"
 
-        self.tree = ttk.Treeview(self.leftframe, height=60, selectmode='browse')
+        self.tree = ttk.Treeview(
+            self.leftframe, height=60, selectmode='browse')
 
-        # Formulário de introdução de dados (aparece somente quando o utilizador solicita) ----------------------------
+        # Formulário de introdução de dados (aparece somente quando o utilizado
         self.entryframe = ttk.Frame(master, padding="4 8 4 10")
-        self.estilo.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=("Helvetica Neue", 18, "bold"))
-        self.estilo.configure("Panel_Section_Title.TLabelframe.Label", foreground="grey25", font=("Helvetica Neue", 14, "bold"))
+        self.estilo.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=(
+            "Helvetica Neue", 18, "bold"))
+        self.estilo.configure("Panel_Section_Title.TLabelframe.Label",
+                              foreground="grey25", font=("Helvetica Neue", 14, "bold"))
         self.estilo.configure("Panel_Body.TLabel", font=("Lucida Grande", 11))
-        self.estilo.configure("Panel_Body.TRadiobutton", font=("Lucida Grande", 11))
+        self.estilo.configure("Panel_Body.TRadiobutton",
+                              font=("Lucida Grande", 11))
 
-        self.estilo.layout('Panel_Body.Checkbutton', self.estilo.layout('TCheckbutton'))  # Copia o estilo padrão dos widgets Checkbutton.
-        self.estilo.map('Panel_Body.Checkbutton', **self.estilo.map('TCheckbutton'))
-        self.estilo.configure('Panel_Body.Checkbutton', **self.estilo.map('TCheckbutton'))
-        self.estilo.configure('Panel_Body.Checkbutton', font=("Lucida Grande", 11))
+        # Copia o estilo padrão dos widgets Checkbutton.
+        self.estilo.layout('Panel_Body.Checkbutton',
+                           self.estilo.layout('TCheckbutton'))
+        self.estilo.map('Panel_Body.Checkbutton', **
+                        self.estilo.map('TCheckbutton'))
+        self.estilo.configure('Panel_Body.Checkbutton', **
+                              self.estilo.map('TCheckbutton'))
+        self.estilo.configure('Panel_Body.Checkbutton',
+                              font=("Lucida Grande", 11))
 
         #self.estilo.configure(".TLabel", foreground="grey25", font=("Helvetica Neue", 18, "bold"))
 
@@ -112,15 +119,16 @@ class baseApp(ttk.Frame):
         self.entryfr4 = ttk.Frame(self.entryframe)
         self.entryfr5 = ttk.Frame(self.entryframe)
 
-        #get status bar
+        # get status bar
         self.my_statusbar = StatusBar(self.mainframe)
 
-        self.estilo.configure('Treeview', font=("Lucida Grande", 11), foreground="grey22", rowheight=20)
-        self.estilo.configure('Treeview.Heading', font=("Lucida Grande", 11), foreground="grey22")
-        self.estilo.configure( 'Treeview', relief = 'flat', borderwidth = 0)
+        self.estilo.configure('Treeview', font=(
+            "Lucida Grande", 11), foreground="grey22", rowheight=20)
+        self.estilo.configure('Treeview.Heading', font=(
+            "Lucida Grande", 11), foreground="grey22")
+        self.estilo.configure('Treeview', relief='flat', borderwidth=0)
 
         self.composeFrames()
-
 
     def show_entryform(self, *event):
         if not self.is_entryform_visible:
@@ -130,25 +138,27 @@ class baseApp(ttk.Frame):
             self.my_statusbar.lift()
 
             if SLOW_MACHINE:
-                self.entryframe.place(in_=self.my_statusbar, relx=1,  y=0, anchor="se", relwidth=1, bordermode="outside")
+                self.entryframe.place(
+                    in_=self.my_statusbar, relx=1, y=0, anchor="se", relwidth=1, bordermode="outside")
             else:
-                for y in range(-30,-12,6):
+                for y in range(-30, -12, 6):
                     self.entryframe.update()
                     y = y**2
-                    self.entryframe.place(in_=self.my_statusbar, relx=1,  y=y, anchor="se", relwidth=1, bordermode="outside")
-                for y in range(-12,-3,3):
+                    self.entryframe.place(
+                        in_=self.my_statusbar, relx=1, y=y, anchor="se", relwidth=1, bordermode="outside")
+                for y in range(-12, -3, 3):
                     self.entryframe.update()
                     y = y**2
-                    self.entryframe.place(in_=self.my_statusbar, relx=1,  y=y, anchor="se", relwidth=1, bordermode="outside")
-                for y in range(-3,0,1):
+                    self.entryframe.place(
+                        in_=self.my_statusbar, relx=1, y=y, anchor="se", relwidth=1, bordermode="outside")
+                for y in range(-3, 0, 1):
                     self.entryframe.update()
                     y = y**2
-                    self.entryframe.place(in_=self.my_statusbar, relx=1,  y=y, anchor="se", relwidth=1, bordermode="outside")
-
+                    self.entryframe.place(
+                        in_=self.my_statusbar, relx=1, y=y, anchor="se", relwidth=1, bordermode="outside")
 
             self.entryframe.lift()
             #self.entryframe.bind_all("<Escape>", self.hide_entryform)
-
 
     def hide_entryform(self, *event):
         if self.is_entryform_visible:
@@ -157,13 +167,12 @@ class baseApp(ttk.Frame):
             self.my_statusbar.lift()
 
             if not SLOW_MACHINE:
-                for y in range(0,11,2):
-                    self.entryframe.place(in_=self.my_statusbar, relx=1,  y=y**2, anchor="se", relwidth=1, bordermode="outside")
+                for y in range(0, 11, 2):
+                    self.entryframe.place(
+                        in_=self.my_statusbar, relx=1, y=y**2, anchor="se", relwidth=1, bordermode="outside")
                     self.entryframe.update()
 
             self.entryframe.place_forget()
-            
-
 
     def composeFrames(self):
         self.topframe.pack(side='top', fill='x')
@@ -179,23 +188,23 @@ class baseApp(ttk.Frame):
         self.entryfr5.pack(side='top', expand=True, fill='both')
         self.estilo.configure("secondary.TButton", font=("Lucida Grande", 11))
 
-
     def popupMsg(self, msg):
         """
         Mostrar um painel de notificação com uma mensagem
         """
         self.update_idletasks()
-        x, y = int(root.winfo_width()/2), 76
+        x, y = int(root.winfo_width() / 2), 76
         self.popupframe = ttk.Frame(root, padding="15 15 15 15")
-        self.msglabel = ttk.Label(self.popupframe, font=self.statusFont, foreground=self.btnTxtColor, text=msg)
+        self.msglabel = ttk.Label(
+            self.popupframe, font=self.statusFont, foreground=self.btnTxtColor, text=msg)
         self.msglabel.pack()
-        for i in range(1,10,2):
-            self.popupframe.place(x=x,  y=y+i, anchor="n", bordermode="outside")
+        for i in range(1, 10, 2):
+            self.popupframe.place(
+                x=x, y=y + i, anchor="n", bordermode="outside")
             self.popupframe.update()
         self.popupframe.after(1500, self.popupframe.destroy)
 
-
-    # ------ Permitir que a tabela possa ser ordenada clicando no cabeçalho ----------------------
+    # ------ Permitir que a tabela possa ser ordenada clicando no cabeçalho --
     def isNumeric(self, s):
         """
         test if a string s is numeric
@@ -219,26 +228,27 @@ class baseApp(ttk.Frame):
             return new_data
         return data
 
-
     def sortBy(self, tree, col, descending):
         """
         sort tree contents when a column header is clicked
         """
         # grab values to sort
-        data = [(tree.set(child, col), child) for child in tree.get_children('')]
+        data = [(tree.set(child, col), child)
+                for child in tree.get_children('')]
         # if the data to be sorted is numeric change to float
-        data =  self.changeNumeric(data)
+        data = self.changeNumeric(data)
         # now sort the data in place
         data.sort(reverse=descending)
         for ix, item in enumerate(data):
             tree.move(item[1], '', ix)
         # switch the heading so that it will sort in the opposite direction
-        tree.heading(col, command=lambda col=col: self.sortBy(tree, col, int(not descending)))
+        tree.heading(col, command=lambda col=col: self.sortBy(
+            tree, col, int(not descending)))
         self.alternar_cores(tree)
-    # ------ Fim das funções relacionadas c/ o ordenamento da tabela -----------------------------
+    # ------ Fim das funções relacionadas c/ o ordenamento da tabela ---------
 
-
-    def alternar_cores(self, tree, inverso=False, fundo1='grey98', fundo2='white'):
+    def alternar_cores(self, tree, inverso=False,
+                       fundo1='grey98', fundo2='white'):
         tree = tree
         if inverso == False:
             impar = True
@@ -257,15 +267,15 @@ class baseApp(ttk.Frame):
         tree.tag_configure('impar', background=fundo2)
         self.update_idletasks()
 
-
     def configurarTree(self):
         # Ordenar por coluna ao clicar no respetivo cabeçalho
         for col in self.tree['columns']:
             self.tree.heading(col, text=col.title(),
-            command=lambda c=col: self.sortBy(self.tree, c, 0))
+                              command=lambda c=col: self.sortBy(self.tree, c, 0))
 
         # Barra de deslocação para a tabela
         self.tree.grid(column=0, row=0, sticky="nsew", in_=self.leftframe)
-        self.vsb = AutoScrollbar(self.leftframe, orient="vertical", command=self.tree.yview)
+        self.vsb = AutoScrollbar(
+            self.leftframe, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=self.vsb.set)
         self.vsb.grid(column=1, row=0, sticky="ns", in_=self.leftframe)

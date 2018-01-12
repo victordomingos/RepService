@@ -16,13 +16,14 @@ from global_setup import LOCAL_DATABASE_PATH
 
 
 def init_database():
-    engine = create_engine('sqlite:///'+os.path.expanduser(LOCAL_DATABASE_PATH))
+    engine = create_engine(
+        'sqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
     session = sessionmaker()
     session.configure(bind=engine)
     db_base.Base.metadata.create_all(engine)
 
 
-#TODO
+# TODO
 def validate_login(username, password):
     """ Check if username and password match the info in database. Token stuff
         is provided here only to ensure code compatibility for future web API
@@ -34,7 +35,7 @@ def validate_login(username, password):
     else:
         loggedin = False
         token = None
-        
+
     return loggedin, token
 
 
@@ -42,7 +43,7 @@ def change_password(username, old_password, new_password1):
     """ Change the password for the given user if the old passowrd matches.
     """
     print("DB: Changing password for the user {username}.")
-    result = True # TODO
+    result = True  # TODO
     return result
 
 
@@ -50,8 +51,8 @@ def save_repair(rep_num):
     print("a guardar o processo de reparação", rep_num)
     db_last_rep_number = "1234"
     return db_last_rep_number
-    
-    
+
+
 def save_contact(contacto):
     print("a guardar o contacto", contacto)
     db_last_contact_number = "999"
@@ -66,7 +67,7 @@ def save_remessa(remessa):
 
 def obter_lista_fornecedores():
     print("A obter lista atualizada de fornecedores e/ou centros técnicos.")
-    #TODO:
+    # TODO:
     fornecedores = ["Loja X",
                     "Importador Nacional A",
                     "Distribuidor Ibérico Y",
@@ -75,38 +76,37 @@ def obter_lista_fornecedores():
                     "Centro de assistência K"]
 
     return fornecedores
-    
+
 
 def obter_lista_processos_por_receber():
     print("A obter lista atualizada de processos de reparação que falta receber dos fornecedores e/ou centros técnicos.")
-    #TODO:
+    # TODO:
     lista = ["12234 - iPhone 7 128GB Space grey - José manuel da Silva Castro",
-            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
-            "25720 - Beats X - NPK - Network Project for Knowledge",
-            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda."]
+             "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
+             "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
+             "25720 - Beats X - NPK - Network Project for Knowledge",
+             "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
+             "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda."]
 
     return lista
 
 
 def obter_lista_processos_por_enviar():
     print("A obter lista atualizada de processos de reparação que falta receber dos fornecedores e/ou centros técnicos.")
-    #TODO:
+    # TODO:
     lista = ["12234 - iPhone 7 128GB Space grey - José manuel da Silva Castro",
-            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
-            "25720 - Beats X - NPK - Network Project for Knowledge",
-            "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-            "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda."]
+             "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
+             "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
+             "25720 - Beats X - NPK - Network Project for Knowledge",
+             "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
+             "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda."]
 
     return lista
 
 
-
 def obter_lista_fornecedores():
     print("A obter lista atualizada de fornecedores e/ou centros técnicos.")
-    #TODO:
+    # TODO:
     fornecedores = ["Loja X",
                     "Importador Nacional A",
                     "Distribuidor Ibérico Y",
@@ -115,16 +115,16 @@ def obter_lista_fornecedores():
                     "Centro de assistência K"]
 
     return fornecedores
-    
-    
+
+
 def obter_lista_artigos_emprest():
-    """ 
+    """
     Devolve um dicionário em que as chaves correspondem ao ID de artigo, sendo
-    o artigo definido através de uma tupla que contém a descrição e o número de 
+    o artigo definido através de uma tupla que contém a descrição e o número de
     série.
     """
     print("A obter lista atualizada de artigos de empréstimo. ")
-    #TODO:
+    # TODO:
     artigos = {"12234": ("iPhone 7 128GB Space grey", ""),
                "85738": ("MacBook Pro 15\" Retina", ""),
                "32738": ("iPod shuffle 2GB", ""),
@@ -138,37 +138,33 @@ def obter_lista_artigos_emprest():
                "85731": ("MacBook Pro 15\" Retina", "XWD45123456PTXCH"),
                "32730": ("iPod shuffle 2GB", "WXBG23123GB654P"),
                "25729": ("Beats X - NPK - Network Project for Knowledge", "")
-            }
+               }
     return artigos
 
-    
+
 def test_populate():
     loja = db_models.Loja(nome="That Great NPK Store")
-    utilizador = db_models.User(username="utilizador"+str(i), email="test@networkprojectforknowledge.org"+str(i), password="1234", loja=loja)
+    utilizador = db_models.User(username="utilizador" + str(
+        i), email="test@networkprojectforknowledge.org" + str(i), password="1234", loja=loja)
     contacto = db_models.Contact()
     artigo = db_models.Artigo()
     reparacao = db_models.Repair()
-    
+
     loja.utilizadores.append(utilizador)
-    
+
     session.add(loja)
     session.commit()
-    
-    #print(new_user)
-    #session.add(new_user)
-    #session.commit()
+
+    # print(new_user)
+    # session.add(new_user)
+    # session.commit()
     #print(">", new_user)
 
     #our_user = session.query(User).filter_by(username='Victor1').first()
     #print("OUR USER:", our_user)
 
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
     # Testing...
     init_database()
     test_populate()
-    
-    
-
-
-    
