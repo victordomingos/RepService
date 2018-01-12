@@ -102,9 +102,9 @@ class App(baseApp):
         #self.master.configure(background='grey92')
         self.root_login.geometry("{}x{}+{}+{}".format(LOGIN_MIN_WIDTH,LOGIN_MIN_HEIGHT,self.x,self.y))
         self.log_ltxt_username = LabelEntry(self.log_centerframe, label="Nome de Utilizador", width=30)
-        self.log_ltxt_password = LabelEntry(self.log_centerframe, label="Senha", width=30)
+        self.log_ltxt_password = LabelEntry(self.log_centerframe, label="Palavra-passe", width=30)
         self.log_ltxt_password.entry.config(show="•")
-        self.log_btn_alterar_senha = ttk.Button(self.log_centerframe, text="Alterar senha...", command=self.change_password)
+        self.log_btn_alterar_senha = ttk.Button(self.log_centerframe, text="Alterar palavra-passe…", command=self.change_password)
         self.log_btn_cancel = ttk.Button(self.log_centerframe, text="Cancelar", command=exit)
         self.log_btn_enter = ttk.Button(self.log_centerframe, text="Entrar", default="active", style="Active.TButton", command=self.validate_login)
 
@@ -174,9 +174,106 @@ class App(baseApp):
 
 
     def change_password(self):
-        print("a alterar senha...")
-        pass
+        self.log_ltxt_username.entry.focus_set()
+        self.root_chpwd = tk.Toplevel()        
+        self.root_chpwd.minsize(CHPWD_MIN_WIDTH, CHPWD_MIN_HEIGHT)
+        self.root_chpwd.maxsize(CHPWD_MAX_WIDTH, CHPWD_MAX_HEIGHT)
+        self.root_chpwd.configure(background='grey92')
+        self.root_chpwd.title('Alterar senha')
 
+        self.chpwd_mainframe = ttk.Frame(self.root_chpwd, padding="12 25 12 0")
+        self.chpwd_topframe = ttk.Frame(self.chpwd_mainframe, padding="5 8 5 0")
+        self.chpwd_centerframe = ttk.Frame(self.chpwd_mainframe)
+
+
+        self.chpwd_bottomframe = ttk.Frame(self.chpwd_mainframe)
+        self.chpwd_btnFont = tkinter.font.Font(family="Lucida Grande", size=10)
+        self.chpwd_btnTxtColor = "grey22"
+        self.chpwd_btnTxtColor_active = "white"
+
+        w = self.root_chpwd.winfo_screenwidth()
+        h = self.root_chpwd.winfo_screenheight()
+
+        size = tuple(int(_) for _ in self.root_chpwd.geometry().split('+')[0].split('x'))
+        x = int(w/2 - LOGIN_MIN_WIDTH/2)
+        y = int(h/3 - LOGIN_MIN_HEIGHT/2)
+
+        self.root_chpwd.geometry(f"{CHPWD_MIN_WIDTH}x{CHPWD_MIN_HEIGHT}+{x}+{y}")
+        self.chpwd_ltxt_username = LabelEntry(self.chpwd_centerframe, label="Nome de Utilizador", width=30)
+        self.chpwd_ltxt_old_password = LabelEntry(self.chpwd_centerframe, label="Palavra-passe antiga", width=30)
+        self.chpwd_ltxt_new_password1 = LabelEntry(self.chpwd_centerframe, label="Nova palavra-passe", width=30)
+        self.chpwd_ltxt_new_password2 = LabelEntry(self.chpwd_centerframe, label="Confirmar nova palavra-passe", width=30)
+        self.chpwd_ltxt_old_password.entry.config(show="•")
+        self.chpwd_ltxt_new_password1.entry.config(show="•")
+        self.chpwd_ltxt_new_password2.entry.config(show="•")
+
+        self.chpwd_btn_cancel = ttk.Button(self.chpwd_centerframe, text="Cancelar", command=self.root_chpwd.destroy)
+        self.chpwd_btn_alterar = ttk.Button(self.chpwd_centerframe, text="Alterar palavra-passe", default="active", style="Active.TButton", command=self.validate_change_password)
+
+
+        self.chpwd_ltxt_old_password.entry.bind("<Return>", lambda x: self.chpwd_ltxt_new_password1.entry.focus_set())
+        self.chpwd_ltxt_new_password1.entry.bind("<Return>", lambda x: self.chpwd_ltxt_new_password2.entry.focus_set())
+        self.chpwd_ltxt_new_password2.entry.bind("<Return>", self.validate_change_password)
+        self.chpwd_btn_alterar.bind("<Return>", self.validate_change_password)
+
+        self.chpwd_ltxt_username.entry.bind("<Escape>", lambda x: self.root_chpwd.destroy())
+        self.chpwd_ltxt_old_password.entry.bind("<Escape>", lambda x: self.root_chpwd.destroy())
+        self.chpwd_ltxt_new_password1.entry.bind("<Escape>", lambda x: self.root_chpwd.destroy())
+        self.chpwd_ltxt_new_password2.entry.bind("<Escape>", lambda x: self.root_chpwd.destroy())
+        self.chpwd_btn_alterar.bind("<Escape>", lambda x: exit())
+        self.chpwd_btn_cancel.bind("<Escape>", lambda x: exit())
+
+        self.chpwd_ltxt_username.entry.focus_set()
+
+        self.chpwd_ltxt_username.pack(side=tk.TOP, expand=False)
+        self.chpwd_ltxt_old_password.pack(side=tk.TOP, expand=False)
+        self.chpwd_ltxt_new_password1.pack(side=tk.TOP, expand=False)
+        self.chpwd_ltxt_new_password2.pack(side=tk.TOP, expand=False)
+        self.chpwd_btn_alterar.pack(side=tk.RIGHT)
+        self.chpwd_btn_cancel.pack(side=tk.RIGHT)
+
+
+        self.chpwd_centerframe.pack(side=tk.TOP, expand=True, fill='both')
+        self.chpwd_mainframe.pack(side=tk.TOP, expand=True, fill='both')
+
+
+    def validate_change_password(self, *event):
+        username = self.chpwd_ltxt_username.get()
+        old_password = self.chpwd_ltxt_old_password.get()
+        new_password1 = self.chpwd_ltxt_new_password1.get()
+        new_password2 = self.chpwd_ltxt_new_password2.get()
+
+        if new_password1 != new_password2:
+            messagebox.showwarning("", "As palavras-passe indicadas são diferentes!")
+            self.chpwd_ltxt_new_password1.clear()
+            self.chpwd_ltxt_new_password2.clear()
+            self.chpwd_ltxt_new_password1.entry.focus_set()
+            return
+        elif len(new_password1) < 3:
+            messagebox.showwarning("", "A palavra-passe que introduziu é demasiado curta!")
+            self.chpwd_ltxt_new_password1.clear()
+            self.chpwd_ltxt_new_password2.clear()
+            self.chpwd_ltxt_new_password1.entry.focus_set()
+            return
+
+        loggedin, _ = db.validate_login(username, old_password)
+        if loggedin:
+            if db.change_password(username, old_password, new_password1):
+                self.root_chpwd.destroy()
+                self.log_ltxt_username.entry.focus_set()
+            else:
+                messagebox.showwarning("", "Ocorreu um erro desconhecido ao tentar alterar a senha. Tente efetuar login com os seus dados. Se não conseguir, por favor contacte um administrador.")
+                self.chpwd_ltxt_username.clear()
+                self.chpwd_ltxt_old_password.clear()
+                self.chpwd_ltxt_new_password1.clear()
+                self.chpwd_ltxt_new_password2.clear()                
+                self.chpwd_ltxt_username.entry.focus_set()
+        else:
+            messagebox.showwarning("", "O nome de utilizador ou a palavra-passe não estão corretos.")
+            self.chpwd_ltxt_username.clear()
+            self.chpwd_ltxt_old_password.clear()
+            self.chpwd_ltxt_username.entry.focus_set()
+    
 
     def start_main_window(self):
         self.gerar_painel_mensagens()

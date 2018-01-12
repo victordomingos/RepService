@@ -38,6 +38,14 @@ def validate_login(username, password):
     return loggedin, token
 
 
+def change_password(username, old_password, new_password1):
+    """ Change the password for the given user if the old passowrd matches.
+    """
+    print("DB: Changing password for the user {username}.")
+    result = True # TODO
+    return result
+
+
 def save_repair(rep_num):
     print("a guardar o processo de reparação", rep_num)
     db_last_rep_number = "1234"
