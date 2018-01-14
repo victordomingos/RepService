@@ -256,7 +256,7 @@ class RemessasWindow(baseApp):
         # Rodapé entryfr5:
 
         #--- acabaram os 'entryfr', apenas código geral para o entryframe a partir daqui ---
-        #self.entryframe.bind_all("<Command-Escape>", self.fechar_painel_entrada)
+        self.entryframe.bind_all("<Command-Escape>", self.fechar_painel_entrada)
 
     def atualizar_combo_lista_destino(self):
         """ Atualizar a lista de destinatários de remessas na

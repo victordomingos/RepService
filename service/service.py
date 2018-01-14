@@ -48,7 +48,10 @@ __status__ = "Development"
 
 
 class App(baseApp):
-    """ base class for application """
+    """ Base class for the application. It starts by showing the login dialog
+        and, after a successfull login, presents the application's main window
+        (repair list).
+    """
 
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
@@ -73,18 +76,21 @@ class App(baseApp):
         self.start_login_window()
 
     def start_login_window(self):
+        """ Displays the login dialog.
+        """
         self.root_login = tk.Toplevel()
         self.root_login.minsize(LOGIN_MIN_WIDTH, LOGIN_MIN_HEIGHT)
-        self.root_login.maxsize(LOGIN_MAX_WIDTH, LOGIN_MAX_HEIGHT)
+        #self.root_login.maxsize(LOGIN_MAX_WIDTH, LOGIN_MAX_HEIGHT)
         self.root_login.configure(background='grey92')
+        self.root_login.resizable(width=False, height=False)
         self.root_login.title('Login')
         self.root_login.bind_all("<Mod2-q>", self.master.quit)
 
-        self.log_mainframe = ttk.Frame(self.root_login, padding="12 25 12 0")
-        self.log_topframe = ttk.Frame(self.log_mainframe, padding="5 8 5 0")
-        self.log_centerframe = ttk.Frame(self.log_mainframe)
+        self.log_mainframe = ttk.Frame(self.root_login, padding="13 25 13 10")
+        #self.log_topframe = ttk.Frame(self.log_mainframe, padding="0 8 0 0")
+        self.log_centerframe = ttk.Frame(self.log_mainframe, padding="0 5 0 5")
+        self.log_bottomframe = ttk.Frame(self.log_mainframe, padding="0 20 0 8")
 
-        self.log_bottomframe = ttk.Frame(self.log_mainframe)
         self.log_btnFont = tkinter.font.Font(family="Lucida Grande", size=10)
         self.log_btnTxtColor = "grey22"
         self.log_btnTxtColor_active = "white"
@@ -108,15 +114,15 @@ class App(baseApp):
                                             width=30)
         self.log_ltxt_password.entry.config(show="•")
 
-        self.log_btn_alterar_senha = ttk.Button(self.log_centerframe,
+        self.log_btn_alterar_senha = ttk.Button(self.log_bottomframe,
                                                 text="Alterar palavra-passe…",
                                                 command=self.change_password)
 
-        self.log_btn_cancel = ttk.Button(self.log_centerframe,
+        self.log_btn_cancel = ttk.Button(self.log_bottomframe,
                                          text="Cancelar",
                                          command=exit)
 
-        self.log_btn_enter = ttk.Button(self.log_centerframe,
+        self.log_btn_enter = ttk.Button(self.log_bottomframe,
                                         text="Entrar",
                                         default="active",
                                         style="Active.TButton",
@@ -136,16 +142,17 @@ class App(baseApp):
         self.log_ltxt_username.entry.focus_set()
         self.log_ltxt_username.pack(side=tk.TOP, expand=False)
         self.log_ltxt_password.pack(side=tk.TOP, expand=False)
-        self.log_btn_enter.pack(side=tk.RIGHT)
-        self.log_btn_cancel.pack(side=tk.RIGHT)
-        self.log_btn_alterar_senha.pack(side=tk.LEFT)
+        self.log_btn_enter.pack(side=tk.RIGHT, padx=4)
+        self.log_btn_cancel.pack(side=tk.RIGHT, padx=4)
+        self.log_btn_alterar_senha.pack(side=tk.LEFT, padx=4)
 
+        self.log_bottomframe.pack(side=tk.BOTTOM, expand=False, fill='x')
         self.log_centerframe.pack(side=tk.TOP, expand=True, fill='both')
         self.log_mainframe.pack(side=tk.TOP, expand=True, fill='both')
         root.withdraw()
 
     def shake_login_window(self):
-        """ Shakes login window when user name and password don't match.
+        """ Shakes the login dialog when username and password don't match.
         """
         width = LOGIN_MIN_WIDTH
         height = LOGIN_MIN_HEIGHT
@@ -165,11 +172,17 @@ class App(baseApp):
         self.root_login.geometry(f"{width}x{height}+{w_x}+{w_y}")
 
     def validate_login(self, *event):
+        """ Checks if username and password entered are correct and, if so, it
+            opens the aplication's main window. After 5 failed login attempts,
+            the application closes immediately. The failed login attempts
+            count is stored in a class property so that it is shared with the
+            password change dialog.
+        """
         username = self.log_ltxt_username.get()
         password = self.log_ltxt_password.get()
 
         self.loggedin, self.token = db.validate_login(username, password)
-
+        
         if self.loggedin:
             self.failed_login_attempts = 0
             self.username = username
@@ -194,19 +207,22 @@ class App(baseApp):
 
 
     def change_password(self):
+        """ Displays the password change dialog.
+        """
+
         self.log_ltxt_username.entry.focus_set()
         self.root_chpwd = tk.Toplevel()
         self.root_chpwd.minsize(CHPWD_MIN_WIDTH, CHPWD_MIN_HEIGHT)
-        self.root_chpwd.maxsize(CHPWD_MAX_WIDTH, CHPWD_MAX_HEIGHT)
+        #self.root_chpwd.maxsize(CHPWD_MAX_WIDTH, CHPWD_MAX_HEIGHT)
+        self.root_chpwd.resizable(width=False, height=False)
         self.root_chpwd.configure(background='grey92')
-        self.root_chpwd.title('Alterar senha')
-
-        self.chpwd_mainframe = ttk.Frame(self.root_chpwd, padding="12 25 12 0")
-        self.chpwd_topframe = ttk.Frame(
-            self.chpwd_mainframe, padding="5 8 5 0")
-        self.chpwd_centerframe = ttk.Frame(self.chpwd_mainframe)
-
-        self.chpwd_bottomframe = ttk.Frame(self.chpwd_mainframe)
+        self.root_chpwd.title('Alterar Palavra-passe')
+        
+        self.chpwd_mainframe = ttk.Frame(self.root_chpwd, padding="13 25 13 10")
+        #self.chpwd_topframe = ttk.Frame(self.chpwd_mainframe, padding="5 8 5 0")
+        self.chpwd_centerframe = ttk.Frame(self.chpwd_mainframe, padding="0 5 0 5")
+        self.chpwd_bottomframe = ttk.Frame(self.chpwd_mainframe, padding="0 20 0 8")
+       
         self.chpwd_btnFont = tkinter.font.Font(family="Lucida Grande", size=10)
         self.chpwd_btnTxtColor = "grey22"
         self.chpwd_btnTxtColor_active = "white"
@@ -234,10 +250,10 @@ class App(baseApp):
         self.chpwd_ltxt_new_password1.entry.config(show="•")
         self.chpwd_ltxt_new_password2.entry.config(show="•")
 
-        self.chpwd_btn_cancel = ttk.Button(self.chpwd_centerframe,
+        self.chpwd_btn_cancel = ttk.Button(self.chpwd_bottomframe,
                                            text="Cancelar",
                                            command=self.root_chpwd.destroy)
-        self.chpwd_btn_alterar = ttk.Button(self.chpwd_centerframe,
+        self.chpwd_btn_alterar = ttk.Button(self.chpwd_bottomframe,
                                             text="Alterar palavra-passe",
                                             default="active",
                                             style="Active.TButton",
@@ -270,13 +286,20 @@ class App(baseApp):
         self.chpwd_ltxt_old_password.pack(side=tk.TOP, expand=False)
         self.chpwd_ltxt_new_password1.pack(side=tk.TOP, expand=False)
         self.chpwd_ltxt_new_password2.pack(side=tk.TOP, expand=False)
-        self.chpwd_btn_alterar.pack(side=tk.RIGHT)
-        self.chpwd_btn_cancel.pack(side=tk.RIGHT)
+        self.chpwd_btn_alterar.pack(side=tk.RIGHT, padx=4)
+        self.chpwd_btn_cancel.pack(side=tk.RIGHT, padx=4)
 
+        self.chpwd_bottomframe.pack(side=tk.BOTTOM, expand=False, fill='x')
         self.chpwd_centerframe.pack(side=tk.TOP, expand=True, fill='both')
         self.chpwd_mainframe.pack(side=tk.TOP, expand=True, fill='both')
 
+
     def validate_change_password(self, *event):
+        """ Checks all the fields were filled correctly. After 5 failed login
+            attempts, the application closes immediately. The failed login
+            attempts count is stored in a class property so that it is shared
+            with the login dialog.
+        """
         username = self.chpwd_ltxt_username.get()
         old_password = self.chpwd_ltxt_old_password.get()
         new_password1 = self.chpwd_ltxt_new_password1.get()
@@ -299,6 +322,7 @@ class App(baseApp):
 
         loggedin, _ = db.validate_login(username, old_password)
         if loggedin:
+            self.failed_login_attempts = 0
             if db.change_password(username, old_password, new_password1):
                 self.root_chpwd.destroy()
                 self.log_ltxt_username.entry.focus_set()
@@ -315,11 +339,23 @@ class App(baseApp):
         else:
             messagebox.showwarning("", 
                 "O nome de utilizador ou a palavra-passe não estão corretos.")
-            self.chpwd_ltxt_username.clear()
-            self.chpwd_ltxt_old_password.clear()
-            self.chpwd_ltxt_username.entry.focus_set()
+            self.failed_login_attempts += 1
+            if self.failed_login_attempts > 4:
+                messagebox.showerror("",
+                        "Os dados introduzidos não permitiram a sua "
+                        "autenticação. Por favor contacte um administrador.\n"
+                        "\nPor motivos de segurança, a aplicação irá agora "
+                        "encerrar.")
+                exit()
+            else:
+                self.chpwd_ltxt_username.clear()
+                self.chpwd_ltxt_old_password.clear()
+                self.chpwd_ltxt_username.entry.focus_set()
+
 
     def start_main_window(self):
+        """ From here we start building the main window (repair list)
+        """
         self.gerar_painel_mensagens()
         self.gerar_menu()
         self.montar_barra_de_ferramentas()
@@ -340,7 +376,12 @@ class App(baseApp):
 
         # self.teste_GUI()
 
+
     def teste_GUI(self):
+        """ Nothing special here, just a small test to check windowing
+            performance and allow the verification of system load during that
+            process.
+        """
         for i in range(3600):
             print(i)
             self.create_window_contacts()
@@ -1588,7 +1629,10 @@ class App(baseApp):
         ico = "✉️"
         self.msgtree.insert("", "end", values=(ico, processo, texto_final))
 
+
     def inserir_dados_de_exemplo(self):
+        """ Generate some fake data for the repair list
+        """
         for i in range(1, 5):
             self.tree.insert("", "end", tag="", text="", values=(str(i), "José Manuel da Silva Rodrigues",
                                                                  "Artigo Muito Jeitoso (Early 2015)", "Substituição de ecrã", "Em processamento", "120"))
@@ -1604,6 +1648,8 @@ class App(baseApp):
                 i + 5), "Loja X", "Coisa que devia funcionar melhor", "Substituição ao abrigo da garantia", "Entregue", "12"))
 
     def inserir_msgs_de_exemplo(self):
+        """ Generate some fake data for the messages window
+        """
         now = datetime.datetime.now()
         for i in range(7):
             utilizadores = ["Victor Domingos", "DJ Mars", "AC", "NPK"]
