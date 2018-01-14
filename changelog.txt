@@ -6,9 +6,10 @@ Histórico de versões:
 
 ---
 v.0.16 - 15/01/2018
- * Bug fixes.
  * Lojas passam a ser representadas numa tabela independente dos contactos.
- * Janela de login.
+ * Janelas de login e de alteração de senha.
+ * Iniciado o rascunho de alguns dos primeiros modelos de dados (SQLalchemy).
+ * Bug fixes.
 
 ---
 v.0.15 - 28/12/2017
