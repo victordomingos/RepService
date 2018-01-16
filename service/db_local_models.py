@@ -15,11 +15,9 @@ class Loja(Base):
     __tablename__ = 'loja'
     id = Column(Integer, primary_key=True)
     nome = Column(String)
-    utilizadores = relationship('User', secondary='loja_utilizador_link')
-
+    
     def __repr__(self):
-        return f("<Loja(id={self.id}, Nome='{self.nome}', " +
-                 "Utilizadores='{self.utilizadores}'>")
+        return f"<Loja(id={self.id}, Nome='{self.nome}')>"
 
 
 class User(Base):
@@ -28,23 +26,25 @@ class User(Base):
     username = Column(String, index=True, nullable=False, unique=True)
     email = Column(String, index=True, nullable=False)
     password = Column(String, nullable=False, unique=False)
-    lojas = relationship(Loja, secondary='loja_utilizador_link')
-    pwd_last_changed = Column(DateTime(), default=func.now)
-    created_on = Column(DateTime(), default=func.now)
-    updated_on = Column(DateTime(), default=func.now, onupdate=func.now)
+    
+    loja_id = Column(Integer, ForeignKey('loja.id'))
+    loja = relationship(Loja, backref=backref('users', uselist=True))
+    
+    pwd_last_changed = Column(DateTime(), default=func.now())
+    created_on = Column(DateTime(), default=func.now())
+    updated_on = Column(DateTime(), default=func.now(), onupdate=func.now())
 
     def __repr__(self):
-        return f("<User(id={self.id}, name='{self.username}', " +
-                 "email='{self.email}', password='{self.password}', " +
-                 "loja={self.loja})>")
+        return f"<User(id={self.id}, name='{self.username}', email='{self.email}', password='{self.password}', loja={self.loja})>"
 
-
+"""
 class LojaUtilizadorLink(Base):
     __tablename__ = 'loja_utilizador_link'
     loja_id = Column(Integer, ForeignKey('loja.id'), primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
+"""
 
-
+"""
 class Contact(Base):
     __tablename__ = 'contact'
     id = Column(Integer, primary_key=True)
@@ -155,3 +155,4 @@ class RepairClienteLink(Base):
     __tablename__ = 'repair_cliente_link'
     repair_id = Column(Integer, ForeignKey('repair.id'), primary_key=True)
     cliente_id = Column(Integer, ForeignKey('contact.id'), primary_key=True)
+"""

@@ -6,22 +6,32 @@ Victor Domingos e distribuída sob os termos da licença Creative Commons
 Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
 import os
+import pprint
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 
 import db_local_base as db_base
 import db_local_models as db_models
 
 from global_setup import LOCAL_DATABASE_PATH
 
+def delete_database():
+    engine = create_engine(
+        'sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
+    session = sessionmaker()
+    session.configure(bind=engine)
+    db_base.Base.metadata.drop_all(engine)
+
 
 def init_database():
     engine = create_engine(
-        'sqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
+        'sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
     session = sessionmaker()
     session.configure(bind=engine)
     db_base.Base.metadata.create_all(engine)
-
+    
 
 # TODO
 def validate_login(username, password):
@@ -142,29 +152,76 @@ def obter_lista_artigos_emprest():
     return artigos
 
 
+
+
+
+# ----------------------------------------------------------------------------------------
+# Just a bunch of experiences to get the hang of SQLalchemy while developing the models...
+# ----------------------------------------------------------------------------------------
+
+
 def test_populate():
-    loja = db_models.Loja(nome="That Great NPK Store")
-    utilizador = db_models.User(username="utilizador" + str(
-        i), email="test@networkprojectforknowledge.org" + str(i), password="1234", loja=loja)
-    contacto = db_models.Contact()
-    artigo = db_models.Artigo()
-    reparacao = db_models.Repair()
+    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
+    session = sessionmaker()
+    session.configure(bind=engine)
+    s = session()
+    
 
-    loja.utilizadores.append(utilizador)
+    for i in range(50):
+        loja = db_models.Loja(nome=f"That Great NPK Store #{str(i)}")
+        s.add(loja)
 
-    session.add(loja)
-    session.commit()
+    s.commit()
 
-    # print(new_user)
-    # session.add(new_user)
-    # session.commit()
-    #print(">", new_user)
 
-    #our_user = session.query(User).filter_by(username='Victor1').first()
-    #print("OUR USER:", our_user)
+    lojas = s.query(db_models.Loja).all()
+    for i in range(500):
+        lojinha = lojas[i % 50]
+        utilizador = db_models.User(username="utilizador" + str(i), email="test@networkprojectforknowledge.org" + str(i), password="abc1234567", loja=lojinha)
+        s.add(utilizador)
 
+    s.commit()
+
+    
+    #contacto = db_models.Contact()
+    #artigo = db_models.Artigo()
+    #reparacao = db_models.Repair()
+
+
+
+def print_database():
+    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
+    session = sessionmaker()
+    session.configure(bind=engine)
+    s = session()
+
+    lojas = s.query(db_models.Loja).all()
+    utilizadores = s.query(db_models.User).all()
+
+    print("========================")
+    print("          LOJAS")
+    print("========================\n")
+    for lojinha in lojas:
+        pprint.pprint(lojinha)
+        print("")
+        pprint.pprint(lojinha.users)
+        print("\n")
+
+
+    print("==============================")
+    print("        UTILIZADORES")
+    print("==============================\n")
+    for utilizador in utilizadores:
+        pprint.pprint(utilizador)
+        pprint.pprint(utilizador.loja)
+        print(f"O utilizador {utilizador.username} tem o ID {utilizador.id} pertence à loja: {utilizador.loja_id} ({utilizador.loja.nome})")
+        print("\n")
+        
 
 if __name__ == "__main__":
     # Testing...
+    delete_database()
     init_database()
     test_populate()
+    print_database()
+
