@@ -8,7 +8,7 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 import os
 import pprint
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 
 
@@ -182,9 +182,44 @@ def test_populate():
 
     s.commit()
 
+
+
+    utilizadores = s.query(db_models.User).all()
+    nomes = ("José", "Manuel", "Maria", "Guilhermina", "Estêvão", "Joaninha", "Apólito", "John")
+    apelidos = ("Laranja", "Bonito", "Santiago", "de Malva e Cunha", "Azeredo", "Starck", "Brückner")
+    empresas = ("", "NPK", "NPK - Network project for Knowledge", "Aquela Empresa Faltástica, S.A.", "", "")
+    telefones = ("222000000", "960000000", "+351210000000")
+    from random import choice
+    for i in range(3000):
+        contacto = db_models.Contact(
+            nome=f"{choice(nomes)} {choice(apelidos)}", 
+            empresa=choice(empresas),
+            telefone=choice(telefones),
+            telemovel = choice(telefones),
+            telefone_empresa = choice(telefones),
+            email="test@networkprojectforknowledge.org",
+            morada = "Rua da Santa Paciência Que Nos Acuda Em Dias Daqueles\nEdifício Especial XXI, porta 789, 3º Esquerdo Trás",
+            cod_postal = "4700-000",
+            localidade = "Braga",
+            pais = "Portugal das Maravilhas",
+            nif = "999999990",
+            notas = "Apontamentos adicionais sobre este contacto...",
+            is_cliente = 1,
+            is_fornecedor = 0,
+            criado_por_utilizador = choice(utilizadores))
+        s.add(contacto)
+
+    s.commit()
+
     
-    #contacto = db_models.Contact()
-    #artigo = db_models.Artigo()
+
+    for i in range(5000):
+        artigo = db_models.Artigo(descr_artigo=f"Aquele artigo número {str(i)}", part_number="NPKPN662"+str(i)+"ZQ"+str(i))
+        s.add(artigo)
+
+    s.commit()
+
+
     #reparacao = db_models.Repair()
 
 
@@ -197,6 +232,8 @@ def print_database():
 
     lojas = s.query(db_models.Loja).all()
     utilizadores = s.query(db_models.User).all()
+    contactos = s.query(db_models.Contact).all()
+    artigos = s.query(db_models.Artigo).all()
 
     print("========================")
     print("          LOJAS")
@@ -217,6 +254,25 @@ def print_database():
         print(f"O utilizador {utilizador.username} tem o ID {utilizador.id} pertence à loja: {utilizador.loja_id} ({utilizador.loja.nome})")
         print("\n")
         
+
+
+    print("==============================")
+    print("        CONTACTOS")
+    print("==============================\n")
+    for contacto in contactos:
+        pprint.pprint(contacto)
+        #pprint.pprint(contacto.reparacoes)
+        #print(f"O utilizador {utilizador.username} tem o ID {utilizador.id} pertence à loja: {utilizador.loja_id} ({utilizador.loja.nome})")
+        #print("\n")
+
+
+    print("========================")
+    print("          ARTIGOS")
+    print("========================\n")
+    for artigo in artigos:
+        pprint.pprint(artigo)
+
+
 
 if __name__ == "__main__":
     # Testing...

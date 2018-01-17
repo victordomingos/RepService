@@ -23,9 +23,9 @@ class Loja(Base):
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
-    username = Column(String, index=True, nullable=False, unique=True)
-    email = Column(String, index=True, nullable=False)
-    password = Column(String, nullable=False, unique=False)
+    username = Column(String, nullable=False, unique=True)
+    email = Column(String, nullable=False)
+    password = Column(String, nullable=False)
     
     loja_id = Column(Integer, ForeignKey('loja.id'))
     loja = relationship(Loja, backref=backref('users', uselist=True))
@@ -44,12 +44,11 @@ class LojaUtilizadorLink(Base):
     user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
 """
 
-"""
 class Contact(Base):
     __tablename__ = 'contact'
     id = Column(Integer, primary_key=True)
-    nome = Column(String, index=True, nullable=False, unique=True)
-    empresa = Column(String, index=True, nullable=False)
+    nome = Column(String, nullable=False)
+    empresa = Column(String)
     telefone = Column(String)
     telemovel = Column(String)
     telefone_empresa = Column(String)
@@ -62,34 +61,29 @@ class Contact(Base):
     notas = Column(String)
     is_cliente = Column(Integer)
     is_fornecedor = Column(Integer)
-    is_loja = Column(Integer)
-    reparacoes = relationship('Repair', backref='contact', uselist=True)
+    #is_loja = Column(Integer)
+    #reparacoes = relationship('Repair', backref='contact', uselist=True)  # TODO
 
     criado_por_utilizador_id = Column(Integer, ForeignKey('user.id'))
-    criado_por_utilizador = relationship(
-        User, backref=backref('contact', uselist=True))
-    created_on = Column(DateTime(), default=func.now)
-    updated_on = Column(DateTime(), default=func.now, onupdate=func.now)
+    criado_por_utilizador = relationship(User, backref=backref('users', uselist=True))
+    created_on = Column(DateTime(), default=func.now())
+    updated_on = Column(DateTime(), default=func.now(), onupdate=func.now())
 
     def __repr__(self):
-        return f("<Contact(id={self.id}, name='{self.nome}', " +
-                 "empresa='{self.empresa}', " +
-                 "is_cliente='{self.is_cliente}', " +
-                 "is_fornecedor='{self.is_fornecedor}', " +
-                 "is_loja='{self.is_loja}')>")
+        return f"<Contact(id={self.id}, name='{self.nome}', empresa='{self.empresa}', is_cliente='{self.is_cliente}', is_fornecedor='{self.is_fornecedor}'>"
 
 
 class Artigo(Base):
     __tablename__ = 'artigo'
     id = Column(Integer, primary_key=True)
-    descr_artigo = Column(String, index=True, nullable=False)
-    part_number = Column(String, index=True)
+    descr_artigo = Column(String, nullable=False)
+    part_number = Column(String)
 
     def __repr__(self):
-        return f("<Article(id={self.id}, descr_artigo='{self.descr_artigo}', " +
-                 "P/N='{self.part_number}'>")
+        return f"<Article(id={self.id}, descr_artigo='{self.descr_artigo}', P/N='{self.part_number}'>"
 
 
+"""
 class Repair(Base):
     __tablename__ = 'repair'
     id = Column(Integer, primary_key=True)
