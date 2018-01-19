@@ -10,6 +10,7 @@ import pprint
 
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
+from datetime import datetime
 
 
 import db_local_base as db_base
@@ -166,31 +167,31 @@ def test_populate():
     session.configure(bind=engine)
     s = session()
     
-
-    for i in range(50):
+    print("A inserir lojas...")
+    for i in range(20):
         loja = db_models.Loja(nome=f"That Great NPK Store #{str(i)}")
         s.add(loja)
 
     s.commit()
 
-
+    print("A inserir utilizadores...")
     lojas = s.query(db_models.Loja).all()
-    for i in range(500):
-        lojinha = lojas[i % 50]
+    for i in range(20*8):
+        lojinha = lojas[i % 5]
         utilizador = db_models.User(username="utilizador" + str(i), email="test@networkprojectforknowledge.org" + str(i), password="abc1234567", loja=lojinha)
         s.add(utilizador)
 
     s.commit()
 
 
-
+    print("A inserir contactos de clientes e fornecedores...")
     utilizadores = s.query(db_models.User).all()
     nomes = ("José", "Manuel", "Maria", "Guilhermina", "Estêvão", "Joaninha", "Apólito", "John")
     apelidos = ("Laranja", "Bonito", "Santiago", "de Malva e Cunha", "Azeredo", "Starck", "Brückner")
     empresas = ("", "NPK", "NPK - Network project for Knowledge", "Aquela Empresa Faltástica, S.A.", "", "")
     telefones = ("222000000", "960000000", "+351210000000")
     from random import choice
-    for i in range(3000):
+    for i in range(5000):
         contacto = db_models.Contact(
             nome=f"{choice(nomes)} {choice(apelidos)}", 
             empresa=choice(empresas),
@@ -212,16 +213,62 @@ def test_populate():
     s.commit()
 
     
-
-    for i in range(5000):
+    print("A inserir artigos...")
+    for i in range(1500):
         artigo = db_models.Artigo(descr_artigo=f"Aquele artigo número {str(i)}", part_number="NPKPN662"+str(i)+"ZQ"+str(i))
         s.add(artigo)
 
     s.commit()
 
+    print("A inserir reparações...")
+    contactos = s.query(db_models.Contact).all()
+    artigos = s.query(db_models.Artigo).all()
+    utilizadores = s.query(db_models.User).all()
+    for i in range(20000):
+        print("i:", i)
+        reparacao = db_models.Repair(
+            cliente = contactos[i%50],
+            artigo = artigos[i%50],
+            sn = "W123132JJG123B123ZLT",
+            fornecedor = contactos[(i+5)%50],
+            estado_artigo = 1,
+            obs_estado = "Marcas de acidente, com amolgadelas e vidro partido",
+            is_garantia = 0,
+            data_compra = datetime(2017,1,31),
+            num_fatura = "12345FC",
+            loja_compra = "NPK Store",
+            desc_servico = "Tentar ressuscitar o dispositivo",
+            avaria_reprod_loja = True,
+            requer_copia_seg = 0,
+            is_find_my_ativo = 1,
+            Senha = "123456",
+            acessorios_entregues = "Bolsa da marca NPK Accessories",
+            notas = "",
+            local_reparacao = contactos[(i+10)%50],
+            estado_reparacao = 3,
+            fatura_fornecedor = "FC123400001",
+            nar_autorizacao_rep = "1234000",
+            data_fatura_fornecedor = datetime(2017,1,31),
+            num_guia_rececao = "123455",
+            data_guia_rececao = datetime(2017,1,31),
+            cod_resultado_reparacao = 4,
+            descr_detalhe_reparacao = "Foi substituído em garantia o neurónio avariado",
+            novo_sn_artigo = "G1231000TYZ",
+            notas_entrega = "Entregue a José Manuel da Silva Curioso",
 
-    #reparacao = db_models.Repair()
+            utilizador_entrega = utilizadores[(i+5)%50],
 
+            data_entrega = datetime(2017,1,31),
+            num_quebra_stock = "1234",
+            is_stock = 0,
+            modo_entrega = 0,
+            reincidencia_processo_id = 123,
+            morada_entrega = "",
+
+            criado_por_utilizador = utilizadores[i%50])
+        s.add(reparacao)
+
+    s.commit()
 
 
 def print_database():
@@ -234,10 +281,9 @@ def print_database():
     utilizadores = s.query(db_models.User).all()
     contactos = s.query(db_models.Contact).all()
     artigos = s.query(db_models.Artigo).all()
+    reparacoes = s.query(db_models.Repair).all()
 
-    print("========================")
-    print("          LOJAS")
-    print("========================\n")
+    print("\n========================\n          LOJAS\n========================")
     for lojinha in lojas:
         pprint.pprint(lojinha)
         print("")
@@ -245,9 +291,7 @@ def print_database():
         print("\n")
 
 
-    print("==============================")
-    print("        UTILIZADORES")
-    print("==============================\n")
+    print("\n==============================\n         UTILIZADORES\n==============================")
     for utilizador in utilizadores:
         pprint.pprint(utilizador)
         pprint.pprint(utilizador.loja)
@@ -256,9 +300,7 @@ def print_database():
         
 
 
-    print("==============================")
-    print("        CONTACTOS")
-    print("==============================\n")
+    print("\n==============================\n          CONTACTOS\n==============================")
     for contacto in contactos:
         pprint.pprint(contacto)
         #pprint.pprint(contacto.reparacoes)
@@ -266,12 +308,14 @@ def print_database():
         #print("\n")
 
 
-    print("========================")
-    print("          ARTIGOS")
-    print("========================\n")
+    print("\n========================\n           ARTIGOS\n========================")
     for artigo in artigos:
         pprint.pprint(artigo)
 
+    print("\n========================\n           REPARAÇÕES\n========================")
+    for reparacao in reparacoes:
+        pprint.pprint(reparacao)
+    
 
 
 if __name__ == "__main__":
