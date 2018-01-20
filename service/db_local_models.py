@@ -22,30 +22,25 @@ class Loja(Base):
 
 class User(Base):
     __tablename__ = 'user'
+    
     id = Column(Integer, primary_key=True)
     username = Column(String, nullable=False, unique=True)
     email = Column(String, nullable=False)
     password = Column(String, nullable=False)
-    
     loja_id = Column(Integer, ForeignKey('loja.id'))
-    loja = relationship(Loja, backref=backref('users', uselist=True))
-    
     pwd_last_changed = Column(DateTime(), default=func.now())
     created_on = Column(DateTime(), default=func.now())
     updated_on = Column(DateTime(), default=func.now(), onupdate=func.now())
 
+    loja = relationship(Loja, backref=backref('users', uselist=True))
+
     def __repr__(self):
         return f"<User(id={self.id}, name='{self.username}', email='{self.email}', password='{self.password}', loja={self.loja})>"
 
-"""
-class LojaUtilizadorLink(Base):
-    __tablename__ = 'loja_utilizador_link'
-    loja_id = Column(Integer, ForeignKey('loja.id'), primary_key=True)
-    user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
-"""
 
 class Contact(Base):
     __tablename__ = 'contact'
+    
     id = Column(Integer, primary_key=True)
     nome = Column(String, nullable=False)
     empresa = Column(String)
@@ -61,13 +56,11 @@ class Contact(Base):
     notas = Column(String)
     is_cliente = Column(Boolean)
     is_fornecedor = Column(Boolean)
-    #is_loja = Column(Integer)
-    #reparacoes = relationship('Repair', backref='contact', uselist=True)  # TODO
-
     criado_por_utilizador_id = Column(Integer, ForeignKey('user.id'))
-    criado_por_utilizador = relationship(User, backref=backref('users', uselist=True))
     created_on = Column(DateTime(), default=func.now())
     updated_on = Column(DateTime(), default=func.now(), onupdate=func.now())
+
+    criado_por_utilizador = relationship("User", foreign_keys=[criado_por_utilizador_id])
 
     def __repr__(self):
         return f"<Contact(id={self.id}, name='{self.nome}', empresa='{self.empresa}', is_cliente='{self.is_cliente}', is_fornecedor='{self.is_fornecedor}'>"
@@ -75,6 +68,7 @@ class Contact(Base):
 
 class Artigo(Base):
     __tablename__ = 'artigo'
+    
     id = Column(Integer, primary_key=True)
     descr_artigo = Column(String, nullable=False)
     part_number = Column(String)
@@ -86,19 +80,12 @@ class Artigo(Base):
 
 class Repair(Base):
     __tablename__ = 'repair'
+    
     id = Column(Integer, primary_key=True)
-
     cliente_id = Column(Integer, ForeignKey('contact.id'))
-    cliente = relationship("Contact",  foreign_keys=[cliente_id])
-
     artigo_id = Column(Integer, ForeignKey('artigo.id'))
-    artigo = relationship("Artigo", foreign_keys=[artigo_id])
-
     sn = Column(String)
-
     fornecedor_id = Column(Integer, ForeignKey('contact.id'))
-    fornecedor = relationship("Contact", foreign_keys=[fornecedor_id])
-
     estado_artigo = Column(Integer)
     obs_estado = Column(String)
     is_garantia = Column(Integer)
@@ -112,10 +99,7 @@ class Repair(Base):
     Senha = Column(String)
     acessorios_entregues = Column(String)
     notas = Column(String)
-
     local_reparacao_id = Column(Integer, ForeignKey('contact.id'))
-    local_reparacao = relationship("Contact", foreign_keys=[local_reparacao_id])
-
     estado_reparacao = Column(Integer)
     fatura_fornecedor = Column(String)
     nar_autorizacao_rep = Column(String)
@@ -126,21 +110,28 @@ class Repair(Base):
     descr_detalhe_reparacao = Column(String)
     novo_sn_artigo = Column(String)
     notas_entrega = Column(String)
-
     utilizador_entrega_id = Column(Integer, ForeignKey('user.id'))
-    utilizador_entrega = relationship(User, foreign_keys=[utilizador_entrega_id])
-
     data_entrega = Column(DateTime())
     num_quebra_stock = Column(String)
     is_stock = Column(Boolean)
     modo_entrega = Column(Integer)
-    reincidencia_processo_id = Column(Integer) #TODO ? apenas 1 processo, ou lista de todas as reincidências?
+    reincidencia_processo_id = Column(Integer)
     morada_entrega = Column(String)
-
     criado_por_utilizador_id = Column(Integer, ForeignKey('user.id'))
-    criado_por_utilizador = relationship(User, foreign_keys=[criado_por_utilizador_id])
     created_on = Column(DateTime(), default=func.now())
     updated_on = Column(DateTime(), default=func.now(), onupdate=func.now())
+
+    cliente = relationship("Contact", foreign_keys=[cliente_id], 
+        backref=backref("reparacoes_como_cliente", uselist=True, order_by=id))
+    artigo = relationship("Artigo", foreign_keys=[artigo_id], 
+        backref=backref("lista_reparacoes", uselist=True, order_by=id))
+    fornecedor = relationship("Contact", foreign_keys=[fornecedor_id], 
+        backref=backref("reparacoes_como_fornecedor", uselist=True, order_by=id))
+    local_reparacao = relationship("Contact", foreign_keys=[local_reparacao_id], 
+        backref=backref("reparacoes_como_local_reparacao", uselist=True, order_by=id))
+    utilizador_entrega = relationship(User, foreign_keys=[utilizador_entrega_id])
+    criado_por_utilizador = relationship("User", foreign_keys=[criado_por_utilizador_id])
+
 
     def __repr__(self):
         return f"<Repair(id={self.id}, cliente={self.cliente_id},{self.cliente})>"

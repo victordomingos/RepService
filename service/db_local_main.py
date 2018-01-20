@@ -168,7 +168,7 @@ def test_populate():
     s = session()
     
     print("A inserir lojas...")
-    for i in range(20):
+    for i in range(2):
         loja = db_models.Loja(nome=f"That Great NPK Store #{str(i)}")
         s.add(loja)
 
@@ -176,8 +176,8 @@ def test_populate():
 
     print("A inserir utilizadores...")
     lojas = s.query(db_models.Loja).all()
-    for i in range(20*8):
-        lojinha = lojas[i % 5]
+    for i in range(15):
+        lojinha = lojas[i % 2]
         utilizador = db_models.User(username="utilizador" + str(i), email="test@networkprojectforknowledge.org" + str(i), password="abc1234567", loja=lojinha)
         s.add(utilizador)
 
@@ -191,7 +191,7 @@ def test_populate():
     empresas = ("", "NPK", "NPK - Network project for Knowledge", "Aquela Empresa Faltástica, S.A.", "", "")
     telefones = ("222000000", "960000000", "+351210000000")
     from random import choice
-    for i in range(5000):
+    for i in range(1000):
         contacto = db_models.Contact(
             nome=f"{choice(nomes)} {choice(apelidos)}", 
             empresa=choice(empresas),
@@ -224,13 +224,13 @@ def test_populate():
     contactos = s.query(db_models.Contact).all()
     artigos = s.query(db_models.Artigo).all()
     utilizadores = s.query(db_models.User).all()
-    for i in range(20000):
+    for i in range(3500):
         print("i:", i)
         reparacao = db_models.Repair(
-            cliente = contactos[i%50],
-            artigo = artigos[i%50],
+            cliente = contactos[i%15],
+            artigo = artigos[i%1500],
             sn = "W123132JJG123B123ZLT",
-            fornecedor = contactos[(i+5)%50],
+            fornecedor = contactos[(i+5)%15],
             estado_artigo = 1,
             obs_estado = "Marcas de acidente, com amolgadelas e vidro partido",
             is_garantia = 0,
@@ -244,7 +244,7 @@ def test_populate():
             Senha = "123456",
             acessorios_entregues = "Bolsa da marca NPK Accessories",
             notas = "",
-            local_reparacao = contactos[(i+10)%50],
+            local_reparacao = contactos[i%2],
             estado_reparacao = 3,
             fatura_fornecedor = "FC123400001",
             nar_autorizacao_rep = "1234000",
@@ -256,7 +256,7 @@ def test_populate():
             novo_sn_artigo = "G1231000TYZ",
             notas_entrega = "Entregue a José Manuel da Silva Curioso",
 
-            utilizador_entrega = utilizadores[(i+5)%50],
+            utilizador_entrega = utilizadores[(i+5)%15],
 
             data_entrega = datetime(2017,1,31),
             num_quebra_stock = "1234",
@@ -265,7 +265,7 @@ def test_populate():
             reincidencia_processo_id = 123,
             morada_entrega = "",
 
-            criado_por_utilizador = utilizadores[i%50])
+            criado_por_utilizador = utilizadores[i%15])
         s.add(reparacao)
 
     s.commit()
@@ -285,27 +285,22 @@ def print_database():
 
     print("\n========================\n          LOJAS\n========================")
     for lojinha in lojas:
-        pprint.pprint(lojinha)
-        print("")
-        pprint.pprint(lojinha.users)
-        print("\n")
+        print(f"\nA loja {lojinha.nome}, com o ID {lojinha.id}, tem os seguintes utilizadores:)")
+        pprint.pprint([(u.id, u.username) for u in lojinha.users])
 
 
     print("\n==============================\n         UTILIZADORES\n==============================")
     for utilizador in utilizadores:
-        pprint.pprint(utilizador)
-        pprint.pprint(utilizador.loja)
-        print(f"O utilizador {utilizador.username} tem o ID {utilizador.id} pertence à loja: {utilizador.loja_id} ({utilizador.loja.nome})")
-        print("\n")
-        
+        print(f"\nO utilizador {utilizador.username} tem o ID {utilizador.id} pertence à loja: {utilizador.loja_id} ({utilizador.loja.nome})")        
 
 
     print("\n==============================\n          CONTACTOS\n==============================")
     for contacto in contactos:
-        pprint.pprint(contacto)
-        #pprint.pprint(contacto.reparacoes)
-        #print(f"O utilizador {utilizador.username} tem o ID {utilizador.id} pertence à loja: {utilizador.loja_id} ({utilizador.loja.nome})")
-        #print("\n")
+        print(contacto)
+        print("\nReparações como cliente:")
+        pprint.pprint([(rep.id, rep.artigo.descr_artigo, rep.cliente.nome) for rep in contacto.reparacoes_como_cliente])
+        print("\nReparações como fornecedor:")
+        pprint.pprint([(rep.id, rep.artigo.descr_artigo, rep.cliente.nome) for rep in contacto.reparacoes_como_fornecedor])
 
 
     print("\n========================\n           ARTIGOS\n========================")
@@ -316,7 +311,6 @@ def print_database():
     for reparacao in reparacoes:
         pprint.pprint(reparacao)
     
-
 
 if __name__ == "__main__":
     # Testing...
