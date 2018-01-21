@@ -24,18 +24,20 @@ class User(Base):
     __tablename__ = 'user'
     
     id = Column(Integer, primary_key=True)
-    username = Column(String, nullable=False, unique=True)
+    nome = Column(String, nullable=False, unique=True)
     email = Column(String, nullable=False)
     password = Column(String, nullable=False)
     loja_id = Column(Integer, ForeignKey('loja.id'))
     pwd_last_changed = Column(DateTime(), default=func.now())
+    
     created_on = Column(DateTime(), default=func.now())
     updated_on = Column(DateTime(), default=func.now(), onupdate=func.now())
 
     loja = relationship(Loja, backref=backref('users', uselist=True))
+    eventos = relationship("UtilizadorNotificadoPorEvento_link", back_populates="user")
 
     def __repr__(self):
-        return f"<User(id={self.id}, name='{self.username}', email='{self.email}', password='{self.password}', loja={self.loja})>"
+        return f"<User(id={self.id}, name='{self.nome}', email='{self.email}', password='{self.password}', loja={self.loja})>"
 
 
 class Contact(Base):
@@ -57,6 +59,7 @@ class Contact(Base):
     is_cliente = Column(Boolean)
     is_fornecedor = Column(Boolean)
     criado_por_utilizador_id = Column(Integer, ForeignKey('user.id'))
+    
     created_on = Column(DateTime(), default=func.now())
     updated_on = Column(DateTime(), default=func.now(), onupdate=func.now())
 
@@ -66,16 +69,47 @@ class Contact(Base):
         return f"<Contact(id={self.id}, name='{self.nome}', empresa='{self.empresa}', is_cliente='{self.is_cliente}', is_fornecedor='{self.is_fornecedor}'>"
 
 
-class Artigo(Base):
-    __tablename__ = 'artigo'
+class Product(Base):
+    __tablename__ = 'product'
     
     id = Column(Integer, primary_key=True)
-    descr_artigo = Column(String, nullable=False)
+    descr_product = Column(String, nullable=False)
     part_number = Column(String)
 
     def __repr__(self):
-        return f"<Article(id={self.id}, descr_artigo='{self.descr_artigo}', P/N='{self.part_number}'>"
+        return f"<Article(id={self.id}, descr_product='{self.descr_product}', P/N='{self.part_number}'>"
 
+
+
+class Event(Base):
+    __tablename__ = 'event'
+    
+    id = Column(Integer, primary_key=True)
+    repair_id = Column(Integer, ForeignKey('repair.id'))
+    descricao = Column(String)
+    criado_por_utilizador_id = Column(Integer, ForeignKey('user.id'))
+    created_on = Column(DateTime(), default=func.now())
+    updated_on = Column(DateTime(), default=func.now(), onupdate=func.now())
+    
+    repair = relationship("Repair", foreign_keys=[repair_id], 
+        backref=backref("eventos", uselist=True, order_by=id))
+    criado_por_utilizador = relationship("User", foreign_keys=[criado_por_utilizador_id])
+    utilizadores = relationship("UtilizadorNotificadoPorEvento_link", back_populates="event")
+
+    def __repr__(self):
+        return f"<Evento(id={self.id}, Reparação='{self.repair.id}', Descrição={self.descricao})>"
+
+
+class UtilizadorNotificadoPorEvento_link(Base):
+    __tablename__ = 'utilizador_notificado_por_evento_link'
+    
+    evento_id = Column(Integer, ForeignKey('event.id'), primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
+    is_visible = Column(Boolean)
+    is_open = Column(Boolean)
+    
+    user = relationship("User", back_populates="eventos")
+    event = relationship("Event", back_populates="utilizadores")
 
 
 class Repair(Base):
@@ -83,7 +117,7 @@ class Repair(Base):
     
     id = Column(Integer, primary_key=True)
     cliente_id = Column(Integer, ForeignKey('contact.id'))
-    artigo_id = Column(Integer, ForeignKey('artigo.id'))
+    product_id = Column(Integer, ForeignKey('product.id'))
     sn = Column(String)
     fornecedor_id = Column(Integer, ForeignKey('contact.id'))
     estado_artigo = Column(Integer)
@@ -118,12 +152,13 @@ class Repair(Base):
     reincidencia_processo_id = Column(Integer)
     morada_entrega = Column(String)
     criado_por_utilizador_id = Column(Integer, ForeignKey('user.id'))
+    
     created_on = Column(DateTime(), default=func.now())
     updated_on = Column(DateTime(), default=func.now(), onupdate=func.now())
 
     cliente = relationship("Contact", foreign_keys=[cliente_id], 
         backref=backref("reparacoes_como_cliente", uselist=True, order_by=id))
-    artigo = relationship("Artigo", foreign_keys=[artigo_id], 
+    product = relationship("Product", foreign_keys=[product_id], 
         backref=backref("lista_reparacoes", uselist=True, order_by=id))
     fornecedor = relationship("Contact", foreign_keys=[fornecedor_id], 
         backref=backref("reparacoes_como_fornecedor", uselist=True, order_by=id))

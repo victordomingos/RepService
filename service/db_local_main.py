@@ -12,11 +12,11 @@ from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 
-
 import db_local_base as db_base
 import db_local_models as db_models
 
 from global_setup import LOCAL_DATABASE_PATH
+
 
 def delete_database():
     engine = create_engine(
@@ -178,7 +178,7 @@ def test_populate():
     lojas = s.query(db_models.Loja).all()
     for i in range(15):
         lojinha = lojas[i % 2]
-        utilizador = db_models.User(username="utilizador" + str(i), email="test@networkprojectforknowledge.org" + str(i), password="abc1234567", loja=lojinha)
+        utilizador = db_models.User(nome="utilizador" + str(i), email="test@networkprojectforknowledge.org" + str(i), password="abc1234567", loja=lojinha)
         s.add(utilizador)
 
     s.commit()
@@ -191,7 +191,7 @@ def test_populate():
     empresas = ("", "NPK", "NPK - Network project for Knowledge", "Aquela Empresa Faltástica, S.A.", "", "")
     telefones = ("222000000", "960000000", "+351210000000")
     from random import choice
-    for i in range(1000):
+    for i in range(15):
         contacto = db_models.Contact(
             nome=f"{choice(nomes)} {choice(apelidos)}", 
             empresa=choice(empresas),
@@ -202,7 +202,7 @@ def test_populate():
             morada = "Rua da Santa Paciência Que Nos Acuda Em Dias Daqueles\nEdifício Especial XXI, porta 789, 3º Esquerdo Trás",
             cod_postal = "4700-000",
             localidade = "Braga",
-            pais = "Portugal das Maravilhas",
+            pais = "Portugal",
             nif = "999999990",
             notas = "Apontamentos adicionais sobre este contacto...",
             is_cliente = 1,
@@ -214,21 +214,21 @@ def test_populate():
 
     
     print("A inserir artigos...")
-    for i in range(1500):
-        artigo = db_models.Artigo(descr_artigo=f"Aquele artigo número {str(i)}", part_number="NPKPN662"+str(i)+"ZQ"+str(i))
+    for i in range(150):
+        artigo = db_models.Product(descr_product=f"Aquele artigo número {str(i)}", part_number="NPKPN662"+str(i)+"ZQ"+str(i))
         s.add(artigo)
 
     s.commit()
 
     print("A inserir reparações...")
     contactos = s.query(db_models.Contact).all()
-    artigos = s.query(db_models.Artigo).all()
+    artigos = s.query(db_models.Product).all()
     utilizadores = s.query(db_models.User).all()
-    for i in range(3500):
+    for i in range(50):
         print("i:", i)
         reparacao = db_models.Repair(
             cliente = contactos[i%15],
-            artigo = artigos[i%1500],
+            product = artigos[i%150],
             sn = "W123132JJG123B123ZLT",
             fornecedor = contactos[(i+5)%15],
             estado_artigo = 1,
@@ -270,6 +270,41 @@ def test_populate():
 
     s.commit()
 
+    print("\nA inserir eventos...")
+    reparacoes = s.query(db_models.Repair).all()
+    utilizadores = s.query(db_models.User).all()
+    count = 0
+    rep = reparacoes[1]
+    for rep in reparacoes:
+        count +=1
+        print("event in rep", rep)
+        # create parent, append a child via association
+        evento1 = db_models.Event(        
+            repair_id = rep.id,
+            descricao = "Cliente enviou por email a fatura para anexar ao processo de garantia.",
+            criado_por_utilizador = utilizadores[1])
+        
+        link = db_models.UtilizadorNotificadoPorEvento_link(is_visible=True, is_open=False)
+        
+        link.user = utilizadores[1]
+        evento1.utilizadores.append(link)
+        s.add(evento1)
+
+        
+        if count % 2 == 0:
+            print("if rep event")
+            evento2 = db_models.Event(        
+                repair_id = rep.id,
+                descricao = "Centro técnico pediu para questionar cliente sobre algo importante.",
+                criado_por_utilizador = utilizadores[2])
+                
+            link2 = db_models.UtilizadorNotificadoPorEvento_link(is_visible=True, is_open=True)
+            link2.user = utilizadores[2]
+            evento2.utilizadores.append(link2)
+            s.add(evento2)
+    
+    s.commit()
+
 
 def print_database():
     engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
@@ -280,27 +315,29 @@ def print_database():
     lojas = s.query(db_models.Loja).all()
     utilizadores = s.query(db_models.User).all()
     contactos = s.query(db_models.Contact).all()
-    artigos = s.query(db_models.Artigo).all()
+    artigos = s.query(db_models.Product).all()
     reparacoes = s.query(db_models.Repair).all()
+    eventos = s.query(db_models.Event).all()
+    eventos_visiveis = s.query(db_models.UtilizadorNotificadoPorEvento_link).filter_by(is_visible=1, user=utilizadores[2])
 
     print("\n========================\n          LOJAS\n========================")
     for lojinha in lojas:
         print(f"\nA loja {lojinha.nome}, com o ID {lojinha.id}, tem os seguintes utilizadores:)")
-        pprint.pprint([(u.id, u.username) for u in lojinha.users])
+        pprint.pprint([(u.id, u.nome) for u in lojinha.users])
 
 
     print("\n==============================\n         UTILIZADORES\n==============================")
     for utilizador in utilizadores:
-        print(f"\nO utilizador {utilizador.username} tem o ID {utilizador.id} pertence à loja: {utilizador.loja_id} ({utilizador.loja.nome})")        
+        print(f"\nO utilizador {utilizador.nome} tem o ID {utilizador.id} pertence à loja: {utilizador.loja_id} ({utilizador.loja.nome})")        
 
 
     print("\n==============================\n          CONTACTOS\n==============================")
     for contacto in contactos:
         print(contacto)
         print("\nReparações como cliente:")
-        pprint.pprint([(rep.id, rep.artigo.descr_artigo, rep.cliente.nome) for rep in contacto.reparacoes_como_cliente])
+        pprint.pprint([(rep.id, rep.product.descr_product, rep.cliente.nome) for rep in contacto.reparacoes_como_cliente])
         print("\nReparações como fornecedor:")
-        pprint.pprint([(rep.id, rep.artigo.descr_artigo, rep.cliente.nome) for rep in contacto.reparacoes_como_fornecedor])
+        pprint.pprint([(rep.id, rep.product.descr_product, rep.cliente.nome) for rep in contacto.reparacoes_como_fornecedor])
 
 
     print("\n========================\n           ARTIGOS\n========================")
@@ -310,6 +347,15 @@ def print_database():
     print("\n========================\n           REPARAÇÕES\n========================")
     for reparacao in reparacoes:
         pprint.pprint(reparacao)
+
+    print("\n========================\n           EVENTOS\n========================")
+    for evento in eventos:
+        pprint.pprint(evento)
+
+    print("\n========================\n           EVENTOS Visíveis\n========================")
+    for link in eventos_visiveis:
+        pprint.pprint(link.event)
+
     
 
 if __name__ == "__main__":
