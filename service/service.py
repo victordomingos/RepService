@@ -34,6 +34,7 @@ from global_setup import *
 
 if USE_LOCAL_DATABASE:
     import db_local_main as db
+    import db_local_models as db_models
 else:
     import db_remote as db
 
@@ -128,7 +129,7 @@ class App(baseApp):
                                         style="Active.TButton",
                                         command=self.validate_login)
 
-        self.log_ltxt_username.entry.bind("<Return>", 
+        self.log_ltxt_username.entry.bind("<Return>",
             lambda x: self.log_ltxt_password.entry.focus_set())
         self.log_ltxt_password.entry.bind("<Return>", self.validate_login)
         self.log_btn_enter.bind("<Return>", self.validate_login)
@@ -182,7 +183,7 @@ class App(baseApp):
         password = self.log_ltxt_password.get()
 
         self.loggedin, self.token = db.validate_login(username, password)
-        
+
         if self.loggedin:
             self.failed_login_attempts = 0
             self.username = username
@@ -196,14 +197,14 @@ class App(baseApp):
             self.log_ltxt_username.clear()
             self.log_ltxt_password.clear()
             self.log_ltxt_username.entry.focus_set()
-            
+
             if self.failed_login_attempts > 4:
                 messagebox.showerror("",
                         "Os dados introduzidos não permitiram a sua "
                         "autenticação. Por favor contacte um administrador.\n"
                         "\nPor motivos de segurança, a aplicação irá agora "
                         "encerrar.")
-                exit()          
+                exit()
 
 
     def change_password(self):
@@ -217,12 +218,12 @@ class App(baseApp):
         self.root_chpwd.resizable(width=False, height=False)
         self.root_chpwd.configure(background='grey92')
         self.root_chpwd.title('Alterar Palavra-passe')
-        
+
         self.chpwd_mainframe = ttk.Frame(self.root_chpwd, padding="13 25 13 10")
         #self.chpwd_topframe = ttk.Frame(self.chpwd_mainframe, padding="5 8 5 0")
         self.chpwd_centerframe = ttk.Frame(self.chpwd_mainframe, padding="0 5 0 5")
         self.chpwd_bottomframe = ttk.Frame(self.chpwd_mainframe, padding="0 20 0 8")
-       
+
         self.chpwd_btnFont = tkinter.font.Font(family="Lucida Grande", size=10)
         self.chpwd_btnTxtColor = "grey22"
         self.chpwd_btnTxtColor_active = "white"
@@ -327,7 +328,7 @@ class App(baseApp):
                 self.root_chpwd.destroy()
                 self.log_ltxt_username.entry.focus_set()
             else:
-                messagebox.showerror("", 
+                messagebox.showerror("",
                     "Ocorreu um erro desconhecido ao tentar alterar a senha. "
                     "Tente efetuar login com os seus dados. Se não conseguir, "
                     "por favor contacte um administrador.")
@@ -337,7 +338,7 @@ class App(baseApp):
                 self.chpwd_ltxt_new_password2.clear()
                 self.chpwd_ltxt_username.entry.focus_set()
         else:
-            messagebox.showwarning("", 
+            messagebox.showwarning("",
                 "O nome de utilizador ou a palavra-passe não estão corretos.")
             self.failed_login_attempts += 1
             if self.failed_login_attempts > 4:
@@ -561,7 +562,7 @@ class App(baseApp):
         self.label_add.grid(column=0, row=1)
 
         # ----------- Botão com menu "Mostrar" --------------
-        self.label_mbtn_mostrar = ttk.Label(self.topframe, 
+        self.label_mbtn_mostrar = ttk.Label(self.topframe,
             font=self.btnFont,
             foreground=self.btnTxtColor,
             text="Mostrar processos…")
@@ -594,7 +595,7 @@ class App(baseApp):
 
         self.mbtn_mostrar.grid(column=1, row=0)
         self.label_mbtn_mostrar.grid(column=1, row=1)
-        self.dicas.bind(self.mbtn_mostrar, 
+        self.dicas.bind(self.mbtn_mostrar,
             'Mostrar apenas uma parte dos processos,\n'
             'filtrando-os com base do seu estado atual.')
 
@@ -912,7 +913,7 @@ class App(baseApp):
         self.ef_var_tipo.set(0)
         self.ef_var_estado.set(0)
         self.ef_var_garantia.set(0)
-        self.ef_var_repr_loja.set(0)
+        self.ef_var_reprod_loja.set(0)
         self.ef_var_efetuar_copia.set(0)
         self.ef_var_find_my.set(0)
         self.ef_var_local_intervencao.set("Loja X")
@@ -952,8 +953,8 @@ class App(baseApp):
         self.ef_var_tipo = tk.IntVar()
         self.ef_var_estado = tk.IntVar()
         self.ef_var_garantia = tk.IntVar()
-        self.ef_var_repr_loja = tk.IntVar()
-        self.ef_var_repr_loja.set(0)
+        self.ef_var_reprod_loja = tk.IntVar()
+        self.ef_var_reprod_loja.set(0)
         self.ef_var_efetuar_copia = tk.IntVar()
         self.ef_var_find_my = tk.IntVar()
         self.ef_var_local_intervencao = tk.StringVar()
@@ -1176,7 +1177,7 @@ class App(baseApp):
         self.ef_text_descr_avaria_servico = ScrolledText(self.ef_lf_servico, highlightcolor="LightSteelBlue2", font=(
             "Helvetica-Neue", 12), wrap='word', width=20, height=4)
         self.ef_chkbtn_avaria_reprod_loja = ttk.Checkbutton(
-            self.ef_lf_servico, variable=self.ef_var_repr_loja, style="Panel_Body.Checkbutton", width=27, text="Avaria reproduzida na loja")
+            self.ef_lf_servico, variable=self.ef_var_reprod_loja, style="Panel_Body.Checkbutton", width=27, text="Avaria reproduzida na loja")
         self.ef_ltxt_senha = LabelEntry(
             self.ef_lf_servico, "Senha:", style="Panel_Body.TLabel", width=22)
         self.ef_lbl_find_my = ttk.Label(
@@ -1580,10 +1581,60 @@ class App(baseApp):
             # root.bind_all("<Command-n>")
 
     def on_save_repair(self, event=None):
-        # reparacao = recolher todos os dados do formulário  #TODO
-        reparacao = "teste"
+        """ Recolhe todos os dados do formulário e guarda uma nova reparação """
+        
+        # validar aqui se dados estão corretos # TODO
+        
+        # Adaptar para o caso de ser uma reparação de stock #TODO
+        tipo = self.ef_var_tipo.get()
+        if tipo == TIPO_REP_STOCK:
+            pass
+        else:
+            pass
+
+
         self.ultima_reparacao = db.save_repair(
-            reparacao)  # TODO - None se falhar
+            cliente_id = self.ef_txt_num_cliente.get()
+            product_id = self.ef_ltxt_cod_artigo.get()
+            sn = self.ef_ltxt_num_serie.get()
+            fornecedor_id = self.ef_txt_num_fornecedor.get()
+            estado_artigo = self.ef_var_estado.get()
+            obs_estado = self.ef_ltxt_obs_estado_equipamento.get()
+            is_garantia = self.ef_var_garantia.get()
+            data_compra = self.ef_ltxt_data_compra.get()
+            num_fatura = self.ef_ltxt_num_fatura.get()
+            loja_compra = self.self.ef_ltxt_local_compra.get()
+            desc_servico = self.ef_text_descr_avaria_servico.get()
+            avaria_reprod_loja = self.ef_var_reprod_loja.get()
+            requer_copia_seg = self.ef_var_efetuar_copia.get()
+            is_find_my_ativo = self.ef_var_find_my.get()
+            senha = self.ef_ltxt_senha.get()  # todo: scramble text
+            acessorios_entregues = self.ef_ltxt_acessorios_entregues.get()
+            notas = self.ef_ltxt_notas.get()
+            local_reparacao_id = self.ef_var_local_intervencao.get()
+            estado_reparacao = ESTADOS[EM_PROCESSAMENTO]
+            fatura_fornecedor = self.ef_ltxt_num_fatura_fornecedor.get()
+            nar_autorizacao_rep = self.ef_ltxt_nar.get()
+            data_fatura_fornecedor = self.ef_ltxt_data_fatura_fornecedor.get()
+            num_guia_rececao = self.ef_ltxt_num_guia_rececao.get()
+            data_guia_rececao = self.ef_ltxt_data_entrada_stock.get()
+            #cod_resultado_reparacao = SEM_INFORMACAO
+            #descr_detalhe_reparacao = ""
+            #novo_sn_artigo =
+            #notas_entrega =
+            #utilizador_entrega_id =
+            #data_entrega =
+            #num_quebra_stock =
+            is_stock = self.ef_var_tipo.get()
+            modo_entrega = self.ef_var_modo_entrega.get()  #TODO_converter para int?
+            reincidencia_processo_id = None  #TODO
+            morada_entrega = self.ef_ltxt_morada_entrega.get()
+            cliente_pagou_portes = self.ef_var_portes.get()
+            criado_por_utilizador_id = db.get_user_id(username)
+            )
+            
+        
+        # TODO - None se falhar
         if self.ultima_reparacao:
             self.on_repair_save_success()
         else:
@@ -1594,6 +1645,7 @@ class App(baseApp):
                 self.on_save_repair()
             else:
                 self.on_repair_cancel()
+
 
     def on_repair_save_success(self):
         # TODO - criar um mecanismo para obter o número da reparação acabada de

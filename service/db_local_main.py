@@ -262,6 +262,7 @@ def test_populate():
             num_quebra_stock = "1234",
             is_stock = 0,
             modo_entrega = 0,
+            cliente_pagou_portes = 0
             reincidencia_processo_id = 123,
             morada_entrega = "",
 
