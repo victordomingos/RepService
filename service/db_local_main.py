@@ -63,7 +63,7 @@ def change_password(username, old_password, new_password1):
 
 def save_repair(repair):
     print("a guardar o processo de reparação", repair)
-    db_last_rep_number = "12340"
+    db_last_rep_number = 12341
     return db_last_rep_number
 
 

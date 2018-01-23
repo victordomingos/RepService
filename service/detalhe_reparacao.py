@@ -33,11 +33,10 @@ class repairDetailWindow(ttk.Frame):
         self.contact_detail_windows_count = 0
         self.master.focus()
         self.num_reparacao = num_reparacao
-        # TODO: Substituir isto por função que busca tipo na info da base de
-        # dados
-        self.tipo_processo = "Cliente" if bool(
-            (self.num_reparacao % 2) == 0) else "Stock"
-
+        
+        # TODO: Substituir isto por função que busca tipo na info da base de dados
+        self.tipo_processo = "Cliente" if bool((self.num_reparacao % 2) == 0) else "Stock"
+        
         # i.e. True se for reparação de cliente
         self.is_rep_cliente = (self.tipo_processo == "Cliente")
         # TODO: Obter estado a partir da base de dados

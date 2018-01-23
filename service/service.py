@@ -896,7 +896,7 @@ class App(baseApp):
         # root.unbind_all("<Command-n>")
         self.show_entryform()
         estado.painel_nova_reparacao_aberto = self.is_entryform_visible
-        self.ef_txt_num_cliente.focus()
+        self.ef_txt_num_cliente.focus_set()
         self.entryframe.bind_all(
             "<Command-Escape>", self.fechar_painel_entrada)
 
@@ -1649,15 +1649,17 @@ class App(baseApp):
     def on_repair_save_success(self):
         # TODO - criar um mecanismo para obter o número da reparação acabada de
         # introduzir na base de dados
-        self.ultima_reparacao = "1234"
         wants_to_print = messagebox.askquestion(message='O processo de reparação foi guardado com sucesso. Deseja imprimir?',
                                                 default='yes',
                                                 parent=self)
         if wants_to_print == 'yes':
             imprimir.imprimir_folhas_de_reparacao(self.ultima_reparacao)
-            self.fechar_painel_entrada()
-        else:
-            self.entryframe.focus()
+
+        self.master.focus()
+        self.fechar_painel_entrada()   
+        self.reparacao_selecionada = self.ultima_reparacao
+        self.create_window_detalhe_rep(num_reparacao=self.ultima_reparacao)
+        
 
     # TODO
     def on_repair_cancel(self, event=None):
@@ -1668,6 +1670,7 @@ class App(baseApp):
                                               parent=self)
         if wants_to_cancel:
             self.fechar_painel_entrada()
+            self.master.focus()
         else:
             self.entryframe.focus()
 
