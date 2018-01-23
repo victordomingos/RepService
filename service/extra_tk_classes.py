@@ -164,7 +164,7 @@ class LabelText(ttk.Frame):
         self.scrolledtext.pack(side="top", fill="both", expand=True)
 
     def get(self):
-        return self.scrolledtext.get()
+        return self.scrolledtext.get(1.0, tk.END)
 
     def set(self, text):
         self.scrolledtext.insert('insert', text)

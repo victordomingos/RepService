@@ -49,6 +49,9 @@ def validate_login(username, password):
 
     return loggedin, token
 
+def get_user_id(username):
+    #TODO - return the user ID from database, queried with a string containing the username.
+    return(1)
 
 def change_password(username, old_password, new_password1):
     """ Change the password for the given user if the old passowrd matches.
@@ -58,9 +61,9 @@ def change_password(username, old_password, new_password1):
     return result
 
 
-def save_repair(rep_num):
-    print("a guardar o processo de reparação", rep_num)
-    db_last_rep_number = "1234"
+def save_repair(repair):
+    print("a guardar o processo de reparação", repair)
+    db_last_rep_number = "12340"
     return db_last_rep_number
 
 
@@ -241,7 +244,7 @@ def test_populate():
             avaria_reprod_loja = True,
             requer_copia_seg = 0,
             is_find_my_ativo = 1,
-            Senha = "123456",
+            senha = "123456",
             acessorios_entregues = "Bolsa da marca NPK Accessories",
             notas = "",
             local_reparacao = contactos[i%2],
@@ -262,7 +265,7 @@ def test_populate():
             num_quebra_stock = "1234",
             is_stock = 0,
             modo_entrega = 0,
-            cliente_pagou_portes = 0
+            cliente_pagou_portes = 0,
             reincidencia_processo_id = 123,
             morada_entrega = "",
 

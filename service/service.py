@@ -1592,47 +1592,46 @@ class App(baseApp):
         else:
             pass
 
-
-        self.ultima_reparacao = db.save_repair(
-            cliente_id = self.ef_txt_num_cliente.get()
-            product_id = self.ef_ltxt_cod_artigo.get()
-            sn = self.ef_ltxt_num_serie.get()
-            fornecedor_id = self.ef_txt_num_fornecedor.get()
-            estado_artigo = self.ef_var_estado.get()
-            obs_estado = self.ef_ltxt_obs_estado_equipamento.get()
-            is_garantia = self.ef_var_garantia.get()
-            data_compra = self.ef_ltxt_data_compra.get()
-            num_fatura = self.ef_ltxt_num_fatura.get()
-            loja_compra = self.self.ef_ltxt_local_compra.get()
-            desc_servico = self.ef_text_descr_avaria_servico.get()
-            avaria_reprod_loja = self.ef_var_reprod_loja.get()
-            requer_copia_seg = self.ef_var_efetuar_copia.get()
-            is_find_my_ativo = self.ef_var_find_my.get()
-            senha = self.ef_ltxt_senha.get()  # todo: scramble text
-            acessorios_entregues = self.ef_ltxt_acessorios_entregues.get()
-            notas = self.ef_ltxt_notas.get()
-            local_reparacao_id = self.ef_var_local_intervencao.get()
-            estado_reparacao = ESTADOS[EM_PROCESSAMENTO]
-            fatura_fornecedor = self.ef_ltxt_num_fatura_fornecedor.get()
-            nar_autorizacao_rep = self.ef_ltxt_nar.get()
-            data_fatura_fornecedor = self.ef_ltxt_data_fatura_fornecedor.get()
-            num_guia_rececao = self.ef_ltxt_num_guia_rececao.get()
-            data_guia_rececao = self.ef_ltxt_data_entrada_stock.get()
-            #cod_resultado_reparacao = SEM_INFORMACAO
-            #descr_detalhe_reparacao = ""
-            #novo_sn_artigo =
-            #notas_entrega =
-            #utilizador_entrega_id =
-            #data_entrega =
-            #num_quebra_stock =
-            is_stock = self.ef_var_tipo.get()
-            modo_entrega = self.ef_var_modo_entrega.get()  #TODO_converter para int?
-            reincidencia_processo_id = None  #TODO
-            morada_entrega = self.ef_ltxt_morada_entrega.get()
-            cliente_pagou_portes = self.ef_var_portes.get()
-            criado_por_utilizador_id = db.get_user_id(username)
-            )
-            
+        dados_rep = {'cliente_id': self.ef_txt_num_cliente.get(),
+            'product_id': self.ef_ltxt_cod_artigo.get(),
+            'sn': self.ef_ltxt_num_serie.get(),
+            'fornecedor_id': self.ef_txt_num_fornecedor.get(),
+            'estado_artigo': self.ef_var_estado.get(),
+            'obs_estado': self.ef_ltxt_obs_estado_equipamento.get(),
+            'is_garantia': self.ef_var_garantia.get(),
+            'data_compra': self.ef_ltxt_data_compra.get(),
+            'num_fatura': self.ef_ltxt_num_fatura.get(),
+            'loja_compra': self.ef_ltxt_local_compra.get(),
+            'desc_servico': self.ef_text_descr_avaria_servico.get(1.0, tk.END),
+            'avaria_reprod_loja': self.ef_var_reprod_loja.get(),
+            'requer_copia_seg': self.ef_var_efetuar_copia.get(),
+            'is_find_my_ativo': self.ef_var_find_my.get(),
+            'senha': self.ef_ltxt_senha.get(),  # todo: scramble text
+            'acessorios_entregues': self.ef_ltxt_acessorios_entregues.get(),
+            'notas': self.ef_ltxt_notas.get(),
+            'local_reparacao_id': self.ef_var_local_intervencao.get(),
+            'estado_reparacao': ESTADOS[EM_PROCESSAMENTO],
+            'fatura_fornecedor': self.ef_ltxt_num_fatura_fornecedor.get(),
+            'nar_autorizacao_rep': self.ef_ltxt_nar.get(),
+            'data_fatura_fornecedor': self.ef_ltxt_data_fatura_fornecedor.get(),
+            'num_guia_rececao': self.ef_ltxt_num_guia_rececao.get(),
+            'data_guia_rececao': self.ef_ltxt_data_entrada_stock.get(),
+            #'cod_resultado_reparacao': SEM_INFORMACAO,
+            #'descr_detalhe_reparacao': "",
+            #'novo_sn_artigo': ,
+            #'notas_entrega': ,
+            #'utilizador_entrega_id': ,
+            #'data_entrega': ,
+            #'num_quebra_stock': ,
+            'is_stock': self.ef_var_tipo.get(),
+            'modo_entrega': self.ef_var_modo_entrega.get(),  #TODO_converter para int?
+            'reincidencia_processo_id': None,  #TODO
+            'morada_entrega': self.ef_ltxt_morada_entrega.get(),
+            'cliente_pagou_portes': self.ef_var_portes.get(),
+            'criado_por_utilizador_id': db.get_user_id(self.username)
+        }
+        
+        self.ultima_reparacao = db.save_repair(dados_rep)
         
         # TODO - None se falhar
         if self.ultima_reparacao:
