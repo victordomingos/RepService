@@ -15,7 +15,7 @@ from datetime import datetime
 import db_local_base as db_base
 import db_local_models as db_models
 
-from global_setup import LOCAL_DATABASE_PATH
+from global_setup import LOCAL_DATABASE_PATH, ESTADOS
 
 
 def delete_database():
@@ -32,7 +32,7 @@ def init_database():
     session = sessionmaker()
     session.configure(bind=engine)
     db_base.Base.metadata.create_all(engine)
-    
+
 
 # TODO
 def validate_login(username, password):
@@ -156,7 +156,14 @@ def obter_lista_artigos_emprest():
     return artigos
 
 
+def obter_todas_reparacoes():
+    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
+    session = sessionmaker()
+    session.configure(bind=engine)
+    s = session()
 
+    reparacoes = s.query(db_models.Repair).all()
+    return reparacoes
 
 
 # ----------------------------------------------------------------------------------------
@@ -169,7 +176,7 @@ def test_populate():
     session = sessionmaker()
     session.configure(bind=engine)
     s = session()
-    
+
     print("A inserir lojas...")
     for i in range(2):
         loja = db_models.Loja(nome=f"That Great NPK Store #{str(i)}")
@@ -189,14 +196,14 @@ def test_populate():
 
     print("A inserir contactos de clientes e fornecedores...")
     utilizadores = s.query(db_models.User).all()
-    nomes = ("José", "Manuel", "Maria", "Guilhermina", "Estêvão", "Joaninha", "Apólito", "John")
-    apelidos = ("Laranja", "Bonito", "Santiago", "de Malva e Cunha", "Azeredo", "Starck", "Brückner")
+    nomes = ("José", "Rita", "Shawn", "Francelina", "Eufrazina", "Eleutério", "Joana Manuela", "Manuel", "Maria", "Guilhermina", "Estêvão", "Joaninha", "Apólito", "John", "Loja X")
+    apelidos = ("Laranja", "Bonito", "Santiago", "de Malva e Cunha", "Azeredo", "Starck", "Brückner", "Apolinário Gomes Fernandes", "Carvalho", "Rodrigues", "Ló")
     empresas = ("", "NPK", "NPK - Network project for Knowledge", "Aquela Empresa Faltástica, S.A.", "", "")
     telefones = ("222000000", "960000000", "+351210000000")
     from random import choice
-    for i in range(15):
+    for i in range(300):
         contacto = db_models.Contact(
-            nome=f"{choice(nomes)} {choice(apelidos)}", 
+            nome=f"{choice(nomes)} {choice(apelidos)}",
             empresa=choice(empresas),
             telefone=choice(telefones),
             telemovel = choice(telefones),
@@ -215,32 +222,43 @@ def test_populate():
 
     s.commit()
 
-    
+
     print("A inserir artigos...")
+    artigos = ("Artigo Muito Jeitoso (Early 2015)", "Outro Artigo Bem Jeitoso",
+        "Smartphone Daqueles Bons", "Computador do modelo ABCD",
+        "Coisa que não funciona devidamente", "Coisa que devia funcionar melhor")
+
     for i in range(150):
-        artigo = db_models.Product(descr_product=f"Aquele artigo número {str(i)}", part_number="NPKPN662"+str(i)+"ZQ"+str(i))
+        artigo = db_models.Product(descr_product=choice(artigos), part_number="NPKPN662"+str(i)+"ZQ"+str(i))
         s.add(artigo)
 
     s.commit()
 
     print("A inserir reparações...")
     contactos = s.query(db_models.Contact).all()
+    num_contactos = s.query(db_models.Contact).count()
     artigos = s.query(db_models.Product).all()
+    num_artigos = s.query(db_models.Product).count()
     utilizadores = s.query(db_models.User).all()
-    for i in range(50):
+    num_utilizadores = s.query(db_models.User).count()
+    servicos = ("Substituição de ecrã", "Bateria não carrega",
+        "Formatar disco e reinstalar sistema operativo",
+        "Substituição ao abrigo da garantia")
+
+    for i in range(75):
         print("i:", i)
         reparacao = db_models.Repair(
-            cliente = contactos[i%15],
-            product = artigos[i%150],
+            cliente = contactos[i%num_contactos],
+            product = artigos[i%num_artigos],
             sn = "W123132JJG123B123ZLT",
-            fornecedor = contactos[(i+5)%15],
+            fornecedor = contactos[(i+5)%num_contactos],
             estado_artigo = 1,
             obs_estado = "Marcas de acidente, com amolgadelas e vidro partido",
             is_garantia = 0,
             data_compra = datetime(2017,1,31),
             num_fatura = "12345FC",
             loja_compra = "NPK Store",
-            desc_servico = "Tentar ressuscitar o dispositivo",
+            descr_servico = choice(servicos),
             avaria_reprod_loja = True,
             requer_copia_seg = 0,
             is_find_my_ativo = 1,
@@ -248,7 +266,7 @@ def test_populate():
             acessorios_entregues = "Bolsa da marca NPK Accessories",
             notas = "",
             local_reparacao = contactos[i%2],
-            estado_reparacao = 3,
+            estado_reparacao = int(ESTADOS.index(choice(ESTADOS))),
             fatura_fornecedor = "FC123400001",
             nar_autorizacao_rep = "1234000",
             data_fatura_fornecedor = datetime(2017,1,31),
@@ -259,7 +277,7 @@ def test_populate():
             novo_sn_artigo = "G1231000TYZ",
             notas_entrega = "Entregue a José Manuel da Silva Curioso",
 
-            utilizador_entrega = utilizadores[(i+5)%15],
+            utilizador_entrega = utilizadores[(i+5)%num_utilizadores],
 
             data_entrega = datetime(2017,1,31),
             num_quebra_stock = "1234",
@@ -269,7 +287,7 @@ def test_populate():
             reincidencia_processo_id = 123,
             morada_entrega = "",
 
-            criado_por_utilizador = utilizadores[i%15])
+            criado_por_utilizador = utilizadores[i%num_utilizadores])
         s.add(reparacao)
 
     s.commit()
@@ -283,30 +301,30 @@ def test_populate():
         count +=1
         print("event in rep", rep)
         # create parent, append a child via association
-        evento1 = db_models.Event(        
+        evento1 = db_models.Event(
             repair_id = rep.id,
             descricao = "Cliente enviou por email a fatura para anexar ao processo de garantia.",
             criado_por_utilizador = utilizadores[1])
-        
+
         link = db_models.UtilizadorNotificadoPorEvento_link(is_visible=True, is_open=False)
-        
+
         link.user = utilizadores[1]
         evento1.utilizadores.append(link)
         s.add(evento1)
 
-        
+
         if count % 2 == 0:
             print("if rep event")
-            evento2 = db_models.Event(        
+            evento2 = db_models.Event(
                 repair_id = rep.id,
                 descricao = "Centro técnico pediu para questionar cliente sobre algo importante.",
                 criado_por_utilizador = utilizadores[2])
-                
+
             link2 = db_models.UtilizadorNotificadoPorEvento_link(is_visible=True, is_open=True)
             link2.user = utilizadores[2]
             evento2.utilizadores.append(link2)
             s.add(evento2)
-    
+
     s.commit()
 
 
@@ -332,7 +350,7 @@ def print_database():
 
     print("\n==============================\n         UTILIZADORES\n==============================")
     for utilizador in utilizadores:
-        print(f"\nO utilizador {utilizador.nome} tem o ID {utilizador.id} pertence à loja: {utilizador.loja_id} ({utilizador.loja.nome})")        
+        print(f"\nO utilizador {utilizador.nome} tem o ID {utilizador.id} pertence à loja: {utilizador.loja_id} ({utilizador.loja.nome})")
 
 
     print("\n==============================\n          CONTACTOS\n==============================")
@@ -360,7 +378,7 @@ def print_database():
     for link in eventos_visiveis:
         pprint.pprint(link.event)
 
-    
+
 
 if __name__ == "__main__":
     # Testing...

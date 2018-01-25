@@ -367,7 +367,6 @@ class App(baseApp):
 
         self.inserir_dados_de_exemplo()
         self.alternar_cores(self.tree)
-        self.inserir_msgs_de_exemplo()
         self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
         self.atualizar_soma_processos()
 
@@ -540,10 +539,10 @@ class App(baseApp):
         #self.tree.pack(side='top', expand=True, fill='both')
         self.tree.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
         self.tree.column('Nº', anchor='e', minwidth=46, stretch=0, width=46)
-        self.tree.column('Cliente', minwidth=80, stretch=1, width=120)
-        self.tree.column('Equipamento', minwidth=80, stretch=1, width=170)
-        self.tree.column('Serviço', minwidth=80, stretch=1, width=210)
-        self.tree.column('Estado', minwidth=80, stretch=0, width=145)
+        self.tree.column('Cliente', minwidth=40, stretch=1, width=120)
+        self.tree.column('Equipamento', minwidth=40, stretch=1, width=160)
+        self.tree.column('Serviço', minwidth=40, stretch=1, width=195)
+        self.tree.column('Estado', minwidth=40, stretch=1, width=150)
         self.tree.column('Dias', anchor='e', minwidth=35, stretch=0, width=35)
         self.configurarTree()
         self.leftframe.grid_columnconfigure(0, weight=1)
@@ -1322,7 +1321,7 @@ class App(baseApp):
         """ Atualizar a lista de locais de intervenção na combobox
             correspondente, obtendo info a partir da base de dados.
         """
-        self.ef_combo_local_intervencao['values'] = obter_lista_fornecedores()
+        self.ef_combo_local_intervencao['values'] = db.obter_lista_fornecedores()
 
     def radio_tipo_command(self, *event):
         """
@@ -1582,9 +1581,9 @@ class App(baseApp):
 
     def on_save_repair(self, event=None):
         """ Recolhe todos os dados do formulário e guarda uma nova reparação """
-        
+
         # validar aqui se dados estão corretos # TODO
-        
+
         # Adaptar para o caso de ser uma reparação de stock #TODO
         tipo = self.ef_var_tipo.get()
         if tipo == TIPO_REP_STOCK:
@@ -1630,9 +1629,9 @@ class App(baseApp):
             'cliente_pagou_portes': self.ef_var_portes.get(),
             'criado_por_utilizador_id': db.get_user_id(self.username)
         }
-        
+
         self.ultima_reparacao = db.save_repair(dados_rep)
-        
+
         # TODO - None se falhar
         if self.ultima_reparacao:
             self.on_repair_save_success()
@@ -1656,10 +1655,10 @@ class App(baseApp):
             imprimir.imprimir_folhas_de_reparacao(self.ultima_reparacao)
 
         self.master.focus()
-        self.fechar_painel_entrada()   
+        self.fechar_painel_entrada()
         self.reparacao_selecionada = self.ultima_reparacao
         self.create_window_detalhe_rep(num_reparacao=self.ultima_reparacao)
-        
+
 
     # TODO
     def on_repair_cancel(self, event=None):
@@ -1674,53 +1673,59 @@ class App(baseApp):
         else:
             self.entryframe.focus()
 
-    def inserir_msg(self, processo, utilizador, data, texto):
-        processo = str(processo)
+    def inserir_msg(self, rep_num=0, utilizador="", data=None, texto="", msg_lida=True):
+        """ Adicionar uma mensagem à lista, no painel de mensagens
+        """
         str_data = f"{data.day}/{data.month}/{data.year} às {data.hour}:{int(data.minute):02}"
         texto = textwrap.fill(texto, width=45)
         texto_final = f"{utilizador}, {str_data}\n﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘\n{texto}"
-        #texto_final = f"[{utilizador}, {str_data}]\n﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘\n{texto}"
-        ico = "✉️"
-        self.msgtree.insert("", "end", values=(ico, processo, texto_final))
+        ico = "  " if msg_lida else "✉️"
+        self.msgtree.insert("", "end", values=(ico, str(rep_num), texto_final))
+
+
+    def inserir_rep(self, rep_num=0, nome_cliente="", descr_artigo="", descr_servico="", estado=0, dias=0, tag="normal"):
+        """ Adicionar uma reparação à lista, na tabela principal
+        """
+        str_estado = ESTADOS[estado]
+        self.tree.insert("", "end", values=(str(rep_num), nome_cliente,
+            descr_artigo, descr_servico, str_estado, dias))
 
 
     def inserir_dados_de_exemplo(self):
         """ Generate some fake data for the repair list
         """
-        for i in range(1, 5):
-            self.tree.insert("", "end", tag="", text="", values=(str(i), "José Manuel da Silva Rodrigues",
-                                                                 "Artigo Muito Jeitoso (Early 2015)", "Substituição de ecrã", "Em processamento", "120"))
-            self.tree.insert("", "end", text="", values=(str(i + 1), "Joana Manuela Rodrigues",
-                                                         "Outro Artigo Bem Jeitoso", "Bateria não carrega", "Aguarda envio", "120"))
-            self.tree.insert("", "end", tag="baixa", text="", values=(str(
-                i + 2), "Maria Apolinário Gomes Fernandes", "Smartphone Daqueles Bons", "Substituição de ecrã", "Enviado", "15"))
-            self.tree.insert("", "end", text="", tag="normal", values=(str(i + 3), "José Carvalho",
-                                                                       "Computador do modelo ABCD", "Formatar disco e reinstalar sistema operativo", "Recebido", "1"))
-            self.tree.insert("", "end", text="", tag="urgente", values=(str(
-                i + 4), "Loja X", "Coisa que não funciona devidamente", "Substituição ao abrigo da garantia", "Aguarda entrega", "12"))
-            self.tree.insert("", "end", text="", tag="baixa", values=(str(
-                i + 5), "Loja X", "Coisa que devia funcionar melhor", "Substituição ao abrigo da garantia", "Entregue", "12"))
+        from random import choice, randint, randrange
+        import pprint
 
-    def inserir_msgs_de_exemplo(self):
-        """ Generate some fake data for the messages window
-        """
+        reparacoes = db.obter_todas_reparacoes()
+        quantidade_reps = len(reparacoes)
+        quantidade_msgs = 35
+
+        tags = ("baixa", "normal", "urgente")
+
+        i = 1
+        for reparacao in reparacoes:
+            dias=randint(0,300)  # calcular numero de dias desde que o cliente entregou o equipamento
+            tag=choice(tags)  # calcular e atribuir uma prioridade
+            codigo_estado = ESTADOS.index(ESTADOS[reparacao.estado_reparacao])
+            self.inserir_rep(rep_num=i, nome_cliente=reparacao.cliente.nome,
+                descr_artigo=reparacao.product.descr_product, descr_servico=reparacao.descr_servico,
+                estado=codigo_estado, dias=dias, tag=tag)
+            i += 1
+
         now = datetime.datetime.now()
-        for i in range(7):
-            utilizadores = ["Victor Domingos", "DJ Mars", "AC", "NPK"]
-            processo0 = 23456
-            processo1 = 21345
-            processo2 = 99000
-            processo3 = 1234
+        utilizadores = ("Victor Domingos", "DJ Mars", "AC", "NPK", "Monstro das Bolachas", "mit")
+        textos_msgs = ("Convém ligar a este cliente no dia x de dezembro para verificar qual a morada para onde é para enviar",
+            "Ligar ao cliente a explicar processo para fazer isto ou aquilo",
+            "Verificar estado com centro de assistência",
+            "Verificar estado com centro de assistência. O cliente vai enviar fatura para ver se dá para passar em garantia.")
 
-            insert_txt0 = "Convém ligar a este cliente no dia x de dezembro para verificar qual a morada para onde é para enviar"
-            insert_txt1 = "Ligar ao cliente a explicar processo para fazer isto ou aquilo"
-            insert_txt2 = "Verificar estado com centro de assistência"
-            insert_txt3 = "Verificar estado com centro de assistência. O cliente vai enviar fatura para ver se dá para passar em garantia."
+        for i in range(quantidade_msgs):
+            self.inserir_msg(rep_num=randrange(1,99999),
+                utilizador=choice(utilizadores), data=now, texto=choice(textos_msgs),
+                msg_lida=choice((True,False)) )
 
-            self.inserir_msg(processo0, utilizadores[0], now, insert_txt0)
-            self.inserir_msg(processo1, utilizadores[1], now, insert_txt1)
-            self.inserir_msg(processo2, utilizadores[2], now, insert_txt2)
-            self.inserir_msg(processo3, utilizadores[3], now, insert_txt3)
+
 
 
 if __name__ == "__main__":
