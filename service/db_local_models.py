@@ -10,6 +10,8 @@ from sqlalchemy.orm import relationship, backref
 
 from db_local_base import Base
 
+from global_setup import ESTADOS, PRIORIDADES
+
 
 class Loja(Base):
     __tablename__ = 'loja'
@@ -152,6 +154,7 @@ class Repair(Base):
     cliente_pagou_portes = Column(Integer)
     reincidencia_processo_id = Column(Integer)
     morada_entrega = Column(String)
+    prioridade = 1
     criado_por_utilizador_id = Column(Integer, ForeignKey('user.id'))
 
     created_on = Column(DateTime(), default=func.now())

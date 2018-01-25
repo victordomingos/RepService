@@ -15,7 +15,7 @@ from datetime import datetime
 import db_local_base as db_base
 import db_local_models as db_models
 
-from global_setup import LOCAL_DATABASE_PATH, ESTADOS
+from global_setup import LOCAL_DATABASE_PATH, ESTADOS, PRIORIDADES
 
 
 def delete_database():
@@ -77,6 +77,20 @@ def save_remessa(remessa):
     print("a guardar a remessa", remessa)
     db_last_remessa_number = "1984"
     return db_last_remessa_number
+
+
+def update_repair_priority(rep_num, priority):
+    print(f"A atualizar a prioridade da reparação nº {rep_num}: {priority} ({PRIORIDADES[priority]})")
+    reparacao = obter_reparacao(rep_num)
+    
+    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
+    session = sessionmaker()
+    session.configure(bind=engine)
+    s = session()
+    
+    pass  # TODO atualizar reparacao com prioridade.
+    
+    
 
 
 def obter_lista_fornecedores():
@@ -165,6 +179,14 @@ def obter_todas_reparacoes():
     reparacoes = s.query(db_models.Repair).all()
     return reparacoes
 
+def obter_reparacao(num_rep):
+    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
+    session = sessionmaker()
+    session.configure(bind=engine)
+    s = session()
+
+    reparacao = s.query(db_models.Repair).where(id=num_rep)
+    return reparacão
 
 # ----------------------------------------------------------------------------------------
 # Just a bunch of experiences to get the hang of SQLalchemy while developing the models...
@@ -245,7 +267,7 @@ def test_populate():
         "Formatar disco e reinstalar sistema operativo",
         "Substituição ao abrigo da garantia")
 
-    for i in range(75):
+    for i in range(99):
         print("i:", i)
         reparacao = db_models.Repair(
             cliente = contactos[i%num_contactos],
@@ -278,7 +300,7 @@ def test_populate():
             notas_entrega = "Entregue a José Manuel da Silva Curioso",
 
             utilizador_entrega = utilizadores[(i+5)%num_utilizadores],
-
+            prioridade = choice(list(PRIORIDADES.items())),
             data_entrega = datetime(2017,1,31),
             num_quebra_stock = "1234",
             is_stock = 0,

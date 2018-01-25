@@ -123,6 +123,9 @@ RESULTADOS = ("Sem informação",
               )
 
 
+PRIORIDADES = {0: "Baixa", 1: "Normal", 2: "Alta", 3: "Urgente"}
+
+
 EQUIP_MARCAS_USO = 0
 EQUIP_BOM_ESTADO = 1
 EQUIP_MARCAS_ACIDENTE = 2

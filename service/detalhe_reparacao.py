@@ -33,6 +33,7 @@ class repairDetailWindow(ttk.Frame):
         self.contact_detail_windows_count = 0
         self.master.focus()
         self.num_reparacao = num_reparacao
+        self.prioridade = 1
         
         # TODO: Substituir isto por função que busca tipo na info da base de dados
         self.tipo_processo = "Cliente" if bool((self.num_reparacao % 2) == 0) else "Stock"
@@ -135,22 +136,15 @@ class repairDetailWindow(ttk.Frame):
         # ----------- fim de Botão com menu "Alterar estado" -------------
 
         # ----------- Botão com menu "Alterar Prioridade" --------------
-        self.mbtn_alterar_prioridade = ttk.Menubutton(
-            self.topframe, text="Prioridade")
-        self.mbtn_alterar_prioridade.menu = tk.Menu(
-            self.mbtn_alterar_prioridade, tearoff=0)
+        self.mbtn_alterar_prioridade = ttk.Menubutton(self.topframe, text=f"Prioridade: {PRIORIDADES[self.prioridade]}")
+        self.mbtn_alterar_prioridade.menu = tk.Menu(self.mbtn_alterar_prioridade, tearoff=0)
         self.mbtn_alterar_prioridade["menu"] = self.mbtn_alterar_prioridade.menu
-
-        self.mbtn_alterar_prioridade.menu.add_command(
-            label="Baixa", command=None)
-        self.mbtn_alterar_prioridade.menu.add_command(
-            label="Normal", command=None)
-        self.mbtn_alterar_prioridade.menu.add_command(
-            label="Alta", command=None)
-        self.mbtn_alterar_prioridade.menu.add_command(
-            label="Urgente", command=None)
-        self.dicas.bind(self.mbtn_alterar_prioridade,
-                        'Alterar a prioridade deste processo de reparação.')
+        self.mbtn_alterar_prioridade.menu.add_command(label=PRIORIDADES[0], command=lambda:self._on_priority_change(0))
+        self.mbtn_alterar_prioridade.menu.add_command(label=PRIORIDADES[1], command=lambda:self._on_priority_change(1))
+        self.mbtn_alterar_prioridade.menu.add_command(label=PRIORIDADES[2], command=lambda:self._on_priority_change(2))
+        self.mbtn_alterar_prioridade.menu.add_command(label=PRIORIDADES[3], command=lambda:self._on_priority_change(3))
+        
+        self.dicas.bind(self.mbtn_alterar_prioridade,'Alterar a prioridade deste processo de reparação.')
         # ----------- fim de Botão com menu "Alterar Prioridade" -------------
 
         # ----------- Botão com menu "Copiar" --------------
@@ -713,6 +707,18 @@ class repairDetailWindow(ttk.Frame):
     def _on_cancel_emprest(self, *event):
         print(f"Cancelando introdução de dados de empréstimo...")
 
+    def _on_priority_change(self, new_priority):
+        print("self", self)
+        print("new_prio", new_priority)
+        
+        if self.prioridade == new_priority:
+            return
+        else:
+            self.prioridade = new_priority
+            self.mbtn_alterar_prioridade.configure(text=f"Prioridade: {PRIORIDADES[self.prioridade]}")
+            db.update_repair_priority(self.num_reparacao, new_priority)
+        
+        
     def gerar_tab_orcamentos(self):
         self.orcamentos_fr1 = ttk.Frame(self.tab_orcamentos)
         self.orcamentos_fr2 = ttk.Frame(self.tab_orcamentos)

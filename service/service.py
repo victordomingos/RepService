@@ -1701,16 +1701,13 @@ class App(baseApp):
         quantidade_reps = len(reparacoes)
         quantidade_msgs = 35
 
-        tags = ("baixa", "normal", "urgente")
-
         i = 1
         for reparacao in reparacoes:
             dias=randint(0,300)  # calcular numero de dias desde que o cliente entregou o equipamento
-            tag=choice(tags)  # calcular e atribuir uma prioridade
             codigo_estado = ESTADOS.index(ESTADOS[reparacao.estado_reparacao])
             self.inserir_rep(rep_num=i, nome_cliente=reparacao.cliente.nome,
                 descr_artigo=reparacao.product.descr_product, descr_servico=reparacao.descr_servico,
-                estado=codigo_estado, dias=dias, tag=tag)
+                estado=codigo_estado, dias=dias, tag=reparacao.prioridade)
             i += 1
 
         now = datetime.datetime.now()
@@ -1721,7 +1718,7 @@ class App(baseApp):
             "Verificar estado com centro de assistência. O cliente vai enviar fatura para ver se dá para passar em garantia.")
 
         for i in range(quantidade_msgs):
-            self.inserir_msg(rep_num=randrange(1,99999),
+            self.inserir_msg(rep_num=randrange(1,99),
                 utilizador=choice(utilizadores), data=now, texto=choice(textos_msgs),
                 msg_lida=choice((True,False)) )
 
