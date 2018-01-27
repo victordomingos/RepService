@@ -88,18 +88,18 @@ ANULADO = 9
 SEM_INFORMACAO = 10
 
 # Lista de estados (mesma sequência, para quando precisamos de uma string)
-ESTADOS = ("Em processamento",
-           "A aguardar envio",
-           "Aguarda resposta do fornecedor",
-           "Aguarda resposta do cliente",
-           "A aguardar receção",
-           "Recebido - avisar cliente",
-           "Disponível p/ levantamento - avisado",
-           "Entregue",
-           "Abandonado",
-           "Anulado",
-           "Sem informação"
-           )
+ESTADOS = {0: "Em processamento",
+           1: "A aguardar envio",
+           2: "Aguarda resposta do fornecedor",
+           3: "Aguarda resposta do cliente",
+           4: "A aguardar receção",
+           5: "Recebido - avisar cliente",
+           6: "Disponível p/ levantamento - avisado",
+           7: "Entregue",
+           8: "Abandonado",
+           9: "Anulado",
+           10: "Sem informação"
+           }
 
 # Resultados de eventos (como serão registados na base de dados)
 SEM_INFORMACAO = 0

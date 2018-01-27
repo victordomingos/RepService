@@ -34,6 +34,16 @@ def init_database():
     db_base.Base.metadata.create_all(engine)
 
 
+def calcular_dias_desde(data):
+    """ Calcular número de dias que passaram desde data indicada.
+        Ex: calcular_dias_desde(data)
+        Nota: Requer data no formato datetime.today()
+    """
+    hoje = datetime.today()
+    diferenca = hoje - data
+    return diferenca.days   # nº de dias que já passaram
+
+
 # TODO
 def validate_login(username, password):
     """ Check if username and password match the info in database. Token stuff
@@ -78,19 +88,30 @@ def save_remessa(remessa):
     db_last_remessa_number = "1984"
     return db_last_remessa_number
 
-
-def update_repair_priority(rep_num, priority):
-    print(f"A atualizar a prioridade da reparação nº {rep_num}: {priority} ({PRIORIDADES[priority]})")
+def update_repair_status(rep_num, status):
+    print(f"A atualizar o estado da reparação nº {rep_num}: {status} ({ESTADOS[status]})")
     reparacao = obter_reparacao(rep_num)
-    
+
     engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
     session = sessionmaker()
     session.configure(bind=engine)
     s = session()
-    
+
+    pass  # TODO atualizar reparacao com novo estado.
+
+
+def update_repair_priority(rep_num, priority):
+    print(f"A atualizar a prioridade da reparação nº {rep_num}: {priority} ({PRIORIDADES[priority]})")
+    reparacao = obter_reparacao(rep_num)
+
+    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
+    session = sessionmaker()
+    session.configure(bind=engine)
+    s = session()
+
     pass  # TODO atualizar reparacao com prioridade.
-    
-    
+
+
 
 
 def obter_lista_fornecedores():
@@ -185,8 +206,8 @@ def obter_reparacao(num_rep):
     session.configure(bind=engine)
     s = session()
 
-    reparacao = s.query(db_models.Repair).where(id=num_rep)
-    return reparacão
+    reparacao = s.query(db_models.Repair).get(num_rep)
+    return reparacao
 
 # ----------------------------------------------------------------------------------------
 # Just a bunch of experiences to get the hang of SQLalchemy while developing the models...
@@ -288,7 +309,7 @@ def test_populate():
             acessorios_entregues = "Bolsa da marca NPK Accessories",
             notas = "",
             local_reparacao = contactos[i%2],
-            estado_reparacao = int(ESTADOS.index(choice(ESTADOS))),
+            estado_reparacao = choice(list(ESTADOS.keys())),
             fatura_fornecedor = "FC123400001",
             nar_autorizacao_rep = "1234000",
             data_fatura_fornecedor = datetime(2017,1,31),

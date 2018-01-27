@@ -33,25 +33,22 @@ class repairDetailWindow(ttk.Frame):
         self.contact_detail_windows_count = 0
         self.master.focus()
         self.num_reparacao = num_reparacao
-        self.prioridade = 1
-        
-        # TODO: Substituir isto por função que busca tipo na info da base de dados
-        self.tipo_processo = "Cliente" if bool((self.num_reparacao % 2) == 0) else "Stock"
-        
-        # i.e. True se for reparação de cliente
-        self.is_rep_cliente = (self.tipo_processo == "Cliente")
-        # TODO: Obter estado a partir da base de dados
-        self.estado = ESTADOS[EM_PROCESSAMENTO]
-
-        self.is_garantia = True  # todo - verificar se é garantia
-        self.modo_entrega = 2  # todo - obter da base de dados
-        self.portes = 0  # todo - obter da base de dados
+        self.repair = db.obter_reparacao(self.num_reparacao)
+        self.cliente = self.repair.cliente
+        self.fornecedor = self.repair.fornecedor
+        self.prioridade = self.repair.prioridade
+        self.tipo_processo = "Cliente" if (self.repair.is_stock == 0) else "Stock"
+        self.is_rep_cliente = not self.repair.is_stock
+        self.estado = self.repair.estado_reparacao
+        self.is_garantia = self.repair.is_garantia
+        self.modo_entrega = self.repair.modo_entrega  # todo - obter da base de dados
+        self.portes = self.repair.cliente_pagou_portes  # todo - obter da base de dados
 
         if self.is_rep_cliente:
-            self.numero_contacto = "12345"  # TODO numero de cliente
-            self.nome = "Norberto Plutarco Keppler"  # TODO Nome do cliente
-            self.telefone = "+351 900 000 000"  # TODO Telefone do cliente
-            self.email = "repservice@the-NPK-programming-team.py"  # TODO Email do cliente
+            self.numero_contacto = self.cliente.id
+            self.nome = self.cliente.nome
+            self.telefone = self.cliente.telefone
+            self.email = self.cliente.email
             self.var_combo_artigos_emprest = tk.StringVar()
             self.var_combo_artigos_emprest.set("Selecionar artigo...")
             self.var_combo_artigos_emprest.trace(
@@ -62,11 +59,10 @@ class repairDetailWindow(ttk.Frame):
             self.var_id_art_emprest = tk.StringVar()
             self.var_id_art_emprest.trace('w', self._on_id_art_emprest_changed)
         else:
-            self.numero_contacto = "90000"  # TODO numero de fornecedor
-            # TODO Nome do fornecedor
-            self.nome = "That International Provider of Great Stuff, Inc."
-            self.telefone = "+351 200 000 000"  # TODO Telefone do fornecedor
-            self.email = "repservice@the-NPK-programming-team.py"  # TODO Email do fornecedor
+            self.numero_contacto = self.fornecedor.id
+            self.nome = self.fornecedor.nome
+            self.telefone = self.fornecedor.telefone
+            self.email = self.fornecedor.email
 
         self.configurar_frames_e_estilos()
         self.montar_barra_de_ferramentas()
@@ -86,53 +82,37 @@ class repairDetailWindow(ttk.Frame):
 
         # Reincidência apenas aparece se reparação está entregue, anulado,
         # abandonado, sem_informacao
-        if self.estado >= ESTADOS[ENTREGUE]:
-            self.btn_reincidencia = ttk.Button(
-                self.topframe, text="➕ Reincidência", width=4, command=None)
-            self.dicas.bind(
-                self.btn_reincidencia, 'Criar novo processo de reincidência\ncom base nesta reparação.')
+        if self.estado >= ENTREGUE:
+            self.btn_reincidencia = ttk.Button(self.topframe, text="➕ Reincidência", width=4, command=None)
+            self.dicas.bind(self.btn_reincidencia, 'Criar novo processo de reincidência\ncom base nesta reparação.')
 
         # Botão para registar entrega apenas aparece se reparação ainda não
         # está entregue
-        if self.estado != ESTADOS[ENTREGUE]:
+        if self.estado != ENTREGUE:
             self.btn_entregar = ttk.Button(
-                self.topframe, text=" ✅", width=4, command=None)
+                self.topframe, text=" ✅", width=4, command=lambda:self._on_repair_state_change(ENTREGUE))
             self.dicas.bind(self.btn_entregar,
                             'Marcar esta reparação como entregue.')
 
         # ----------- Botão com menu "Alterar estado" --------------
-        self.mbtn_alterar_estado = ttk.Menubutton(
-            self.topframe, style="TMenubutton", text="Estado")
-        self.mbtn_alterar_estado.menu = tk.Menu(
-            self.mbtn_alterar_estado, tearoff=0)
+        self.mbtn_alterar_estado = ttk.Menubutton(self.topframe, style="TMenubutton", text=ESTADOS[self.estado])
+        self.mbtn_alterar_estado.menu = tk.Menu(self.mbtn_alterar_estado, tearoff=0)
         self.mbtn_alterar_estado["menu"] = self.mbtn_alterar_estado.menu
 
-        self.mbtn_alterar_estado.menu.add_command(
-            label=ESTADOS[EM_PROCESSAMENTO], command=None)
-        self.mbtn_alterar_estado.menu.add_command(
-            label=ESTADOS[AGUARDA_ENVIO], command=None)
-        self.mbtn_alterar_estado.menu.add_command(
-            label=ESTADOS[AGUARDA_RESP_FORNECEDOR], command=None)
-        self.mbtn_alterar_estado.menu.add_command(
-            label=ESTADOS[AGUARDA_RESP_CLIENTE], command=None)
-        self.mbtn_alterar_estado.menu.add_command(
-            label=ESTADOS[AGUARDA_RECECAO], command=None)
-        self.mbtn_alterar_estado.menu.add_command(
-            label=ESTADOS[RECEBIDO], command=None)
-        self.mbtn_alterar_estado.menu.add_command(
-            label=ESTADOS[DISPONIVEL_P_LEVANTAMENTO], command=None)
+        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[EM_PROCESSAMENTO], command=lambda:self._on_repair_state_change(EM_PROCESSAMENTO))
+        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[AGUARDA_ENVIO], command=lambda:self._on_repair_state_change(AGUARDA_ENVIO))
+        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[AGUARDA_RESP_FORNECEDOR], command=lambda:self._on_repair_state_change(AGUARDA_RESP_FORNECEDOR))
+        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[AGUARDA_RESP_CLIENTE], command=lambda:self._on_repair_state_change(AGUARDA_RESP_CLIENTE))
+        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[AGUARDA_RECECAO], command=lambda:self._on_repair_state_change(AGUARDA_RECECAO))
+        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[RECEBIDO], command=lambda:self._on_repair_state_change(RECEBIDO))
+        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[DISPONIVEL_P_LEVANTAMENTO], command=lambda:self._on_repair_state_change(DISPONIVEL_P_LEVANTAMENTO))
         self.mbtn_alterar_estado.menu.add_separator()
-        self.mbtn_alterar_estado.menu.add_command(
-            label=ESTADOS[ENTREGUE], command=None)
+        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[ENTREGUE], command=lambda:self._on_repair_state_change(ENTREGUE))
         self.mbtn_alterar_estado.menu.add_separator()
-        self.mbtn_alterar_estado.menu.add_command(
-            label=ESTADOS[ANULADO], command=None)
-        self.mbtn_alterar_estado.menu.add_command(
-            label=ESTADOS[ABANDONADO], command=None)
-        self.mbtn_alterar_estado.menu.add_command(
-            label=ESTADOS[SEM_INFORMACAO], command=None)
-        self.dicas.bind(self.mbtn_alterar_estado,
-                        'Alterar o estado deste processo de reparação.')
+        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[ANULADO], command=lambda:self._on_repair_state_change(ANULADO))
+        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[ABANDONADO], command=lambda:self._on_repair_state_change(ABANDONADO))
+        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[SEM_INFORMACAO], command=lambda:self._on_repair_state_change(SEM_INFORMACAO))
+        self.dicas.bind(self.mbtn_alterar_estado, 'Alterar o estado deste processo de reparação.')
         # ----------- fim de Botão com menu "Alterar estado" -------------
 
         # ----------- Botão com menu "Alterar Prioridade" --------------
@@ -143,7 +123,7 @@ class repairDetailWindow(ttk.Frame):
         self.mbtn_alterar_prioridade.menu.add_command(label=PRIORIDADES[1], command=lambda:self._on_priority_change(1))
         self.mbtn_alterar_prioridade.menu.add_command(label=PRIORIDADES[2], command=lambda:self._on_priority_change(2))
         self.mbtn_alterar_prioridade.menu.add_command(label=PRIORIDADES[3], command=lambda:self._on_priority_change(3))
-        
+
         self.dicas.bind(self.mbtn_alterar_prioridade,'Alterar a prioridade deste processo de reparação.')
         # ----------- fim de Botão com menu "Alterar Prioridade" -------------
 
@@ -218,12 +198,12 @@ class repairDetailWindow(ttk.Frame):
 
         # Reincidência apenas aparece se reparação está entregue, anulado,
         # abandonado, sem_informacao
-        if self.estado >= ESTADOS[ENTREGUE]:
+        if self.estado >= ENTREGUE:
             self.btn_reincidencia.grid(column=10, row=0)
 
         # Botão para registar entrega apenas aparece se reparação ainda não
         # está entregue
-        if self.estado != ESTADOS[ENTREGUE]:
+        if self.estado != ENTREGUE:
             self.btn_entregar.grid(column=11, row=0)
 
         self.topframe.grid_columnconfigure(2, weight=1)
@@ -707,18 +687,24 @@ class repairDetailWindow(ttk.Frame):
     def _on_cancel_emprest(self, *event):
         print(f"Cancelando introdução de dados de empréstimo...")
 
+
+    def _on_repair_state_change(self, new_status):
+        if self.estado == new_status:
+            return
+        else:
+            self.estado = new_status
+            self.mbtn_alterar_estado.configure(text=ESTADOS[self.estado])
+            db.update_repair_status(self.num_reparacao, new_status)
+
     def _on_priority_change(self, new_priority):
-        print("self", self)
-        print("new_prio", new_priority)
-        
         if self.prioridade == new_priority:
             return
         else:
             self.prioridade = new_priority
             self.mbtn_alterar_prioridade.configure(text=f"Prioridade: {PRIORIDADES[self.prioridade]}")
             db.update_repair_priority(self.num_reparacao, new_priority)
-        
-        
+
+
     def gerar_tab_orcamentos(self):
         self.orcamentos_fr1 = ttk.Frame(self.tab_orcamentos)
         self.orcamentos_fr2 = ttk.Frame(self.tab_orcamentos)

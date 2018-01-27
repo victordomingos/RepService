@@ -1701,14 +1701,15 @@ class App(baseApp):
         quantidade_reps = len(reparacoes)
         quantidade_msgs = 35
 
-        i = 1
         for reparacao in reparacoes:
-            dias=randint(0,300)  # calcular numero de dias desde que o cliente entregou o equipamento
-            codigo_estado = ESTADOS.index(ESTADOS[reparacao.estado_reparacao])
-            self.inserir_rep(rep_num=i, nome_cliente=reparacao.cliente.nome,
-                descr_artigo=reparacao.product.descr_product, descr_servico=reparacao.descr_servico,
-                estado=codigo_estado, dias=dias, tag=reparacao.prioridade)
-            i += 1
+            dias = db.calcular_dias_desde(reparacao.created_on)
+            self.inserir_rep(rep_num=reparacao.id,
+                nome_cliente=reparacao.cliente.nome,
+                descr_artigo=reparacao.product.descr_product,
+                descr_servico=reparacao.descr_servico,
+                estado=reparacao.estado_reparacao,
+                dias=dias,
+                tag=reparacao.prioridade)
 
         now = datetime.datetime.now()
         utilizadores = ("Victor Domingos", "DJ Mars", "AC", "NPK", "Monstro das Bolachas", "mit")
