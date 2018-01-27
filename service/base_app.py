@@ -84,6 +84,7 @@ class baseApp(ttk.Frame):
 
         self.bottomframe = ttk.Frame(self.mainframe)
         self.btnFont = tkinter.font.Font(family="Lucida Grande", size=10)
+        self.statusFont = tkinter.font.Font(family="Lucida Grande", size=11)
         self.btnTxtColor = "grey22"
         self.btnTxtColor_active = "white"
 
@@ -193,8 +194,8 @@ class baseApp(ttk.Frame):
         Mostrar um painel de notificação com uma mensagem
         """
         self.update_idletasks()
-        x, y = int(root.winfo_width() / 2), 76
-        self.popupframe = ttk.Frame(root, padding="15 15 15 15")
+        x, y = int(self.master.winfo_width() / 2), 76
+        self.popupframe = ttk.Frame(self.master, padding="15 15 15 15")
         self.msglabel = ttk.Label(
             self.popupframe, font=self.statusFont, foreground=self.btnTxtColor, text=msg)
         self.msglabel.pack()

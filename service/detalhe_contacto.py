@@ -474,8 +474,7 @@ class contactDetailWindow(ttk.Frame):
         #self.my_statusbar.set(f"{num_reparacao} • {equipamento}")
         self.reparacao_selecionada = num_reparacao
 
-    def alternar_cores(self, tree, inverso=False,
-                       fundo1='grey98', fundo2='white'):
+    def alternar_cores(self, tree, inverso=False, fundo1='grey98', fundo2='white'):
         tree = tree
         if inverso == False:
             impar = True
@@ -496,8 +495,7 @@ class contactDetailWindow(ttk.Frame):
 
     def create_window_detalhe_rep(self, num_reparacao=None):
         self.rep_detail_windows_count += 1
-        self.rep_newDetailsWindow[self.rep_detail_windows_count] = tk.Toplevel(
-        )
+        self.rep_newDetailsWindow[self.rep_detail_windows_count] = tk.Toplevel()
         self.janela_detalhes_rep = repairDetailWindow(
             self.rep_newDetailsWindow[self.rep_detail_windows_count],
             num_reparacao)
@@ -525,10 +523,8 @@ class contactDetailWindow(ttk.Frame):
         self.lbl_soma_processos.config(text=texto)
 
     def configurar_frames_e_estilos(self):
-        self.master.minsize(W_DETALHE_CONTACTO_MIN_WIDTH,
-                            W_DETALHE_CONTACTO_MIN_HEIGHT)
-        self.master.maxsize(W_DETALHE_CONTACTO_MAX_WIDTH,
-                            W_DETALHE_CONTACTO_MAX_HEIGHT)
+        self.master.minsize(W_DETALHE_CONTACTO_MIN_WIDTH, W_DETALHE_CONTACTO_MIN_HEIGHT)
+        self.master.maxsize(W_DETALHE_CONTACTO_MAX_WIDTH, W_DETALHE_CONTACTO_MAX_HEIGHT)
         # self.master.geometry(W_DETALHE_CONTACTO_GEOMETRIA)  # Se ativada esta
         # linha, deixa de atualizar as medidas da janela ao mudar de separador
         self.master.title(f"Contacto nº{self.num_contacto}")

@@ -83,7 +83,7 @@ class repairDetailWindow(ttk.Frame):
         # Reincidência apenas aparece se reparação está entregue, anulado,
         # abandonado, sem_informacao
         if self.estado >= ENTREGUE:
-            self.btn_reincidencia = ttk.Button(self.topframe, text="➕ Reincidência", width=4, command=None)
+            self.btn_reincidencia = ttk.Button(self.topframe, text="➕ Reincidência", command=None)
             self.dicas.bind(self.btn_reincidencia, 'Criar novo processo de reincidência\ncom base nesta reparação.')
 
         # Botão para registar entrega apenas aparece se reparação ainda não
@@ -91,27 +91,20 @@ class repairDetailWindow(ttk.Frame):
         if self.estado != ENTREGUE:
             self.btn_entregar = ttk.Button(
                 self.topframe, text=" ✅", width=4, command=lambda:self._on_repair_state_change(ENTREGUE))
-            self.dicas.bind(self.btn_entregar,
-                            'Marcar esta reparação como entregue.')
+            self.dicas.bind(self.btn_entregar, 'Marcar esta reparação como entregue.')
 
         # ----------- Botão com menu "Alterar estado" --------------
-        self.mbtn_alterar_estado = ttk.Menubutton(self.topframe, style="TMenubutton", text=ESTADOS[self.estado])
+        self.mbtn_alterar_estado = ttk.Menubutton(self.topframe,
+            style="TMenubutton", text=ESTADOS[self.estado])
         self.mbtn_alterar_estado.menu = tk.Menu(self.mbtn_alterar_estado, tearoff=0)
         self.mbtn_alterar_estado["menu"] = self.mbtn_alterar_estado.menu
 
-        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[EM_PROCESSAMENTO], command=lambda:self._on_repair_state_change(EM_PROCESSAMENTO))
-        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[AGUARDA_ENVIO], command=lambda:self._on_repair_state_change(AGUARDA_ENVIO))
-        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[AGUARDA_RESP_FORNECEDOR], command=lambda:self._on_repair_state_change(AGUARDA_RESP_FORNECEDOR))
-        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[AGUARDA_RESP_CLIENTE], command=lambda:self._on_repair_state_change(AGUARDA_RESP_CLIENTE))
-        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[AGUARDA_RECECAO], command=lambda:self._on_repair_state_change(AGUARDA_RECECAO))
-        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[RECEBIDO], command=lambda:self._on_repair_state_change(RECEBIDO))
-        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[DISPONIVEL_P_LEVANTAMENTO], command=lambda:self._on_repair_state_change(DISPONIVEL_P_LEVANTAMENTO))
-        self.mbtn_alterar_estado.menu.add_separator()
-        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[ENTREGUE], command=lambda:self._on_repair_state_change(ENTREGUE))
-        self.mbtn_alterar_estado.menu.add_separator()
-        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[ANULADO], command=lambda:self._on_repair_state_change(ANULADO))
-        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[ABANDONADO], command=lambda:self._on_repair_state_change(ABANDONADO))
-        self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[SEM_INFORMACAO], command=lambda:self._on_repair_state_change(SEM_INFORMACAO))
+        for estado in ESTADOS:
+            if estado in (ENTREGUE, ABANDONADO):
+                self.mbtn_alterar_estado.menu.add_separator()
+            self.mbtn_alterar_estado.menu.add_command(label=ESTADOS[estado],
+                command=lambda estado=estado:self._on_repair_state_change(estado))
+
         self.dicas.bind(self.mbtn_alterar_estado, 'Alterar o estado deste processo de reparação.')
         # ----------- fim de Botão com menu "Alterar estado" -------------
 
@@ -119,10 +112,10 @@ class repairDetailWindow(ttk.Frame):
         self.mbtn_alterar_prioridade = ttk.Menubutton(self.topframe, text=f"Prioridade: {PRIORIDADES[self.prioridade]}")
         self.mbtn_alterar_prioridade.menu = tk.Menu(self.mbtn_alterar_prioridade, tearoff=0)
         self.mbtn_alterar_prioridade["menu"] = self.mbtn_alterar_prioridade.menu
-        self.mbtn_alterar_prioridade.menu.add_command(label=PRIORIDADES[0], command=lambda:self._on_priority_change(0))
-        self.mbtn_alterar_prioridade.menu.add_command(label=PRIORIDADES[1], command=lambda:self._on_priority_change(1))
-        self.mbtn_alterar_prioridade.menu.add_command(label=PRIORIDADES[2], command=lambda:self._on_priority_change(2))
-        self.mbtn_alterar_prioridade.menu.add_command(label=PRIORIDADES[3], command=lambda:self._on_priority_change(3))
+
+        for p in PRIORIDADES:
+            self.mbtn_alterar_prioridade.menu.add_command(label=PRIORIDADES[p],
+                command=lambda p=p:self._on_priority_change(p))
 
         self.dicas.bind(self.mbtn_alterar_prioridade,'Alterar a prioridade deste processo de reparação.')
         # ----------- fim de Botão com menu "Alterar Prioridade" -------------
@@ -693,15 +686,17 @@ class repairDetailWindow(ttk.Frame):
             return
         else:
             self.estado = new_status
-            self.mbtn_alterar_estado.configure(text=ESTADOS[self.estado])
+            self.mbtn_alterar_estado.configure(text=ESTADOS[new_status])
             db.update_repair_status(self.num_reparacao, new_status)
+            if new_status == ENTREGUE:
+                pass # TODO: procedimentos de entrega (registo do serviço realizado, verificar se há equipamentos emprestados, gerar documentos para impressão...)
 
     def _on_priority_change(self, new_priority):
         if self.prioridade == new_priority:
             return
         else:
             self.prioridade = new_priority
-            self.mbtn_alterar_prioridade.configure(text=f"Prioridade: {PRIORIDADES[self.prioridade]}")
+            self.mbtn_alterar_prioridade.configure(text=f"Prioridade: {PRIORIDADES[new_priority]}")
             db.update_repair_priority(self.num_reparacao, new_priority)
 
 

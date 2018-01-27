@@ -561,36 +561,23 @@ class App(baseApp):
         self.label_add.grid(column=0, row=1)
 
         # ----------- Botão com menu "Mostrar" --------------
-        self.label_mbtn_mostrar = ttk.Label(self.topframe,
-            font=self.btnFont,
-            foreground=self.btnTxtColor,
-            text="Mostrar processos…")
-        self.mbtn_mostrar = ttk.Menubutton(
-            self.topframe, text="Processos", width=18)
+        self.label_mbtn_mostrar = ttk.Label(self.topframe, font=self.btnFont,
+            foreground=self.btnTxtColor, text="Mostrar processos…")
+        self.mbtn_mostrar = ttk.Menubutton(self.topframe, text="Processos", width=18)
         self.mbtn_mostrar.menu = tk.Menu(self.mbtn_mostrar, tearoff=0)
         self.mbtn_mostrar["menu"] = self.mbtn_mostrar.menu
 
-        self.mbtn_mostrar.menu.add_command(
-            label="Processos em curso", command=None)
-        self.mbtn_mostrar.menu.add_command(
-            label="Processos finalizados", command=None)
-        self.mbtn_mostrar.menu.add_command(
-            label="Todos os processos", command=None)
+        self.mbtn_mostrar.menu.add_command(label="Processos em curso", command=None)
+        self.mbtn_mostrar.menu.add_command(label="Processos finalizados", command=None)
+        self.mbtn_mostrar.menu.add_command(label="Todos os processos", command=None)
         self.mbtn_mostrar.menu.add_separator()
-        self.mbtn_mostrar.menu.add_command(
-            label=ESTADOS[EM_PROCESSAMENTO], command=None)
-        self.mbtn_mostrar.menu.add_command(
-            label=ESTADOS[AGUARDA_ENVIO], command=None)
-        self.mbtn_mostrar.menu.add_command(
-            label=ESTADOS[AGUARDA_RESP_FORNECEDOR], command=None)
-        self.mbtn_mostrar.menu.add_command(
-            label=ESTADOS[AGUARDA_RESP_CLIENTE], command=None)
-        self.mbtn_mostrar.menu.add_command(
-            label=ESTADOS[AGUARDA_RECECAO], command=None)
-        self.mbtn_mostrar.menu.add_command(
-            label=ESTADOS[RECEBIDO], command=None)
-        self.mbtn_mostrar.menu.add_command(
-            label=ESTADOS[DISPONIVEL_P_LEVANTAMENTO])
+        self.mbtn_mostrar.menu.add_command(label=ESTADOS[EM_PROCESSAMENTO], command=None)
+        self.mbtn_mostrar.menu.add_command(label=ESTADOS[AGUARDA_ENVIO], command=None)
+        self.mbtn_mostrar.menu.add_command(label=ESTADOS[AGUARDA_RESP_FORNECEDOR], command=None)
+        self.mbtn_mostrar.menu.add_command(label=ESTADOS[AGUARDA_RESP_CLIENTE], command=None)
+        self.mbtn_mostrar.menu.add_command(label=ESTADOS[AGUARDA_RECECAO], command=None)
+        self.mbtn_mostrar.menu.add_command(label=ESTADOS[RECEBIDO], command=None)
+        self.mbtn_mostrar.menu.add_command(label=ESTADOS[DISPONIVEL_P_LEVANTAMENTO])
 
         self.mbtn_mostrar.grid(column=1, row=0)
         self.label_mbtn_mostrar.grid(column=1, row=1)
@@ -600,8 +587,8 @@ class App(baseApp):
 
         # ----------- fim de Botão com menu "Mostrar" -------------
 
-        self.btn_detalhes = ttk.Button(self.topframe, text=" ℹ️️", width=3, command=lambda: self.create_window_detalhe_rep(
-            num_reparacao=self.reparacao_selecionada))
+        self.btn_detalhes = ttk.Button(self.topframe, text=" ℹ️️", width=3,
+            command=lambda: self.create_window_detalhe_rep(num_reparacao=self.reparacao_selecionada))
         self.btn_detalhes.grid(column=6, row=0)
         ttk.Label(self.topframe, font=self.btnFont,
                   foreground=self.btnTxtColor, text="Detalhes").grid(column=6, row=1)
@@ -609,41 +596,24 @@ class App(baseApp):
             self.btn_detalhes, 'Apresentar detalhes do processo\nde reparação selecionado. (⌘I)')
 
         # ----------- Botão com menu "Alterar estado" --------------
-        self.label_mbtn_alterar = ttk.Label(
-            self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Alterar estado")
-        self.mbtn_alterar = ttk.Menubutton(self.topframe, text="•••")
+        self.label_mbtn_alterar = ttk.Label(self.topframe, font=self.btnFont,
+            foreground=self.btnTxtColor,text="Alterar estado")
+        self.mbtn_alterar = ttk.Menubutton(self.topframe, text="•••", style="TMenubutton")
         self.mbtn_alterar.menu = tk.Menu(self.mbtn_alterar, tearoff=0)
         self.mbtn_alterar["menu"] = self.mbtn_alterar.menu
 
-        self.mbtn_alterar.menu.add_command(
-            label=ESTADOS[EM_PROCESSAMENTO], command=None)
-        self.mbtn_alterar.menu.add_command(
-            label=ESTADOS[AGUARDA_ENVIO], command=None)
-        self.mbtn_alterar.menu.add_command(
-            label=ESTADOS[AGUARDA_RESP_FORNECEDOR], command=None)
-        self.mbtn_alterar.menu.add_command(
-            label=ESTADOS[AGUARDA_RESP_CLIENTE], command=None)
-        self.mbtn_alterar.menu.add_command(
-            label=ESTADOS[AGUARDA_RECECAO], command=None)
-        self.mbtn_alterar.menu.add_command(
-            label=ESTADOS[RECEBIDO], command=None)
-        self.mbtn_alterar.menu.add_command(
-            label=ESTADOS[DISPONIVEL_P_LEVANTAMENTO], command=None)
-        self.mbtn_alterar.menu.add_separator()
-        self.mbtn_alterar.menu.add_command(
-            label=ESTADOS[ENTREGUE], command=None)
-        self.mbtn_alterar.menu.add_separator()
-        self.mbtn_alterar.menu.add_command(
-            label=ESTADOS[ANULADO], command=None)
-        self.mbtn_alterar.menu.add_command(
-            label=ESTADOS[ABANDONADO], command=None)
-        self.mbtn_alterar.menu.add_command(
-            label=ESTADOS[SEM_INFORMACAO], command=None)
+        for estado in ESTADOS:
+            if estado in (ENTREGUE, ABANDONADO):
+                self.mbtn_alterar.menu.add_separator()
+            self.mbtn_alterar.menu.add_command(label=ESTADOS[estado],
+                command=lambda estado=estado:self._on_repair_state_change(estado))
+
         self.mbtn_alterar.grid(column=7, row=0)
         self.label_mbtn_alterar.grid(column=7, row=1)
         self.dicas.bind(
             self.mbtn_alterar, 'Alterar o estado do processo\nde reparação selecionado.')
         # ----------- fim de Botão com menu "Alterar estado" -------------
+
 
         self.btn_entregar = ttk.Button(
             self.topframe, text=" ✅", width=3, command=None)
@@ -1454,6 +1424,19 @@ class App(baseApp):
 
             self.adicionar_morada_entrega()
             self.ef_txt_num_cliente.focus()
+
+
+    def _on_repair_state_change(self, new_status):
+        reparacao = db.obter_reparacao(self.reparacao_selecionada)
+        if reparacao.estado_reparacao == new_status:
+            self.popupMsg(f"A reparação nº {self.reparacao_selecionada} já tinha o estado selecionado.\nNenhuma alteração efetuada.")
+            return
+        db.update_repair_status(self.reparacao_selecionada, new_status)
+        self.popupMsg(f"A atualizar o estado da reparação nº {self.reparacao_selecionada} para: {ESTADOS[new_status]}")
+        if new_status == ENTREGUE:
+            pass # TODO: procedimentos de entrega (registo do serviço realizado, verificar se há equipamentos emprestados, gerar documentos para impressão...)
+
+
 
     def radio_estado_command(self, *event):
         print("RadioButton Estado Changed. New value:",

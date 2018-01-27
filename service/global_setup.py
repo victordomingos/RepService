@@ -111,7 +111,7 @@ ORCAMENTO_ACEITE = 5
 ORCAMENTO_RECUSADO = 6
 INTERVENCAO_IMPOSSIVEL = 7
 
-# Lista de estados (mesma sequência, para quando precisamos de uma string)
+# Lista de resultados (mesma sequência, para quando precisamos de uma string)
 RESULTADOS = ("Sem informação",
               "Garantia aprovada - artigo reparado",
               "Garantia aprovada - artigo substituído",
@@ -123,7 +123,7 @@ RESULTADOS = ("Sem informação",
               )
 
 
-PRIORIDADES = {0: "Baixa", 1: "Normal", 2: "Alta", 3: "Urgente"}
+PRIORIDADES = {0: "Normal", 1: "Alta", 2: "Urgente"}
 
 
 EQUIP_MARCAS_USO = 0
