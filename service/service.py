@@ -610,19 +610,17 @@ class App(baseApp):
 
         self.mbtn_alterar.grid(column=7, row=0)
         self.label_mbtn_alterar.grid(column=7, row=1)
-        self.dicas.bind(
-            self.mbtn_alterar, 'Alterar o estado do processo\nde reparação selecionado.')
+        self.dicas.bind(self.mbtn_alterar, 'Alterar o estado do processo\nde reparação selecionado.')
         # ----------- fim de Botão com menu "Alterar estado" -------------
 
 
-        self.btn_entregar = ttk.Button(
-            self.topframe, text=" ✅", width=3, command=None)
+        self.btn_entregar = ttk.Button(self.topframe, text=" ✅", width=3,
+            command=lambda:self._on_repair_state_change(ENTREGUE))
         self.btn_entregar.grid(column=8, row=0)
-        self.label_entregar = ttk.Label(
-            self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Entregar")
+        self.label_entregar = ttk.Label(self.topframe, font=self.btnFont,
+            foreground=self.btnTxtColor, text="Entregar")
         self.label_entregar.grid(column=8, row=1)
-        self.dicas.bind(
-            self.btn_entregar, 'Marcar o processo de reparação\nselecionado como entregue.')
+        self.dicas.bind(self.btn_entregar, 'Marcar o processo de reparação\nselecionado como entregue.')
 
         self.btn_messages = ttk.Button(
             self.topframe, text=" ☝️️", width=3, command=self.abrir_painel_mensagens)

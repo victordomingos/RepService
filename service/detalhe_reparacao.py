@@ -80,18 +80,11 @@ class repairDetailWindow(ttk.Frame):
         self.lbl_titulo = ttk.Label(self.topframe, style="Panel_Title.TLabel",
                                     foreground=self.btnTxtColor, text=f"Reparação nº {self.num_reparacao}")
 
-        # Reincidência apenas aparece se reparação está entregue, anulado,
-        # abandonado, sem_informacao
-        if self.estado >= ENTREGUE:
-            self.btn_reincidencia = ttk.Button(self.topframe, text="➕ Reincidência", command=None)
-            self.dicas.bind(self.btn_reincidencia, 'Criar novo processo de reincidência\ncom base nesta reparação.')
-
-        # Botão para registar entrega apenas aparece se reparação ainda não
-        # está entregue
-        if self.estado != ENTREGUE:
-            self.btn_entregar = ttk.Button(
-                self.topframe, text=" ✅", width=4, command=lambda:self._on_repair_state_change(ENTREGUE))
-            self.dicas.bind(self.btn_entregar, 'Marcar esta reparação como entregue.')
+        self.btn_reincidencia = ttk.Button(self.topframe, text="➕ Reincidência", command=None)
+        self.dicas.bind(self.btn_reincidencia, 'Criar novo processo de reincidência\ncom base nesta reparação.')
+        self.btn_entregar = ttk.Button(
+            self.topframe, text=" ✅", width=4, command=lambda:self._on_repair_state_change(ENTREGUE))
+        self.dicas.bind(self.btn_entregar, 'Marcar esta reparação como entregue.')
 
         # ----------- Botão com menu "Alterar estado" --------------
         self.mbtn_alterar_estado = ttk.Menubutton(self.topframe,
@@ -189,14 +182,9 @@ class repairDetailWindow(ttk.Frame):
         self.mbtn_copiar.grid(column=8, row=0)
         self.mbtn_imprimir.grid(column=9, row=0)
 
-        # Reincidência apenas aparece se reparação está entregue, anulado,
-        # abandonado, sem_informacao
-        if self.estado >= ENTREGUE:
+        if self.estado == ENTREGUE:
             self.btn_reincidencia.grid(column=10, row=0)
-
-        # Botão para registar entrega apenas aparece se reparação ainda não
-        # está entregue
-        if self.estado != ENTREGUE:
+        else:
             self.btn_entregar.grid(column=11, row=0)
 
         self.topframe.grid_columnconfigure(2, weight=1)
@@ -287,7 +275,7 @@ class repairDetailWindow(ttk.Frame):
 
         if self.is_rep_cliente:
             # TODO: obter string do estado do equipamento
-            estado = f'Estado: {"Marcas de acidente"}'
+            estado = f'Estado: {ESTADOS[self.estado]}'
             self.ltxt_obs_estado_equipamento = LabelText(
                 self.geral_fr2, estado, style="Panel_Body.TLabel", height=2)
             self.ltxt_local_intervencao = LabelEntry(
@@ -689,7 +677,12 @@ class repairDetailWindow(ttk.Frame):
             self.mbtn_alterar_estado.configure(text=ESTADOS[new_status])
             db.update_repair_status(self.num_reparacao, new_status)
             if new_status == ENTREGUE:
-                pass # TODO: procedimentos de entrega (registo do serviço realizado, verificar se há equipamentos emprestados, gerar documentos para impressão...)
+                # TODO: procedimentos de entrega (registo do serviço realizado, verificar se há equipamentos emprestados, gerar documentos para impressão...)
+                self.btn_entregar.grid_remove()
+                self.btn_reincidencia.grid(column=10, row=0)
+            else:
+                self.btn_entregar.grid()
+                self.btn_reincidencia.grid_remove()
 
     def _on_priority_change(self, new_priority):
         if self.prioridade == new_priority:
