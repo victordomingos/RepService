@@ -215,6 +215,8 @@ def pesquisar_reparacoes(txt_pesquisa, estados=[]):
     session.configure(bind=engine)
     s = session()
     
+    print(f"A pesquisar com:\n{txt_pesquisa},\n{estados}")
+    
     termo_pesquisa = txt_pesquisa
     
     for c in txt_pesquisa:

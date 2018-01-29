@@ -1461,6 +1461,7 @@ class App(baseApp):
         # regressar ao campo de pesquisa caso não haja texto a pesquisar (resolve questão do atalho de teclado)
 
         if termo_pesquisa == "":
+            estados = list(ESTADOS.keys())
             reparacoes = db.obter_reparacoes_por_estados(self.last_selected_view_repair_list)
             self.atualizar_lista(reparacoes)
             return
@@ -1471,7 +1472,7 @@ class App(baseApp):
 
         estados = []
         if self.last_selected_view_repair_list == estados:
-            estados = ESTADOS
+            estados = list(ESTADOS.keys())
         else:
             estados = self.last_selected_view_repair_list
 
