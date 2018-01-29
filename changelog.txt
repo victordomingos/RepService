@@ -6,7 +6,12 @@ Histórico de versões:
 
 ---
 v.0.17 - 3/02/2018
- * 
+ * Criado método para preencher lista de reparações a partir da base de dados.
+ * Criado método para iniciar pesquisas de reparações (falta completar a
+   implementação correspondente nos módulos de base de dados).
+ * Criado método para filtrar reparações por estados.
+ * Criado método callback para alterar o estado de uma reparação (falta a
+   implementação correspondente nos módulos de base de dados).
 
 ---
 v.0.16 - 15/01/2018
@@ -25,7 +30,7 @@ v.0.15 - 28/12/2017
    automaticamente na combobox o artigo de empréstimo correspondente.
  * Adicionada opção de configuração que permitirá escolher entre uma base de
    dados local (SQLite, via SQLalchemy?) ou o acesso a uma web API.
-   
+
 ---
 v.0.14 - 17/09/2017
  * Corrigido um bug que impedia a expansão e o correto redimensionamento da
