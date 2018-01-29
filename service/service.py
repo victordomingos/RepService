@@ -368,10 +368,7 @@ class App(baseApp):
 
         self.composeFrames()
 
-        estados = [EM_PROCESSAMENTO, AGUARDA_ENVIO, AGUARDA_RESP_FORNECEDOR,
-                   AGUARDA_RESP_CLIENTE, AGUARDA_RECECAO, RECEBIDO,
-                   DISPONIVEL_P_LEVANTAMENTO]
-        self.atualizar_lista(db.obter_reparacoes_por_estados(estados))
+        self.atualizar_lista(db.obter_reparacoes_por_estados(PROCESSOS_EM_CURSO))
         self.inserir_dados_de_exemplo()
         self.alternar_cores(self.tree)
         self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
@@ -1462,15 +1459,37 @@ class App(baseApp):
         termo_pesquisa = termo_pesquisa.strip()
 
         # regressar ao campo de pesquisa caso não haja texto a pesquisar (resolve questão do atalho de teclado)
+
         if termo_pesquisa == "":
+            reparacoes = db.obter_reparacoes_por_estados(self.last_selected_view_repair_list)
+            self.atualizar_lista(reparacoes)
+            return
+        elif (len(termo_pesquisa) < 4) and not self.isNumeric(termo_pesquisa):
             return
 
         self.my_statusbar.set(f"A pesquisar: {termo_pesquisa}")
-        reparacoes = db.pesquisar_reparacoes(termo_pesquisa)
+
+        estados = []
+        if self.last_selected_view_repair_list == estados:
+            estados = ESTADOS
+        else:
+            estados = self.last_selected_view_repair_list
+
+        reparacoes = db.pesquisar_reparacoes(termo_pesquisa, estados=estados)
+
+        #if self.last_selected_view_repair_list in (PROCESSOS_EM_CURSO, PROCESSOS_FINALIZADOS):
+        #    reparacoes = db.pesquisar_reparacoes(termo_pesquisa, estados=self.last_selected_view_repair_list)
+        #else:
+        #    reparacoes = db.pesquisar_reparacoes(termo_pesquisa, estados=ESTADOS)
+
         self.atualizar_lista(reparacoes)
 
         self.nprocessos = len(reparacoes)
-        em_curso = 0  # TODO: contabilizar
+        em_curso = 0
+        for rep in reparacoes:
+            if rep.estado_reparacao in PROCESSOS_EM_CURSO:
+                em_curso += 1
+            
         if self.nprocessos == 0:
             s_status = f"""Pesquisa: {'"'+termo_pesquisa.upper()+'"'}. Não foi encontrado nenhum processo com o termo de pesquisa introduzido."""
         else:

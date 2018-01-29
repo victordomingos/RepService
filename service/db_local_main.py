@@ -8,14 +8,14 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 import os
 import pprint
 
-from sqlalchemy import create_engine, func, or_
+from sqlalchemy import create_engine, func, or_, and_
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 
 import db_local_base as db_base
 import db_local_models as db_models
 
-from global_setup import LOCAL_DATABASE_PATH, ESTADOS, PRIORIDADES
+from global_setup import LOCAL_DATABASE_PATH, ESTADOS, ENTREGUE, PRIORIDADES
 
 
 def delete_database():
@@ -209,33 +209,44 @@ def obter_reparacoes_por_estados(status_list):
     reparacoes = s.query(db_models.Repair).filter(db_models.Repair.estado_reparacao.in_(status_list))
     return reparacoes.all()
 
-def pesquisar_reparacoes(txt_pesquisa):
+def pesquisar_reparacoes(txt_pesquisa, estados=[]):
     engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
     session = sessionmaker()
     session.configure(bind=engine)
     s = session()
+    
+    termo_pesquisa = txt_pesquisa
+    
+    for c in txt_pesquisa:
+        if c in "1234567890.":
+            numeric = True
+        else:
+            numeric = False
+            break
 
-    if '*' in txt_pesquisa or '_' in txt_pesquisa or '?' in txt_pesquisa:
-        termo_pesquisa = txt_pesquisa.replace('_', '__')\
-                                     .replace('*', '%')\
-                                     .replace('?', '_')
-    else:
-        termo_pesquisa = f"%{txt_pesquisa}%"
+    if not numeric:
+        if '*' in txt_pesquisa or '_' in txt_pesquisa or '?' in txt_pesquisa:
+            termo_pesquisa = txt_pesquisa.replace('_', '__').replace('*', '%').replace('?', '_')
+        else:
+            termo_pesquisa = f"%{txt_pesquisa}%"
 
+    #TODO: restringir a pesquisa aos registos que tenham o estado selecionado
+    
     reparacoes = s.query(db_models.Repair).filter(
-        or_(
-            db_models.Repair.id.ilike(termo_pesquisa),
-            #db_models.Contact.nome.ilike(termo_pesquisa),
-            #db_models.Contact.telefone.ilike(termo_pesquisa),
-            #db_models.Contact.telemovel.ilike(termo_pesquisa),
-            #db_models.Contact.email.ilike(termo_pesquisa),
-            #db_models.Product.descr_product.ilike(termo_pesquisa),
-            #db_models.Product.part_number.ilike(termo_pesquisa),
-            db_models.Repair.descr_servico.ilike(termo_pesquisa),
-            db_models.Repair.notas.ilike(termo_pesquisa),
-            db_models.Repair.num_fatura.ilike(termo_pesquisa),
-            db_models.Repair.sn.ilike(termo_pesquisa),
-        ))
+        and_(db_models.Repair.estado_reparacao.in_(estados),
+            or_(
+                db_models.Repair.id.like(termo_pesquisa),
+                #db_models.Contact.nome.ilike(termo_pesquisa),
+                #db_models.Contact.telefone.ilike(termo_pesquisa),
+                #db_models.Contact.telemovel.ilike(termo_pesquisa),
+                #db_models.Contact.email.ilike(termo_pesquisa),
+                #db_models.Product.descr_product.ilike(termo_pesquisa),
+                #db_models.Product.part_number.ilike(termo_pesquisa),
+                db_models.Repair.descr_servico.ilike(termo_pesquisa),
+                db_models.Repair.notas.ilike(termo_pesquisa),
+                db_models.Repair.num_fatura.ilike(termo_pesquisa),
+                db_models.Repair.sn.ilike(termo_pesquisa),
+        )))
 
     return reparacoes.all()
 
@@ -328,8 +339,12 @@ def test_populate():
         "Formatar disco e reinstalar sistema operativo",
         "Substituição ao abrigo da garantia")
 
-    for i in range(99):
+    for i in range(30000):
         print("i:", i)
+        if (i%2 == 1) or (i%3 == 0) or (i%10 == 0) or i<21000 or i>21150:
+            estado = ENTREGUE
+        else: 
+            estado = choice(list(ESTADOS.keys()))
         reparacao = db_models.Repair(
             cliente = contactos[i%num_contactos],
             product = artigos[i%num_artigos],
@@ -349,7 +364,7 @@ def test_populate():
             acessorios_entregues = "Bolsa da marca NPK Accessories",
             notas = "",
             local_reparacao = contactos[i%2],
-            estado_reparacao = choice(list(ESTADOS.keys())),
+            estado_reparacao = estado,
             fatura_fornecedor = "FC123400001",
             nar_autorizacao_rep = "1234000",
             data_fatura_fornecedor = datetime(2017,1,31),
@@ -421,7 +436,7 @@ def print_database():
     utilizadores = s.query(db_models.User).all()
     contactos = s.query(db_models.Contact).all()
     artigos = s.query(db_models.Product).all()
-    reparacoes = s.query(db_models.Repair).all()
+    #reparacoes = s.query(db_models.Repair).all()
     eventos = s.query(db_models.Event).all()
     eventos_visiveis = s.query(db_models.UtilizadorNotificadoPorEvento_link).filter_by(is_visible=1, user=utilizadores[2])
 
@@ -449,10 +464,11 @@ def print_database():
     for artigo in artigos:
         pprint.pprint(artigo)
 
+    
     print("\n========================\n           REPARAÇÕES\n========================")
     for reparacao in reparacoes:
         pprint.pprint(reparacao)
-
+    
     print("\n========================\n           EVENTOS\n========================")
     for evento in eventos:
         pprint.pprint(evento)
@@ -462,11 +478,9 @@ def print_database():
         pprint.pprint(link.event)
 
 
-
 if __name__ == "__main__":
     # Testing...
     delete_database()
     init_database()
     test_populate()
-    print_database()
-
+    #print_database()

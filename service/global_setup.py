@@ -117,15 +117,15 @@ EV_ORCAMENTO_RECUSADO = 6
 EV_INTERVENCAO_IMPOSSIVEL = 7
 
 # Lista de resultados (mesma sequência, para quando precisamos de uma string)
-RESULTADOS = ("Sem informação",
-              "Garantia aprovada - artigo reparado",
-              "Garantia aprovada - artigo substituído",
-              "Garantia aprovada - emitida nota de crédito",
-              "Garantia recusada",
-              "Orçamento aceite",
-              "Orçamento recusado",
-              "Intervenção impossível",
-              )
+RESULTADOS = {0: "Sem informação",
+              1: "Garantia aprovada - artigo reparado",
+              2: "Garantia aprovada - artigo substituído",
+              3: "Garantia aprovada - emitida nota de crédito",
+              4: "Garantia recusada",
+              5: "Orçamento aceite",
+              6: "Orçamento recusado",
+              7: "Intervenção impossível",
+              }
 
 
 PRIORIDADES = {0: "Normal", 1: "Alta", 2: "Urgente"}

@@ -559,7 +559,7 @@ class repairDetailWindow(ttk.Frame):
             self.historico_fr1, style="Panel_Body.TLabel", text="Definir resultado:")
         self.ef_combo_resultado = ttk.Combobox(self.historico_fr1,
                                                textvariable=self.var_resultado,
-                                               values=RESULTADOS,
+                                               values=list(RESULTADOS.values()),
                                                width=32,
                                                state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
 
@@ -610,21 +610,21 @@ class repairDetailWindow(ttk.Frame):
         self.historico_fr1.pack(side='bottom', expand=False, fill='x')
 
     def _on_combo_resultado_select(self, event):
-        if self.var_resultado.get() == RESULTADOS[GARANTIA_APROVADA_REPARADO]:
+        if self.var_resultado.get() == RESULTADOS[EV_GARANTIA_APROVADA_REPARADO]:
             self.ef_ltxt_detalhes_evento.set_label(
                 "\nDetalhes (serviço realizado, descrição e número de série das peças substituídas, etc.):")
-        elif self.var_resultado.get() == RESULTADOS[GARANTIA_APROVADA_SUBSTITUIDO]:
+        elif self.var_resultado.get() == RESULTADOS[EV_GARANTIA_APROVADA_SUBSTITUIDO]:
             self.ef_ltxt_detalhes_evento.set_label(
                 "\nDetalhes (número de série do novo artigo, etc.):")
-        elif self.var_resultado.get() == RESULTADOS[GARANTIA_APROVADA_NOTA_DE_CREDITO]:
+        elif self.var_resultado.get() == RESULTADOS[EV_GARANTIA_APROVADA_NOTA_DE_CREDITO]:
             self.ef_ltxt_detalhes_evento.set_label(
                 "\nDetalhes (números das notas de crédito do fornecedor e da loja):")
-        elif self.var_resultado.get() == RESULTADOS[GARANTIA_RECUSADA]:
+        elif self.var_resultado.get() == RESULTADOS[EV_GARANTIA_RECUSADA]:
             self.ef_ltxt_detalhes_evento.set_label(
                 "\nDetalhes (motivo indicado pelo fornecedor ou centro técnico):")
-        elif self.var_resultado.get() == RESULTADOS[ORCAMENTO_ACEITE]:
+        elif self.var_resultado.get() == RESULTADOS[EV_ORCAMENTO_ACEITE]:
             self.ef_ltxt_detalhes_evento.set_label("\nDetalhes:")
-        elif self.var_resultado.get() == RESULTADOS[ORCAMENTO_RECUSADO]:
+        elif self.var_resultado.get() == RESULTADOS[EV_ORCAMENTO_RECUSADO]:
             self.ef_ltxt_detalhes_evento.set_label(
                 "\nDetalhes (motivo apontado pelo cliente):")
         else:
@@ -632,7 +632,7 @@ class repairDetailWindow(ttk.Frame):
 
         # TODO: criar regras para atribuição automática de novos estados do processo.
         # P. ex.: se orçamento aceite, perguntar utilizador se centro técnico
-        # foi notificado. Se sim, AGUARDA_RESP_FORNECEDOR, se não cria email
+        # foi notificado. Se sim, EV_AGUARDA_RESP_FORNECEDOR, se não cria email
         # modelo a informar centro técnico da decisão.
 
     def _on_combo_artigos_emprest_changed(self, index, value, op):
@@ -1078,7 +1078,7 @@ class repairDetailWindow(ttk.Frame):
         # self.master.geometry(W_DETALHE_REP_GEOMETRIA)  # Se ativada esta
         # linha, deixa de atualizar as medidas da janela ao mudar de separador
         self.master.title(
-            f"Reparação nº{self.num_reparacao} ({self.tipo_processo})")
+            f"Reparação nº {self.num_reparacao} ({self.tipo_processo})")
 
         self.dicas = Pmw.Balloon(self.master, label_background='#f6f6f6',
                                  hull_highlightbackground='#b3b3b3',
