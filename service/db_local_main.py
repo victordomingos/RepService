@@ -8,7 +8,7 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 import os
 import pprint
 
-from sqlalchemy import create_engine, func
+from sqlalchemy import create_engine, func, or_
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 
@@ -199,6 +199,46 @@ def obter_todas_reparacoes():
 
     reparacoes = s.query(db_models.Repair).all()
     return reparacoes
+
+def obter_reparacoes_por_estados(status_list):
+    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
+    session = sessionmaker()
+    session.configure(bind=engine)
+    s = session()
+
+    reparacoes = s.query(db_models.Repair).filter(db_models.Repair.estado_reparacao.in_(status_list))
+    return reparacoes.all()
+
+def pesquisar_reparacoes(txt_pesquisa):
+    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
+    session = sessionmaker()
+    session.configure(bind=engine)
+    s = session()
+
+    if '*' in txt_pesquisa or '_' in txt_pesquisa or '?' in txt_pesquisa:
+        termo_pesquisa = txt_pesquisa.replace('_', '__')\
+                                     .replace('*', '%')\
+                                     .replace('?', '_')
+    else:
+        termo_pesquisa = f"%{txt_pesquisa}%"
+
+    reparacoes = s.query(db_models.Repair).filter(
+        or_(
+            db_models.Repair.id.ilike(termo_pesquisa),
+            #db_models.Contact.nome.ilike(termo_pesquisa),
+            #db_models.Contact.telefone.ilike(termo_pesquisa),
+            #db_models.Contact.telemovel.ilike(termo_pesquisa),
+            #db_models.Contact.email.ilike(termo_pesquisa),
+            #db_models.Product.descr_product.ilike(termo_pesquisa),
+            #db_models.Product.part_number.ilike(termo_pesquisa),
+            db_models.Repair.descr_servico.ilike(termo_pesquisa),
+            db_models.Repair.notas.ilike(termo_pesquisa),
+            db_models.Repair.num_fatura.ilike(termo_pesquisa),
+            db_models.Repair.sn.ilike(termo_pesquisa),
+        ))
+
+    return reparacoes.all()
+
 
 def obter_reparacao(num_rep):
     engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))

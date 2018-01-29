@@ -18,6 +18,7 @@ import tkinter as tk
 import tkinter.font
 from tkinter import ttk, messagebox
 from tkinter.scrolledtext import ScrolledText
+from string import ascii_letters
 import datetime
 import time
 import textwrap
@@ -64,6 +65,8 @@ class App(baseApp):
         self.rep_detail_windows_count = 0
         self.msg_newDetailsWindow = {}
         self.msg_detail_windows_count = 0
+        self.pesquisa_visible = False
+        self.last_selected_view_repair_list = PROCESSOS_EM_CURSO
         self.nprocessos = 0
         self.nmensagens = 0
         self.reparacao_selecionada = None
@@ -365,34 +368,18 @@ class App(baseApp):
 
         self.composeFrames()
 
+        estados = [EM_PROCESSAMENTO, AGUARDA_ENVIO, AGUARDA_RESP_FORNECEDOR,
+                   AGUARDA_RESP_CLIENTE, AGUARDA_RECECAO, RECEBIDO,
+                   DISPONIVEL_P_LEVANTAMENTO]
+        self.atualizar_lista(db.obter_reparacoes_por_estados(estados))
         self.inserir_dados_de_exemplo()
         self.alternar_cores(self.tree)
         self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
-        self.atualizar_soma_processos()
 
         if self.contar_linhas(self.msgtree) > 0:
             #self.after(1200, self.abrir_painel_mensagens)
             self.abrir_painel_mensagens()
 
-        # self.teste_GUI()
-
-
-    def teste_GUI(self):
-        """ Nothing special here, just a small test to check windowing
-            performance and allow the verification of system load during that
-            process.
-        """
-        for i in range(3600):
-            print(i)
-            self.create_window_contacts()
-            self.create_window_remessas()
-            self.abrir_painel_mensagens()
-            self.mostrar_painel_entrada()
-
-            self.close_window_contactos()
-            self.close_window_remessas()
-            self.fechar_painel_mensagens()
-            self.fechar_painel_entrada()
 
     def contar_linhas(self, tree):
         """
@@ -563,28 +550,33 @@ class App(baseApp):
         # ----------- Botão com menu "Mostrar" --------------
         self.label_mbtn_mostrar = ttk.Label(self.topframe, font=self.btnFont,
             foreground=self.btnTxtColor, text="Mostrar processos…")
-        self.mbtn_mostrar = ttk.Menubutton(self.topframe, text="Processos", width=18)
+        self.mbtn_mostrar = ttk.Menubutton(self.topframe,
+            text="Processos em curso", width=18)
         self.mbtn_mostrar.menu = tk.Menu(self.mbtn_mostrar, tearoff=0)
         self.mbtn_mostrar["menu"] = self.mbtn_mostrar.menu
 
-        self.mbtn_mostrar.menu.add_command(label="Processos em curso", command=None)
-        self.mbtn_mostrar.menu.add_command(label="Processos finalizados", command=None)
-        self.mbtn_mostrar.menu.add_command(label="Todos os processos", command=None)
+        estados = PROCESSOS_EM_CURSO
+        self.mbtn_mostrar.menu.add_command(label="Processos em curso",
+            command=lambda estados=estados:self._on_repair_view_select(estados))
+
+        estados = PROCESSOS_FINALIZADOS
+        self.mbtn_mostrar.menu.add_command(label="Processos finalizados",
+            command=lambda estados=estados:self._on_repair_view_select(estados))
+
+        estados = []
+        self.mbtn_mostrar.menu.add_command(label="Todos os processos",
+            command=lambda estados=estados:self._on_repair_view_select(estados))
         self.mbtn_mostrar.menu.add_separator()
-        self.mbtn_mostrar.menu.add_command(label=ESTADOS[EM_PROCESSAMENTO], command=None)
-        self.mbtn_mostrar.menu.add_command(label=ESTADOS[AGUARDA_ENVIO], command=None)
-        self.mbtn_mostrar.menu.add_command(label=ESTADOS[AGUARDA_RESP_FORNECEDOR], command=None)
-        self.mbtn_mostrar.menu.add_command(label=ESTADOS[AGUARDA_RESP_CLIENTE], command=None)
-        self.mbtn_mostrar.menu.add_command(label=ESTADOS[AGUARDA_RECECAO], command=None)
-        self.mbtn_mostrar.menu.add_command(label=ESTADOS[RECEBIDO], command=None)
-        self.mbtn_mostrar.menu.add_command(label=ESTADOS[DISPONIVEL_P_LEVANTAMENTO])
+
+        for estado in ESTADOS:
+            self.mbtn_mostrar.menu.add_command(label=ESTADOS[estado],
+                command=lambda estado=estado:self._on_repair_view_select([estado]))
 
         self.mbtn_mostrar.grid(column=1, row=0)
         self.label_mbtn_mostrar.grid(column=1, row=1)
         self.dicas.bind(self.mbtn_mostrar,
             'Mostrar apenas uma parte dos processos,\n'
             'filtrando-os com base do seu estado atual.')
-
         # ----------- fim de Botão com menu "Mostrar" -------------
 
         self.btn_detalhes = ttk.Button(self.topframe, text=" ℹ️️", width=3,
@@ -657,13 +649,14 @@ class App(baseApp):
         self.dicas.bind(self.text_input_pesquisa,
                         'Para iniciar a pesquisa, digite\numa palavra ou frase. (⌘F)')
 
-        #letras_etc = ascii_letters + "01234567890-., "
-        # for char in letras_etc:
-        #    keystr = '<KeyRelease-' + char + '>'
-        #    self.text_input_pesquisa.bind(keystr, self.ativar_pesquisa)
-        #self.text_input_pesquisa.bind('<Button-1>', self.clique_a_pesquisar)
-        #self.text_input_pesquisa.bind('<KeyRelease-Escape>', self.cancelar_pesquisa)
-        #self.text_input_pesquisa.bind('<KeyRelease-Mod2-a>', self.text_input_pesquisa.select_range(0, END))
+        letras_etc = ascii_letters + "01234567890-., "
+        for char in letras_etc:
+            keystr = '<KeyRelease-' + char + '>'
+            self.text_input_pesquisa.bind(keystr, self.mostrar_pesquisa)
+        self.text_input_pesquisa.bind('<Button-1>', self.clique_a_pesquisar)
+        self.text_input_pesquisa.bind('<KeyRelease-Escape>', self.cancelar_pesquisa)
+        self.text_input_pesquisa.bind('<Command-a>', lambda x: self.text_input_pesquisa.select_range(0, tk.END))
+
 
         for col in range(1, 16):
             self.topframe.columnconfigure(col, weight=0)
@@ -1435,6 +1428,55 @@ class App(baseApp):
             pass # TODO: procedimentos de entrega (registo do serviço realizado, verificar se há equipamentos emprestados, gerar documentos para impressão...)
 
 
+    def _on_repair_view_select(self, status_list):
+        self.text_input_pesquisa.delete(0, tk.END)
+        if len(status_list) == 0:
+            reparacoes = db.obter_todas_reparacoes()
+            self.mbtn_mostrar.configure(text="Todos os processos")
+        else:
+            reparacoes = db.obter_reparacoes_por_estados(status_list)
+            if len(status_list) == 1:
+                self.mbtn_mostrar.configure(text=f"{ESTADOS[status_list[0]]}")
+            elif status_list == PROCESSOS_FINALIZADOS:
+                self.mbtn_mostrar.configure(text="Processos finalizados")
+            elif status_list == PROCESSOS_EM_CURSO:
+                self.mbtn_mostrar.configure(text="Processos em curso")
+
+        self.last_selected_view_repair_list = status_list
+        self.atualizar_lista(reparacoes)
+
+
+    def clique_a_pesquisar(self, *event):
+        self.text_input_pesquisa.focus_set()
+        self.my_statusbar.set("Por favor, introduza o texto a pesquisar na base de dados.")
+
+
+    def cancelar_pesquisa(self, event):
+        self.pesquisa_visible = False
+        self.tree.focus_set()
+        self._on_repair_view_select(self.last_selected_view_repair_list)
+
+
+    def mostrar_pesquisa(self, *event):
+        termo_pesquisa = self.text_input_pesquisa.get()
+        termo_pesquisa = termo_pesquisa.strip()
+
+        # regressar ao campo de pesquisa caso não haja texto a pesquisar (resolve questão do atalho de teclado)
+        if termo_pesquisa == "":
+            return
+
+        self.my_statusbar.set(f"A pesquisar: {termo_pesquisa}")
+        reparacoes = db.pesquisar_reparacoes(termo_pesquisa)
+        self.atualizar_lista(reparacoes)
+
+        self.nprocessos = len(reparacoes)
+        em_curso = 0  # TODO: contabilizar
+        if self.nprocessos == 0:
+            s_status = f"""Pesquisa: {'"'+termo_pesquisa.upper()+'"'}. Não foi encontrado nenhum processo com o termo de pesquisa introduzido."""
+        else:
+            s_status = f"""Pesquisa: {'"'+termo_pesquisa.upper()+'"'}. Encontrados {self.nprocessos} processos ({em_curso} em curso)."""
+        self.my_statusbar.set(s_status)
+
 
     def radio_estado_command(self, *event):
         print("RadioButton Estado Changed. New value:",
@@ -1483,7 +1525,9 @@ class App(baseApp):
             criar_nova_remessa=True), accelerator="Command+r")
         self.MenuFicheiro.add_separator()
         self.MenuFicheiro.add_command(
-            label="Pesquisar...", command=None, accelerator="Command+f")
+            label="Pesquisar...", command=self.clique_a_pesquisar, accelerator="Command+f")
+        self.MenuFicheiro.bind_all("<Command-f>", self.clique_a_pesquisar)
+
         root.bind_all("<Command-n>", self.mostrar_painel_entrada)
         root.bind_all(
             "<Command-t>", lambda *x: self.create_window_contacts(criar_novo_contacto="Cliente"))
@@ -1544,6 +1588,7 @@ class App(baseApp):
         self.contextMenuMsg = tk.Menu(self.menu)
         self.contextMenuMsg.add_command(label="Visualizar Mensagem", command=lambda: self.create_window_detalhe_msg(
             num_mensagem=self.mensagem_selecionada))
+
 
     def liga_desliga_menu_novo(self, *event):
         """
@@ -1665,22 +1710,20 @@ class App(baseApp):
 
 
     def inserir_rep(self, rep_num=0, nome_cliente="", descr_artigo="", descr_servico="", estado=0, dias=0, tag="normal"):
-        """ Adicionar uma reparação à lista, na tabela principal
+        """ Adicionar uma reparação à lista, na tabela principal.
         """
         str_estado = ESTADOS[estado]
         self.tree.insert("", "end", values=(str(rep_num), nome_cliente,
             descr_artigo, descr_servico, str_estado, dias))
 
 
-    def inserir_dados_de_exemplo(self):
-        """ Generate some fake data for the repair list
+    def atualizar_lista(self, reparacoes):
+        """ Atualizar a lista de reparações na tabela principal.
         """
-        from random import choice, randint, randrange
-        import pprint
-
-        reparacoes = db.obter_todas_reparacoes()
         quantidade_reps = len(reparacoes)
-        quantidade_msgs = 35
+
+        for i in self.tree.get_children():  # Limpar tabela primeiro
+            self.tree.delete(i)
 
         for reparacao in reparacoes:
             dias = db.calcular_dias_desde(reparacao.created_on)
@@ -1691,6 +1734,30 @@ class App(baseApp):
                 estado=reparacao.estado_reparacao,
                 dias=dias,
                 tag=reparacao.prioridade)
+
+        self.atualizar_soma_processos()
+
+    def inserir_dados_de_exemplo(self):
+        """ Generate some fake data for the repair list
+        """
+        from random import choice, randint, randrange
+        import pprint
+
+        #reparacoes = db.obter_todas_reparacoes()
+        #quantidade_reps = len(reparacoes)
+        quantidade_msgs = 35
+        """
+        for reparacao in reparacoes:
+            dias = db.calcular_dias_desde(reparacao.created_on)
+            self.inserir_rep(rep_num=reparacao.id,
+                nome_cliente=reparacao.cliente.nome,
+                descr_artigo=reparacao.product.descr_product,
+                descr_servico=reparacao.descr_servico,
+                estado=reparacao.estado_reparacao,
+                dias=dias,
+                tag=reparacao.prioridade)
+        """
+
 
         now = datetime.datetime.now()
         utilizadores = ("Victor Domingos", "DJ Mars", "AC", "NPK", "Monstro das Bolachas", "mit")

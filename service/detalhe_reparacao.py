@@ -510,7 +510,7 @@ class repairDetailWindow(ttk.Frame):
         self.var_notificar = tk.IntVar()
         self.var_notificar.set(0)
         self.var_resultado = tk.StringVar()
-        self.var_resultado.set(RESULTADOS[SEM_INFORMACAO])
+        self.var_resultado.set(RESULTADOS[EV_SEM_INFORMACAO])
 
         self.historico_fr1 = ttk.Frame(self.tab_historico)
         self.historico_fr2 = ttk.Frame(self.tab_historico)

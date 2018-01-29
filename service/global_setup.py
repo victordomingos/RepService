@@ -87,6 +87,11 @@ ABANDONADO = 8
 ANULADO = 9
 SEM_INFORMACAO = 10
 
+PROCESSOS_FINALIZADOS = [ENTREGUE, ABANDONADO, ANULADO, SEM_INFORMACAO]
+PROCESSOS_EM_CURSO = [EM_PROCESSAMENTO, AGUARDA_ENVIO, AGUARDA_RESP_FORNECEDOR,
+                   AGUARDA_RESP_CLIENTE, AGUARDA_RECECAO, RECEBIDO,
+                   DISPONIVEL_P_LEVANTAMENTO]
+
 # Lista de estados (mesma sequência, para quando precisamos de uma string)
 ESTADOS = {0: "Em processamento",
            1: "A aguardar envio",
@@ -94,7 +99,7 @@ ESTADOS = {0: "Em processamento",
            3: "Aguarda resposta do cliente",
            4: "A aguardar receção",
            5: "Recebido - avisar cliente",
-           6: "Disponível p/ levantamento - avisado",
+           6: "Disponível p/ levantamento",
            7: "Entregue",
            8: "Abandonado",
            9: "Anulado",
@@ -102,14 +107,14 @@ ESTADOS = {0: "Em processamento",
            }
 
 # Resultados de eventos (como serão registados na base de dados)
-SEM_INFORMACAO = 0
-GARANTIA_APROVADA_REPARADO = 1
-GARANTIA_APROVADA_SUBSTITUIDO = 2
-GARANTIA_APROVADA_NOTA_DE_CREDITO = 3
-GARANTIA_RECUSADA = 4
-ORCAMENTO_ACEITE = 5
-ORCAMENTO_RECUSADO = 6
-INTERVENCAO_IMPOSSIVEL = 7
+EV_SEM_INFORMACAO = 0
+EV_GARANTIA_APROVADA_REPARADO = 1
+EV_GARANTIA_APROVADA_SUBSTITUIDO = 2
+EV_GARANTIA_APROVADA_NOTA_DE_CREDITO = 3
+EV_GARANTIA_RECUSADA = 4
+EV_ORCAMENTO_ACEITE = 5
+EV_ORCAMENTO_RECUSADO = 6
+EV_INTERVENCAO_IMPOSSIVEL = 7
 
 # Lista de resultados (mesma sequência, para quando precisamos de uma string)
 RESULTADOS = ("Sem informação",
