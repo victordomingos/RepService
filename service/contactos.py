@@ -8,7 +8,7 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 
 import tkinter as tk
 from tkinter import ttk, messagebox
-from string import ascii_uppercase
+from string import ascii_uppercase, ascii_letters
 
 from base_app import baseApp
 from extra_tk_classes import LabelEntry, LabelText
@@ -33,6 +33,7 @@ class ContactsWindow(baseApp):
         self.contacto_selecionado = None
         self.ultimo_contacto = None
         self.ncontactos = 0
+        self.last_selected_view_contacts_list = "Clientes"  # ou "Fornecedores"
 
         self.master.minsize(CONTACTOS_MIN_WIDTH, CONTACTOS_MIN_HEIGHT)
         self.master.maxsize(CONTACTOS_MAX_WIDTH, CONTACTOS_MAX_HEIGHT)
@@ -121,13 +122,13 @@ class ContactsWindow(baseApp):
         self.dicas.bind(self.text_input_pesquisa,
                         'Para iniciar a pesquisa, digite\numa palavra ou frase. (⌘F)')
 
-        #letras_etc = ascii_letters + "01234567890-., "
-        # for char in letras_etc:
-        #    keystr = '<KeyRelease-' + char + '>'
-        #    self.text_input_pesquisa.bind(keystr, self.ativar_pesquisa)
-        #self.text_input_pesquisa.bind('<Button-1>', self.clique_a_pesquisar)
-        #self.text_input_pesquisa.bind('<KeyRelease-Escape>', self.cancelar_pesquisa)
-        #self.text_input_pesquisa.bind('<KeyRelease-Mod2-a>', self.text_input_pesquisa.select_range(0, END))
+        letras_etc = ascii_letters + "01234567890-., "
+        for char in letras_etc:
+            keystr = '<KeyRelease-' + char + '>'
+            self.text_input_pesquisa.bind(keystr, self.mostrar_pesquisa)
+        self.text_input_pesquisa.bind('<Button-1>', self.clique_a_pesquisar)
+        self.text_input_pesquisa.bind('<KeyRelease-Escape>', self.cancelar_pesquisa)
+        self.text_input_pesquisa.bind('<Command-a>', lambda x: self.text_input_pesquisa.select_range(0, tk.END))
 
         for col in range(1, 4):
             self.topframe.columnconfigure(col, weight=0)
@@ -446,3 +447,49 @@ class ContactsWindow(baseApp):
         for i in range(1, 4001):
             self.tree.insert("", "end", text="", values=(
                 str(i), "Nome do cliente", "+351000000000", "endereco@emaildocliente.com"))
+
+
+
+    def clique_a_pesquisar(self, *event):
+        self.text_input_pesquisa.focus_set()
+        self.my_statusbar.set("Por favor, introduza o texto a pesquisar na base de dados.")
+
+
+    def cancelar_pesquisa(self, event):
+        self.tree.focus_set()
+        self._on_repair_view_select(self.last_selected_view_contacts_list)
+
+
+    def mostrar_pesquisa(self, *event):
+        termo_pesquisa = self.text_input_pesquisa.get()
+        termo_pesquisa = termo_pesquisa.strip()
+
+        # regressar ao campo de pesquisa caso não haja texto a pesquisar (resolve questão do atalho de teclado)
+
+        if termo_pesquisa == "":
+            contactos = db.obter_contactos_por_tipo(self.last_selected_view_contacts_list)
+            self.atualizar_lista(contactos)
+            return
+        elif (len(termo_pesquisa) < 4) and not self.isNumeric(termo_pesquisa):
+            return
+
+        self.my_statusbar.set(f"A pesquisar: {termo_pesquisa}")
+
+        # Pesquisar filtrando pelo tipo de contacto selecionado (cliente/fornecedor)
+        contactos = db.pesquisar_contactos(termo_pesquisa,
+            tipo=self.last_selected_view_contacts_list)
+
+        self.atualizar_lista(reparacoes)
+
+        self.nprocessos = len(reparacoes)
+        em_curso = 0
+        for rep in reparacoes:
+            if rep.estado_reparacao in PROCESSOS_EM_CURSO:
+                em_curso += 1
+            
+        if self.nprocessos == 0:
+            s_status = f"""Pesquisa: {'"'+termo_pesquisa.upper()+'"'}. Não foi encontrado nenhum processo com o termo de pesquisa introduzido."""
+        else:
+            s_status = f"""Pesquisa: {'"'+termo_pesquisa.upper()+'"'}. Encontrados {self.nprocessos} processos ({em_curso} em curso)."""
+        self.my_statusbar.set(s_status)
+

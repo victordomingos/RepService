@@ -13,9 +13,9 @@ from tkinter import ttk
 from global_setup import *
 
 
-__app_name__ = "RepService 2017"
+__app_name__ = "RepService 2018"
 __author__ = "Victor Domingos"
-__copyright__ = "Copyright 2017 Victor Domingos"
+__copyright__ = "Copyright 2018 Victor Domingos"
 __license__ = "Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)"
 __version__ = "v0.17 development"
 __email__ = "web@victordomingos.com"
@@ -66,7 +66,7 @@ class thanks_window:
 
 
 class about_window:
-    def __init__(self):
+    def __init__(self, *event):
         self.about_w = 320
         self.about_h = 370
 
@@ -111,7 +111,7 @@ class about_window:
 
         #---------- FUNDO -----------
         self.copyright_lbl = ttk.Label(
-            self.pframe_fundo, font=self.copyfont, text="\n\n\n© 2017 Victor Domingos")
+            self.pframe_fundo, font=self.copyfont, text="\n\n\n© 2018 Victor Domingos")
         self.license_lbl = ttk.Label(
             self.pframe_fundo, font=self.copyfont, text=__license__)
 
@@ -128,7 +128,6 @@ class about_window:
         self.pframe_topo.focus()
         self.popupRoot.bind("<Command-w>", self.close_window)
 
-        self.popupRoot.mainloop()
 
     def close_window(self, event):
         window = event.widget.winfo_toplevel()

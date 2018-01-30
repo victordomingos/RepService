@@ -65,7 +65,6 @@ class App(baseApp):
         self.rep_detail_windows_count = 0
         self.msg_newDetailsWindow = {}
         self.msg_detail_windows_count = 0
-        self.pesquisa_visible = False
         self.last_selected_view_repair_list = PROCESSOS_EM_CURSO
         self.nprocessos = 0
         self.nmensagens = 0
@@ -91,7 +90,7 @@ class App(baseApp):
         self.root_login.bind_all("<Mod2-q>", self.master.quit)
 
         self.log_mainframe = ttk.Frame(self.root_login, padding="13 25 13 10")
-        #self.log_topframe = ttk.Frame(self.log_mainframe, padding="0 8 0 0")
+        self.log_topframe = ttk.Frame(self.log_mainframe, padding="0 8 0 0")
         self.log_centerframe = ttk.Frame(self.log_mainframe, padding="0 5 0 5")
         self.log_bottomframe = ttk.Frame(self.log_mainframe, padding="0 20 0 8")
 
@@ -102,12 +101,14 @@ class App(baseApp):
         w = self.root_login.winfo_screenwidth()
         h = self.root_login.winfo_screenheight()
 
-        size = tuple(int(_)
-                     for _ in self.root_login.geometry().split('+')[0].split('x'))
+        size = tuple(int(_) for _ in self.root_login.geometry().split('+')[0].split('x'))
         x = int(w / 2 - LOGIN_MIN_WIDTH / 2)
         y = int(h / 3 - LOGIN_MIN_HEIGHT / 2)
-        self.root_login.geometry(
-            f"{LOGIN_MIN_WIDTH}x{LOGIN_MIN_HEIGHT}+{x}+{y}")
+        self.root_login.geometry(f"{LOGIN_MIN_WIDTH}x{LOGIN_MIN_HEIGHT}+{x}+{y}")
+
+        icon_path = APP_PATH + "/images/icon.gif"
+        self.icon = tk.PhotoImage(file=icon_path)
+        self.label_icon = ttk.Label(self.log_topframe, image=self.icon)
 
         self.log_ltxt_username = LabelEntry(self.log_centerframe,
                                             label="Nome de Utilizador",
@@ -132,6 +133,8 @@ class App(baseApp):
                                         style="Active.TButton",
                                         command=self.validate_login)
 
+        self.label_icon.bind('<Button-1>', about_window.about_window)
+        
         self.log_ltxt_username.entry.bind("<Return>",
             lambda x: self.log_ltxt_password.entry.focus_set())
         self.log_ltxt_password.entry.bind("<Return>", self.validate_login)
@@ -144,6 +147,8 @@ class App(baseApp):
         self.log_btn_alterar_senha.bind("<Escape>", lambda x: exit())
 
         self.log_ltxt_username.entry.focus_set()
+
+        self.label_icon.pack(side=tk.TOP, pady=15, padx=30)
         self.log_ltxt_username.pack(side=tk.TOP, expand=False)
         self.log_ltxt_password.pack(side=tk.TOP, expand=False)
         self.log_btn_enter.pack(side=tk.RIGHT, padx=4)
@@ -151,7 +156,8 @@ class App(baseApp):
         self.log_btn_alterar_senha.pack(side=tk.LEFT, padx=4)
 
         self.log_bottomframe.pack(side=tk.BOTTOM, expand=False, fill='x')
-        self.log_centerframe.pack(side=tk.TOP, expand=True, fill='both')
+        self.log_topframe.pack(side=tk.LEFT, expand=True, fill='both')
+        self.log_centerframe.pack(side=tk.RIGHT, expand=True, fill='both')
         self.log_mainframe.pack(side=tk.TOP, expand=True, fill='both')
         root.withdraw()
 
@@ -1449,7 +1455,6 @@ class App(baseApp):
 
 
     def cancelar_pesquisa(self, event):
-        self.pesquisa_visible = False
         self.tree.focus_set()
         self._on_repair_view_select(self.last_selected_view_repair_list)
 
@@ -1477,11 +1482,6 @@ class App(baseApp):
             estados = self.last_selected_view_repair_list
 
         reparacoes = db.pesquisar_reparacoes(termo_pesquisa, estados=estados)
-
-        #if self.last_selected_view_repair_list in (PROCESSOS_EM_CURSO, PROCESSOS_FINALIZADOS):
-        #    reparacoes = db.pesquisar_reparacoes(termo_pesquisa, estados=self.last_selected_view_repair_list)
-        #else:
-        #    reparacoes = db.pesquisar_reparacoes(termo_pesquisa, estados=ESTADOS)
 
         self.atualizar_lista(reparacoes)
 
