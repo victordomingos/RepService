@@ -17,7 +17,7 @@ __app_name__ = "RepService 2018"
 __author__ = "Victor Domingos"
 __copyright__ = "Copyright 2018 Victor Domingos"
 __license__ = "Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)"
-__version__ = "v0.17 development"
+__version__ = "v0.18 development"
 __email__ = "web@victordomingos.com"
 __status__ = "Development"
 
@@ -106,6 +106,10 @@ class about_window:
             self.pframe_topo, text="\nO seu gestor avançado de reparações.\n")
         self.version_lbl = ttk.Label(
             self.pframe_topo, font=self.copyfont, text="Versão {}\n\n\n".format(__version__))
+        db_filesize = os.path.getsize(os.path.expanduser(LOCAL_DATABASE_PATH)) >> 10
+        self.lbl_filesize = ttk.Label(self.pframe_topo, font=self.copyfont, 
+            text=f"Tamanho atual da base de dados: {db_filesize/1024:.1f}MB\n")
+
 
         #---------- MEIO -----------
 
@@ -118,6 +122,7 @@ class about_window:
         self.app_lbl.pack()
         self.assin_lbl.pack()
         self.version_lbl.pack()
+        self.lbl_filesize.pack()
 
         self.copyright_lbl.pack()
         self.license_lbl.pack()

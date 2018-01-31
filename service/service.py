@@ -44,7 +44,7 @@ __app_name__ = "RepService 2018"
 __author__ = "Victor Domingos"
 __copyright__ = "Copyright 2018 Victor Domingos"
 __license__ = "Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)"
-__version__ = "v0.17 development"
+__version__ = "v0.18 development"
 __email__ = "web@victordomingos.com"
 __status__ = "Development"
 
@@ -559,20 +559,26 @@ class App(baseApp):
 
         estados = PROCESSOS_EM_CURSO
         self.mbtn_mostrar.menu.add_command(label="Processos em curso",
-            command=lambda estados=estados:self._on_repair_view_select(estados))
+            command=lambda status_list=estados:
+                self._on_repair_view_select(None, status_list=estados), 
+            accelerator="Command-4")
 
         estados = PROCESSOS_FINALIZADOS
         self.mbtn_mostrar.menu.add_command(label="Processos finalizados",
-            command=lambda estados=estados:self._on_repair_view_select(estados))
+            command=lambda status_list=estados:
+                self._on_repair_view_select(None, status_list=estados),
+            accelerator="Command-5")
 
         estados = []
         self.mbtn_mostrar.menu.add_command(label="Todos os processos",
-            command=lambda estados=estados:self._on_repair_view_select(estados))
+            command=lambda status_list=estados:
+                self._on_repair_view_select(None, status_list=estados),
+            accelerator="Command-5")
         self.mbtn_mostrar.menu.add_separator()
 
         for estado in ESTADOS:
             self.mbtn_mostrar.menu.add_command(label=ESTADOS[estado],
-                command=lambda estado=estado:self._on_repair_view_select([estado]))
+                command=lambda estado=estado: self._on_repair_view_select(None, status_list=[estado]))
 
         self.mbtn_mostrar.grid(column=1, row=0)
         self.label_mbtn_mostrar.grid(column=1, row=1)
@@ -1440,7 +1446,7 @@ class App(baseApp):
             pass # TODO: procedimentos de entrega (registo do serviço realizado, verificar se há equipamentos emprestados, gerar documentos para impressão...)
 
 
-    def _on_repair_view_select(self, status_list):
+    def _on_repair_view_select(self, *event, status_list=[]):
         self.text_input_pesquisa.delete(0, tk.END)
         if len(status_list) == 0:
             reparacoes = db.obter_todas_reparacoes()
@@ -1469,7 +1475,7 @@ class App(baseApp):
 
     def cancelar_pesquisa(self, event):
         self.tree.focus_set()
-        self._on_repair_view_select(self.last_selected_view_repair_list)
+        self._on_repair_view_select(None, status_list=self.last_selected_view_repair_list)
 
 
     def mostrar_pesquisa(self, *event):
@@ -1485,7 +1491,8 @@ class App(baseApp):
             return
         elif (len(termo_pesquisa) < 4) and not self.isNumeric(termo_pesquisa):
             return
-
+        
+        self.my_statusbar.clear()
         self.my_statusbar.set(f"A pesquisar: {termo_pesquisa}")
 
         estados = []
@@ -1588,7 +1595,37 @@ class App(baseApp):
         self.menuVis.bind_all("<Command-KeyPress-2>",
                               self.create_window_contacts)
         self.menuVis.bind_all("<Command-KeyPress-3>",
-                              self.create_window_remessas)
+                              self.create_window_remessas)          
+        self.menuVis.add_separator()
+        self.menuMostraProcessos = tk.Menu(self.menuVis)
+        self.menuVis.add_cascade(label="Mostrar processos...", menu=self.menuMostraProcessos)
+
+        self.menuMostraProcessos.add_command(label="Processos em curso",
+            command=lambda estados=PROCESSOS_EM_CURSO:
+                self._on_repair_view_select(status_list=PROCESSOS_EM_CURSO), 
+            accelerator="Command-4")
+        self.menuVis.bind_all("<Command-KeyPress-4>",
+            lambda status_list=PROCESSOS_EM_CURSO:
+                self._on_repair_view_select(None, status_list=PROCESSOS_EM_CURSO))
+
+
+        self.menuMostraProcessos.add_command(label="Processos finalizados",
+            command=lambda estados=PROCESSOS_FINALIZADOS:
+                self._on_repair_view_select(None, status_list=PROCESSOS_FINALIZADOS),
+            accelerator="Command-5")
+        self.menuVis.bind_all("<Command-KeyPress-5>",
+            lambda estados=PROCESSOS_FINALIZADOS:
+                self._on_repair_view_select(None, status_list=PROCESSOS_FINALIZADOS))
+        self.menuMostraProcessos.add_command(label="Todos os processos",
+            command=lambda estados=[]:self._on_repair_view_select(None, status_list=[]), 
+            accelerator="Command-6")
+        self.menuVis.bind_all("<Command-KeyPress-6>",
+            lambda estados=[]:self._on_repair_view_select(None, status_list=[]))
+        self.menuMostraProcessos.add_separator()
+
+        for estado in ESTADOS:
+            self.menuMostraProcessos.add_command(label=ESTADOS[estado],
+                command=lambda estado=estado:self._on_repair_view_select(None, status_list=[estado]))
 
         self.windowmenu = tk.Menu(self.menu, name='window')
         self.menu.add_cascade(menu=self.windowmenu, label='Janela')

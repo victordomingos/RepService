@@ -18,19 +18,20 @@ import db_local_models as db_models
 from global_setup import LOCAL_DATABASE_PATH, ESTADOS, ENTREGUE, PRIORIDADES
 
 
-def delete_database():
-    engine = create_engine(
-        'sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
+def iniciar_sessao_db():
+    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
     session = sessionmaker()
     session.configure(bind=engine)
+    return session(), engine
+
+
+def delete_database():
+    _, engine = iniciar_sessao_db()
     db_base.Base.metadata.drop_all(engine)
 
 
 def init_database():
-    engine = create_engine(
-        'sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
-    session = sessionmaker()
-    session.configure(bind=engine)
+    _, engine = iniciar_sessao_db()
     db_base.Base.metadata.create_all(engine)
 
 
@@ -192,29 +193,19 @@ def obter_lista_artigos_emprest():
 
 
 def obter_todas_reparacoes():
-    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
-    session = sessionmaker()
-    session.configure(bind=engine)
-    s = session()
-
+    s, _ = iniciar_sessao_db()
     reparacoes = s.query(db_models.Repair).all()
     return reparacoes
 
-def obter_reparacoes_por_estados(status_list):
-    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
-    session = sessionmaker()
-    session.configure(bind=engine)
-    s = session()
 
+def obter_reparacoes_por_estados(status_list):
+    s, _ = iniciar_sessao_db()
     reparacoes = s.query(db_models.Repair).filter(db_models.Repair.estado_reparacao.in_(status_list))
     return reparacoes.all()
 
 
 def pesquisar_reparacoes(txt_pesquisa, estados=[]):
-    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
-    session = sessionmaker()
-    session.configure(bind=engine)
-    s = session()
+    s, _ = iniciar_sessao_db()
 
     termo_pesquisa = txt_pesquisa
 
@@ -254,20 +245,13 @@ def pesquisar_reparacoes(txt_pesquisa, estados=[]):
 
 
 def obter_reparacao(num_rep):
-    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
-    session = sessionmaker()
-    session.configure(bind=engine)
-    s = session()
-
+    s, _ = iniciar_sessao_db()
     reparacao = s.query(db_models.Repair).get(num_rep)
     return reparacao
 
 
 def pesquisar_contactos(txt_pesquisa="", tipo="Clientes"):
-    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
-    session = sessionmaker()
-    session.configure(bind=engine)
-    s = session()
+    s, _ = iniciar_sessao_db()
 
     termo_pesquisa = txt_pesquisa
 
@@ -312,31 +296,18 @@ def pesquisar_contactos(txt_pesquisa="", tipo="Clientes"):
 
 
 def obter_clientes():
-    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
-    session = sessionmaker()
-    session.configure(bind=engine)
-    s = session()
-
+    s, _ = iniciar_sessao_db()
     contactos = s.query(db_models.Contact).filter_by(is_cliente=True)
     return contactos.all()
 
 
 def obter_fornecedores():
-    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
-    session = sessionmaker()
-    session.configure(bind=engine)
-    s = session()
-
+    s, _ = iniciar_sessao_db()
     contactos = s.query(db_models.Contact).filter_by(is_fornecedor=True)
     return contactos.all()
 
-
 def obter_contacto(num_contacto):
-    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
-    session = sessionmaker()
-    session.configure(bind=engine)
-    s = session()
-
+    s, _ = iniciar_sessao_db()
     contacto = s.query(db_models.Contact).get(num_contacto)
     return contacto
 
@@ -346,22 +317,21 @@ def obter_contacto(num_contacto):
 # ----------------------------------------------------------------------------------------
 
 
-def test_populate():
-    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
-    session = sessionmaker()
-    session.configure(bind=engine)
-    s = session()
+def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=1, num_reparacoes=1):
+    s, _ = iniciar_sessao_db()
+    print("A inserir dados de exemplo na base de dados.\n")
 
-    print("A inserir lojas...")
-    for i in range(2):
+    for i in range(num_lojas):
+        print(f"{'  - A inserir lojas...'.ljust(55)}{i+1:7}", end="\r")
         loja = db_models.Loja(nome=f"That Great NPK Store #{str(i)}")
         s.add(loja)
 
     s.commit()
 
-    print("A inserir utilizadores...")
+    print("")
     lojas = s.query(db_models.Loja).all()
-    for i in range(15):
+    for i in range(num_utilizadores):
+        print(f"{'  - A inserir utilizadores...'.ljust(55)}{i+1:7}", end="\r")
         lojinha = lojas[i % 2]
         utilizador = db_models.User(nome="utilizador" + str(i), email="test@networkprojectforknowledge.org" + str(i), password="abc1234567", loja=lojinha)
         s.add(utilizador)
@@ -369,7 +339,7 @@ def test_populate():
     s.commit()
 
 
-    print("A inserir contactos de clientes e fornecedores...")
+    print("")
     utilizadores = s.query(db_models.User).all()
     nomes = ("José", "Rita", "Shawn", "Francelina", "Eufrazina", "Eleutério", "Joana Manuela", "Manuel", "Maria", "Guilhermina", "Estêvão", "Joaninha", "Apólito", "John", "Loja X")
     apelidos = ("Laranja", "Bonito", "Santiago", "de Malva e Cunha", "Azeredo", "Starck", "Brückner", "Apolinário Gomes Fernandes", "Carvalho", "Rodrigues", "Ló")
@@ -381,9 +351,15 @@ def test_populate():
     is_fornecedor = (*20*(False,), True)
 
     from random import choice
-    for i in range(100):
+    for i in range(num_contactos):
+        print(f"{'  - A inserir contactos (clientes e fornecedores)...'.ljust(55)}{i+1:7}", end="\r")
         forn = choice(is_fornecedor)
-        cli = choice(is_cliente) if forn else True,
+        
+        if forn:
+            cli = choice(is_cliente)
+        else:
+            cli = True
+
 
         contacto = db_models.Contact(
             nome=f"{choice(nomes)} {choice(apelidos)}",
@@ -398,26 +374,28 @@ def test_populate():
             pais = "Portugal",
             nif = "999999990",
             notas = "Apontamentos adicionais sobre este contacto...",
-            is_cliente = cli,
-            is_fornecedor = forn,
+            is_cliente = bool(cli),
+            is_fornecedor = bool(forn),
             criado_por_utilizador = choice(utilizadores))
         s.add(contacto)
 
     s.commit()
 
 
-    print("A inserir artigos...")
+    print("")
     artigos = ("Artigo Muito Jeitoso (Early 2015)", "Outro Artigo Bem Jeitoso",
         "Smartphone Daqueles Bons", "Computador do modelo ABCD",
         "Coisa que não funciona devidamente", "Coisa que devia funcionar melhor")
 
-    for i in range(50):
+    for i in range(num_artigos):
+        print(f"{'  - A inserir artigos...'.ljust(55)}{i+1:7}", end="\r")
+        
         artigo = db_models.Product(descr_product=choice(artigos), part_number="NPKPN662"+str(i)+"ZQ"+str(i))
         s.add(artigo)
 
     s.commit()
 
-    print("A inserir reparações...")
+    print("")
     contactos = s.query(db_models.Contact).all()
     num_contactos = s.query(db_models.Contact).count()
     artigos = s.query(db_models.Product).all()
@@ -428,9 +406,9 @@ def test_populate():
         "Formatar disco e reinstalar sistema operativo",
         "Substituição ao abrigo da garantia")
 
-    for i in range(3000):
-        print("i:", i)
-        if (i%2 == 1) or (i%3 == 0) or (i%10 == 0) or i<21000 or i>21150:
+    for i in range(num_reparacoes):
+        print(f"{'  - A inserir reparações...'.ljust(55)}{i+1:7}", end="\r")
+        if (i%2 == 1) or (i%3 == 0) or (i%10 == 0) or i<1000 or i>1150:
             estado = ENTREGUE
         else:
             estado = choice(list(ESTADOS.keys()))
@@ -479,12 +457,14 @@ def test_populate():
 
     s.commit()
 
-    print("\nA inserir eventos...")
+
+    print("")
     reparacoes = s.query(db_models.Repair).all()
     utilizadores = s.query(db_models.User).all()
     count = 0
     rep = reparacoes[1]
     for rep in reparacoes:
+        print(f"{'  - A inserir eventos...'.ljust(55)}{count+1:7}", end="\r")
         count +=1
         #print("event in rep", rep)
         # create parent, append a child via association
@@ -513,13 +493,13 @@ def test_populate():
             s.add(evento2)
 
     s.commit()
+    
+    db_filesize = os.path.getsize(os.path.expanduser(LOCAL_DATABASE_PATH)) >> 10
+    print(f"\n\nOperação terminada.\nTamanho atual da base de dados: {db_filesize/1024:.1f}MB\n")
 
 
 def print_database():
-    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
-    session = sessionmaker()
-    session.configure(bind=engine)
-    s = session()
+    s, _ = iniciar_sessao_db()
 
     lojas = s.query(db_models.Loja).all()
     utilizadores = s.query(db_models.User).all()
@@ -571,5 +551,9 @@ if __name__ == "__main__":
     # Testing...
     delete_database()
     init_database()
-    test_populate()
+    test_populate(num_lojas=5, 
+                  num_utilizadores=40,
+                  num_contactos=2000,
+                  num_artigos=300,
+                  num_reparacoes=5000)
     #print_database()
