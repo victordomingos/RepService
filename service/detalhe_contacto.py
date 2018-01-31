@@ -248,8 +248,7 @@ class contactDetailWindow(ttk.Frame):
             self.ef_cabecalho, text="Cliente", style="Panel_Body.Checkbutton", variable=self.var_tipo_is_cliente)
         self.ef_chkbtn_tipo_fornecedor = ttk.Checkbutton(
             self.ef_cabecalho, text="Fornecedor ou centro técnico", style="Panel_Body.Checkbutton", variable=self.var_tipo_is_fornecedor)
-        self.ef_chkbtn_tipo_loja = ttk.Checkbutton(
-            self.ef_cabecalho, text="Loja do nosso grupo", style="Panel_Body.Checkbutton", variable=self.var_tipo_is_loja)
+        #self.ef_chkbtn_tipo_loja = ttk.Checkbutton(self.ef_cabecalho, text="Loja do nosso grupo", style="Panel_Body.Checkbutton", variable=self.var_tipo_is_loja)
 
         self.ef_lstxt_notas = LabelText(
             self.notas_fr1, "\nNotas:", height=3, style="Panel_Body.TLabel")
@@ -263,7 +262,7 @@ class contactDetailWindow(ttk.Frame):
         self.ef_lbl_tipo.grid(column=0, row=1, sticky='e')
         self.ef_chkbtn_tipo_cliente.grid(column=1, row=1, sticky='w')
         self.ef_chkbtn_tipo_fornecedor.grid(column=1, row=2, sticky='w')
-        self.ef_chkbtn_tipo_loja.grid(column=1, row=3, sticky='w')
+        #self.ef_chkbtn_tipo_loja.grid(column=1, row=3, sticky='w')
 
         self.ef_cabecalho.grid(column=0, row=0, sticky='we')
 

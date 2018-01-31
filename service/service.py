@@ -40,9 +40,9 @@ else:
     import db_remote as db
 
 
-__app_name__ = "RepService 2017"
+__app_name__ = "RepService 2018"
 __author__ = "Victor Domingos"
-__copyright__ = "Copyright 2017 Victor Domingos"
+__copyright__ = "Copyright 2018 Victor Domingos"
 __license__ = "Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)"
 __version__ = "v0.17 development"
 __email__ = "web@victordomingos.com"
@@ -89,10 +89,10 @@ class App(baseApp):
         self.root_login.title('Login')
         self.root_login.bind_all("<Mod2-q>", self.master.quit)
 
-        self.log_mainframe = ttk.Frame(self.root_login, padding="13 25 13 10")
-        self.log_topframe = ttk.Frame(self.log_mainframe, padding="0 8 0 0")
-        self.log_centerframe = ttk.Frame(self.log_mainframe, padding="0 5 0 5")
-        self.log_bottomframe = ttk.Frame(self.log_mainframe, padding="0 20 0 8")
+        self.log_mainframe = ttk.Frame(self.root_login, padding="13 15 13 10")
+        self.log_logoframe = ttk.Frame(self.log_mainframe, padding="0 0 0 0")
+        self.log_formframe = ttk.Frame(self.log_mainframe, padding="0 15 15 20")
+        self.log_bottomframe = ttk.Frame(self.log_mainframe, padding="0 0 0 8")
 
         self.log_btnFont = tkinter.font.Font(family="Lucida Grande", size=10)
         self.log_btnTxtColor = "grey22"
@@ -108,13 +108,13 @@ class App(baseApp):
 
         icon_path = APP_PATH + "/images/icon.gif"
         self.icon = tk.PhotoImage(file=icon_path)
-        self.label_icon = ttk.Label(self.log_topframe, image=self.icon)
+        self.label_icon = ttk.Label(self.log_logoframe, image=self.icon)
 
-        self.log_ltxt_username = LabelEntry(self.log_centerframe,
+        self.log_ltxt_username = LabelEntry(self.log_formframe,
                                             label="Nome de Utilizador",
                                             width=30)
 
-        self.log_ltxt_password = LabelEntry(self.log_centerframe,
+        self.log_ltxt_password = LabelEntry(self.log_formframe,
                                             label="Palavra-passe",
                                             width=30)
         self.log_ltxt_password.entry.config(show="•")
@@ -134,7 +134,7 @@ class App(baseApp):
                                         command=self.validate_login)
 
         self.label_icon.bind('<Button-1>', about_window.about_window)
-        
+
         self.log_ltxt_username.entry.bind("<Return>",
             lambda x: self.log_ltxt_password.entry.focus_set())
         self.log_ltxt_password.entry.bind("<Return>", self.validate_login)
@@ -156,8 +156,8 @@ class App(baseApp):
         self.log_btn_alterar_senha.pack(side=tk.LEFT, padx=4)
 
         self.log_bottomframe.pack(side=tk.BOTTOM, expand=False, fill='x')
-        self.log_topframe.pack(side=tk.LEFT, expand=True, fill='both')
-        self.log_centerframe.pack(side=tk.RIGHT, expand=True, fill='both')
+        self.log_logoframe.pack(side=tk.LEFT, expand=True, fill='both')
+        self.log_formframe.pack(side=tk.RIGHT, expand=True, fill='both')
         self.log_mainframe.pack(side=tk.TOP, expand=True, fill='both')
         root.withdraw()
 
@@ -542,8 +542,7 @@ class App(baseApp):
         self.bind_tree()
 
     def montar_barra_de_ferramentas(self):
-        self.btn_add = ttk.Button(
-            self.topframe, text="➕", width=6, command=self.show_entryform)
+        self.btn_add = ttk.Button(self.topframe, text="➕", width=6, command=self.show_entryform)
         self.btn_add.grid(column=0, row=0)
         self.dicas.bind(self.btn_add, 'Criar novo processo de reparação. (⌘N)')
         self.label_add = ttk.Label(
@@ -581,6 +580,14 @@ class App(baseApp):
             'Mostrar apenas uma parte dos processos,\n'
             'filtrando-os com base do seu estado atual.')
         # ----------- fim de Botão com menu "Mostrar" -------------
+
+        """
+        self.btn_sair = ttk.Button(self.topframe, text="x", width=3,
+            command=restart_program)
+        self.btn_sair.grid(column=2, row=0)
+        ttk.Label(self.topframe, font=self.btnFont, foreground=self.btnTxtColor, text="Terminar sessão").grid(column=2, row=1)
+        self.dicas.bind(self.btn_sair, "Terminar sessão.")
+        """
 
         self.btn_detalhes = ttk.Button(self.topframe, text=" ℹ️️", width=3,
             command=lambda: self.create_window_detalhe_rep(num_reparacao=self.reparacao_selecionada))
@@ -656,7 +663,7 @@ class App(baseApp):
         for char in letras_etc:
             keystr = '<KeyRelease-' + char + '>'
             self.text_input_pesquisa.bind(keystr, self.mostrar_pesquisa)
-        self.text_input_pesquisa.bind('<Button-1>', self.clique_a_pesquisar)
+        self.text_input_pesquisa.bind('<Button-1>', self.clique_a_pesquisar_reps)
         self.text_input_pesquisa.bind('<KeyRelease-Escape>', self.cancelar_pesquisa)
         self.text_input_pesquisa.bind('<Command-a>', lambda x: self.text_input_pesquisa.select_range(0, tk.END))
 
@@ -695,26 +702,28 @@ class App(baseApp):
         estado.painel_nova_remessa_aberto = False
         estado.janela_remessas.destroy()
 
-    def create_window_contacts(self, *event, criar_novo_contacto=None):
+    def create_window_contacts(self, *event, criar_novo_contacto=None, pesquisar=None):
         #estado.contacto_para_nova_reparacao = nova_reparacao
         estado.tipo_novo_contacto = criar_novo_contacto
 
-        if not estado.janela_contactos_aberta:
+        if estado.janela_contactos_aberta:
+            if criar_novo_contacto:
+                estado.painel_novo_contacto_aberto = True
+                self.janela_contactos.mostrar_painel_entrada()
+            elif pesquisar:
+                self.janela_contactos.clique_a_pesquisar()
+            else:
+                self.close_window_contactos()
+        else:
             if criar_novo_contacto in ["Cliente", "Fornecedor"]:
                 print("Sim:", criar_novo_contacto)
                 estado.painel_novo_contacto_aberto = True
             estado.janela_contactos = tk.Toplevel(self.master)
             self.janela_contactos = contactos.ContactsWindow(
-                estado.janela_contactos, estado)
+                estado.janela_contactos, estado, pesquisar)
             estado.janela_contactos_aberta = True
             estado.janela_contactos.wm_protocol(
                 "WM_DELETE_WINDOW", self.close_window_contactos)
-        else:
-            if not criar_novo_contacto:
-                self.close_window_contactos()
-            else:
-                estado.painel_novo_contacto_aberto = True
-                self.janela_contactos.mostrar_painel_entrada()
 
     def close_window_contactos(self, *event):
         root.update_idletasks()
@@ -1449,7 +1458,11 @@ class App(baseApp):
         self.atualizar_lista(reparacoes)
 
 
-    def clique_a_pesquisar(self, *event):
+    def clique_a_pesquisar_contactos(self, *event):
+        self.create_window_contacts(criar_novo_contacto=None, pesquisar=True)
+
+
+    def clique_a_pesquisar_reps(self, *event):
         self.text_input_pesquisa.focus_set()
         self.my_statusbar.set("Por favor, introduza o texto a pesquisar na base de dados.")
 
@@ -1490,7 +1503,7 @@ class App(baseApp):
         for rep in reparacoes:
             if rep.estado_reparacao in PROCESSOS_EM_CURSO:
                 em_curso += 1
-            
+
         if self.nprocessos == 0:
             s_status = f"""Pesquisa: {'"'+termo_pesquisa.upper()+'"'}. Não foi encontrado nenhum processo com o termo de pesquisa introduzido."""
         else:
@@ -1545,8 +1558,16 @@ class App(baseApp):
             criar_nova_remessa=True), accelerator="Command+r")
         self.MenuFicheiro.add_separator()
         self.MenuFicheiro.add_command(
-            label="Pesquisar...", command=self.clique_a_pesquisar, accelerator="Command+f")
-        self.MenuFicheiro.bind_all("<Command-f>", self.clique_a_pesquisar)
+            label="Pesquisar reparações...", command=self.clique_a_pesquisar_reps, accelerator="Command+f")
+        self.MenuFicheiro.bind_all("<Command-f>", self.clique_a_pesquisar_reps)
+        self.MenuFicheiro.add_command(
+            label="Pesquisar contactos...", command=self.clique_a_pesquisar_contactos, accelerator="Shift+Command+f")
+        self.MenuFicheiro.bind_all("<Shift-Command-f>", self.clique_a_pesquisar_contactos)
+        self.MenuFicheiro.add_separator()
+        self.MenuFicheiro.add_command(
+            label=f"Terminar sessão de {self.username}…", command=self.logout_user, accelerator="Shift+Command+l")
+        self.MenuFicheiro.bind_all("<Shift-Command-l>", self.logout_user)
+
 
         root.bind_all("<Command-n>", self.mostrar_painel_entrada)
         root.bind_all(
@@ -1608,6 +1629,10 @@ class App(baseApp):
         self.contextMenuMsg = tk.Menu(self.menu)
         self.contextMenuMsg.add_command(label="Visualizar Mensagem", command=lambda: self.create_window_detalhe_msg(
             num_mensagem=self.mensagem_selecionada))
+
+
+    def logout_user(self, *event):
+        restart_program()
 
 
     def liga_desliga_menu_novo(self, *event):
@@ -1792,6 +1817,13 @@ class App(baseApp):
                 msg_lida=choice((True,False)) )
 
 
+
+def restart_program():
+    """Restarts the current program.
+    Note: this function does not return. Any cleanup action (like
+    saving data) must be done before calling this function."""
+    python = sys.executable
+    os.execl(python, python, * sys.argv)
 
 
 if __name__ == "__main__":

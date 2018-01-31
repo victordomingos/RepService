@@ -209,16 +209,15 @@ def obter_reparacoes_por_estados(status_list):
     reparacoes = s.query(db_models.Repair).filter(db_models.Repair.estado_reparacao.in_(status_list))
     return reparacoes.all()
 
+
 def pesquisar_reparacoes(txt_pesquisa, estados=[]):
     engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
     session = sessionmaker()
     session.configure(bind=engine)
     s = session()
-    
-    print(f"A pesquisar com:\n{txt_pesquisa},\n{estados}")
-    
+
     termo_pesquisa = txt_pesquisa
-    
+
     for c in txt_pesquisa:
         if c in "1234567890.":
             numeric = True
@@ -233,7 +232,8 @@ def pesquisar_reparacoes(txt_pesquisa, estados=[]):
             termo_pesquisa = f"%{txt_pesquisa}%"
 
     #TODO: restringir a pesquisa aos registos que tenham o estado selecionado
-    
+
+
     reparacoes = s.query(db_models.Repair).filter(
         and_(db_models.Repair.estado_reparacao.in_(estados),
             or_(
@@ -261,6 +261,85 @@ def obter_reparacao(num_rep):
 
     reparacao = s.query(db_models.Repair).get(num_rep)
     return reparacao
+
+
+def pesquisar_contactos(txt_pesquisa="", tipo="Clientes"):
+    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
+    session = sessionmaker()
+    session.configure(bind=engine)
+    s = session()
+
+    termo_pesquisa = txt_pesquisa
+
+    for c in txt_pesquisa:
+        if c in "1234567890.":
+            numeric = True
+        else:
+            numeric = False
+            break
+
+    if not numeric:
+        if '*' in txt_pesquisa or '_' in txt_pesquisa or '?' in txt_pesquisa:
+            termo_pesquisa = txt_pesquisa.replace('_', '__').replace('*', '%').replace('?', '_')
+        else:
+            termo_pesquisa = f"%{txt_pesquisa}%"
+
+    #TODO: restringir a pesquisa aos registos que tenham o estado selecionado
+
+    if tipo == "Clientes":
+        contactos = s.query(db_models.Contact).filter(
+        and_(db_models.Contact.is_cliente.is_(True),
+            or_(
+                db_models.Contact.id.like(termo_pesquisa),
+                db_models.Contact.nome.ilike(termo_pesquisa),
+                db_models.Contact.telefone.ilike(termo_pesquisa),
+                db_models.Contact.telemovel.ilike(termo_pesquisa),
+                db_models.Contact.email.ilike(termo_pesquisa),
+        )))
+    else:
+        contactos = s.query(db_models.Contact).filter(
+        and_(db_models.Contact.is_fornecedor.is_(True),
+            or_(
+                db_models.Contact.id.like(termo_pesquisa),
+                db_models.Contact.nome.ilike(termo_pesquisa),
+                db_models.Contact.telefone.ilike(termo_pesquisa),
+                db_models.Contact.telemovel.ilike(termo_pesquisa),
+                db_models.Contact.email.ilike(termo_pesquisa),
+        )))
+
+    return contactos.all()
+
+
+
+def obter_clientes():
+    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
+    session = sessionmaker()
+    session.configure(bind=engine)
+    s = session()
+
+    contactos = s.query(db_models.Contact).filter_by(is_cliente=True)
+    return contactos.all()
+
+
+def obter_fornecedores():
+    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
+    session = sessionmaker()
+    session.configure(bind=engine)
+    s = session()
+
+    contactos = s.query(db_models.Contact).filter_by(is_fornecedor=True)
+    return contactos.all()
+
+
+def obter_contacto(num_contacto):
+    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
+    session = sessionmaker()
+    session.configure(bind=engine)
+    s = session()
+
+    contacto = s.query(db_models.Contact).get(num_contacto)
+    return contacto
+
 
 # ----------------------------------------------------------------------------------------
 # Just a bunch of experiences to get the hang of SQLalchemy while developing the models...
@@ -296,23 +375,31 @@ def test_populate():
     apelidos = ("Laranja", "Bonito", "Santiago", "de Malva e Cunha", "Azeredo", "Starck", "Brückner", "Apolinário Gomes Fernandes", "Carvalho", "Rodrigues", "Ló")
     empresas = ("", "NPK", "NPK - Network project for Knowledge", "Aquela Empresa Faltástica, S.A.", "", "")
     telefones = ("222000000", "960000000", "+351210000000")
+    emails = ("test", "info", "npk", "theworldisavampire", "florzinha98", "josefloresmanuel", "mariazinha1978")
+    dominios = ("networkprojectforknowledge.org", "baratatonta2001.com.br", "thegreatnpkdomain.com", "zbxvsga.pt", "ihopethisdomaindoesnotexist.net")
+    is_cliente = (True, False)
+    is_fornecedor = (*20*(False,), True)
+
     from random import choice
-    for i in range(300):
+    for i in range(500):
+        forn = choice(is_fornecedor)
+        cli = choice(is_cliente) if forn else True,
+
         contacto = db_models.Contact(
             nome=f"{choice(nomes)} {choice(apelidos)}",
             empresa=choice(empresas),
             telefone=choice(telefones),
             telemovel = choice(telefones),
             telefone_empresa = choice(telefones),
-            email="test@networkprojectforknowledge.org",
+            email=choice(emails) + "@" + choice(dominios),
             morada = "Rua da Santa Paciência Que Nos Acuda Em Dias Daqueles\nEdifício Especial XXI, porta 789, 3º Esquerdo Trás",
             cod_postal = "4700-000",
             localidade = "Braga",
             pais = "Portugal",
             nif = "999999990",
             notas = "Apontamentos adicionais sobre este contacto...",
-            is_cliente = 1,
-            is_fornecedor = 0,
+            is_cliente = cli,
+            is_fornecedor = forn,
             criado_por_utilizador = choice(utilizadores))
         s.add(contacto)
 
@@ -345,7 +432,7 @@ def test_populate():
         print("i:", i)
         if (i%2 == 1) or (i%3 == 0) or (i%10 == 0) or i<21000 or i>21150:
             estado = ENTREGUE
-        else: 
+        else:
             estado = choice(list(ESTADOS.keys()))
         reparacao = db_models.Repair(
             cliente = contactos[i%num_contactos],
@@ -466,11 +553,11 @@ def print_database():
     for artigo in artigos:
         pprint.pprint(artigo)
 
-    
+
     print("\n========================\n           REPARAÇÕES\n========================")
     for reparacao in reparacoes:
         pprint.pprint(reparacao)
-    
+
     print("\n========================\n           EVENTOS\n========================")
     for evento in eventos:
         pprint.pprint(evento)

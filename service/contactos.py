@@ -18,6 +18,7 @@ from global_setup import *
 
 if USE_LOCAL_DATABASE:
     import db_local_main as db
+    import db_local_models as db_models
 else:
     import db_remote as db
 
@@ -25,7 +26,7 @@ else:
 class ContactsWindow(baseApp):
     """ base class for application """
 
-    def __init__(self, master, estado, *args, **kwargs):
+    def __init__(self, master, estado, pesquisar, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.estado = estado
         self.contacto_newDetailsWindow = {}
@@ -46,12 +47,13 @@ class ContactsWindow(baseApp):
 
         self.gerar_painel_entrada()
         self.composeFrames()
-        self.inserir_dados_de_exemplo()
+        self.atualizar_lista(db.obter_clientes())
         self.alternar_cores(self.tree)
-        self.atualizar_soma()
 
         if self.estado.painel_novo_contacto_aberto:
             self.mostrar_painel_entrada()
+        if pesquisar:
+            self.clique_a_pesquisar()
 
     def contar_linhas(self):
         """ Obtém o número de linhas da tabela de contactos. """
@@ -102,12 +104,12 @@ class ContactsWindow(baseApp):
 
     def montar_barra_de_ferramentas(self):
         self.btn_clientes = ttk.Button(
-            self.topframe, style="secondary.TButton", text="Clientes", command=None)
+            self.topframe, style="secondary.TButton", text="Clientes", command=self.mostrar_clientes)
         self.btn_clientes.grid(column=0, row=0)
         self.dicas.bind(self.btn_clientes, 'Mostrar apenas clientes.')
 
         self.btn_fornecedores = ttk.Button(
-            self.topframe, style="secondary.TButton", text="Fornecedores", command=None)
+            self.topframe, style="secondary.TButton", text="Fornecedores", command=self.mostrar_fornecedores)
         self.btn_fornecedores.grid(column=1, row=0)
         self.dicas.bind(self.btn_fornecedores,
                         'Mostrar apenas fornecedores\ne centros técnicos.')
@@ -217,31 +219,20 @@ class ContactsWindow(baseApp):
 
         # entryfr2-----------------------------
         self.ef_lf_top = ttk.Labelframe(self.entryfr2, padding=4, text="")
-        self.ef_ltxt_nome = LabelEntry(
-            self.ef_lf_top, "Nome", style="Panel_Body.TLabel")
-        self.ef_ltxt_empresa = LabelEntry(
-            self.ef_lf_top, "Empresa", style="Panel_Body.TLabel")
-        self.ef_ltxt_nif = LabelEntry(
-            self.ef_lf_top, "NIF", style="Panel_Body.TLabel")
-        self.ef_ltxt_telefone = LabelEntry(
-            self.ef_lf_top, "\nTel.", width=14, style="Panel_Body.TLabel")
-        self.ef_ltxt_tlm = LabelEntry(
-            self.ef_lf_top, "\nTlm.", width=14, style="Panel_Body.TLabel")
-        self.ef_ltxt_tel_empresa = LabelEntry(
-            self.ef_lf_top, "\nTel. empresa", width=14, style="Panel_Body.TLabel")
+        self.ef_ltxt_nome = LabelEntry(self.ef_lf_top, "Nome", style="Panel_Body.TLabel")
+        self.ef_ltxt_empresa = LabelEntry(self.ef_lf_top, "Empresa", style="Panel_Body.TLabel")
+        self.ef_ltxt_nif = LabelEntry(self.ef_lf_top, "NIF", style="Panel_Body.TLabel")
+        self.ef_ltxt_telefone = LabelEntry(self.ef_lf_top, "\nTel.", width=14, style="Panel_Body.TLabel")
+        self.ef_ltxt_tlm = LabelEntry(self.ef_lf_top, "\nTlm.", width=14, style="Panel_Body.TLabel")
+        self.ef_ltxt_tel_empresa = LabelEntry(self.ef_lf_top, "\nTel. empresa", width=14, style="Panel_Body.TLabel")
 
-        self.ef_ltxt_email = LabelEntry(
-            self.ef_lf_top, "Email", style="Panel_Body.TLabel")
-        self.ef_lstxt_morada = LabelText(
-            self.ef_lf_top, "\nMorada", height=2, style="Panel_Body.TLabel")
+        self.ef_ltxt_email = LabelEntry(self.ef_lf_top, "Email", style="Panel_Body.TLabel")
+        self.ef_lstxt_morada = LabelText(self.ef_lf_top, "\nMorada", height=2, style="Panel_Body.TLabel")
 
-        self.ef_ltxt_cod_postal = LabelEntry(
-            self.ef_lf_top, "Código Postal", style="Panel_Body.TLabel")
-        self.ef_ltxt_localidade = LabelEntry(
-            self.ef_lf_top, "Localidade", style="Panel_Body.TLabel")
+        self.ef_ltxt_cod_postal = LabelEntry(self.ef_lf_top, "Código Postal", style="Panel_Body.TLabel")
+        self.ef_ltxt_localidade = LabelEntry(self.ef_lf_top, "Localidade", style="Panel_Body.TLabel")
 
-        self.ef_lbl_pais = ttk.Label(
-            self.ef_lf_top, text="País", style="Panel_Body.TLabel")
+        self.ef_lbl_pais = ttk.Label(self.ef_lf_top, text="País", style="Panel_Body.TLabel")
         self.paises_value = tk.StringVar()
         self.ef_combo_pais = ttk.Combobox(self.ef_lf_top, values=TODOS_OS_PAISES,
                                           textvariable=self.paises_value,
@@ -249,33 +240,24 @@ class ContactsWindow(baseApp):
         self.ef_combo_pais.current(178)
         self.ef_combo_pais.bind("<Key>", self.procurar_em_combobox)
 
-        self.ef_lstxt_notas = LabelText(
-            self.ef_lf_top, "\nNotas:", height=3, style="Panel_Body.TLabel")
+        self.ef_lstxt_notas = LabelText(self.ef_lf_top, "\nNotas:", height=3, style="Panel_Body.TLabel")
 
-        self.ef_ltxt_nome.grid(
-            column=0, row=0, columnspan=3, padx=5, sticky='we')
-        self.ef_ltxt_empresa.grid(
-            column=0, row=1, columnspan=2, padx=5, sticky='we')
+        self.ef_ltxt_nome.grid(column=0, row=0, columnspan=3, padx=5, sticky='we')
+        self.ef_ltxt_empresa.grid(column=0, row=1, columnspan=2, padx=5, sticky='we')
         self.ef_ltxt_nif.grid(column=2, row=1, padx=5, sticky='we')
 
         self.ef_ltxt_telefone.grid(column=0, row=2, padx=5, sticky='we')
         self.ef_ltxt_tlm.grid(column=1, row=2, padx=5, sticky='we')
         self.ef_ltxt_tel_empresa.grid(column=2, row=2, padx=5, sticky='we')
-        self.ef_ltxt_email.grid(
-            column=0, row=3, columnspan=3, padx=5, sticky='we')
-        self.ef_lstxt_morada.grid(
-            column=0, row=4, columnspan=3, rowspan=2, padx=5, sticky='we')
+        self.ef_ltxt_email.grid(column=0, row=3, columnspan=3, padx=5, sticky='we')
+        self.ef_lstxt_morada.grid(column=0, row=4, columnspan=3, rowspan=2, padx=5, sticky='we')
 
         self.ef_ltxt_cod_postal.grid(column=0, row=6, padx=5, sticky='we')
-        self.ef_ltxt_localidade.grid(
-            column=1, row=6, columnspan=2, padx=5, sticky='we')
+        self.ef_ltxt_localidade.grid(column=1, row=6, columnspan=2, padx=5, sticky='we')
 
-        self.ef_lbl_pais.grid(column=0, columnspan=3,
-                              row=7, padx=5, sticky='we')
-        self.ef_combo_pais.grid(column=0, columnspan=3,
-                                row=8, padx=5, sticky='we')
-        self.ef_lstxt_notas.grid(
-            column=0, row=9, columnspan=3, rowspan=4, padx=5, sticky='we')
+        self.ef_lbl_pais.grid(column=0, columnspan=3, row=7, padx=5, sticky='we')
+        self.ef_combo_pais.grid(column=0, columnspan=3, row=8, padx=5, sticky='we')
+        self.ef_lstxt_notas.grid(column=0, row=9, columnspan=3, rowspan=4, padx=5, sticky='we')
 
         self.ef_lf_top.grid(column=0, row=0, sticky='we')
         self.ef_lf_top.columnconfigure(0, weight=1)
@@ -284,8 +266,7 @@ class ContactsWindow(baseApp):
         self.entryfr2.columnconfigure(0, weight=1)
 
         #--- acabaram os 'entryfr', apenas código geral para o entryframe a partir daqui ---
-        self.entryframe.bind_all(
-            "<Command-Escape>", self.fechar_painel_entrada)
+        self.entryframe.bind_all("<Command-Escape>", self.fechar_painel_entrada)
 
     def procurar_em_combobox(self, event):
         """
@@ -298,6 +279,20 @@ class ContactsWindow(baseApp):
                 if pais[0] == tecla_pressionada:
                     self.ef_combo_pais.current(index)
                     break
+
+    def mostrar_fornecedores(self, *event):
+        self.master.title("Fornecedores")
+        self.last_selected_view_contacts_list = "Fornecedores"
+        fornecedores = db.obter_fornecedores()
+        self.atualizar_lista(fornecedores)
+
+
+    def mostrar_clientes(self, *event):
+        self.master.title("Clientes")
+        self.last_selected_view_contacts_list = "Clientes"
+        clientes = db.obter_clientes()
+        self.atualizar_lista(clientes)
+
 
     def adicionar_contacto(self, *event):
         """
@@ -443,11 +438,29 @@ class ContactsWindow(baseApp):
         else:
             self.entryframe.focus()
 
-    def inserir_dados_de_exemplo(self):
-        for i in range(1, 4001):
-            self.tree.insert("", "end", text="", values=(
-                str(i), "Nome do cliente", "+351000000000", "endereco@emaildocliente.com"))
 
+    def inserir_contacto(self, contact_num=0, nome="", telefone="", email=""):
+        """ Adicionar umo contacto à lista, na tabela principal.
+        """
+        self.tree.insert("", "end", values=(str(contact_num), nome,
+            telefone, email))
+
+
+    def atualizar_lista(self, contactos):
+        """ Atualizar a lista de reparações na tabela principal.
+        """
+        quantidade_contactos = len(contactos)
+
+        for i in self.tree.get_children():  # Limpar tabela primeiro
+            self.tree.delete(i)
+
+        for contacto in contactos:
+            self.inserir_contacto(contact_num=contacto.id,
+                nome=contacto.nome,
+                telefone=contacto.telefone,
+                email=contacto.email)
+
+        self.atualizar_soma()
 
 
     def clique_a_pesquisar(self, *event):
@@ -457,7 +470,10 @@ class ContactsWindow(baseApp):
 
     def cancelar_pesquisa(self, event):
         self.tree.focus_set()
-        self._on_repair_view_select(self.last_selected_view_contacts_list)
+        if self.last_selected_view_contacts_list == "Clientes":
+            self.mostrar_clientes()
+        else:
+            self.mostrar_fornecedores()
 
 
     def mostrar_pesquisa(self, *event):
@@ -467,10 +483,13 @@ class ContactsWindow(baseApp):
         # regressar ao campo de pesquisa caso não haja texto a pesquisar (resolve questão do atalho de teclado)
 
         if termo_pesquisa == "":
-            contactos = db.obter_contactos_por_tipo(self.last_selected_view_contacts_list)
+            if self.last_selected_view_contacts_list == "Clientes":
+                contactos = db.obter_clientes()
+            else:
+                contactos = db.obter_fornecedores()
             self.atualizar_lista(contactos)
             return
-        elif (len(termo_pesquisa) < 4) and not self.isNumeric(termo_pesquisa):
+        elif (len(termo_pesquisa) < 3) and not self.isNumeric(termo_pesquisa):
             return
 
         self.my_statusbar.set(f"A pesquisar: {termo_pesquisa}")
@@ -479,17 +498,13 @@ class ContactsWindow(baseApp):
         contactos = db.pesquisar_contactos(termo_pesquisa,
             tipo=self.last_selected_view_contacts_list)
 
-        self.atualizar_lista(reparacoes)
+        self.atualizar_lista(contactos)
 
-        self.nprocessos = len(reparacoes)
-        em_curso = 0
-        for rep in reparacoes:
-            if rep.estado_reparacao in PROCESSOS_EM_CURSO:
-                em_curso += 1
-            
-        if self.nprocessos == 0:
-            s_status = f"""Pesquisa: {'"'+termo_pesquisa.upper()+'"'}. Não foi encontrado nenhum processo com o termo de pesquisa introduzido."""
+        self.ncontactos = len(contactos)
+
+        if self.ncontactos == 0:
+            s_status = f"""Pesquisa: {'"'+termo_pesquisa.upper()+'"'}. Não foi encontrado nenhum contacto com o termo de pesquisa introduzido."""
         else:
-            s_status = f"""Pesquisa: {'"'+termo_pesquisa.upper()+'"'}. Encontrados {self.nprocessos} processos ({em_curso} em curso)."""
+            s_status = f"""Pesquisa: {'"'+termo_pesquisa.upper()+'"'}. Encontrados {self.ncontactos} contactos."""
         self.my_statusbar.set(s_status)
 
