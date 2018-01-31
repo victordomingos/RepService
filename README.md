@@ -21,7 +21,7 @@ Database application for in-store registering of warranty and service/repair pro
 
 
 ## Dependencies
-This application is being developed in Python 3.6 and tkinter, after and original idea by Márcio Araújo.
+This application is being developed in Python 3.6 and tkinter, after an original idea by Márcio Araújo.
 
 It requires, in its current version, the following external modules:
 
