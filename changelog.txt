@@ -5,7 +5,7 @@ Histórico de versões:
 
 
 ---
-v.0.17 - 3/02/2018
+v.0.17 - 31/01/2018
  * Criado método para preencher lista de reparações a partir da base de dados.
  * Criado método para filtrar reparações por estados.
  * Criado método para realizar pesquisas de reparações, filtrando por estados
@@ -23,7 +23,16 @@ v.0.17 - 3/02/2018
    iniciar uma nova pesquisa.
  * Criado método callback para alterar o estado de uma reparação (falta a
    implementação correspondente nos módulos de base de dados).
+ * Criado método para preencher lista de contactos a partir da base de dados.
+ * Criado método para filtrar contactos por tipo (clientes/fornecedores).
+ * Criado método para realizar pesquisas de contactos, filtrando por tipo
+   (cliente ou fornecedor) e com suporte básico para "wildcards". As pesquisas
+   começam automaticamente quando o utilizador introduz um mínimo de 3
+   caracteres e são atualizadas em tempo real à medida que escreve. As
+   pesquisas são feitas sempre considerando apenas o tipo de contacto
+   correspondente à vista selecionada.
  * Logotipo na janela de login.
+ * Possibilidade de terminar sessão e efetuar login com utilizador diferente.
 
 ---
 v.0.16 - 15/01/2018
