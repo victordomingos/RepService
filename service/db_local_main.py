@@ -381,7 +381,7 @@ def test_populate():
     is_fornecedor = (*20*(False,), True)
 
     from random import choice
-    for i in range(500):
+    for i in range(100):
         forn = choice(is_fornecedor)
         cli = choice(is_cliente) if forn else True,
 
@@ -411,7 +411,7 @@ def test_populate():
         "Smartphone Daqueles Bons", "Computador do modelo ABCD",
         "Coisa que não funciona devidamente", "Coisa que devia funcionar melhor")
 
-    for i in range(150):
+    for i in range(50):
         artigo = db_models.Product(descr_product=choice(artigos), part_number="NPKPN662"+str(i)+"ZQ"+str(i))
         s.add(artigo)
 
@@ -428,7 +428,7 @@ def test_populate():
         "Formatar disco e reinstalar sistema operativo",
         "Substituição ao abrigo da garantia")
 
-    for i in range(30000):
+    for i in range(3000):
         print("i:", i)
         if (i%2 == 1) or (i%3 == 0) or (i%10 == 0) or i<21000 or i>21150:
             estado = ENTREGUE
@@ -486,7 +486,7 @@ def test_populate():
     rep = reparacoes[1]
     for rep in reparacoes:
         count +=1
-        print("event in rep", rep)
+        #print("event in rep", rep)
         # create parent, append a child via association
         evento1 = db_models.Event(
             repair_id = rep.id,
@@ -501,7 +501,7 @@ def test_populate():
 
 
         if count % 2 == 0:
-            print("if rep event")
+            #print("if rep event")
             evento2 = db_models.Event(
                 repair_id = rep.id,
                 descricao = "Centro técnico pediu para questionar cliente sobre algo importante.",
