@@ -1,39 +1,39 @@
 # RepService
-Aplicação de base de dados para registo em loja de processos de garantia e reparações. Permite manter um registo dos artigos entregues pelos clientes, do seu percurso durante a tramitação do processo e da comunicação realizada. Os processos que requerem atenção, por exemplo devido a atrasos na entrega ou na receção de comunicação de cliente são destacados na lista principal, por forma a permitir uma intervenção em conformidade.
+Database application for in-store registering of warranty and service/repair processes in general. It enables store staff to keep an organized log of the products left for repair by costumers, their route during the process and the communications made. Processes that require special attention, for instance because of a delay in delivery or while waiting for an answer from the costumer, are highlighted in the main list, in order to allow proper intervention by the staff team.
 
-## Capturas de ecrã
-1. Janela de autenticação:
+
+## Screenshots
+1. Login window:
 
 ![login](https://user-images.githubusercontent.com/18650184/35652209-8da74808-06da-11e8-88ed-3e31d4b6e71c.png)
 
-2. Aspeto geral da aplicação (lista de reparações com painel de mensagens, janelas de detalhes de reparações e de mensagens/eventos):
+2. The overall aspect of the aplication (repairs list with message board, repair details and message/event details windows):
 
 ![service_msg_reparacoes](https://user-images.githubusercontent.com/18650184/27431379-4a942e82-5744-11e7-87cb-226f798a5bba.jpg)
 
-3. Formulários de introdução de dados (nova reparação de artigo de stock, nova remessa):
+3. Data insertion forms (new stock product repair, new shipment):
 
 ![service_rep_stock_e_remessas](https://user-images.githubusercontent.com/18650184/27431380-4abc89cc-5744-11e7-9c00-4ed3e39ddebd.jpg)
 
-4. Formulários de introdução de dados (nova reparação de artigo de cliente, novo contacto):
+4. Data insertion forms (new costumer product repair, new contact):
 
 ![service_rep_cliente_e_contactos](https://user-images.githubusercontent.com/18650184/27431381-4ac27404-5744-11e7-804a-d4b5d58e7435.jpg)
 
 
-## Dependências
-Esta aplicação é desenvolvida em Python 3.6 e tkinter, a partir de uma ideia original de Márcio Araújo.
+## Dependencies
+This application is being developed in Python 3.6 and tkinter, after and original idea by Márcio Araújo.
 
-Requer, na versão atual o(s) seguinte(s) módulo(s) externo(s):
+It requires, in its current version, the following external modules:
 
 - Python MegaWidgets 2.0.1
 - SQL Alchemy 1.1.5
 
+Development and testing has been done only on Mac, however it should be pretty straightforward to make a few adaptations to make it run in Windows or Linux. The visual interface has been tweaked to match as much as possible Mac native applications, so at least the toolbars will certainly look a bit awkward in other plaforms. In older operating systems, some Unicode icons or emojis may not be correctly displayed. In Mac, it's highly recomendable to use ActiveTCL 8.5.18, as stated in Python language release documentation, in order to ensure compatibility and stability for tkinter in macOS.
 
-O desenvolvimento e testes têm sido realizados apenas em Mac, no entanto deverá ser bastante simples a adaptação para funcionar sem problemas em Windows ou Linux. Em sistemas operativos antigos, alguns ícones Unicode poderão não aparecer corretamente. Em ambiente Mac, é altamente recomendável usar o ActiveTCL 8.5.18, conforme as notas de lançamento da linguagem Python, de modo a assegurar a compatibilidade e estabilidade do tkinter no OS X.
 
+## How to use
+At this time, it is possible to configure some of the application's parameters (window dimensions and location, reducing animation for slower machines, database file location – only supporting a local sqlite database currently!), by changing the constants defined in the `service/global_setup.py` module.
 
-## Como usar
-Neste momento, é possível configurar alguns parâmetros da aplicação (tamanho e localização predefinida das janelas, redução de efeitos de animação para computadores mais lentos, localização do ficheiro de base de dados - apenas base de dados local sqlite presentemente!), alterando as constantes definidas no módulo `service/global_setup.py`.
+Before running the application for the first time, you will need to initialize the database. During this early development stage, the module `service/db_local_main.py` can be executed directly, in order to generate a small sample database, populated with fake data.
 
-Antes da primeira utilização, é necessário inicializar a base de dados. Durante esta fase de desenvolvimento inicial, o módulo `service/db_local_main.py` pode ser executado diretamente, por forma a gerar uma pequena base de dados de exemplo, preenchida com informação fictícia.
-
-Para iniciar a aplicação, basta executar o ficheiro `service/service.py` com o interpretador Python 3.6 ou superior. O utilizador predefinido é `npk` com a senha `...` (sim, ninguém no mundo se lembraria algum dia de uma senha tão segura).
+To run the application, you just need to execute the module `service/service.py` with Python 3.6 or later. The default user is `npk` with the password `...` (yeah, no one in the entire world would ever come up with such a strong and safe password).
