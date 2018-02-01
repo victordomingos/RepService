@@ -22,7 +22,7 @@ Aplicação de base de dados para registo em loja de processos de garantia e rep
 ## Dependências
 Esta aplicação é desenvolvida em Python 3.6 e tkinter, a partir de uma ideia original de Márcio Araújo.
 
-Requer, na versão atual o(s) seguinte(s) módulo(s) externo(s):
+Requer, na versão atual, os seguintes pacotes externos:
 
 - Python MegaWidgets 2.0.1
 - SQL Alchemy 1.1.5
