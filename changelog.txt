@@ -7,8 +7,11 @@ Histórico de versões:
 ---
 v.0.18 - 14/02/2018 - A comemorar 1 ano de desenvolvimento(s).
  * Adicionados comandos ao menu para filtrar reparações por estados.
- * Janela "Acerca de" agora informa sobre o tamanho atual do ficheiro da base de dados.
+ * Janela "Acerca de" agora informa sobre o tamanho atual do ficheiro da base
+   de dados.
  * Novos atalhos de teclado.
+ * Corrigido um bug que impedia que fosse mostrado o fundo das linhas em cor
+   alternada nas listas de reparações e contactos.
 
 ---
 v.0.17 - 31/01/2018
@@ -103,8 +106,8 @@ v.0.12 - 15/07/2017
 v.0.11 - 03/07/2017
  * Adicionadas callbacks aos vários botões da janela de detalhes de mensagem.
  * Foi simplificado o código relativo à geração das janelas de detalhes.
- * Adicionada indicação sobre pagamento ou oferta de portes à janela de detalhes
-   de reparação.
+ * Adicionada indicação sobre pagamento ou oferta de portes à janela de
+   detalhes de reparação.
  * Criada janela de detalhes de remessa.
 
 ---
@@ -173,40 +176,46 @@ v.0.5 - 06/04/2017
  * Adicionado painel de introdução de novo contacto, na janela de contactos.
  * Botão "+" no painel de criação de reparação abre a janela de contactos,
    caso não esteja aberta, e mostra o painel de criação de novo contacto.
- * Adicionado painel de introdução de nova remessa, na janela de remessas (ainda
-   incompleto).
- * Corrigidos bugs que impediam a abertura das janelas "Acerca" e "Agradecimentos"
+ * Adicionado painel de introdução de nova remessa, na janela de remessas
+   (ainda incompleto).
+ * Corrigidos bugs que impediam a abertura das janelas "Acerca" e
+   "Agradecimentos".
  * Nova tentativa de separar as classes por ficheiros diferentes sem perder a
    comunicação entre elas.
 
 ---
 v.0.4 - 24/03/2017
- * Removida coluna do nº de série na tabela de reparações, para libertar espaço e
-   melhorar a legibilidade.
+ * Removida coluna do nº de série na tabela de reparações, para libertar espaço
+   e melhorar a legibilidade.
  * O nº de série aparece agora na barra de estado, ao selecionar a reparação.
  * Ajustes na animação do painel de entrada de dados.
  * Ajustes na largura das colunas da tabela de reparações.
- * Adicionados no formulário de entrada de dados os campos para reparações de stock,
-   bem como os métodos necessários para mostrar e esconder os campos, reorganizando
-   visualmente o formulário.
+ * Adicionados no formulário de entrada de dados os campos para reparações de
+   stock, bem como os métodos necessários para mostrar e esconder os campos,
+   reorganizando visualmente o formulário.
  * Ajustes visuais no formulário de entrada de dados.
  * Para facilitar comunicação entre as diferentes janelas e respetivos painéis
    de introdução de dados, etc., as classes ContactsWindow() e RemessasWindow()
-   voltam a residir no mesmo módulo que a classe App() (i.e., a classe da janela
-   principal).
+   voltam a residir no mesmo módulo que a classe App() (i.e., a classe da
+   janela principal).
 
 ---
 v.0.3 - 13/03/2017 (1 mês desde o início do projeto)
- * Adicionado painel de mensagens, atalho de teclado e botão para abrir e fechar.
+ * Adicionado painel de mensagens, atalho de teclado e botão para abrir e
+   fechar.
  * Aumentada a largura máxima da janela.
- * Criado método na classe baseApp para colorir alternadamente as linhas de tabelas.
- * Criado método inserir_msg() para formatar, moldar e inserir o texto de cada mensagem.
- * Adicionado painel de entrada de dados, com animação (opcional) e atalhos de teclado.
+ * Criado método na classe baseApp para colorir alternadamente as linhas de
+   tabelas.
+ * Criado método inserir_msg() para formatar, moldar e inserir o texto de cada
+   mensagem.
+ * Adicionado painel de entrada de dados, com animação (opcional) e atalhos de
+   teclado.
 
 ---
 v.0.2 - 07/03/2017
  * Menu da aplicação.
- * Atalhos de teclado para abrir/fechar janelas secundárias (contactos e remessas).
+ * Atalhos de teclado para abrir/fechar janelas secundárias (contactos e
+   remessas).
  * Organização dos botões nas barras de ferramentas.
  * Adicionados ícones aos botões.
  * Ajustes visuais (largura das colunas, tamanho dos botões).
