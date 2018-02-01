@@ -23,7 +23,7 @@ Database application for in-store registering of warranty and service/repair pro
 ## Dependencies
 This application is being developed in Python 3.6 and tkinter, after an original idea by Márcio Araújo.
 
-It requires, in its current version, the following external modules:
+It requires, in its current version, the following external packages:
 
 - Python MegaWidgets 2.0.1
 - SQL Alchemy 1.1.5
