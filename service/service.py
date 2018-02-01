@@ -376,7 +376,6 @@ class App(baseApp):
 
         self.atualizar_lista(db.obter_reparacoes_por_estados(PROCESSOS_EM_CURSO))
         self.inserir_dados_de_exemplo()
-        self.alternar_cores(self.tree)
         self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
 
         if self.contar_linhas(self.msgtree) > 0:
@@ -560,7 +559,7 @@ class App(baseApp):
         estados = PROCESSOS_EM_CURSO
         self.mbtn_mostrar.menu.add_command(label="Processos em curso",
             command=lambda status_list=estados:
-                self._on_repair_view_select(None, status_list=estados), 
+                self._on_repair_view_select(None, status_list=estados),
             accelerator="Command-4")
 
         estados = PROCESSOS_FINALIZADOS
@@ -1491,7 +1490,7 @@ class App(baseApp):
             return
         elif (len(termo_pesquisa) < 4) and not self.isNumeric(termo_pesquisa):
             return
-        
+
         self.my_statusbar.clear()
         self.my_statusbar.set(f"A pesquisar: {termo_pesquisa}")
 
@@ -1595,14 +1594,14 @@ class App(baseApp):
         self.menuVis.bind_all("<Command-KeyPress-2>",
                               self.create_window_contacts)
         self.menuVis.bind_all("<Command-KeyPress-3>",
-                              self.create_window_remessas)          
+                              self.create_window_remessas)
         self.menuVis.add_separator()
         self.menuMostraProcessos = tk.Menu(self.menuVis)
         self.menuVis.add_cascade(label="Mostrar processos...", menu=self.menuMostraProcessos)
 
         self.menuMostraProcessos.add_command(label="Processos em curso",
             command=lambda estados=PROCESSOS_EM_CURSO:
-                self._on_repair_view_select(status_list=PROCESSOS_EM_CURSO), 
+                self._on_repair_view_select(status_list=PROCESSOS_EM_CURSO),
             accelerator="Command-4")
         self.menuVis.bind_all("<Command-KeyPress-4>",
             lambda status_list=PROCESSOS_EM_CURSO:
@@ -1617,7 +1616,7 @@ class App(baseApp):
             lambda estados=PROCESSOS_FINALIZADOS:
                 self._on_repair_view_select(None, status_list=PROCESSOS_FINALIZADOS))
         self.menuMostraProcessos.add_command(label="Todos os processos",
-            command=lambda estados=[]:self._on_repair_view_select(None, status_list=[]), 
+            command=lambda estados=[]:self._on_repair_view_select(None, status_list=[]),
             accelerator="Command-6")
         self.menuVis.bind_all("<Command-KeyPress-6>",
             lambda estados=[]:self._on_repair_view_select(None, status_list=[]))
@@ -1818,6 +1817,8 @@ class App(baseApp):
                 tag=reparacao.prioridade)
 
         self.atualizar_soma_processos()
+        self.alternar_cores(self.tree)
+
 
     def inserir_dados_de_exemplo(self):
         """ Generate some fake data for the repair list

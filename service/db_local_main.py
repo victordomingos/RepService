@@ -555,5 +555,5 @@ if __name__ == "__main__":
                   num_utilizadores=40,
                   num_contactos=2000,
                   num_artigos=300,
-                  num_reparacoes=5000)
+                  num_reparacoes=int(5000/3))
     #print_database()

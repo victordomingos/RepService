@@ -48,7 +48,6 @@ class ContactsWindow(baseApp):
         self.gerar_painel_entrada()
         self.composeFrames()
         self.atualizar_lista(db.obter_clientes())
-        self.alternar_cores(self.tree)
 
         if self.estado.painel_novo_contacto_aberto:
             self.mostrar_painel_entrada()
@@ -461,6 +460,8 @@ class ContactsWindow(baseApp):
                 email=contacto.email)
 
         self.atualizar_soma()
+        self.alternar_cores(self.tree)
+
 
 
     def clique_a_pesquisar(self, *event):
