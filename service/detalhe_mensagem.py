@@ -13,7 +13,13 @@ from extra_tk_classes import LabelText
 from detalhe_reparacao import repairDetailWindow
 from global_setup import *
 
-
+if USE_LOCAL_DATABASE:
+    import db_local_main as db
+    import db_local_models as db_models
+else:
+    import db_remote as db
+    
+    
 class msgDetailWindow(ttk.Frame):
     """ Classe de base para a janela de detalhes de mensagem """
 
@@ -21,23 +27,27 @@ class msgDetailWindow(ttk.Frame):
         super().__init__(master, *args, **kwargs)
         self.num_mensagem = num_mensagem
         self.master = master
+        self.mensagem = db.obter_evento(num_mensagem)
         self.master.bind("<Command-w>", self.on_btn_fechar)
-        self.master.focus()
-        self.num_rep = 12345  # TODO - obter número da reparação
-        self.nome = "José Manuel da Cunha Fantástico"
-        self.artigo = "Um artigo que se encontra em reparação"
-        self.estado_atual = "Em processamento"
-        self.resultado = "Orçamento aprovado"
-        self.detalhe = "Texto completo do evento ou mensagem conforme escrito pelo utilizador."
-        self.remetente = "Utilizador que registou o evento"
-        self.data = "12/05/2021 18:01"
+        self.num_rep = self.mensagem.repair.id
+        self.nome = self.mensagem.repair.cliente.nome
+        self.artigo = self.mensagem.repair.product.descr_product
+        self.estado_atual = ESTADOS[self.mensagem.repair.estado_reparacao]
+        self.resultado = "Orçamento aprovado" #TODO
+        self.detalhe = self.mensagem.descricao
+        self.remetente = self.mensagem.criado_por_utilizador
+        self.data = self.mensagem.created_on
 
+        self.master.focus()
         self.configurar_frames_e_estilos()
         self.montar_painel_principal()
         self.montar_barra_de_ferramentas()
         self.montar_rodape()
         self.composeFrames()
         self.desativar_campos()
+        
+        #todo: marcar msg como lida
+        
 
     def on_btn_abrir_rep(self, event):
         """ Abre a janela de detalhes do processo a que se refere esta mensagem.

@@ -5,7 +5,6 @@ Este módulo é parte integrante da aplicação RepService, desenvolvida por
 Victor Domingos e distribuída sob os termos da licença Creative Commons
 Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
 """
-
 import os
 import os.path
 
@@ -65,12 +64,13 @@ W_DETALHE_MSG_MAX_HEIGHT = 480
 
 # Alterar para True no caso de se tratar de uma máquina lenta (animações
 # no entryframe)
-SLOW_MACHINE = False
+SLOW_MACHINE = True
 # Alterar para False para utilizar uma ligação remota via web API.
 USE_LOCAL_DATABASE = True
 
 if USE_LOCAL_DATABASE:
     LOCAL_DATABASE_PATH = '__test_service.db'
+    #LOCAL_DATABASE_PATH = '__test_service.db'
 else:
     REMOTE_API_URL = 'http://localhost:5000'
 

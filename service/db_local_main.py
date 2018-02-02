@@ -312,6 +312,23 @@ def obter_contacto(num_contacto):
     return contacto
 
 
+def obter_mensagens(user_id):
+    s, _ = iniciar_sessao_db()
+    utilizador = s.query(db_models.User).get(user_id)
+    
+    q_msgs = s.query(db_models.UtilizadorNotificadoPorEvento_link) \
+                        .filter_by(is_visible=1, user=utilizador)
+
+    msgs = q_msgs.all()
+    return msgs
+
+
+def obter_evento(event_id):
+    s, _ = iniciar_sessao_db()
+    evento = s.query(db_models.Event).get(event_id)
+    return evento
+
+
 # ----------------------------------------------------------------------------------------
 # Just a bunch of experiences to get the hang of SQLalchemy while developing the models...
 # ----------------------------------------------------------------------------------------
@@ -329,7 +346,10 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
     s.commit()
 
     print("")
-    lojas = s.query(db_models.Loja).all()
+    lojas = s.query(db_models.Loja)
+    admin = db_models.User(nome="npk", email="admin@networkprojectforknowledge.org", password="...", loja=lojas.get(1))
+    s.add(admin)
+    lojas = lojas.all()
     for i in range(num_utilizadores):
         print(f"{'  - A inserir utilizadores...'.ljust(55)}{i+1:7}", end="\r")
         lojinha = lojas[i % 2]
@@ -354,7 +374,7 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
     for i in range(num_contactos):
         print(f"{'  - A inserir contactos (clientes e fornecedores)...'.ljust(55)}{i+1:7}", end="\r")
         forn = choice(is_fornecedor)
-        
+
         if forn:
             cli = choice(is_cliente)
         else:
@@ -389,7 +409,7 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
 
     for i in range(num_artigos):
         print(f"{'  - A inserir artigos...'.ljust(55)}{i+1:7}", end="\r")
-        
+
         artigo = db_models.Product(descr_product=choice(artigos), part_number="NPKPN662"+str(i)+"ZQ"+str(i))
         s.add(artigo)
 
@@ -463,7 +483,7 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
     utilizadores = s.query(db_models.User).all()
     count = 0
     rep = reparacoes[1]
-    for rep in reparacoes:
+    for rep in reparacoes:            
         print(f"{'  - A inserir eventos...'.ljust(55)}{count+1:7}", end="\r")
         count +=1
         #print("event in rep", rep)
@@ -471,11 +491,13 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
         evento1 = db_models.Event(
             repair_id = rep.id,
             descricao = "Cliente enviou por email a fatura para anexar ao processo de garantia.",
-            criado_por_utilizador = utilizadores[1])
+            criado_por_utilizador = choice(utilizadores))
 
-        link = db_models.UtilizadorNotificadoPorEvento_link(is_visible=True, is_open=False)
+        link = db_models.UtilizadorNotificadoPorEvento_link(
+            is_visible=choice([False, True]),
+            is_open=choice([True, False]))
 
-        link.user = utilizadores[1]
+        link.user = choice(utilizadores)
         evento1.utilizadores.append(link)
         s.add(evento1)
 
@@ -485,15 +507,17 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
             evento2 = db_models.Event(
                 repair_id = rep.id,
                 descricao = "Centro técnico pediu para questionar cliente sobre algo importante.",
-                criado_por_utilizador = utilizadores[2])
+                criado_por_utilizador = utilizadores[0])
 
-            link2 = db_models.UtilizadorNotificadoPorEvento_link(is_visible=True, is_open=True)
-            link2.user = utilizadores[2]
+            link2 = db_models.UtilizadorNotificadoPorEvento_link(
+                is_visible=choice([True, False]),
+                is_open=choice([False, True]))
+            link2.user = utilizadores[0]
             evento2.utilizadores.append(link2)
             s.add(evento2)
 
     s.commit()
-    
+
     db_filesize = os.path.getsize(os.path.expanduser(LOCAL_DATABASE_PATH)) >> 10
     print(f"\n\nOperação terminada.\nTamanho atual da base de dados: {db_filesize/1024:.1f}MB\n")
 
@@ -551,9 +575,9 @@ if __name__ == "__main__":
     # Testing...
     delete_database()
     init_database()
-    test_populate(num_lojas=5, 
-                  num_utilizadores=40,
-                  num_contactos=2000,
-                  num_artigos=300,
-                  num_reparacoes=int(5000/3))
+    test_populate(num_lojas=3,
+                  num_utilizadores=24,
+                  num_contactos=800,
+                  num_artigos=500,
+                  num_reparacoes=int(2000))
     #print_database()

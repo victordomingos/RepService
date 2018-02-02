@@ -72,6 +72,7 @@ class App(baseApp):
         self.mensagem_selecionada = None
         self.ultima_reparacao = None
         self.username = None
+        self.user_id = None
         self.password = None
         self.loggedin = False
         self.token = None
@@ -197,6 +198,7 @@ class App(baseApp):
             self.failed_login_attempts = 0
             self.username = username
             self.password = password
+            self.user_id = db.get_user_id(self.username)
             self.start_main_window()
             root.deiconify()
             self.root_login.destroy()
@@ -375,7 +377,7 @@ class App(baseApp):
         self.composeFrames()
 
         self.atualizar_lista(db.obter_reparacoes_por_estados(PROCESSOS_EM_CURSO))
-        self.inserir_dados_de_exemplo()
+        self.atualizar_lista_msgs()
         self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
 
         if self.contar_linhas(self.msgtree) > 0:
@@ -820,8 +822,8 @@ class App(baseApp):
             self.lblFrame_mensagens, height=31, selectmode='browse', show='', style='Msg.Treeview')
         self.msgtree['columns'] = ('ico', 'Processo', 'Mensagem')
         self.msgtree.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
-        self.msgtree.column('ico', anchor='ne',
-                            minwidth=20, stretch=0, width=20)
+        self.msgtree.column('ico', anchor='nw',
+                            minwidth=35, stretch=0, width=35)
         self.msgtree.column('Processo', anchor='ne',
                             minwidth=40, stretch=0, width=40)
         self.msgtree.column('Mensagem', anchor='nw',
@@ -858,6 +860,7 @@ class App(baseApp):
             self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
             self.atualizar_soma_msgs()
             estado.painel_mensagens_aberto = True
+            self.atualizar_lista_msgs()
         else:
             self.fechar_painel_mensagens()
 
@@ -1786,7 +1789,7 @@ class App(baseApp):
         str_data = f"{data.day}/{data.month}/{data.year} às {data.hour}:{int(data.minute):02}"
         texto = textwrap.fill(texto, width=45)
         texto_final = f"{utilizador}, {str_data}\n﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘\n{texto}"
-        ico = "  " if msg_lida else "✉️"
+        ico = " ✉️" if msg_lida else " ✉️ ❗️"
         self.msgtree.insert("", "end", values=(ico, str(rep_num), texto_final))
 
 
@@ -1798,11 +1801,24 @@ class App(baseApp):
             descr_artigo, descr_servico, str_estado, dias))
 
 
+    def atualizar_lista_msgs(self):
+        for i in self.msgtree.get_children():  # Limpar tabela primeiro
+            self.msgtree.delete(i)
+
+        mensagens = db.obter_mensagens(self.user_id)
+        for msg in mensagens:
+            self.inserir_msg(rep_num=msg.event.repair.id, 
+                             utilizador=self.user_id,
+                             data=msg.event.created_on,
+                             texto=msg.event.descricao,
+                             msg_lida=msg.is_open)
+        self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
+        self.atualizar_soma_msgs()
+
+
     def atualizar_lista(self, reparacoes):
         """ Atualizar a lista de reparações na tabela principal.
         """
-        quantidade_reps = len(reparacoes)
-
         for i in self.tree.get_children():  # Limpar tabela primeiro
             self.tree.delete(i)
 
@@ -1816,43 +1832,8 @@ class App(baseApp):
                 dias=dias,
                 tag=reparacao.prioridade)
 
-        self.atualizar_soma_processos()
         self.alternar_cores(self.tree)
-
-
-    def inserir_dados_de_exemplo(self):
-        """ Generate some fake data for the repair list
-        """
-        from random import choice, randint, randrange
-        import pprint
-
-        #reparacoes = db.obter_todas_reparacoes()
-        #quantidade_reps = len(reparacoes)
-        quantidade_msgs = 35
-        """
-        for reparacao in reparacoes:
-            dias = db.calcular_dias_desde(reparacao.created_on)
-            self.inserir_rep(rep_num=reparacao.id,
-                nome_cliente=reparacao.cliente.nome,
-                descr_artigo=reparacao.product.descr_product,
-                descr_servico=reparacao.descr_servico,
-                estado=reparacao.estado_reparacao,
-                dias=dias,
-                tag=reparacao.prioridade)
-        """
-
-
-        now = datetime.datetime.now()
-        utilizadores = ("Victor Domingos", "DJ Mars", "AC", "NPK", "Monstro das Bolachas", "mit")
-        textos_msgs = ("Convém ligar a este cliente no dia x de dezembro para verificar qual a morada para onde é para enviar",
-            "Ligar ao cliente a explicar processo para fazer isto ou aquilo",
-            "Verificar estado com centro de assistência",
-            "Verificar estado com centro de assistência. O cliente vai enviar fatura para ver se dá para passar em garantia.")
-
-        for i in range(quantidade_msgs):
-            self.inserir_msg(rep_num=randrange(1,99),
-                utilizador=choice(utilizadores), data=now, texto=choice(textos_msgs),
-                msg_lida=choice((True,False)) )
+        self.atualizar_soma_processos()
 
 
 
