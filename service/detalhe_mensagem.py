@@ -18,8 +18,8 @@ if USE_LOCAL_DATABASE:
     import db_local_models as db_models
 else:
     import db_remote as db
-    
-    
+
+
 class msgDetailWindow(ttk.Frame):
     """ Classe de base para a janela de detalhes de mensagem """
 
@@ -33,7 +33,7 @@ class msgDetailWindow(ttk.Frame):
         self.nome = self.mensagem.repair.cliente.nome
         self.artigo = self.mensagem.repair.product.descr_product
         self.estado_atual = ESTADOS[self.mensagem.repair.estado_reparacao]
-        self.resultado = "Orçamento aprovado" #TODO
+        self.resultado = RESULTADOS[self.mensagem.repair.cod_resultado_reparacao]
         self.detalhe = self.mensagem.descricao
         self.remetente = self.mensagem.criado_por_utilizador
         self.data = self.mensagem.created_on
@@ -45,9 +45,9 @@ class msgDetailWindow(ttk.Frame):
         self.montar_rodape()
         self.composeFrames()
         self.desativar_campos()
-        
+
         #todo: marcar msg como lida
-        
+
 
     def on_btn_abrir_rep(self, event):
         """ Abre a janela de detalhes do processo a que se refere esta mensagem.

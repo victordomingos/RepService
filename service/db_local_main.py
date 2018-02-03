@@ -15,7 +15,7 @@ from datetime import datetime
 import db_local_base as db_base
 import db_local_models as db_models
 
-from global_setup import LOCAL_DATABASE_PATH, ESTADOS, ENTREGUE, PRIORIDADES
+from global_setup import LOCAL_DATABASE_PATH, ESTADOS, ENTREGUE, PRIORIDADES, RESULTADOS
 
 
 def iniciar_sessao_db():
@@ -315,7 +315,7 @@ def obter_contacto(num_contacto):
 def obter_mensagens(user_id):
     s, _ = iniciar_sessao_db()
     utilizador = s.query(db_models.User).get(user_id)
-    
+
     q_msgs = s.query(db_models.UtilizadorNotificadoPorEvento_link) \
                         .filter_by(is_visible=1, user=utilizador)
 
@@ -457,7 +457,7 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
             data_fatura_fornecedor = datetime(2017,1,31),
             num_guia_rececao = "123455",
             data_guia_rececao = datetime(2017,1,31),
-            cod_resultado_reparacao = 4,
+            cod_resultado_reparacao = choice(list(RESULTADOS.keys())),
             descr_detalhe_reparacao = "Foi substituído em garantia o neurónio avariado",
             novo_sn_artigo = "G1231000TYZ",
             notas_entrega = "Entregue a José Manuel da Silva Curioso",
@@ -483,7 +483,7 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
     utilizadores = s.query(db_models.User).all()
     count = 0
     rep = reparacoes[1]
-    for rep in reparacoes:            
+    for rep in reparacoes:
         print(f"{'  - A inserir eventos...'.ljust(55)}{count+1:7}", end="\r")
         count +=1
         #print("event in rep", rep)
@@ -501,12 +501,13 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
         evento1.utilizadores.append(link)
         s.add(evento1)
 
-
+        textos = ("Centro técnico pediu para questionar cliente sobre algo importante.",
+                  "Falta enviar a fatura para garantia.")
         if count % 2 == 0:
             #print("if rep event")
             evento2 = db_models.Event(
                 repair_id = rep.id,
-                descricao = "Centro técnico pediu para questionar cliente sobre algo importante.",
+                descricao = choice(textos),
                 criado_por_utilizador = utilizadores[0])
 
             link2 = db_models.UtilizadorNotificadoPorEvento_link(
@@ -515,6 +516,8 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
             link2.user = utilizadores[0]
             evento2.utilizadores.append(link2)
             s.add(evento2)
+            if count >=50:
+                break
 
     s.commit()
 

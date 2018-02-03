@@ -378,7 +378,6 @@ class App(baseApp):
 
         self.atualizar_lista(db.obter_reparacoes_por_estados(PROCESSOS_EM_CURSO))
         self.atualizar_lista_msgs()
-        self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
 
         if self.contar_linhas(self.msgtree) > 0:
             #self.after(1200, self.abrir_painel_mensagens)
@@ -860,7 +859,6 @@ class App(baseApp):
             self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
             self.atualizar_soma_msgs()
             estado.painel_mensagens_aberto = True
-            self.atualizar_lista_msgs()
         else:
             self.fechar_painel_mensagens()
 
@@ -1802,23 +1800,24 @@ class App(baseApp):
 
 
     def atualizar_lista_msgs(self):
-        for i in self.msgtree.get_children():  # Limpar tabela primeiro
-            self.msgtree.delete(i)
-
         mensagens = db.obter_mensagens(self.user_id)
+
         for msg in mensagens:
-            self.inserir_msg(rep_num=msg.event.repair.id, 
-                             utilizador=self.user_id,
-                             data=msg.event.created_on,
-                             texto=msg.event.descricao,
-                             msg_lida=msg.is_open)
-        self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
+            self.inserir_msg(rep_num=msg.event.repair.id,
+                utilizador=msg.user.nome,
+                data=msg.event.created_on,
+                texto=msg.event.descricao,
+                msg_lida=msg.is_open)
+
         self.atualizar_soma_msgs()
+        self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
 
 
     def atualizar_lista(self, reparacoes):
         """ Atualizar a lista de reparações na tabela principal.
         """
+        quantidade_reps = len(reparacoes)
+
         for i in self.tree.get_children():  # Limpar tabela primeiro
             self.tree.delete(i)
 
@@ -1832,8 +1831,43 @@ class App(baseApp):
                 dias=dias,
                 tag=reparacao.prioridade)
 
-        self.alternar_cores(self.tree)
         self.atualizar_soma_processos()
+        self.alternar_cores(self.tree)
+
+
+    def inserir_dados_de_exemplo(self):
+        """ Generate some fake data for the repair list
+        """
+        from random import choice, randint, randrange
+        import pprint
+
+        #reparacoes = db.obter_todas_reparacoes()
+        #quantidade_reps = len(reparacoes)
+        quantidade_msgs = 35
+        """
+        for reparacao in reparacoes:
+            dias = db.calcular_dias_desde(reparacao.created_on)
+            self.inserir_rep(rep_num=reparacao.id,
+                nome_cliente=reparacao.cliente.nome,
+                descr_artigo=reparacao.product.descr_product,
+                descr_servico=reparacao.descr_servico,
+                estado=reparacao.estado_reparacao,
+                dias=dias,
+                tag=reparacao.prioridade)
+        """
+
+
+        now = datetime.datetime.now()
+        utilizadores = ("Victor Domingos", "DJ Mars", "AC", "NPK", "Monstro das Bolachas", "mit")
+        textos_msgs = ("Convém ligar a este cliente no dia x de dezembro para verificar qual a morada para onde é para enviar",
+            "Ligar ao cliente a explicar processo para fazer isto ou aquilo",
+            "Verificar estado com centro de assistência",
+            "Verificar estado com centro de assistência. O cliente vai enviar fatura para ver se dá para passar em garantia.")
+
+        for i in range(quantidade_msgs):
+            self.inserir_msg(rep_num=randrange(1,99),
+                utilizador=choice(utilizadores), data=now, texto=choice(textos_msgs),
+                msg_lida=choice((True,False)) )
 
 
 
