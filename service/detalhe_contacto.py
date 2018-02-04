@@ -14,6 +14,12 @@ from extra_tk_classes import AutoScrollbar, LabelEntry, LabelText
 from detalhe_reparacao import repairDetailWindow
 from global_setup import *
 
+if USE_LOCAL_DATABASE:
+    import db_local_main as db
+    import db_local_models as db_models
+else:
+    import db_remote as db
+
 
 class contactDetailWindow(ttk.Frame):
     """ Classe de base para a janela de detalhes de reparações """
@@ -24,17 +30,18 @@ class contactDetailWindow(ttk.Frame):
         self.master.bind("<Command-w>", self.on_btn_fechar)
         self.master.focus()
         self.num_contacto = num_contacto
-        self.reparacao_selecionada = ""
+        self.contacto = db.obter_contacto(num_contacto)
+        self.contacto_selecionado = ""
         self.rep_newDetailsWindow = {}
         self.rep_detail_windows_count = 0
         self.soma_reparacoes = 0
         self.soma_reincidencias = 0
 
         self.var_tipo_is_cliente = tk.IntVar()
-        self.var_tipo_is_loja = tk.IntVar()
         self.var_tipo_is_fornecedor = tk.IntVar()
+        #self.var_tipo_is_loja = tk.IntVar()
 
-        self.nome = "Nome do contacto"
+        """self.nome = "Nome do contacto"
         self.empresa = ""
         self.nif = "999999990"
         self.telefone = "253000000"
@@ -48,9 +55,10 @@ class contactDetailWindow(ttk.Frame):
 
         self.notas = "Alguns apontamentos adicionais sobre este contacto.\nEtc."
 
-        self.var_tipo_is_cliente.set(True)  # Todo
-        self.var_tipo_is_fornecedor.set(True)  # TODO
-        self.var_tipo_is_loja.set(False)  # TODO
+        """
+        self.var_tipo_is_cliente.set(self.contacto.is_cliente)  # Todo
+        self.var_tipo_is_fornecedor.set(self.contacto.is_cliente)  # TODO
+        #elf.var_tipo_is_loja.set(False)  # TODO
 
         self.configurar_frames_e_estilos()
         self.montar_barra_de_ferramentas()
@@ -100,7 +108,7 @@ class contactDetailWindow(ttk.Frame):
         self.topframe.grid_columnconfigure(2, weight=1)
 
     def gerar_painel_principal(self):
-        print(f"A mostrar detalhes da reparação nº {self.num_contacto}")
+        print(f"A mostrar detalhes do contacto nº {self.num_contacto}")
 
         # Preparar o notebook da secção principal ------------------------
         self.note = ttk.Notebook(self.centerframe, padding="3 20 3 3")
@@ -191,12 +199,24 @@ class contactDetailWindow(ttk.Frame):
         self.ef_combo_pais = ttk.Combobox(self.morada_fr1, values=TODOS_OS_PAISES,
                                           textvariable=self.paises_value,
                                           state='readonly')
-        self.ef_combo_pais.current(178)  # TODO!
+        #self.ef_combo_pais.current(178)  # TODO!
         self.ef_combo_pais.bind("<Key>", self.procurar_em_combobox)
 
         # Preencher com dados da base de dados --------------------------------
-        self.ef_ltxt_nome.set(self.nome)
-        # TODO - preencher o resto dos campos do formulário...
+        self.ef_ltxt_nome.set(self.contacto.nome)
+        self.ef_ltxt_empresa.set(self.contacto.empresa)
+        self.ef_ltxt_nif.set(self.contacto.nif)
+        self.ef_ltxt_telefone.set(self.contacto.telefone)
+        self.ef_ltxt_tlm.set(self.contacto.telemovel)
+        self.ef_ltxt_tel_empresa.set(self.contacto.telefone_empresa)
+        self.ef_ltxt_email.set(self.contacto.email)
+        self.ef_lstxt_morada.set(self.contacto.morada)
+        self.ef_ltxt_cod_postal.set(self.contacto.cod_postal)
+        self.ef_ltxt_localidade.set(self.contacto.localidade)
+        #self.ef_combo_pais.current(self.contacto.pais)
+        #self.el_ltxt_notas.set(self.contacto.notas)
+        #self.el_ltxt_.set(self.contacto.)
+        #self.el_ltxt_.set(self.contacto.)
 
     def montar_tab_geral(self):
         # Montar todos os campos na grid --------------------------------------
@@ -373,7 +393,7 @@ class contactDetailWindow(ttk.Frame):
     def bind_tree(self):
         self.tree.bind('<<TreeviewSelect>>', self.selectItem_popup)
         self.tree.bind('<Double-1>', lambda x: self.create_window_detalhe_rep(
-            num_reparacao=self.reparacao_selecionada))
+            num_reparacao=self.contacto_selecionado))
         self.tree.bind("<Button-2>", self.popupMenu)
         self.tree.bind("<Button-3>", self.popupMenu)
         self.update_idletasks()
@@ -468,10 +488,10 @@ class contactDetailWindow(ttk.Frame):
         curItem = self.tree.focus()
         tree_linha = self.tree.item(curItem)
 
-        num_reparacao = tree_linha["values"][0]
-        #equipamento =  tree_linha["values"][2]
-        #self.my_statusbar.set(f"{num_reparacao} • {equipamento}")
-        self.reparacao_selecionada = num_reparacao
+        num_contacto = tree_linha["values"][0]
+        nome =  tree_linha["values"][1]
+        self.my_statusbar.set(f"{num_contacto} • {nome}")
+        self.contacto_selecionado = num_contacto
 
     def alternar_cores(self, tree, inverso=False, fundo1='grey98', fundo2='white'):
         tree = tree
