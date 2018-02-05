@@ -13,6 +13,8 @@ v.0.18 - 14/02/2018 - A comemorar 1 ano de desenvolvimento(s).
  * Corrigido um bug que impedia que fosse mostrado o fundo das linhas em cor
    alternada nas listas de reparações e contactos.
  * Criado método para preencher lista de mensagens a partir da base de dados.
+ * As janelas de detalhes de evento/mensagem já mostram dados obtidos a partir
+   da base de dados.
 
 ---
 v.0.17 - 31/01/2018
