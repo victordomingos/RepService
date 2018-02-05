@@ -309,7 +309,7 @@ def obter_fornecedores():
 def obter_contacto(num_contacto):
     s, _ = iniciar_sessao_db()
     contacto = s.query(db_models.Contact).get(num_contacto)
-    return contacto
+    return s, contacto
 
 
 def obter_mensagens(user_id):
@@ -380,6 +380,10 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
         else:
             cli = True
 
+        if i == 0:
+            atualizado_por_utilizador = None
+        else:
+            atualizado_por_utilizador = choice(utilizadores)
 
         contacto = db_models.Contact(
             nome=f"{choice(nomes)} {choice(apelidos)}",
@@ -396,7 +400,8 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
             notas = "Apontamentos adicionais sobre este contacto...",
             is_cliente = bool(cli),
             is_fornecedor = bool(forn),
-            criado_por_utilizador = choice(utilizadores))
+            criado_por_utilizador = choice(utilizadores),
+            atualizado_por_utilizador = atualizado_por_utilizador)
         s.add(contacto)
 
     s.commit()

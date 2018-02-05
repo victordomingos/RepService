@@ -30,7 +30,7 @@ class contactDetailWindow(ttk.Frame):
         self.master.bind("<Command-w>", self.on_btn_fechar)
         self.master.focus()
         self.num_contacto = num_contacto
-        self.contacto = db.obter_contacto(num_contacto)
+        _, self.contacto = db.obter_contacto(num_contacto)
         self.contacto_selecionado = ""
         self.rep_newDetailsWindow = {}
         self.rep_detail_windows_count = 0
@@ -41,35 +41,15 @@ class contactDetailWindow(ttk.Frame):
         self.var_tipo_is_fornecedor = tk.IntVar()
         #self.var_tipo_is_loja = tk.IntVar()
 
-        """self.nome = "Nome do contacto"
-        self.empresa = ""
-        self.nif = "999999990"
-        self.telefone = "253000000"
-        self.tlm = "900000000"
-        self.telef_empresa = "253000000"
-        self.email = "TestContact@NetworkProjectForKnowledge.org"
-        self.morada = "Rua Imaginária do Código sem Bugs, ∞, 2002º Esquerdo-e-Meio\nUrbanização da Consola Negra"
-        self.cod_postal = "0101-101"
-        self.localidade = "Vila Nova de Milcódigos-Fonte"
-        self.pais = "Portugal"
-
-        self.notas = "Alguns apontamentos adicionais sobre este contacto.\nEtc."
-
-        """
-        self.var_tipo_is_cliente.set(self.contacto.is_cliente)  # Todo
-        self.var_tipo_is_fornecedor.set(self.contacto.is_cliente)  # TODO
-        #elf.var_tipo_is_loja.set(False)  # TODO
-
         self.configurar_frames_e_estilos()
         self.montar_barra_de_ferramentas()
         self.gerar_painel_principal()
         self.mostrar_painel_principal()
-
         self.montar_rodape()
         self.composeFrames()
-        self.inserir_dados_de_exemplo()
         self.atualizar_soma()
         self.alternar_cores(self.tree)
+
 
     def montar_barra_de_ferramentas(self):
         self.lbl_titulo = ttk.Label(self.topframe, style="Panel_Title.TLabel",
@@ -108,8 +88,6 @@ class contactDetailWindow(ttk.Frame):
         self.topframe.grid_columnconfigure(2, weight=1)
 
     def gerar_painel_principal(self):
-        print(f"A mostrar detalhes do contacto nº {self.num_contacto}")
-
         # Preparar o notebook da secção principal ------------------------
         self.note = ttk.Notebook(self.centerframe, padding="3 20 3 3")
         self.note.bind_all("<<NotebookTabChanged>>", self._on_tab_changed)
@@ -163,7 +141,6 @@ class contactDetailWindow(ttk.Frame):
 
         #self.geral_fr2 = ttk.Frame(self.tab_geral)
 
-        # TODO - obter valor da base de dados
         # Criar widgets para este separador -----------------------------------
         #self.txt_numero_contacto = ttk.Entry(self.geral_fr1, font=("Helvetica-Neue", 12), width=5)
         #self.txt_nome = ttk.Entry(self.geral_fr1, font=("Helvetica-Neue", 12), width=35)
@@ -199,7 +176,7 @@ class contactDetailWindow(ttk.Frame):
         self.ef_combo_pais = ttk.Combobox(self.morada_fr1, values=TODOS_OS_PAISES,
                                           textvariable=self.paises_value,
                                           state='readonly')
-        #self.ef_combo_pais.current(178)  # TODO!
+
         self.ef_combo_pais.bind("<Key>", self.procurar_em_combobox)
 
         # Preencher com dados da base de dados --------------------------------
@@ -213,10 +190,12 @@ class contactDetailWindow(ttk.Frame):
         self.ef_lstxt_morada.set(self.contacto.morada)
         self.ef_ltxt_cod_postal.set(self.contacto.cod_postal)
         self.ef_ltxt_localidade.set(self.contacto.localidade)
-        #self.ef_combo_pais.current(self.contacto.pais)
-        #self.el_ltxt_notas.set(self.contacto.notas)
-        #self.el_ltxt_.set(self.contacto.)
-        #self.el_ltxt_.set(self.contacto.)
+
+        for index, pais in enumerate(TODOS_OS_PAISES):
+            if pais == self.contacto.pais:
+                self.ef_combo_pais.current(index)
+                break
+
 
     def montar_tab_geral(self):
         # Montar todos os campos na grid --------------------------------------
@@ -272,6 +251,13 @@ class contactDetailWindow(ttk.Frame):
 
         self.ef_lstxt_notas = LabelText(
             self.notas_fr1, "\nNotas:", height=3, style="Panel_Body.TLabel")
+
+
+        self.var_tipo_is_cliente.set(self.contacto.is_cliente)
+        self.var_tipo_is_fornecedor.set(self.contacto.is_cliente)
+        #elf.var_tipo_is_loja.set(False)  # TODO
+        self.ef_lstxt_notas.set(self.contacto.notas)
+
 
     def montar_tab_notas(self):
         self.ef_lstxt_notas.grid(
@@ -376,9 +362,16 @@ class contactDetailWindow(ttk.Frame):
         self.note.enable_traversal()
 
     def montar_rodape(self):
-        # TODO - obter dados da base de dados
-        txt_esquerda = "Criado por Victor Domingos em 12/05/2021 18:01."
-        txt_direita = "Atualizado por Victor Domingos em 13/05/2021 17:01."
+        nome_cr = self.contacto.criado_por_utilizador.nome
+        data_cr = self.contacto.created_on.isoformat(sep=' ', timespec='minutes')
+        txt_esquerda = f"Criado por {nome_cr} em {data_cr}."
+
+        if self.contacto.atualizado_por_utilizador == None:
+            txt_direita = ""
+        else:
+            nome_updt = self.contacto.nome
+            data_updt = self.contacto.updated_on.isoformat(sep=' ', timespec='minutes')
+            txt_direita = f"Atualizado por {nome_updt} em {data_updt}."
 
         self.rodapeFont = tk.font.Font(family="Lucida Grande", size=9)
         self.rodapeTxtColor = "grey22"
@@ -576,13 +569,3 @@ class contactDetailWindow(ttk.Frame):
         self.centerframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
         self.bottomframe.pack(side=tk.BOTTOM, fill=tk.X)
         self.mainframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
-
-    def inserir_dados_de_exemplo(self):
-        for i in range(200100, 200106, 4):
-            #self.tree.insert("", "end", text="", values=(str(i), "12/07/2017", textwrap.fill("Artigo Muito Jeitoso (Early 2015)", width=35), textwrap.fill("Substituição de ecrã", width=35), "Substituído em Garantia", ""))
-            self.tree.insert("", "end", text="", values=(str(i + 1), "02/01/2016", textwrap.fill("Outro Artigo Bem Jeitoso",
-                                                                                                 width=35), "Bateria não carrega", textwrap.fill("Bateria substituída em garantia", width=35), ""))
-            self.tree.insert("", "end", text="", values=(str(i + 2), "13/08/2013", textwrap.fill("Smartphone Daqueles Bons", width=35), textwrap.fill(
-                "O equipamento não liga, na sequência de exposição a líquidos. Testar e verificar se é possível reparar. Caso contrário, apresentar orçamento para a sua substituição.", width=35), "Sem reparação.", "123456"))
-            self.tree.insert("", "end", text="", values=(str(i + 3), "01/01/2001", textwrap.fill("Smartphone Daqueles Fraquinhos", width=35),
-                                                         textwrap.fill("A bateria dura pouco tempo.", width=35), textwrap.fill("Reparado conforme orçamento", width=35), ""))

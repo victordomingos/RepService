@@ -413,13 +413,13 @@ class App(baseApp):
             self.lbl_mensagens_titulo.config(text=f"Não tem mensagens.")
 
     def bind_tree(self):
-        self.tree.bind('<<TreeviewSelect>>', self.selectItem_popup)
+        self.tree.bind('<<TreeviewSelect>>', self.selectItem)
         self.tree.bind('<Double-1>', lambda x: self.create_window_detalhe_rep(
             num_reparacao=self.reparacao_selecionada))
         self.tree.bind("<Button-2>", self.popupMenu)
         self.tree.bind("<Button-3>", self.popupMenu)
 
-        self.msgtree.bind('<<TreeviewSelect>>', self.selectItemMsg_popup)
+        self.msgtree.bind('<<TreeviewSelect>>', self.selectItemMsg)
         self.msgtree.bind(
             '<Double-1>', lambda x: self.create_window_detalhe_msg(num_mensagem=self.mensagem_selecionada))
         self.msgtree.bind("<Button-2>", self.popupMenuMsg)
@@ -436,19 +436,6 @@ class App(baseApp):
         self.msgtree.bind("<Button-2>", None)
         self.msgtree.bind("<Button-3>", None)
 
-    def selectItem_popup(self, event):
-        """ # Hacking moment: Uma função que junta duas funções, para assegurar a sequência...
-        """
-        print("selectItem_popup")
-        self.selectItem()
-        self.popupMenu(event)
-
-    def selectItemMsg_popup(self, event):
-        """ # Hacking moment: Uma função que junta duas funções, para assegurar a sequência...
-        """
-        print("selectItemMsg_popup")
-        self.selectItemMsg()
-        self.popupMenuMsg(event)
 
     def selectItemMsg(self, *event):
         """
@@ -458,7 +445,7 @@ class App(baseApp):
         tree_linha = self.msgtree.item(curItem)
 
         mensagem = tree_linha["values"][1]
-        remetente = tree_linha["values"][2].split(',', 1)[0]
+        remetente = tree_linha["values"][3].split(',', 1)[0]
         self.my_statusbar.set(f"{mensagem} • Mensagem enviada por {remetente}")
         self.mensagem_selecionada = mensagem
 
@@ -466,6 +453,7 @@ class App(baseApp):
         """action in event of button 3 on tree view"""
         # select row under mouse
         self.selectItem()
+        self.update_idletasks()
 
         iid = self.tree.identify_row(event.y)
         x, y = event.x_root, event.y_root
@@ -490,6 +478,7 @@ class App(baseApp):
         """action in event of button 3 on tree view"""
         # select row under mouse
         self.selectItemMsg()
+        self.update_idletasks()
 
         iid = self.msgtree.identify_row(event.y)
         x, y = event.x_root, event.y_root
@@ -763,6 +752,9 @@ class App(baseApp):
             self.rep_newDetailsWindow[self.rep_detail_windows_count], num_reparacao)
 
     def create_window_detalhe_msg(self, *event, num_mensagem=None):
+        self.selectItemMsg()
+        self.master.update_idletasks()
+
         if num_mensagem is None:
             messagebox.showwarning("", "Nenhuma mensagem selecionada.")
             root.focus_force()
@@ -819,10 +811,11 @@ class App(baseApp):
 
         self.msgtree = ttk.Treeview(
             self.lblFrame_mensagens, height=31, selectmode='browse', show='', style='Msg.Treeview')
-        self.msgtree['columns'] = ('ico', 'Processo', 'Mensagem')
+        self.msgtree['columns'] = ('ico', "msg_id", 'Processo', 'Mensagem')
         self.msgtree.column('#0', anchor='w', minwidth=0, stretch=0, width=0)
         self.msgtree.column('ico', anchor='nw',
                             minwidth=35, stretch=0, width=35)
+        self.msgtree.column('msg_id', anchor='w', minwidth=0, stretch=0, width=0)
         self.msgtree.column('Processo', anchor='ne',
                             minwidth=40, stretch=0, width=40)
         self.msgtree.column('Mensagem', anchor='nw',
@@ -1781,14 +1774,14 @@ class App(baseApp):
         else:
             self.entryframe.focus()
 
-    def inserir_msg(self, rep_num=0, utilizador="", data=None, texto="", msg_lida=True):
+    def inserir_msg(self, msg_id=0, rep_num=0, utilizador="", data=None, texto="", msg_lida=True):
         """ Adicionar uma mensagem à lista, no painel de mensagens
         """
         str_data = f"{data.day}/{data.month}/{data.year} às {data.hour}:{int(data.minute):02}"
         texto = textwrap.fill(texto, width=45)
         texto_final = f"{utilizador}, {str_data}\n﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘\n{texto}"
         ico = " ✉️" if msg_lida else " ✉️ ❗️"
-        self.msgtree.insert("", "end", values=(ico, str(rep_num), texto_final))
+        self.msgtree.insert("", "end", values=(ico, str(msg_id), str(rep_num), texto_final))
 
 
     def inserir_rep(self, rep_num=0, nome_cliente="", descr_artigo="", descr_servico="", estado=0, dias=0, tag="normal"):
@@ -1803,7 +1796,10 @@ class App(baseApp):
         mensagens = db.obter_mensagens(self.user_id)
 
         for msg in mensagens:
-            self.inserir_msg(rep_num=msg.event.repair.id,
+            print("a atualizar")
+            print(msg.event.id, msg.event.repair.id, msg.event.descricao)
+            self.inserir_msg(msg_id=msg.event.id,
+                rep_num=msg.event.repair.id,
                 utilizador=msg.user.nome,
                 data=msg.event.created_on,
                 texto=msg.event.descricao,

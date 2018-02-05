@@ -167,7 +167,7 @@ class msgDetailWindow(ttk.Frame):
                                  xoffset=-2,
                                  initwait=1300)
 
-        self.master.title(f'Mensagem nº {self.num_mensagem}')
+        self.master.title(f'Detalhes')
         self.mainframe = ttk.Frame(self.master)
         self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 20")
         self.centerframe = ttk.Frame(self.mainframe, padding="5 8 5 5")

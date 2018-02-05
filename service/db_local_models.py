@@ -61,11 +61,13 @@ class Contact(Base):
     is_cliente = Column(Boolean)
     is_fornecedor = Column(Boolean)
     criado_por_utilizador_id = Column(Integer, ForeignKey('user.id'))
+    ult_atualizacao_por_utilizador_id = Column(Integer, ForeignKey('user.id'))
 
     created_on = Column(DateTime(), default=func.now())
     updated_on = Column(DateTime(), default=func.now(), onupdate=func.now())
 
     criado_por_utilizador = relationship("User", foreign_keys=[criado_por_utilizador_id])
+    atualizado_por_utilizador = relationship("User", foreign_keys=[ult_atualizacao_por_utilizador_id])
 
     def __repr__(self):
         return f"<Contact(id={self.id}, name='{self.nome}', empresa='{self.empresa}', is_cliente='{self.is_cliente}', is_fornecedor='{self.is_fornecedor}'>"
@@ -157,6 +159,7 @@ class Repair(Base):
     morada_entrega = Column(String)
     prioridade = 1
     criado_por_utilizador_id = Column(Integer, ForeignKey('user.id'))
+    ult_atualizacao_por_utilizador_id = Column(Integer, ForeignKey('user.id'))
 
     created_on = Column(DateTime(), default=func.now())
     updated_on = Column(DateTime(), default=func.now(), onupdate=func.now())
@@ -171,6 +174,7 @@ class Repair(Base):
         backref=backref("reparacoes_como_local_reparacao", uselist=True, order_by=id))
     utilizador_entrega = relationship(User, foreign_keys=[utilizador_entrega_id])
     criado_por_utilizador = relationship("User", foreign_keys=[criado_por_utilizador_id])
+    atualizado_por_utilizador = relationship(User, foreign_keys=[ult_atualizacao_por_utilizador_id])
 
 
     def __repr__(self):
