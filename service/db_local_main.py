@@ -194,14 +194,38 @@ def obter_lista_artigos_emprest():
 
 def obter_todas_reparacoes():
     s, _ = iniciar_sessao_db()
-    reparacoes = s.query(db_models.Repair).all()
-    return reparacoes
+    reps = s.query(db_models.Repair).all()
+    repair_list = [{'id': rep.id,
+                    'cliente_nome': rep.cliente.nome,
+                    'descr_artigo': rep.product.descr_product,
+                    'sn': rep.sn,
+                    'descr_servico': rep.descr_servico,
+                    'estado': rep.estado_reparacao,
+                    'dias': calcular_dias_desde(rep.created_on),
+                    'prioridade': rep.prioridade}
+                   for rep in reps]
+    #print(repair_list)
+
+    return repair_list
 
 
 def obter_reparacoes_por_estados(status_list):
     s, _ = iniciar_sessao_db()
     reparacoes = s.query(db_models.Repair).filter(db_models.Repair.estado_reparacao.in_(status_list))
-    return reparacoes.all()
+    reps = reparacoes.all()
+
+    repair_list = [{'id': rep.id,
+                    'cliente_nome': rep.cliente.nome,
+                    'descr_artigo': rep.product.descr_product,
+                    'sn': rep.sn,
+                    'descr_servico': rep.descr_servico,
+                    'estado': rep.estado_reparacao,
+                    'dias': calcular_dias_desde(rep.created_on),
+                    'prioridade': rep.prioridade}
+                   for rep in reps]
+    #print(repair_list)
+
+    return repair_list
 
 
 def pesquisar_reparacoes(txt_pesquisa, estados=[]):
@@ -225,7 +249,7 @@ def pesquisar_reparacoes(txt_pesquisa, estados=[]):
     #TODO: restringir a pesquisa aos registos que tenham o estado selecionado
 
 
-    reparacoes = s.query(db_models.Repair).filter(
+    reps = s.query(db_models.Repair).filter(
         and_(db_models.Repair.estado_reparacao.in_(estados),
             or_(
                 db_models.Repair.id.like(termo_pesquisa),
@@ -239,9 +263,17 @@ def pesquisar_reparacoes(txt_pesquisa, estados=[]):
                 db_models.Repair.notas.ilike(termo_pesquisa),
                 db_models.Repair.num_fatura.ilike(termo_pesquisa),
                 db_models.Repair.sn.ilike(termo_pesquisa),
-        )))
-
-    return reparacoes.all()
+        ))).all()
+    repair_list = [{'id': rep.id,
+                    'cliente_nome': rep.cliente.nome,
+                    'descr_artigo': rep.product.descr_product,
+                    'sn': rep.sn,
+                    'descr_servico': rep.descr_servico,
+                    'estado': rep.estado_reparacao,
+                    'dias': calcular_dias_desde(rep.created_on),
+                    'prioridade': rep.prioridade}
+                   for rep in reps]
+    return repair_list
 
 
 def obter_reparacao(num_rep):

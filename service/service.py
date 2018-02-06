@@ -562,7 +562,7 @@ class App(baseApp):
         self.mbtn_mostrar.menu.add_command(label="Todos os processos",
             command=lambda status_list=estados:
                 self._on_repair_view_select(None, status_list=estados),
-            accelerator="Command-5")
+            accelerator="Command-6")
         self.mbtn_mostrar.menu.add_separator()
 
         for estado in ESTADOS:
@@ -1501,7 +1501,7 @@ class App(baseApp):
         self.nprocessos = len(reparacoes)
         em_curso = 0
         for rep in reparacoes:
-            if rep.estado_reparacao in PROCESSOS_EM_CURSO:
+            if rep['estado'] in PROCESSOS_EM_CURSO:
                 em_curso += 1
 
         if self.nprocessos == 0:
@@ -1812,20 +1812,17 @@ class App(baseApp):
     def atualizar_lista(self, reparacoes):
         """ Atualizar a lista de reparações na tabela principal.
         """
-        quantidade_reps = len(reparacoes)
-
         for i in self.tree.get_children():  # Limpar tabela primeiro
             self.tree.delete(i)
 
         for reparacao in reparacoes:
-            dias = db.calcular_dias_desde(reparacao.created_on)
-            self.inserir_rep(rep_num=reparacao.id,
-                nome_cliente=reparacao.cliente.nome,
-                descr_artigo=reparacao.product.descr_product,
-                descr_servico=reparacao.descr_servico,
-                estado=reparacao.estado_reparacao,
-                dias=dias,
-                tag=reparacao.prioridade)
+            self.inserir_rep(rep_num=reparacao['id'],
+                nome_cliente=reparacao['cliente_nome'],
+                descr_artigo=reparacao['descr_artigo'],
+                descr_servico=reparacao['descr_servico'],
+                estado=reparacao['estado'],
+                dias=reparacao['dias'],
+                tag=reparacao['prioridade'])
 
         self.atualizar_soma_processos()
         self.alternar_cores(self.tree)

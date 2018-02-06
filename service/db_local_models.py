@@ -176,7 +176,6 @@ class Repair(Base):
     criado_por_utilizador = relationship("User", foreign_keys=[criado_por_utilizador_id])
     atualizado_por_utilizador = relationship(User, foreign_keys=[ult_atualizacao_por_utilizador_id])
 
-
     def __repr__(self):
         return f"<Repair(id={self.id}, cliente={self.cliente_id},{self.cliente})>"
 
