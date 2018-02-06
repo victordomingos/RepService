@@ -312,7 +312,7 @@ def pesquisar_contactos(txt_pesquisa="", tipo="Clientes"):
                 db_models.Contact.telefone.ilike(termo_pesquisa),
                 db_models.Contact.telemovel.ilike(termo_pesquisa),
                 db_models.Contact.email.ilike(termo_pesquisa),
-        )))
+        ))).all()
     else:
         contactos = s.query(db_models.Contact).filter(
         and_(db_models.Contact.is_fornecedor.is_(True),
@@ -322,22 +322,39 @@ def pesquisar_contactos(txt_pesquisa="", tipo="Clientes"):
                 db_models.Contact.telefone.ilike(termo_pesquisa),
                 db_models.Contact.telemovel.ilike(termo_pesquisa),
                 db_models.Contact.email.ilike(termo_pesquisa),
-        )))
+        ))).all()
+    contact_list = [{'id': contact.id,
+                     'nome': contact.nome,
+                     'telefone': contact.telefone,
+                     'email': contact.email}
+                   for contact in contactos]
 
-    return contactos.all()
-
+    return contact_list
 
 
 def obter_clientes():
     s, _ = iniciar_sessao_db()
-    contactos = s.query(db_models.Contact).filter_by(is_cliente=True)
-    return contactos.all()
+    contactos = s.query(db_models.Contact).filter_by(is_cliente=True).all()
+    contact_list = [{'id': contact.id,
+                     'nome': contact.nome,
+                     'telefone': contact.telefone,
+                     'email': contact.email}
+                   for contact in contactos]
+                   
+    return contact_list
 
 
 def obter_fornecedores():
     s, _ = iniciar_sessao_db()
-    contactos = s.query(db_models.Contact).filter_by(is_fornecedor=True)
-    return contactos.all()
+    contactos = s.query(db_models.Contact).filter_by(is_fornecedor=True).all()
+    contact_list = [{'id': contact.id,
+                     'nome': contact.nome,
+                     'telefone': contact.telefone,
+                     'email': contact.email}
+                   for contact in contactos]
+
+    return contact_list
+
 
 def obter_contacto(num_contacto):
     s, _ = iniciar_sessao_db()

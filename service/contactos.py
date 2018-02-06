@@ -454,10 +454,10 @@ class ContactsWindow(baseApp):
             self.tree.delete(i)
 
         for contacto in contactos:
-            self.inserir_contacto(contact_num=contacto.id,
-                nome=contacto.nome,
-                telefone=contacto.telefone,
-                email=contacto.email)
+            self.inserir_contacto(contact_num=contacto['id'],
+                nome=contacto['nome'],
+                telefone=contacto['telefone'],
+                email=contacto['email'])
 
         self.atualizar_soma()
         self.alternar_cores(self.tree)
