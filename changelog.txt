@@ -15,6 +15,7 @@ v.0.18 - 14/02/2018 - A comemorar 1 ano de desenvolvimento(s).
  * Criado método para preencher lista de mensagens a partir da base de dados.
  * As janelas de detalhes de evento/mensagem já mostram dados obtidos a partir
    da base de dados.
+ * Algumas alterações para facilitar o desenvolvimento futuro.
 
 ---
 v.0.17 - 31/01/2018
