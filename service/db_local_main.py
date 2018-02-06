@@ -210,6 +210,7 @@ def obter_todas_reparacoes():
 
 
 def obter_reparacoes_por_estados(status_list):
+    print("A obter:", status_list)
     s, _ = iniciar_sessao_db()
     reparacoes = s.query(db_models.Repair).filter(db_models.Repair.estado_reparacao.in_(status_list))
     reps = reparacoes.all()
@@ -341,7 +342,7 @@ def obter_fornecedores():
 def obter_contacto(num_contacto):
     s, _ = iniciar_sessao_db()
     contacto = s.query(db_models.Contact).get(num_contacto)
-    return s, contacto
+    return contacto
 
 
 def obter_mensagens(user_id):
@@ -615,9 +616,17 @@ if __name__ == "__main__":
     # Testing...
     delete_database()
     init_database()
-    test_populate(num_lojas=3,
-                  num_utilizadores=24,
-                  num_contactos=800,
-                  num_artigos=500,
-                  num_reparacoes=int(2000))
+    
+    lojas = 2
+    
+    utilizadores = lojas * 8
+    contactos = lojas * 750
+    artigos = lojas * 500
+    reps = lojas * 1000
+    
+    test_populate(num_lojas=lojas,
+                  num_utilizadores=utilizadores,
+                  num_contactos=contactos,
+                  num_artigos=artigos,
+                  num_reparacoes=int(reps))
     #print_database()

@@ -131,6 +131,28 @@ class baseApp(ttk.Frame):
 
         self.composeFrames()
 
+
+    def shake_window(self, root_object):
+        """ Shakes a Toplevel window, for instance when username and password don't match.
+        """
+        width = LOGIN_MIN_WIDTH
+        height = LOGIN_MIN_HEIGHT
+        w_x, w_y = root_object.winfo_x(), root_object.winfo_y()
+
+        for n in range(3):
+            for i in range(0, 18 - n * 6, 6):
+                root_object.geometry(f"{width}x{height}+{w_x+i}+{w_y}")
+                root_object.update()
+            for i in range(18 - n * 6, -18 + n * 6, -6):
+                root_object.geometry(f"{width}x{height}+{w_x+i}+{w_y}")
+                root_object.update()
+            for i in range(-18 + n * 6, 0, 6):
+                root_object.geometry(f"{width}x{height}+{w_x+i}+{w_y}")
+                root_object.update()
+
+        root_object.geometry(f"{width}x{height}+{w_x}+{w_y}")
+
+
     def show_entryform(self, *event):
         if not self.is_entryform_visible:
             self.is_entryform_visible = True

@@ -162,25 +162,6 @@ class App(baseApp):
         self.log_mainframe.pack(side=tk.TOP, expand=True, fill='both')
         root.withdraw()
 
-    def shake_login_window(self):
-        """ Shakes the login dialog when username and password don't match.
-        """
-        width = LOGIN_MIN_WIDTH
-        height = LOGIN_MIN_HEIGHT
-        w_x, w_y = self.root_login.winfo_x(), self.root_login.winfo_y()
-
-        for n in range(3):
-            for i in range(0, 18 - n * 6, 6):
-                self.root_login.geometry(f"{width}x{height}+{w_x+i}+{w_y}")
-                self.root_login.update()
-            for i in range(18 - n * 6, -18 + n * 6, -6):
-                self.root_login.geometry(f"{width}x{height}+{w_x+i}+{w_y}")
-                self.root_login.update()
-            for i in range(-18 + n * 6, 0, 6):
-                self.root_login.geometry(f"{width}x{height}+{w_x+i}+{w_y}")
-                self.root_login.update()
-
-        self.root_login.geometry(f"{width}x{height}+{w_x}+{w_y}")
 
     def validate_login(self, *event):
         """ Checks if username and password entered are correct and, if so, it
@@ -204,7 +185,7 @@ class App(baseApp):
             self.root_login.destroy()
         else:
             self.failed_login_attempts += 1
-            self.shake_login_window()
+            self.shake_window(self.root_login)
             self.log_ltxt_username.clear()
             self.log_ltxt_password.clear()
             self.log_ltxt_username.entry.focus_set()
@@ -463,12 +444,13 @@ class App(baseApp):
                 self.tree.selection_set(iid)
                 self.tree.focus(iid)
                 self.contextMenu.post(event.x_root, event.y_root)
-                print("popupMenu(): x,y = ", event.x_root, event.y_root)
+                #print("popupMenu(): x,y = ", event.x_root, event.y_root)
             else:
-                print("popupMenu(): wrong values for event - x=0, y=0")
+                #print("popupMenu(): wrong values for event - x=0, y=0")
+                pass
         else:
-            print(iid)
-            print("popupMenu(): Else - No code here yet! (mouse not over item)")
+            #print(iid)
+            #print("popupMenu(): Else - No code here yet! (mouse not over item)")
             # mouse pointer not over item
             # occurs when items do not fill frame
             # no action required
@@ -488,12 +470,13 @@ class App(baseApp):
                 self.msgtree.selection_set(iid)
                 self.msgtree.focus(iid)
                 self.contextMenuMsg.post(event.x_root, event.y_root)
-                print("popupMenuMsg(): x,y = ", event.x_root, event.y_root)
+                #print("popupMenuMsg(): x,y = ", event.x_root, event.y_root)
             else:
-                print("popupMenuMsg(): wrong values for event - x=0, y=0")
+                #print("popupMenuMsg(): wrong values for event - x=0, y=0")
+                pass
         else:
-            print(iid)
-            print("popupMenuMsg(): Else - No code here yet! (mouse not over item)")
+            #print(iid)
+            #print("popupMenuMsg(): Else - No code here yet! (mouse not over item)")
             # mouse pointer not over item
             # occurs when items do not fill frame
             # no action required
@@ -546,24 +529,19 @@ class App(baseApp):
         self.mbtn_mostrar.menu = tk.Menu(self.mbtn_mostrar, tearoff=0)
         self.mbtn_mostrar["menu"] = self.mbtn_mostrar.menu
 
-        estados = PROCESSOS_EM_CURSO
         self.mbtn_mostrar.menu.add_command(label="Processos em curso",
-            command=lambda status_list=estados:
-                self._on_repair_view_select(None, status_list=estados),
+            command=lambda status_list=PROCESSOS_EM_CURSO: self._on_repair_view_select(None, status_list=PROCESSOS_EM_CURSO),
             accelerator="Command-4")
 
-        estados = PROCESSOS_FINALIZADOS
         self.mbtn_mostrar.menu.add_command(label="Processos finalizados",
-            command=lambda status_list=estados:
-                self._on_repair_view_select(None, status_list=estados),
+            command=lambda estados=PROCESSOS_FINALIZADOS: self._on_repair_view_select(None, status_list=PROCESSOS_FINALIZADOS),
             accelerator="Command-5")
 
-        estados = []
         self.mbtn_mostrar.menu.add_command(label="Todos os processos",
-            command=lambda status_list=estados:
-                self._on_repair_view_select(None, status_list=estados),
+            command=lambda estados=[]:self._on_repair_view_select(None, status_list=[]),
             accelerator="Command-6")
         self.mbtn_mostrar.menu.add_separator()
+
 
         for estado in ESTADOS:
             self.mbtn_mostrar.menu.add_command(label=ESTADOS[estado],
@@ -675,7 +653,7 @@ class App(baseApp):
 
         if not estado.janela_remessas_aberta:
             if criar_nova_remessa:
-                print("A abrir a janela de remessas, vamos lá criar uma nova remessa!")
+                #print("A abrir a janela de remessas, vamos lá criar uma nova remessa!")
                 estado.painel_nova_remessa_aberto = True
             #self.newWindow2 = tk.Toplevel(self.master)
             estado.janela_remessas = tk.Toplevel(self.master)
@@ -733,6 +711,7 @@ class App(baseApp):
                     0, estado.contacto_para_nova_reparacao)
             else:
                 print("Qual é afinal o tipo de contacto a criar???")
+                pass
 
         estado.janela_contactos_aberta = False
         estado.painel_novo_contacto_aberto = False
@@ -848,7 +827,6 @@ class App(baseApp):
             self.mensagens_frame.pack()
             self.messagepane.pack(side='top', expand=True, fill='both')
             self.rightframe.grid()
-            # self.inserir_msgs_de_exemplo()  # TODO atualizar_mensagens()
             self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
             self.atualizar_soma_msgs()
             estado.painel_mensagens_aberto = True
@@ -1594,7 +1572,7 @@ class App(baseApp):
         self.menuVis.add_cascade(label="Mostrar processos...", menu=self.menuMostraProcessos)
 
         self.menuMostraProcessos.add_command(label="Processos em curso",
-            command=lambda estados=PROCESSOS_EM_CURSO:
+            command=lambda status_list=PROCESSOS_EM_CURSO:
                 self._on_repair_view_select(status_list=PROCESSOS_EM_CURSO),
             accelerator="Command-4")
         self.menuVis.bind_all("<Command-KeyPress-4>",
@@ -1796,8 +1774,6 @@ class App(baseApp):
         mensagens = db.obter_mensagens(self.user_id)
 
         for msg in mensagens:
-            print("a atualizar")
-            print(msg.event.id, msg.event.repair.id, msg.event.descricao)
             self.inserir_msg(msg_id=msg.event.id,
                 rep_num=msg.event.repair.id,
                 utilizador=msg.user.nome,
@@ -1826,42 +1802,6 @@ class App(baseApp):
 
         self.atualizar_soma_processos()
         self.alternar_cores(self.tree)
-
-
-    def inserir_dados_de_exemplo(self):
-        """ Generate some fake data for the repair list
-        """
-        from random import choice, randint, randrange
-        import pprint
-
-        #reparacoes = db.obter_todas_reparacoes()
-        #quantidade_reps = len(reparacoes)
-        quantidade_msgs = 35
-        """
-        for reparacao in reparacoes:
-            dias = db.calcular_dias_desde(reparacao.created_on)
-            self.inserir_rep(rep_num=reparacao.id,
-                nome_cliente=reparacao.cliente.nome,
-                descr_artigo=reparacao.product.descr_product,
-                descr_servico=reparacao.descr_servico,
-                estado=reparacao.estado_reparacao,
-                dias=dias,
-                tag=reparacao.prioridade)
-        """
-
-
-        now = datetime.datetime.now()
-        utilizadores = ("Victor Domingos", "DJ Mars", "AC", "NPK", "Monstro das Bolachas", "mit")
-        textos_msgs = ("Convém ligar a este cliente no dia x de dezembro para verificar qual a morada para onde é para enviar",
-            "Ligar ao cliente a explicar processo para fazer isto ou aquilo",
-            "Verificar estado com centro de assistência",
-            "Verificar estado com centro de assistência. O cliente vai enviar fatura para ver se dá para passar em garantia.")
-
-        for i in range(quantidade_msgs):
-            self.inserir_msg(rep_num=randrange(1,99),
-                utilizador=choice(utilizadores), data=now, texto=choice(textos_msgs),
-                msg_lida=choice((True,False)) )
-
 
 
 def restart_program():

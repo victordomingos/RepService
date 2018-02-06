@@ -30,7 +30,7 @@ class contactDetailWindow(ttk.Frame):
         self.master.bind("<Command-w>", self.on_btn_fechar)
         self.master.focus()
         self.num_contacto = num_contacto
-        _, self.contacto = db.obter_contacto(num_contacto)
+        self.contacto = db.obter_contacto(num_contacto)
         self.contacto_selecionado = ""
         self.rep_newDetailsWindow = {}
         self.rep_detail_windows_count = 0
