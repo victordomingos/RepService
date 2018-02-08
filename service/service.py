@@ -1774,12 +1774,12 @@ class App(baseApp):
         mensagens = db.obter_mensagens(self.user_id)
 
         for msg in mensagens:
-            self.inserir_msg(msg_id=msg.event.id,
-                rep_num=msg.event.repair.id,
-                utilizador=msg.user.nome,
-                data=msg.event.created_on,
-                texto=msg.event.descricao,
-                msg_lida=msg.is_open)
+            self.inserir_msg(msg_id=msg['evento_id'],
+                rep_num=msg['repair_id'],
+                utilizador=msg['remetente_nome'],
+                data=msg['data'],
+                texto=msg['texto'],
+                msg_lida=msg['estado_msg'])
 
         self.atualizar_soma_msgs()
         self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')

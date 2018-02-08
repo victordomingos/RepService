@@ -26,6 +26,7 @@ def iniciar_sessao_db():
     return session(), engine
 
 
+# =============================== LOGIN ===============================
 # TODO
 def validate_login(username, password):
     """ Check if username and password match the info in database. Token stuff
@@ -41,9 +42,11 @@ def validate_login(username, password):
 
     return loggedin, token
 
+
 def get_user_id(username):
     #TODO - return the user ID from database, queried with a string containing the username.
     return(1)
+
 
 def change_password(username, old_password, new_password1):
     """ Change the password for the given user if the old passowrd matches.
@@ -53,22 +56,12 @@ def change_password(username, old_password, new_password1):
     return result
 
 
+# =============================== Reparações ===============================
 def save_repair(repair):
     print("a guardar o processo de reparação", repair)
     db_last_rep_number = 12341
     return db_last_rep_number
 
-
-def save_contact(contacto):
-    print("a guardar o contacto", contacto)
-    db_last_contact_number = "999"
-    return db_last_contact_number
-
-
-def save_remessa(remessa):
-    print("a guardar a remessa", remessa)
-    db_last_remessa_number = "1984"
-    return db_last_remessa_number
 
 def update_repair_status(rep_num, status):
     print(f"A atualizar o estado da reparação nº {rep_num}: {status} ({ESTADOS[status]})")
@@ -86,71 +79,6 @@ def update_repair_priority(rep_num, priority):
     s, _ = iniciar_sessao_db()
 
     pass  # TODO atualizar reparacao com prioridade.
-
-
-
-def obter_lista_processos_por_receber():
-    print("A obter lista atualizada de processos de reparação que falta receber dos fornecedores e/ou centros técnicos.")
-    # TODO:
-    lista = ["12234 - iPhone 7 128GB Space grey - José manuel da Silva Castro",
-             "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-             "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
-             "25720 - Beats X - NPK - Network Project for Knowledge",
-             "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-             "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda."]
-
-    return lista
-
-
-def obter_lista_processos_por_enviar():
-    print("A obter lista atualizada de processos de reparação que falta receber dos fornecedores e/ou centros técnicos.")
-    # TODO:
-    lista = ["12234 - iPhone 7 128GB Space grey - José manuel da Silva Castro",
-             "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-             "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
-             "25720 - Beats X - NPK - Network Project for Knowledge",
-             "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
-             "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda."]
-
-    return lista
-
-
-def obter_lista_fornecedores():
-    print("A obter lista atualizada de fornecedores e/ou centros técnicos.")
-    # TODO:
-    fornecedores = ["Loja X",
-                    "Importador Nacional A",
-                    "Distribuidor Ibérico Y",
-                    "Centro de assistência N",
-                    "Centro de assistência P",
-                    "Centro de assistência K"]
-
-    return fornecedores
-
-
-def obter_lista_artigos_emprest():
-    """
-    Devolve um dicionário em que as chaves correspondem ao ID de artigo, sendo
-    o artigo definido através de uma tupla que contém a descrição e o número de
-    série.
-    """
-    print("A obter lista atualizada de artigos de empréstimo. ")
-    # TODO:
-    artigos = {"12234": ("iPhone 7 128GB Space grey", ""),
-               "85738": ("MacBook Pro 15\" Retina", ""),
-               "32738": ("iPod shuffle 2GB", ""),
-               "25720": ("Beats X", "XWD45123456PTXCH"),
-               "85737": ("MacBook Pro 15\" Retina", ""),
-               "32736": ("iPod shuffle 2GB", ""),
-               "25725": ("Beats X - NPK - Network Project for Knowledge", ""),
-               "85734": ("MacBook Pro 15\" Retina", ""),
-               "32733": ("iPod shuffle 2GB", ""),
-               "25722": ("Beats X - NPK - Network Project for Knowledge", ""),
-               "85731": ("MacBook Pro 15\" Retina", "XWD45123456PTXCH"),
-               "32730": ("iPod shuffle 2GB", "WXBG23123GB654P"),
-               "25729": ("Beats X - NPK - Network Project for Knowledge", "")
-               }
-    return artigos
 
 
 def obter_todas_reparacoes():
@@ -240,6 +168,47 @@ def obter_reparacao(num_rep):
     return reparacao
 
 
+# =============================== Mensagens/Eventos ===============================
+
+def obter_mensagens(user_id):
+    s, _ = iniciar_sessao_db()
+    utilizador = s.query(db_models.User).get(user_id)
+
+    msgs = s.query(db_models.UtilizadorNotificadoPorEvento_link) \
+                        .filter_by(is_visible=1, user=utilizador).all()
+
+    msgs_list = [{'evento_id': msg.evento_id,
+                  'repair_id': msg.event.repair.id,
+                  'remetente_nome': msg.event.criado_por_utilizador.nome,
+                  'data': msg.event.created_on,
+                  'texto': msg.event.descricao,
+                  'estado_msg': msg.is_open}
+                 for msg in msgs]
+    return msgs_list
+
+
+def obter_evento(event_id):
+    s, _ = iniciar_sessao_db()
+    evento = s.query(db_models.Event).get(event_id)
+    event_dict = {'repair_id': evento.repair.id,
+                  'cliente_nome': evento.repair.cliente.nome,
+                  'remetente_nome': evento.criado_por_utilizador.nome,
+                  'artigo': evento.repair.product.descr_product,
+                  'data': evento.created_on,
+                  'texto': evento.descricao,
+                  'estado_atual': evento.repair.estado_reparacao,
+                  'resultado': evento.repair.cod_resultado_reparacao}
+    return event_dict
+
+
+
+# =============================== Contactos ===============================
+def save_contact(contacto):
+    print("a guardar o contacto", contacto)
+    db_last_contact_number = "999"
+    return db_last_contact_number
+
+
 def pesquisar_contactos(txt_pesquisa="", tipo="Clientes"):
     s, _ = iniciar_sessao_db()
 
@@ -313,24 +282,88 @@ def obter_fornecedores():
     return contact_list
 
 
+def obter_lista_fornecedores():
+    print("A obter lista atualizada de fornecedores e/ou centros técnicos.")
+    # TODO:
+    fornecedores = ["Loja X",
+                    "Importador Nacional A",
+                    "Distribuidor Ibérico Y",
+                    "Centro de assistência N",
+                    "Centro de assistência P",
+                    "Centro de assistência K"]
+
+    return fornecedores
+
+
 def obter_contacto(num_contacto):
     s, _ = iniciar_sessao_db()
     contacto = s.query(db_models.Contact).get(num_contacto)
     return contacto
 
 
-def obter_mensagens(user_id):
-    s, _ = iniciar_sessao_db()
-    utilizador = s.query(db_models.User).get(user_id)
-
-    q_msgs = s.query(db_models.UtilizadorNotificadoPorEvento_link) \
-                        .filter_by(is_visible=1, user=utilizador)
-
-    msgs = q_msgs.all()
-    return msgs
+# =============================== Remessas ===============================
+def save_remessa(remessa):
+    print("a guardar a remessa", remessa)
+    db_last_remessa_number = "1984"
+    return db_last_remessa_number
 
 
-def obter_evento(event_id):
-    s, _ = iniciar_sessao_db()
-    evento = s.query(db_models.Event).get(event_id)
-    return evento
+def obter_lista_processos_por_receber():
+    print("A obter lista atualizada de processos de reparação que falta receber dos fornecedores e/ou centros técnicos.")
+    # TODO:
+    lista = ["12234 - iPhone 7 128GB Space grey - José manuel da Silva Castro",
+             "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
+             "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
+             "25720 - Beats X - NPK - Network Project for Knowledge",
+             "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
+             "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda."]
+
+    return lista
+
+
+def obter_lista_processos_por_enviar():
+    print("A obter lista atualizada de processos de reparação que falta receber dos fornecedores e/ou centros técnicos.")
+    # TODO:
+    lista = ["12234 - iPhone 7 128GB Space grey - José manuel da Silva Castro",
+             "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
+             "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda.",
+             "25720 - Beats X - NPK - Network Project for Knowledge",
+             "85738 - MacBook Pro 15\" Retina - Manuel José de Castro Silva",
+             "32738 - iPod shuffle 2GB - Laranjas e Limões, Lda."]
+
+    return lista
+
+
+# =============================== Empréstimos ===============================
+
+def obter_lista_artigos_emprest():
+    """
+    Devolve um dicionário em que as chaves correspondem ao ID de artigo, sendo
+    o artigo definido através de uma tupla que contém a descrição e o número de
+    série.
+    """
+    print("A obter lista atualizada de artigos de empréstimo. ")
+    # TODO:
+    artigos = {"12234": ("iPhone 7 128GB Space grey", ""),
+               "85738": ("MacBook Pro 15\" Retina", ""),
+               "32738": ("iPod shuffle 2GB", ""),
+               "25720": ("Beats X", "XWD45123456PTXCH"),
+               "85737": ("MacBook Pro 15\" Retina", ""),
+               "32736": ("iPod shuffle 2GB", ""),
+               "25725": ("Beats X - NPK - Network Project for Knowledge", ""),
+               "85734": ("MacBook Pro 15\" Retina", ""),
+               "32733": ("iPod shuffle 2GB", ""),
+               "25722": ("Beats X - NPK - Network Project for Knowledge", ""),
+               "85731": ("MacBook Pro 15\" Retina", "XWD45123456PTXCH"),
+               "32730": ("iPod shuffle 2GB", "WXBG23123GB654P"),
+               "25729": ("Beats X - NPK - Network Project for Knowledge", "")
+               }
+    return artigos
+
+
+# =============================== Orçamentos ===============================
+
+
+# =============================== Comunicação ===============================
+
+

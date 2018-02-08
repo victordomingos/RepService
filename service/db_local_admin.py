@@ -30,11 +30,9 @@ def init_database():
     db_base.Base.metadata.create_all(engine)
 
 
-
 # ----------------------------------------------------------------------------------------
 # Just a bunch of experiences to get the hang of SQLalchemy while developing the models...
 # ----------------------------------------------------------------------------------------
-
 
 def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=1, num_reparacoes=1):
     s, _ = db.iniciar_sessao_db()

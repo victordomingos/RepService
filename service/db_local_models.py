@@ -84,38 +84,6 @@ class Product(Base):
         return f"<Article(id={self.id}, descr_product='{self.descr_product}', P/N='{self.part_number}'>"
 
 
-
-class Event(Base):
-    __tablename__ = 'event'
-
-    id = Column(Integer, primary_key=True)
-    repair_id = Column(Integer, ForeignKey('repair.id'))
-    descricao = Column(String)
-    criado_por_utilizador_id = Column(Integer, ForeignKey('user.id'))
-    created_on = Column(DateTime(), default=func.now())
-    updated_on = Column(DateTime(), default=func.now(), onupdate=func.now())
-
-    repair = relationship("Repair", foreign_keys=[repair_id],
-        backref=backref("eventos", uselist=True, order_by=id))
-    criado_por_utilizador = relationship("User", foreign_keys=[criado_por_utilizador_id])
-    utilizadores = relationship("UtilizadorNotificadoPorEvento_link", back_populates="event")
-
-    def __repr__(self):
-        return f"<Evento(id={self.id}, Reparação='{self.repair.id}', Descrição={self.descricao})>"
-
-
-class UtilizadorNotificadoPorEvento_link(Base):
-    __tablename__ = 'utilizador_notificado_por_evento_link'
-
-    evento_id = Column(Integer, ForeignKey('event.id'), primary_key=True)
-    user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
-    is_visible = Column(Boolean)
-    is_open = Column(Boolean)
-
-    user = relationship("User", back_populates="eventos")
-    event = relationship("Event", back_populates="utilizadores")
-
-
 class Repair(Base):
     __tablename__ = 'repair'
 
@@ -178,4 +146,35 @@ class Repair(Base):
 
     def __repr__(self):
         return f"<Repair(id={self.id}, cliente={self.cliente_id},{self.cliente})>"
+
+
+class Event(Base):
+    __tablename__ = 'event'
+
+    id = Column(Integer, primary_key=True)
+    repair_id = Column(Integer, ForeignKey('repair.id'))
+    descricao = Column(String)
+    criado_por_utilizador_id = Column(Integer, ForeignKey('user.id'))
+    created_on = Column(DateTime(), default=func.now())
+    updated_on = Column(DateTime(), default=func.now(), onupdate=func.now())
+
+    repair = relationship("Repair", foreign_keys=[repair_id],
+        backref=backref("eventos", uselist=True, order_by=id))
+    criado_por_utilizador = relationship("User", foreign_keys=[criado_por_utilizador_id])
+    utilizadores = relationship("UtilizadorNotificadoPorEvento_link", back_populates="event")
+
+    def __repr__(self):
+        return f"<Evento(id={self.id}, Reparação='{self.repair.id}', Descrição={self.descricao})>"
+
+
+class UtilizadorNotificadoPorEvento_link(Base):
+    __tablename__ = 'utilizador_notificado_por_evento_link'
+
+    evento_id = Column(Integer, ForeignKey('event.id'), primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
+    is_visible = Column(Boolean)
+    is_open = Column(Boolean)
+
+    user = relationship("User", back_populates="eventos")
+    event = relationship("Event", back_populates="utilizadores")
 

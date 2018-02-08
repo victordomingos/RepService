@@ -29,14 +29,15 @@ class msgDetailWindow(ttk.Frame):
         self.master = master
         self.mensagem = db.obter_evento(num_mensagem)
         self.master.bind("<Command-w>", self.on_btn_fechar)
-        self.num_rep = self.mensagem.repair.id
-        self.nome = self.mensagem.repair.cliente.nome
-        self.artigo = self.mensagem.repair.product.descr_product
-        self.estado_atual = ESTADOS[self.mensagem.repair.estado_reparacao]
-        self.resultado = RESULTADOS[self.mensagem.repair.cod_resultado_reparacao]
-        self.detalhe = self.mensagem.descricao
-        self.remetente = self.mensagem.criado_por_utilizador
-        self.data = self.mensagem.created_on
+
+        self.num_rep = self.mensagem['repair_id']
+        self.nome = self.mensagem['cliente_nome']
+        self.artigo = self.mensagem['artigo']
+        self.estado_atual = ESTADOS[self.mensagem['estado_atual']]
+        self.resultado = RESULTADOS[self.mensagem['resultado']]
+        self.detalhe = self.mensagem['texto']
+        self.remetente = self.mensagem['remetente_nome']
+        self.data = self.mensagem['data']
 
         self.master.focus()
         self.configurar_frames_e_estilos()
