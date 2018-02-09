@@ -9,7 +9,7 @@ import os
 
 from sqlalchemy import create_engine, func, or_, and_
 from sqlalchemy.orm import sessionmaker, load_only
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple, List, Union
 
 import db_local_models as db_models
 
@@ -43,7 +43,7 @@ def validate_login(username: str, password: str) -> Tuple[bool, str]:
     return loggedin, token
 
 
-def get_user_id(username):
+def get_user_id(username: str) -> int:
     """ Return the user ID from database, queried with a string containing the
         username.
     """
@@ -52,8 +52,9 @@ def get_user_id(username):
     return utilizador.id
 
 
-def change_password(username, old_password, new_password1):
-    """ Change the password for the given user if the old passowrd matches.
+def change_password(username: str, old_password: str, new_password1: str) -> bool:
+    """ Change the password for the given user if the old password matches.
+        Returns False if it fails for some reason.
     """
     print("DB: Changing password for the user {username}.")
     result = True  # TODO
@@ -61,13 +62,13 @@ def change_password(username, old_password, new_password1):
 
 
 # =============================== Reparações ===============================
-def save_repair(repair):
+def save_repair(repair) -> int:
     print("a guardar o processo de reparação", repair)
     db_last_rep_number = 12341
     return db_last_rep_number
 
 
-def update_repair_status(rep_num, status):
+def update_repair_status(rep_num: int, status: int):
     print(f"A atualizar o estado da reparação nº {rep_num}: {status} ({ESTADOS[status]})")
     reparacao = obter_reparacao(rep_num)
 
@@ -76,7 +77,7 @@ def update_repair_status(rep_num, status):
     pass  # TODO atualizar reparacao com novo estado.
 
 
-def update_repair_priority(rep_num, priority):
+def update_repair_priority(rep_num: int, priority: int):
     print(f"A atualizar a prioridade da reparação nº {rep_num}: {priority} ({PRIORIDADES[priority]})")
     reparacao = _obter_reparacao(rep_num)
 
@@ -85,7 +86,7 @@ def update_repair_priority(rep_num, priority):
     pass  # TODO atualizar reparacao com prioridade.
 
 
-def obter_todas_reparacoes():
+def obter_todas_reparacoes() -> List[Dict[str, Union[int, str]]]:
     s, _ = iniciar_sessao_db()
     reps = s.query(db_models.Repair).all()
     repair_list = [{'id': rep.id,
@@ -101,7 +102,7 @@ def obter_todas_reparacoes():
     return repair_list
 
 
-def obter_reparacoes_por_estados(status_list):
+def obter_reparacoes_por_estados(status_list: List[int]) -> List[Dict[str, Union[int, str]]]:
     s, _ = iniciar_sessao_db()
     reparacoes = s.query(db_models.Repair).filter(db_models.Repair.estado_reparacao.in_(status_list))
     reps = reparacoes.all()
@@ -119,8 +120,11 @@ def obter_reparacoes_por_estados(status_list):
     return repair_list
 
 
-def pesquisar_reparacoes(txt_pesquisa, estados=[]):
+def pesquisar_reparacoes(txt_pesquisa: str, estados: List[int]=None) -> List[Dict[str, Union[int, str]]]:
     s, _ = iniciar_sessao_db()
+
+    if estados is None:
+        estados = []
 
     termo_pesquisa = txt_pesquisa
 
@@ -166,7 +170,7 @@ def pesquisar_reparacoes(txt_pesquisa, estados=[]):
     return repair_list
 
 
-def _obter_reparacao(num_rep):
+def _obter_reparacao(num_rep: int):
     """ Returns a Repair object.
     """
     s, _ = iniciar_sessao_db()
@@ -174,7 +178,7 @@ def _obter_reparacao(num_rep):
     return reparacao
 
 
-def obter_reparacao(num_rep):
+def obter_reparacao(num_rep: int) -> List[Dict[str, Union[int, str]]]:
     """ 
     """
     reparacao = _obter_reparacao(num_rep)
@@ -184,7 +188,7 @@ def obter_reparacao(num_rep):
 
 # =============================== Mensagens/Eventos ===============================
 
-def obter_mensagens(user_id):
+def obter_mensagens(user_id: int) -> List[Dict[str, Union[int, str]]]:
     s, _ = iniciar_sessao_db()
     utilizador = s.query(db_models.User).get(user_id)
 
@@ -201,7 +205,7 @@ def obter_mensagens(user_id):
     return msgs_list
 
 
-def obter_evento(event_id):
+def obter_evento(event_id: int) -> List[Dict[str, Union[int, str]]]:
     s, _ = iniciar_sessao_db()
     evento = s.query(db_models.Event).get(event_id)
     event_dict = {'repair_id': evento.repair.id,
@@ -216,13 +220,13 @@ def obter_evento(event_id):
 
 
 # =============================== Contactos ===============================
-def save_contact(contacto):
+def save_contact(contacto) -> int:
     print("a guardar o contacto", contacto)
-    db_last_contact_number = "999"
+    db_last_contact_number = 999
     return db_last_contact_number
 
 
-def pesquisar_contactos(txt_pesquisa="", tipo="Clientes"):
+def pesquisar_contactos(txt_pesquisa: str="", tipo: str ="Clientes"):
     s, _ = iniciar_sessao_db()
 
     termo_pesquisa = txt_pesquisa
@@ -271,7 +275,7 @@ def pesquisar_contactos(txt_pesquisa="", tipo="Clientes"):
     return contact_list
 
 
-def obter_clientes():
+def obter_clientes() -> List[Dict[str, Union[int, str]]]:
     s, _ = iniciar_sessao_db()
     contactos = s.query(db_models.Contact).filter_by(is_cliente=True).all()
     contact_list = [{'id': contact.id,
@@ -283,7 +287,7 @@ def obter_clientes():
     return contact_list
 
 
-def obter_fornecedores():
+def obter_fornecedores() -> List[Dict[str, Union[int, str]]]:
     s, _ = iniciar_sessao_db()
     contactos = s.query(db_models.Contact).filter_by(is_fornecedor=True).all()
     contact_list = [{'id': contact.id,
@@ -295,7 +299,7 @@ def obter_fornecedores():
     return contact_list
 
 
-def obter_lista_fornecedores():
+def obter_lista_fornecedores() -> List[Dict[str, Union[int, str]]]:
     """ Obter lista simplificada de fornecedores e/ou centros técnicos.
     """
     s, _ = iniciar_sessao_db()
@@ -306,7 +310,7 @@ def obter_lista_fornecedores():
     return fornecedores_list
 
 
-def obter_contacto(num_contacto):
+def obter_contacto(num_contacto: int) -> List[Dict[str, Union[int, str]]]:
     s, _ = iniciar_sessao_db()
     contacto = s.query(db_models.Contact).get(num_contacto)
 
@@ -337,9 +341,9 @@ def obter_contacto(num_contacto):
 
 
 # =============================== Remessas ===============================
-def save_remessa(remessa):
+def save_remessa(remessa: int) -> int:
     print("a guardar a remessa", remessa)
-    db_last_remessa_number = "1984"
+    db_last_remessa_number = 1984
     return db_last_remessa_number
 
 
@@ -371,7 +375,7 @@ def obter_lista_processos_por_enviar():
 
 # =============================== Empréstimos ===============================
 
-def obter_lista_artigos_emprest():
+def obter_lista_artigos_emprest() -> Dict[str, Tuple[str, str]]:
     """
     Devolve um dicionário em que as chaves correspondem ao ID de artigo, sendo
     o artigo definido através de uma tupla que contém a descrição e o número de
@@ -400,5 +404,4 @@ def obter_lista_artigos_emprest():
 
 
 # =============================== Comunicação ===============================
-
 
