@@ -19,12 +19,12 @@ import tkinter.font
 from tkinter import ttk, messagebox
 from tkinter.scrolledtext import ScrolledText
 from string import ascii_letters
-import datetime
-import time
+#import datetime
+#import time
 import textwrap
 import webbrowser
-import Pmw
-import io
+#import Pmw
+#import io
 import sys  # For Atom compatibility
 
 import about_window, contactos, remessas, detalhe_reparacao, detalhe_mensagem

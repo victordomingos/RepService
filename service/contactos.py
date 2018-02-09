@@ -18,7 +18,6 @@ from global_setup import *
 
 if USE_LOCAL_DATABASE:
     import db_local_main as db
-    import db_local_models as db_models
 else:
     import db_remote as db
 
@@ -299,19 +298,20 @@ class ContactsWindow(baseApp):
         reparação, adiciona o contacto ao campo correspondente.
         """
         # guardar na base de dados e obter o nº do último contacto adicionado
-
         if self.estado.tipo_novo_contacto == "Cliente":
-            print("Usar este cliente")
             self.estado.contacto_para_nova_reparacao = "123"
-            self.estado.janela_principal.close_window_contactos()
-            pass  # preencher o campo do nº de cliente com o último contacto de cliente criado; depois atribuir foco ao formulário da reparação e fechar a janela
+            self.mostrar_clientes()
+            if self.estado.painel_nova_reparacao_aberto:
+                self.estado.janela_principal.close_window_contactos()
+            # preencher o campo do nº de cliente com o último contacto de cliente criado; depois atribuir foco ao formulário da reparação e fechar a janela
         elif self.estado.tipo_novo_contacto == "Fornecedor":
-            print("Usar este fornecedor")
-            self.estado.janela_principal.close_window_contactos()
-            pass  # preencher o campo do nº de fornecedor com o último contacto de fornecedor criado; depois atribuir foco ao formulário da reparação e fechar a janela
+            self.mostrar_fornecedores()
+            if self.estado.painel_nova_reparacao_aberto:
+                self.estado.janela_principal.close_window_contactos()
+            # preencher o campo do nº de fornecedor com o último contacto de fornecedor criado; depois atribuir foco ao formulário da reparação e fechar a janela
         else:
             print("guardar e nao fazer mais nada")
-            pass  # atualizar a lista de contactos nesta janela fechar o formulário
+            self.mostrar_clientes()  # atualizar a lista de contactos nesta janela fechar o formulário
 
     def bind_tree(self):
         self.tree.bind('<<TreeviewSelect>>', self.selectItem_popup)
@@ -388,11 +388,11 @@ class ContactsWindow(baseApp):
         que o painel se feche inadvertidamente.
         """
         if self.is_entryform_visible:
-            self.MenuFicheiro.entryconfigure("Novo contacto", state="disabled")
+            self.estado.janela_principal.MenuFicheiro.entryconfigure("Novo contacto", state="disabled")
             # TODO - corrigir bug: o atalho de teclado só fica realmente inativo depois de acedermos ao menu ficheiro. Porquê??
             # root.unbind_all("<Command-Option-n>")
         else:
-            self.MenuFicheiro.entryconfigure("Novo contacto", state="active")
+            self.estado.janela_principal.MenuFicheiro.entryconfigure("Novo contacto", state="active")
             # root.bind_all("<Command-Option-n>")
 
     def on_save_contact(self, event=None):

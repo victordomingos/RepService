@@ -6,13 +6,11 @@ Victor Domingos e distribuída sob os termos da licença Creative Commons
 Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
 import os
-import pprint
 
 from sqlalchemy import create_engine, func, or_, and_
 from sqlalchemy.orm import sessionmaker, load_only
-from datetime import datetime
+from typing import Dict, Tuple, List
 
-import db_local_base as db_base
 import db_local_models as db_models
 
 from misc import calcular_dias_desde
@@ -28,7 +26,7 @@ def iniciar_sessao_db():
 
 # =============================== LOGIN ===============================
 # TODO
-def validate_login(username, password):
+def validate_login(username: str, password: str) -> Tuple[bool, str]:
     """ Check if username and password match the info in database. Token stuff
         is provided here only to ensure code compatibility for future web API
         access.
@@ -169,9 +167,19 @@ def pesquisar_reparacoes(txt_pesquisa, estados=[]):
 
 
 def _obter_reparacao(num_rep):
+    """ Returns a Repair object.
+    """
     s, _ = iniciar_sessao_db()
     reparacao = s.query(db_models.Repair).get(num_rep)
     return reparacao
+
+
+def obter_reparacao(num_rep):
+    """ 
+    """
+    reparacao = _obter_reparacao(num_rep)
+    return reparacao
+
 
 
 # =============================== Mensagens/Eventos ===============================
@@ -205,7 +213,6 @@ def obter_evento(event_id):
                   'estado_atual': evento.repair.estado_reparacao,
                   'resultado': evento.repair.cod_resultado_reparacao}
     return event_dict
-
 
 
 # =============================== Contactos ===============================
@@ -321,8 +328,8 @@ def obter_contacto(num_contacto):
         'is_fornecedor': contacto.is_fornecedor,
         'criado_por_utilizador_id': contacto.criado_por_utilizador_id,
         'ult_atualizacao_por_utilizador_id': contacto.ult_atualizacao_por_utilizador_id,
-        'created_on': contacto.created_on,
-        'updated_on': contacto.updated_on,
+        'created_on': contacto.created_on.isoformat(sep=' ', timespec='minutes'),
+        'updated_on': contacto.updated_on.isoformat(sep=' ', timespec='minutes'),
         'criado_por_utilizador_nome': contacto.criado_por_utilizador.nome,
         'atualizado_por_utilizador_nome': contacto.atualizado_por_utilizador.nome}
 

@@ -223,7 +223,7 @@ class repairDetailWindow(ttk.Frame):
         """ Atualizar a lista de locais de artigos de empréstimo, obtendo info
             a partir da base de dados.
         """
-        artigos = obter_lista_artigos_emprest()
+        artigos = db.obter_lista_artigos_emprest()
         lista_strings = []
         for item in artigos.keys():
             if artigos[item][1] == "":

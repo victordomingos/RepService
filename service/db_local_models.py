@@ -10,8 +10,6 @@ from sqlalchemy.orm import relationship, backref
 
 from db_local_base import Base
 
-from global_setup import ESTADOS, PRIORIDADES
-
 
 class Loja(Base):
     __tablename__ = 'loja'

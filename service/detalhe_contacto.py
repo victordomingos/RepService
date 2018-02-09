@@ -8,7 +8,8 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 import tkinter as tk
 from tkinter import ttk
 import Pmw
-import textwrap
+from string import ascii_uppercase
+#import textwrap
 
 from extra_tk_classes import AutoScrollbar, LabelEntry, LabelText
 from detalhe_reparacao import repairDetailWindow
@@ -16,7 +17,6 @@ from global_setup import *
 
 if USE_LOCAL_DATABASE:
     import db_local_main as db
-    import db_local_models as db_models
 else:
     import db_remote as db
 
@@ -180,19 +180,19 @@ class contactDetailWindow(ttk.Frame):
         self.ef_combo_pais.bind("<Key>", self.procurar_em_combobox)
 
         # Preencher com dados da base de dados --------------------------------
-        self.ef_ltxt_nome.set(self.contacto.nome)
-        self.ef_ltxt_empresa.set(self.contacto.empresa)
-        self.ef_ltxt_nif.set(self.contacto.nif)
-        self.ef_ltxt_telefone.set(self.contacto.telefone)
-        self.ef_ltxt_tlm.set(self.contacto.telemovel)
-        self.ef_ltxt_tel_empresa.set(self.contacto.telefone_empresa)
-        self.ef_ltxt_email.set(self.contacto.email)
-        self.ef_lstxt_morada.set(self.contacto.morada)
-        self.ef_ltxt_cod_postal.set(self.contacto.cod_postal)
-        self.ef_ltxt_localidade.set(self.contacto.localidade)
+        self.ef_ltxt_nome.set(self.contacto['nome'])
+        self.ef_ltxt_empresa.set(self.contacto['empresa'])
+        self.ef_ltxt_nif.set(self.contacto['nif'])
+        self.ef_ltxt_telefone.set(self.contacto['telefone'])
+        self.ef_ltxt_tlm.set(self.contacto['telemovel'])
+        self.ef_ltxt_tel_empresa.set(self.contacto['telefone_empresa'])
+        self.ef_ltxt_email.set(self.contacto['email'])
+        self.ef_lstxt_morada.set(self.contacto['morada'])
+        self.ef_ltxt_cod_postal.set(self.contacto['cod_postal'])
+        self.ef_ltxt_localidade.set(self.contacto['localidade'])
 
         for index, pais in enumerate(TODOS_OS_PAISES):
-            if pais == self.contacto.pais:
+            if pais == self.contacto['pais']:
                 self.ef_combo_pais.current(index)
                 break
 
@@ -253,10 +253,10 @@ class contactDetailWindow(ttk.Frame):
             self.notas_fr1, "\nNotas:", height=3, style="Panel_Body.TLabel")
 
 
-        self.var_tipo_is_cliente.set(self.contacto.is_cliente)
-        self.var_tipo_is_fornecedor.set(self.contacto.is_cliente)
+        self.var_tipo_is_cliente.set(self.contacto['is_cliente'])
+        self.var_tipo_is_fornecedor.set(self.contacto['is_fornecedor'])
         #elf.var_tipo_is_loja.set(False)  # TODO
-        self.ef_lstxt_notas.set(self.contacto.notas)
+        self.ef_lstxt_notas.set(self.contacto['notas'])
 
 
     def montar_tab_notas(self):
@@ -362,15 +362,15 @@ class contactDetailWindow(ttk.Frame):
         self.note.enable_traversal()
 
     def montar_rodape(self):
-        nome_cr = self.contacto.criado_por_utilizador.nome
-        data_cr = self.contacto.created_on.isoformat(sep=' ', timespec='minutes')
+        nome_cr = self.contacto['criado_por_utilizador_nome']
+        data_cr = self.contacto['created_on']
         txt_esquerda = f"Criado por {nome_cr} em {data_cr}."
 
-        if self.contacto.atualizado_por_utilizador == None:
+        if self.contacto['atualizado_por_utilizador_nome'] is None:
             txt_direita = ""
         else:
-            nome_updt = self.contacto.nome
-            data_updt = self.contacto.updated_on.isoformat(sep=' ', timespec='minutes')
+            nome_updt = self.contacto['atualizado_por_utilizador_nome']
+            data_updt = self.contacto['updated_on']
             txt_direita = f"Atualizado por {nome_updt} em {data_updt}."
 
         self.rodapeFont = tk.font.Font(family="Lucida Grande", size=9)
