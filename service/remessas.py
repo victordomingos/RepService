@@ -258,11 +258,15 @@ class RemessasWindow(baseApp):
         #--- acabaram os 'entryfr', apenas código geral para o entryframe a partir daqui ---
         self.entryframe.bind_all("<Command-Escape>", self.fechar_painel_entrada)
 
+
     def atualizar_combo_lista_destino(self):
         """ Atualizar a lista de destinatários de remessas na
             combobox correspondente, obtendo info a partir da base de dados.
         """
-        self.ef_combo_destino['values'] = db.obter_lista_fornecedores()
+        fornecedores = db.obter_lista_fornecedores()
+        lista_forn = [f"{forn['id']} - {forn['nome']}" for forn in fornecedores]
+        self.ef_combo_destino['values'] = lista_forn
+
 
     def atualizar_combo_lista_reparacoes(self):
         """ Atualizar a lista de reparações por enviar ou por receber na

@@ -9,7 +9,7 @@ import os
 import pprint
 
 from sqlalchemy import create_engine, func, or_, and_
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, load_only
 from datetime import datetime
 
 import db_local_base as db_base
@@ -33,6 +33,8 @@ def validate_login(username, password):
         is provided here only to ensure code compatibility for future web API
         access.
     """
+    s, _ = iniciar_sessao_db()
+
     if username == "npk" and password == "...":  # change this
         loggedin = True
         token = "The amazing NPK Token"
@@ -44,8 +46,12 @@ def validate_login(username, password):
 
 
 def get_user_id(username):
-    #TODO - return the user ID from database, queried with a string containing the username.
-    return(1)
+    """ Return the user ID from database, queried with a string containing the
+        username.
+    """
+    s, _ = iniciar_sessao_db()
+    utilizador = s.query(db_models.User).filter(db_models.User.nome==username).one()
+    return utilizador.id
 
 
 def change_password(username, old_password, new_password1):
@@ -74,7 +80,7 @@ def update_repair_status(rep_num, status):
 
 def update_repair_priority(rep_num, priority):
     print(f"A atualizar a prioridade da reparação nº {rep_num}: {priority} ({PRIORIDADES[priority]})")
-    reparacao = obter_reparacao(rep_num)
+    reparacao = _obter_reparacao(rep_num)
 
     s, _ = iniciar_sessao_db()
 
@@ -162,7 +168,7 @@ def pesquisar_reparacoes(txt_pesquisa, estados=[]):
     return repair_list
 
 
-def obter_reparacao(num_rep):
+def _obter_reparacao(num_rep):
     s, _ = iniciar_sessao_db()
     reparacao = s.query(db_models.Repair).get(num_rep)
     return reparacao
@@ -283,22 +289,44 @@ def obter_fornecedores():
 
 
 def obter_lista_fornecedores():
-    print("A obter lista atualizada de fornecedores e/ou centros técnicos.")
-    # TODO:
-    fornecedores = ["Loja X",
-                    "Importador Nacional A",
-                    "Distribuidor Ibérico Y",
-                    "Centro de assistência N",
-                    "Centro de assistência P",
-                    "Centro de assistência K"]
-
-    return fornecedores
+    """ Obter lista simplificada de fornecedores e/ou centros técnicos.
+    """
+    s, _ = iniciar_sessao_db()
+    contactos = s.query(db_models.Contact).filter_by(is_fornecedor=True).\
+        options(load_only("id", "nome")).all()
+    fornecedores_list = [{'id': contact.id, 'nome': contact.nome}
+                         for contact in contactos]
+    return fornecedores_list
 
 
 def obter_contacto(num_contacto):
     s, _ = iniciar_sessao_db()
     contacto = s.query(db_models.Contact).get(num_contacto)
-    return contacto
+
+    this_contact = {
+        'id': contacto.id,
+        'nome': contacto.nome,
+        'empresa': contacto.empresa,
+        'telefone': contacto.telefone,
+        'telemovel': contacto.telemovel,
+        'telefone_empresa': contacto.telefone_empresa,
+        'email': contacto.email,
+        'morada': contacto.morada,
+        'cod_postal': contacto.cod_postal,
+        'localidade': contacto.localidade,
+        'pais': contacto.pais,
+        'nif': contacto.nif,
+        'notas': contacto.notas,
+        'is_cliente': contacto.is_cliente,
+        'is_fornecedor': contacto.is_fornecedor,
+        'criado_por_utilizador_id': contacto.criado_por_utilizador_id,
+        'ult_atualizacao_por_utilizador_id': contacto.ult_atualizacao_por_utilizador_id,
+        'created_on': contacto.created_on,
+        'updated_on': contacto.updated_on,
+        'criado_por_utilizador_nome': contacto.criado_por_utilizador.nome,
+        'atualizado_por_utilizador_nome': contacto.atualizado_por_utilizador.nome}
+
+    return this_contact
 
 
 # =============================== Remessas ===============================

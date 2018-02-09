@@ -22,6 +22,7 @@ from string import ascii_letters
 import datetime
 import time
 import textwrap
+import webbrowser
 import Pmw
 import io
 import sys  # For Atom compatibility
@@ -1271,7 +1272,10 @@ class App(baseApp):
         """ Atualizar a lista de locais de intervenção na combobox
             correspondente, obtendo info a partir da base de dados.
         """
-        self.ef_combo_local_intervencao['values'] = db.obter_lista_fornecedores()
+        fornecedores = db.obter_lista_fornecedores()
+        lista_forn = [f"{forn['id']} - {forn['nome']}" for forn in fornecedores]
+        self.ef_combo_local_intervencao['values'] = lista_forn
+
 
     def radio_tipo_command(self, *event):
         """

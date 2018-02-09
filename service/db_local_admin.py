@@ -237,7 +237,7 @@ def print_database():
     utilizadores = s.query(db_models.User).all()
     contactos = s.query(db_models.Contact).all()
     artigos = s.query(db_models.Product).all()
-    #reparacoes = s.query(db_models.Repair).all()
+    reparacoes = s.query(db_models.Repair).all()
     eventos = s.query(db_models.Event).all()
     eventos_visiveis = s.query(db_models.UtilizadorNotificadoPorEvento_link).filter_by(is_visible=1, user=utilizadores[2])
 
