@@ -7,14 +7,14 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
 import os
 
-from sqlalchemy import create_engine, func, or_, and_
+from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import sessionmaker, load_only
 from typing import Dict, Tuple, List, Union
 
 import db_local_models as db_models
 
 from misc import calcular_dias_desde
-from global_setup import LOCAL_DATABASE_PATH, ESTADOS, ENTREGUE, PRIORIDADES, RESULTADOS
+from global_setup import LOCAL_DATABASE_PATH, ESTADOS, PRIORIDADES
 
 
 def iniciar_sessao_db():
@@ -141,7 +141,7 @@ def pesquisar_reparacoes(txt_pesquisa: str, estados: List[int]=None) -> List[Dic
         else:
             termo_pesquisa = f"%{txt_pesquisa}%"
 
-    #TODO:
+    #TODO: melhorar a query de pesquisa, permitindo pesquisar nos campos do cliente e do artigo
 
     reps = s.query(db_models.Repair).filter(
         and_(db_models.Repair.estado_reparacao.in_(estados),
@@ -181,8 +181,67 @@ def _obter_reparacao(num_rep: int):
 def obter_reparacao(num_rep: int) -> List[Dict[str, Union[int, str]]]:
     """ 
     """
-    reparacao = _obter_reparacao(num_rep)
-    return reparacao
+    rep = _obter_reparacao(num_rep)
+
+    """
+    reparacao_dict = { 'id': rep.id,
+                    'cliente_id': rep.cliente.id,
+                    'cliente_nome': rep.cliente.nome,
+                    'cliente_telefone': rep.cliente.telefone,
+                    'cliente_email': rep.cliente.email,
+                    'product_id': rep.product.id,
+                    'product_descr': rep.product.descr_product,
+                    'product_part_number': rep.product.part_number,
+                    'sn': rep.sn,
+                    'fornecedor_id': rep.fornecedor_id,
+                    'estado_artigo': rep.estado_artigo,
+                    'obs_estado': rep.obs_estado,
+                    'is_garantia': rep.is_garantia,
+                    'data_compra': rep.data_compra,
+                    'num_fatura': rep.num_fatura,
+                    'loja_compra': rep.loja_compra,
+                    'descr_servico': rep.descr_servico,
+                    'avaria_reprod_loja': rep.avaria_reprod_loja,
+                    'requer_copia_seg': rep.requer_copia_seg,
+                    'is_find_my_ativo': rep.is_find_my_ativo,
+                    'senha': rep.senha,
+                    'acessorios_entregues': rep.acessorios_entregues,
+                    'notas': rep.notas,
+                    'local_reparacao_id': rep.local_reparacao_id,
+                    'estado_reparacao': rep.estado_reparacao,
+                    'fatura_fornecedor': rep.fatura_fornecedor,
+                    'nar_autorizacao_rep': rep.nar_autorizacao_rep,
+                    'data_fatura_fornecedor': rep.data_fatura_fornecedor,
+                    'num_guia_rececao': rep.num_guia_rececao,
+                    'data_guia_rececao': rep.data_guia_rececao,
+                    'cod_resultado_reparacao': rep.cod_resultado_reparacao,
+                    'descr_detalhe_reparacao': rep.descr_detalhe_reparacao,
+                    'novo_sn_artigo': rep.novo_sn_artigo,
+                    'notas_entrega': rep.notas_entrega,
+                    'utilizador_entrega_id': rep.utilizador_entrega_id,
+                    'data_entrega': rep.data_entrega,
+                    'num_quebra_stock': rep.num_quebra_stock,
+                    'is_stock': rep.is_stock,
+                    'modo_entrega': rep.modo_entrega,
+                    'cliente_pagou_portes': rep.cliente_pagou_portes,
+                    'reincidencia_processo_id': rep.reincidencia_processo_id,
+                    'morada_entrega': rep.morada_entrega,
+                    'prioridade': rep.prioridade,
+                    'criado_por_utilizador_id': rep.criado_por_utilizador_id,
+                    'ult_atualizacao_por_utilizador_id': rep.ult_atualizacao_por_utilizador_id,
+
+                    'created_on': rep.created_on,
+                    'updated_on': rep.updated_on,
+
+                    'fornecedor': rep.fornecedor,
+                    'local_reparacao': rep.local_reparacao,,
+                    'utilizador_entrega': rep.utilizador_entrega,
+                    'criado_por_utilizador': rep.criado_por_utilizador,
+                    'atualizado_por_utilizador': rep.atualizado_por_utilizador
+                   }
+    return reparacao_dict
+    """
+    return rep
 
 
 

@@ -19,24 +19,19 @@ import tkinter.font
 from tkinter import ttk, messagebox
 from tkinter.scrolledtext import ScrolledText
 from string import ascii_letters
-#import datetime
-#import time
+
 import textwrap
 import webbrowser
-#import Pmw
-#import io
 import sys  # For Atom compatibility
 
 import about_window, contactos, remessas, detalhe_reparacao, detalhe_mensagem
 import imprimir
 from base_app import baseApp, AppStatus
-from extra_tk_classes import AutocompleteEntry, AutoScrollbar, LabelEntry
-from extra_tk_classes import LabelText, StatusBar
+from extra_tk_classes import LabelEntry, LabelText
 from global_setup import *
 
 if USE_LOCAL_DATABASE:
     import db_local_main as db
-    import db_local_models as db_models
 else:
     import db_remote as db
 

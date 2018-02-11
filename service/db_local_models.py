@@ -105,7 +105,6 @@ class Repair(Base):
     notas = Column(String)
     local_reparacao_id = Column(Integer, ForeignKey('contact.id'))
     estado_reparacao = Column(Integer)
-    ### Todo: falta incluir notas sobre estado do equipamento.
     fatura_fornecedor = Column(String)
     nar_autorizacao_rep = Column(String)
     data_fatura_fornecedor = Column(Date)
