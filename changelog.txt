@@ -8,13 +8,15 @@ Histórico de versões:
 v.0.18 - 14/02/2018 - A comemorar 1 ano de desenvolvimento(s).
  * Adicionados comandos ao menu para filtrar reparações por estados.
  * Janela "Acerca de" agora informa sobre o tamanho atual do ficheiro da base
-   de dados.
+   de dados, bem como do número total de reparações e contactos já registados.
  * Novos atalhos de teclado.
  * Corrigido um bug que impedia que fosse mostrado o fundo das linhas em cor
    alternada nas listas de reparações e contactos.
  * Criado método para preencher lista de mensagens a partir da base de dados.
  * As janelas de detalhes de evento/mensagem já mostram dados obtidos a partir
    da base de dados.
+ * Melhoramentos na pesquisa de reparações: agora são incluídos os registos em
+   que é encontrada correspondência nos dados do cliente e/ou do artigo.
  * Algumas alterações para facilitar o desenvolvimento futuro.
 
 ---
