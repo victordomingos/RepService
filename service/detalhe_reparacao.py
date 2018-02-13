@@ -34,21 +34,21 @@ class repairDetailWindow(ttk.Frame):
         self.master.focus()
         self.num_reparacao = num_reparacao
         self.repair = db.obter_reparacao(self.num_reparacao)
-        self.cliente = self.repair.cliente
-        self.fornecedor = self.repair.fornecedor
-        self.prioridade = self.repair.prioridade
-        self.tipo_processo = "Cliente" if (self.repair.is_stock == 0) else "Stock"
-        self.is_rep_cliente = not self.repair.is_stock
-        self.estado = self.repair.estado_reparacao
-        self.is_garantia = self.repair.is_garantia
-        self.modo_entrega = self.repair.modo_entrega  # todo - obter da base de dados
-        self.portes = self.repair.cliente_pagou_portes  # todo - obter da base de dados
+        #self.cliente = self.repair.cliente
+        #self.fornecedor = self.repair.fornecedor
+        #self.prioridade = self.repair.prioridade
+        self.tipo_processo = "Cliente" if (self.repair['is_rep_stock'] == 0) else "Stock"
+        #self.is_rep_cliente = not self.repair['is_rep_stock']
+        #self.estado = self.repair.estado_reparacao
+        #self.is_garantia = self.repair.is_garantia
+        #self.modo_entrega = self.repair.modo_entrega  # todo - obter da base de dados
+        #self.portes = self.repair.cliente_pagou_portes  # todo - obter da base de dados
 
-        if self.is_rep_cliente:
-            self.numero_contacto = self.cliente.id
-            self.nome = self.cliente.nome
-            self.telefone = self.cliente.telefone
-            self.email = self.cliente.email
+        if self.repair['is_rep_cliente']:
+            self.numero_contacto = self.repair['cliente_id']
+            self.nome = self.repair['cliente_nome']
+            self.telefone = self.repair['cliente_telefone']
+            self.email = self.repair['cliente_email']
             self.var_combo_artigos_emprest = tk.StringVar()
             self.var_combo_artigos_emprest.set("Selecionar artigo...")
             self.var_combo_artigos_emprest.trace(
@@ -59,10 +59,10 @@ class repairDetailWindow(ttk.Frame):
             self.var_id_art_emprest = tk.StringVar()
             self.var_id_art_emprest.trace('w', self._on_id_art_emprest_changed)
         else:
-            self.numero_contacto = self.fornecedor.id
-            self.nome = self.fornecedor.nome
-            self.telefone = self.fornecedor.telefone
-            self.email = self.fornecedor.email
+            self.numero_contacto = self.repair['fornecedor_id']
+            self.nome = self.repair['fornecedor_nome']
+            self.telefone = self.repair['fornecedor_telefone']
+            self.email = self.repair['fornecedor_email']
 
         self.configurar_frames_e_estilos()
         self.montar_barra_de_ferramentas()
@@ -73,7 +73,7 @@ class repairDetailWindow(ttk.Frame):
         self.composeFrames()
         self.inserir_dados_de_exemplo()
         self.alternar_cores(self.tree_hist)
-        if self.is_rep_cliente:
+        if self.repair['is_rep_cliente']:
             self.alternar_cores(self.tree_emprest)
 
     def montar_barra_de_ferramentas(self):
@@ -88,7 +88,7 @@ class repairDetailWindow(ttk.Frame):
 
         # ----------- Botão com menu "Alterar estado" --------------
         self.mbtn_alterar_estado = ttk.Menubutton(self.topframe,
-            style="TMenubutton", text=ESTADOS[self.estado])
+            style="TMenubutton", text=ESTADOS[self.repair['estado_reparacao']])
         self.mbtn_alterar_estado.menu = tk.Menu(self.mbtn_alterar_estado, tearoff=0)
         self.mbtn_alterar_estado["menu"] = self.mbtn_alterar_estado.menu
 
@@ -102,7 +102,7 @@ class repairDetailWindow(ttk.Frame):
         # ----------- fim de Botão com menu "Alterar estado" -------------
 
         # ----------- Botão com menu "Alterar Prioridade" --------------
-        self.mbtn_alterar_prioridade = ttk.Menubutton(self.topframe, text=f"Prioridade: {PRIORIDADES[self.prioridade]}")
+        self.mbtn_alterar_prioridade = ttk.Menubutton(self.topframe, text=f"Prioridade: {PRIORIDADES[self.repair['prioridade']]}")
         self.mbtn_alterar_prioridade.menu = tk.Menu(self.mbtn_alterar_prioridade, tearoff=0)
         self.mbtn_alterar_prioridade["menu"] = self.mbtn_alterar_prioridade.menu
 
@@ -118,14 +118,14 @@ class repairDetailWindow(ttk.Frame):
         self.mbtn_copiar.menu = tk.Menu(self.mbtn_copiar, tearoff=0)
         self.mbtn_copiar["menu"] = self.mbtn_copiar.menu
 
-        if self.is_rep_cliente:
+        if self.repair['is_rep_cliente']:
             self.mbtn_copiar.menu.add_command(label="Nome", command=None)
             self.mbtn_copiar.menu.add_command(label="NIF", command=None)
             self.mbtn_copiar.menu.add_command(label="Morada", command=None)
             self.mbtn_copiar.menu.add_command(
                 label="Código Postal", command=None)
             self.mbtn_copiar.menu.add_command(label="Localidade", command=None)
-            if self.modo_entrega >= 1:
+            if self.repair['modo_entrega'] >= 1:
                 self.mbtn_copiar.menu.add_separator()
                 self.mbtn_copiar.menu.add_command(
                     label="Morada para entrega", command=None)
@@ -182,7 +182,7 @@ class repairDetailWindow(ttk.Frame):
         self.mbtn_copiar.grid(column=8, row=0)
         self.mbtn_imprimir.grid(column=9, row=0)
 
-        if self.estado == ENTREGUE:
+        if self.repair['estado_reparacao'] == ENTREGUE:
             self.btn_reincidencia.grid(column=10, row=0)
         else:
             self.btn_entregar.grid(column=11, row=0)
@@ -207,7 +207,7 @@ class repairDetailWindow(ttk.Frame):
 
         # TODO
 
-        if self.is_rep_cliente:
+        if self.repair['is_rep_cliente']:
             self.tab_orcamentos = ttk.Frame(self.note, padding=10)
             self.tab_emprestimos = ttk.Frame(self.note, padding=10)
             #self.note.add(self.tab_orcamentos, text="Orçamentos")
@@ -273,16 +273,16 @@ class repairDetailWindow(ttk.Frame):
         self.ltxt_descr_equipamento = LabelText(
             self.geral_fr2, "Descrição:", style="Panel_Body.TLabel", height=2, width=40)
 
-        if self.is_rep_cliente:
+        if self.repair['is_rep_cliente']:
             # TODO: obter string do estado do equipamento
-            estado = f'Estado: {ESTADOS[self.estado]}'
+            estado = f"Estado: {ESTADOS[self.repair['estado_artigo']]}"
             self.ltxt_obs_estado_equipamento = LabelText(
                 self.geral_fr2, estado, style="Panel_Body.TLabel", height=2)
             self.ltxt_local_intervencao = LabelEntry(
                 self.geral_fr2, "Local da intervenção:", style="Panel_Body.TLabel", width=25)
             self.ltxt_acessorios = LabelText(
                 self.geral_fr2, "Acessórios entregues:", style="Panel_Body.TLabel")
-            if self.is_garantia:
+            if self.repair['is_garantia']:
                 self.ltxt_data_compra = LabelEntry(
                     self.geral_fr2, "Data de compra:", style="Panel_Body.TLabel", width=10)
                 self.ltxt_num_fatura = LabelEntry(
@@ -303,23 +303,23 @@ class repairDetailWindow(ttk.Frame):
         self.ltxt_notas = LabelText(
             self.geral_fr2, "Notas:", style="Panel_Body.TLabel")
 
-        if self.is_rep_cliente:
+        if self.repair['is_rep_cliente']:
             self.ltxt_senha = LabelEntry(
                 self.geral_fr2, "Senha:", style="Panel_Body.TLabel", width=22)
             varias_linhas = "• Avaria reproduzida na loja"
             varias_linhas += "\n• Find my iPhone ativo"
             varias_linhas += "\n• Efetuar cópia de segurança"
 
-            if self.modo_entrega == 0:
+            if self.repair['modo_entrega'] == 0:
                 varias_linhas += "\n• Levantamento nas n/ instalações"
-            elif self.modo_entrega == 1:
+            elif self.repair['modo_entrega'] == 1:
                 varias_linhas += "\n• Enviar para a morada da ficha de cliente"
             else:
                 varias_linhas += "\n• Enviar para a morada abaixo indicada"
                 self.ltxt_morada_entrega = LabelText(
                     self.geral_fr2, "Morada a utilizar na entrega:", style="Panel_Body.TLabel")
 
-            if self.modo_entrega != 0:
+            if self.repair['modo_entrega'] != 0:
                 if self.portes == 0:
                     varias_linhas += "\n• Cliente ainda não pagou portes"
                 elif self.portes == 1:
@@ -362,18 +362,18 @@ class repairDetailWindow(ttk.Frame):
 
         self.ltxt_descr_equipamento.set(
             'Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
-        if self.is_rep_cliente:
+        if self.repair['is_rep_cliente']:
             self.ltxt_obs_estado_equipamento.set(
                 'Texto de exemplo para experimentar como sai na prática.\n Equipamentos em excelente estado.')
             self.ltxt_local_intervencao.set('Aquele Tal Centro Técnico')
             self.ltxt_acessorios.set(
                 'Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
             self.ltxt_senha.set('12343112121')
-            if self.is_garantia:
+            if self.repair['is_garantia']:
                 self.ltxt_data_compra.set('29-07-2035')
                 self.ltxt_num_fatura.set('FCR 1234567890/2035')
                 self.ltxt_garantia.set('NPK International Online Store')
-            if self.modo_entrega > 1:
+            if self.repair['modo_entrega'] > 1:
                 self.ltxt_morada_entrega.set(
                     "José manuel da silva fictício\nRua imaginária da conceição esplendorosa, nº 31, 3º andar frente\n1234-567 CIDADE MARAVILHOSA BRG\nPortugal")
         else:
@@ -408,7 +408,7 @@ class repairDetailWindow(ttk.Frame):
         self.geral_fr2.grid_rowconfigure(10, weight=1)
         self.geral_fr2.grid_rowconfigure(15, weight=1)
 
-        if self.is_rep_cliente:
+        if self.repair['is_rep_cliente']:
             self.ltxt_descr_equipamento.grid(
                 column=0, row=0, columnspan=2, rowspan=4, sticky='nwes', padx=4)
             self.ltxt_obs_estado_equipamento.grid(
@@ -420,7 +420,7 @@ class repairDetailWindow(ttk.Frame):
             ttk.Separator(self.geral_fr2).grid(column=0, row=4,
                                                columnspan=5, sticky='nwe', pady=10)
 
-            if self.is_garantia:
+            if self.repair['is_garantia']:
                 self.ltxt_garantia.grid(
                     column=0, row=5, columnspan=2, rowspan=2, sticky='nwe', padx=4)
                 self.ltxt_data_compra.grid(
@@ -449,7 +449,7 @@ class repairDetailWindow(ttk.Frame):
             ttk.Separator(self.geral_fr2).grid(
                 column=0, row=13, columnspan=5, sticky='we', pady=10)
 
-            if self.modo_entrega <= 1:
+            if self.repair['modo_entrega'] <= 1:
                 self.ltxt_acessorios.grid(
                     column=0, row=14, columnspan=2, rowspan=3, sticky='wesn', padx=4)
                 self.ltxt_notas.grid(
@@ -670,10 +670,10 @@ class repairDetailWindow(ttk.Frame):
 
 
     def _on_repair_state_change(self, new_status):
-        if self.estado == new_status:
+        if self.repair['estado'] == new_status:
             return
         else:
-            self.estado = new_status
+            self.repair['estado'] = new_status
             self.mbtn_alterar_estado.configure(text=ESTADOS[new_status])
             db.update_repair_status(self.num_reparacao, new_status)
             if new_status == ENTREGUE:
@@ -685,10 +685,10 @@ class repairDetailWindow(ttk.Frame):
                 self.btn_reincidencia.grid_remove()
 
     def _on_priority_change(self, new_priority):
-        if self.prioridade == new_priority:
+        if self.repair['prioridade'] == new_priority:
             return
         else:
-            self.prioridade = new_priority
+            self.repair['prioridade'] = new_priority
             self.mbtn_alterar_prioridade.configure(text=f"Prioridade: {PRIORIDADES[new_priority]}")
             db.update_repair_priority(self.num_reparacao, new_priority)
 
@@ -943,8 +943,8 @@ class repairDetailWindow(ttk.Frame):
         for widget in widgets:
             widget.disable()
 
-        if self.is_rep_cliente:
-            if self.is_garantia:
+        if self.repair['is_rep_cliente']:
+            if self.repair['is_garantia']:
                 self.ltxt_garantia.disable()
                 self.ltxt_data_compra.disable()
                 self.ltxt_num_fatura.disable()
@@ -952,7 +952,7 @@ class repairDetailWindow(ttk.Frame):
             self.ltxt_local_intervencao.disable()
             self.ltxt_acessorios.disable()
             self.ltxt_senha.disable()
-            if self.modo_entrega > 1:
+            if self.repair['modo_entrega'] > 1:
                 self.ltxt_morada_entrega.disable()
         else:
             widgets = (self.ltxt_num_fatura_fornecedor,
@@ -1121,7 +1121,7 @@ class repairDetailWindow(ttk.Frame):
             self.tree_hist.insert("", "end", text="", values=(str(i + 3), textwrap.fill(
                 "Centro técnico informou que não é possível reparar pois já não há peças originais.", 45), "Em processamento", "Victor Domingos", "12/07/2021"))
 
-        if self.is_rep_cliente:
+        if self.repair['is_rep_cliente']:
             for i in range(1):
                 self.tree_emprest.insert("", "end", text="", values=(
                     "1", "MN0234PO/A", "Equipamento de substituição a utilizar enquanto a reparação não fica concluída", "SF1325FVWt5654", "91"))

@@ -141,31 +141,32 @@ def pesquisar_reparacoes(txt_pesquisa: str, estados: List[int]=None) -> List[Dic
         else:
             termo_pesquisa = f"%{txt_pesquisa}%"
 
-    #TODO: melhorar a query de pesquisa, permitindo pesquisar nos campos do cliente e do artigo
+    reps = s.query(db_models.Repair, db_models.Contact, db_models.Product) \
+                .filter(and_(db_models.Repair.product_id == db_models.Product.id,
+                             db_models.Repair.cliente_id == db_models.Contact.id)) \
+                .filter(and_(db_models.Repair.estado_reparacao.in_(estados),
+                             or_(
+                                 db_models.Repair.id.like(termo_pesquisa),
+                                 db_models.Contact.nome.ilike(termo_pesquisa),
+                                 db_models.Contact.telefone.ilike(termo_pesquisa),
+                                 db_models.Contact.telemovel.ilike(termo_pesquisa),
+                                 db_models.Contact.email.ilike(termo_pesquisa),
+                                 db_models.Product.descr_product.ilike(termo_pesquisa),
+                                 db_models.Product.part_number.ilike(termo_pesquisa),
+                                 db_models.Repair.descr_servico.ilike(termo_pesquisa),
+                                 db_models.Repair.notas.ilike(termo_pesquisa),
+                                 db_models.Repair.num_fatura.ilike(termo_pesquisa),
+                                 db_models.Repair.sn.ilike(termo_pesquisa)
+                        ))).all()
 
-    reps = s.query(db_models.Repair).filter(
-        and_(db_models.Repair.estado_reparacao.in_(estados),
-            or_(
-                db_models.Repair.id.like(termo_pesquisa),
-                #db_models.Contact.nome.ilike(termo_pesquisa),
-                #db_models.Contact.telefone.ilike(termo_pesquisa),
-                #db_models.Contact.telemovel.ilike(termo_pesquisa),
-                #db_models.Contact.email.ilike(termo_pesquisa),
-                #db_models.Product.descr_product.ilike(termo_pesquisa),
-                #db_models.Product.part_number.ilike(termo_pesquisa),
-                db_models.Repair.descr_servico.ilike(termo_pesquisa),
-                db_models.Repair.notas.ilike(termo_pesquisa),
-                db_models.Repair.num_fatura.ilike(termo_pesquisa),
-                db_models.Repair.sn.ilike(termo_pesquisa),
-        ))).all()
-    repair_list = [{'id': rep.id,
-                    'cliente_nome': rep.cliente.nome,
-                    'descr_artigo': rep.product.descr_product,
-                    'sn': rep.sn,
-                    'descr_servico': rep.descr_servico,
-                    'estado': rep.estado_reparacao,
-                    'dias': calcular_dias_desde(rep.created_on),
-                    'prioridade': rep.prioridade}
+    repair_list = [{'id': rep[0].id,
+                    'cliente_nome': rep[1].nome,
+                    'descr_artigo': rep[2].descr_product,
+                    'sn': rep[0].sn,
+                    'descr_servico': rep[0].descr_servico,
+                    'estado': rep[0].estado_reparacao,
+                    'dias': calcular_dias_desde(rep[0].created_on),
+                    'prioridade': rep[0].prioridade}
                    for rep in reps]
     return repair_list
 
@@ -183,8 +184,7 @@ def obter_reparacao(num_rep: int) -> List[Dict[str, Union[int, str]]]:
     """
     rep = _obter_reparacao(num_rep)
 
-    """
-    reparacao_dict = { 'id': rep.id,
+    reparacao_dict = {'id': rep.id,
                     'cliente_id': rep.cliente.id,
                     'cliente_nome': rep.cliente.nome,
                     'cliente_telefone': rep.cliente.telefone,
@@ -221,7 +221,8 @@ def obter_reparacao(num_rep: int) -> List[Dict[str, Union[int, str]]]:
                     'utilizador_entrega_id': rep.utilizador_entrega_id,
                     'data_entrega': rep.data_entrega,
                     'num_quebra_stock': rep.num_quebra_stock,
-                    'is_stock': rep.is_stock,
+                    'is_rep_stock': rep.is_stock,
+                    'is_rep_cliente': not rep.is_stock,
                     'modo_entrega': rep.modo_entrega,
                     'cliente_pagou_portes': rep.cliente_pagou_portes,
                     'reincidencia_processo_id': rep.reincidencia_processo_id,
@@ -234,14 +235,12 @@ def obter_reparacao(num_rep: int) -> List[Dict[str, Union[int, str]]]:
                     'updated_on': rep.updated_on,
 
                     'fornecedor': rep.fornecedor,
-                    'local_reparacao': rep.local_reparacao,,
+                    'local_reparacao': rep.local_reparacao,
                     'utilizador_entrega': rep.utilizador_entrega,
                     'criado_por_utilizador': rep.criado_por_utilizador,
                     'atualizado_por_utilizador': rep.atualizado_por_utilizador
                    }
     return reparacao_dict
-    """
-    return rep
 
 
 
