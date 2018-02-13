@@ -12,6 +12,11 @@ from tkinter import ttk
 
 from global_setup import *
 
+if USE_LOCAL_DATABASE:
+    import db_local_main as db
+else:
+    import db_remote as db
+
 
 __app_name__ = "RepService 2018"
 __author__ = "Victor Domingos"
@@ -106,22 +111,40 @@ class about_window:
             self.pframe_topo, text="\nO seu gestor avançado de reparações.\n")
         self.version_lbl = ttk.Label(
             self.pframe_topo, font=self.copyfont, text="Versão {}\n\n\n".format(__version__))
+
+
+        db_rep_count = db.contar_reparacoes()
+        self.lbl_rep_count = ttk.Label(self.pframe_topo, font=self.copyfont,
+            text=f"Reparações: {db_rep_count}")
+
+        db_contact_count = db.contar_contactos()
+        self.lbl_contact_count = ttk.Label(self.pframe_topo, font=self.copyfont,
+            text=f"Contactos: {db_contact_count}")
+
+        db_remessas_count = db.contar_remessas()
+        self.lbl_remessas_count = ttk.Label(self.pframe_topo, font=self.copyfont,
+            text=f"Remessas: {db_remessas_count}")
+
+
         db_filesize = os.path.getsize(os.path.expanduser(LOCAL_DATABASE_PATH)) >> 10
         self.lbl_filesize = ttk.Label(self.pframe_topo, font=self.copyfont, 
-            text=f"Tamanho atual da base de dados: {db_filesize/1024:.1f}MB\n")
+            text=f"Tamanho atual da base de dados: {db_filesize/1024:.1f}MB")
 
 
         #---------- MEIO -----------
 
         #---------- FUNDO -----------
         self.copyright_lbl = ttk.Label(
-            self.pframe_fundo, font=self.copyfont, text="\n\n\n© 2018 Victor Domingos")
+            self.pframe_fundo, font=self.copyfont, text="\n\n© 2018 Victor Domingos")
         self.license_lbl = ttk.Label(
             self.pframe_fundo, font=self.copyfont, text=__license__)
 
         self.app_lbl.pack()
         self.assin_lbl.pack()
         self.version_lbl.pack()
+        self.lbl_rep_count.pack()
+        self.lbl_contact_count.pack()
+        self.lbl_remessas_count.pack()
         self.lbl_filesize.pack()
 
         self.copyright_lbl.pack()

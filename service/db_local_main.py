@@ -80,10 +80,20 @@ def update_repair_status(rep_num: int, status: int):
 def update_repair_priority(rep_num: int, priority: int):
     print(f"A atualizar a prioridade da reparação nº {rep_num}: {priority} ({PRIORIDADES[priority]})")
     reparacao = _obter_reparacao(rep_num)
-
     s, _ = iniciar_sessao_db()
-
     pass  # TODO atualizar reparacao com prioridade.
+
+def contar_reparacoes() -> int:
+    s, _ = iniciar_sessao_db()
+    return s.query(db_models.Repair).count()
+
+def contar_contactos() -> int:
+    s, _ = iniciar_sessao_db()
+    return s.query(db_models.Contact).count()
+
+def contar_remessas() -> int:
+    s, _ = iniciar_sessao_db()
+    return 0 #TODO
 
 
 def obter_todas_reparacoes() -> List[Dict[str, Union[int, str]]]:
