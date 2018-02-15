@@ -25,9 +25,10 @@ else:
 class repairDetailWindow(ttk.Frame):
     """ Classe de base para a janela de detalhes de reparações """
 
-    def __init__(self, master, num_reparacao, *args, **kwargs):
+    def __init__(self, master, num_reparacao, estado_app, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.master = master
+        self.estado_app = estado_app
         self.master.bind("<Command-w>", self.on_btn_fechar)
         self.contacto_newDetailsWindow = {}
         self.contact_detail_windows_count = 0
@@ -248,7 +249,7 @@ class repairDetailWindow(ttk.Frame):
             f'Detalhe de contacto: {self.numero_contacto}')
         self.janela_detalhes_contacto = detalhe_contacto.contactDetailWindow(
             self.contacto_newDetailsWindow[self.contact_detail_windows_count],
-            self.numero_contacto)
+            self.numero_contacto, self.estado_app)
         self.contacto_newDetailsWindow[self.contact_detail_windows_count].focus(
         )
 
@@ -672,10 +673,10 @@ class repairDetailWindow(ttk.Frame):
 
 
     def _on_repair_state_change(self, new_status):
-        if self.repair['estado'] == new_status:
+        if self.repair['estado_reparacao'] == new_status:
             return
         else:
-            self.repair['estado'] = new_status
+            self.repair['estado_reparacao'] = new_status
             self.mbtn_alterar_estado.configure(text=ESTADOS[new_status])
             db.update_repair_status(self.num_reparacao, new_status)
             if new_status == ENTREGUE:

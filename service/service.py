@@ -42,7 +42,7 @@ __app_name__ = "RepService 2018"
 __author__ = "Victor Domingos"
 __copyright__ = "Copyright 2018 Victor Domingos"
 __license__ = "Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)"
-__version__ = "v0.18 development"
+__version__ = "v0.19 development"
 __email__ = "web@victordomingos.com"
 __status__ = "Development"
 
@@ -649,37 +649,37 @@ class App(baseApp):
         # TODO: as janelas de contactos e remesas não são destruídas
         # corretamente, ficam sempre na memória e no menu. Como resolver?
 
-        if not estado.janela_remessas_aberta:
+        if not estado_app.janela_remessas_aberta:
             if criar_nova_remessa:
                 #print("A abrir a janela de remessas, vamos lá criar uma nova remessa!")
-                estado.painel_nova_remessa_aberto = True
+                estado_app.painel_nova_remessa_aberto = True
             #self.newWindow2 = tk.Toplevel(self.master)
-            estado.janela_remessas = tk.Toplevel(self.master)
+            estado_app.janela_remessas = tk.Toplevel(self.master)
             self.janela_remessas = remessas.RemessasWindow(
-                estado.janela_remessas, estado)
-            estado.janela_remessas_aberta = True
-            estado.janela_remessas.wm_protocol(
+                estado_app.janela_remessas, estado_app)
+            estado_app.janela_remessas_aberta = True
+            estado_app.janela_remessas.wm_protocol(
                 "WM_DELETE_WINDOW", self.close_window_remessas)
         else:
             if not criar_nova_remessa:
                 self.close_window_remessas()
             else:
-                estado.painel_nova_remessa_aberto = True
+                estado_app.painel_nova_remessa_aberto = True
                 self.janela_remessas.mostrar_painel_entrada()
 
     def close_window_remessas(self, *event):
         root.update_idletasks()
-        estado.janela_remessas_aberta = False
-        estado.painel_nova_remessa_aberto = False
-        estado.janela_remessas.destroy()
+        estado_app.janela_remessas_aberta = False
+        estado_app.painel_nova_remessa_aberto = False
+        estado_app.janela_remessas.destroy()
 
     def create_window_contacts(self, *event, criar_novo_contacto=None, pesquisar=None):
-        #estado.contacto_para_nova_reparacao = nova_reparacao
-        estado.tipo_novo_contacto = criar_novo_contacto
+        #estado_app.contacto_para_nova_reparacao = nova_reparacao
+        estado_app.tipo_novo_contacto = criar_novo_contacto
 
-        if estado.janela_contactos_aberta:
+        if estado_app.janela_contactos_aberta:
             if criar_novo_contacto:
-                estado.painel_novo_contacto_aberto = True
+                estado_app.painel_novo_contacto_aberto = True
                 self.janela_contactos.mostrar_painel_entrada()
             elif pesquisar:
                 self.janela_contactos.clique_a_pesquisar()
@@ -688,37 +688,37 @@ class App(baseApp):
         else:
             if criar_novo_contacto in ["Cliente", "Fornecedor"]:
                 print("Sim:", criar_novo_contacto)
-                estado.painel_novo_contacto_aberto = True
-            estado.janela_contactos = tk.Toplevel(self.master)
+                estado_app.painel_novo_contacto_aberto = True
+            estado_app.janela_contactos = tk.Toplevel(self.master)
             self.janela_contactos = contactos.ContactsWindow(
-                estado.janela_contactos, estado, pesquisar)
-            estado.janela_contactos_aberta = True
-            estado.janela_contactos.wm_protocol(
+                estado_app.janela_contactos, estado_app, pesquisar)
+            estado_app.janela_contactos_aberta = True
+            estado_app.janela_contactos.wm_protocol(
                 "WM_DELETE_WINDOW", self.close_window_contactos)
 
     def close_window_contactos(self, *event):
         root.update_idletasks()
-        if estado.contacto_para_nova_reparacao:
-            if estado.tipo_novo_contacto == "Cliente":
+        if estado_app.contacto_para_nova_reparacao:
+            if estado_app.tipo_novo_contacto == "Cliente":
                 self.ef_txt_num_cliente.delete(0, tk.END)
                 self.ef_txt_num_cliente.insert(
-                    0, estado.contacto_para_nova_reparacao)
-            elif estado.tipo_novo_contacto == "Fornecedor":
+                    0, estado_app.contacto_para_nova_reparacao)
+            elif estado_app.tipo_novo_contacto == "Fornecedor":
                 self.ef_txt_num_fornecedor.delete(0, tk.END)
                 self.ef_txt_num_fornecedor.insert(
-                    0, estado.contacto_para_nova_reparacao)
+                    0, estado_app.contacto_para_nova_reparacao)
             else:
                 print("Qual é afinal o tipo de contacto a criar???")
                 pass
 
-        estado.janela_contactos_aberta = False
-        estado.painel_novo_contacto_aberto = False
-        estado.janela_contactos.destroy()
+        estado_app.janela_contactos_aberta = False
+        estado_app.painel_novo_contacto_aberto = False
+        estado_app.janela_contactos.destroy()
         self.ef_ltxt_descr_equipamento.scrolledtext.focus()
 
     def create_window_detalhe_rep(self, *event, num_reparacao=None):
         if num_reparacao is None:
-            messagebox.showwarning("", "Nenhuma reparação selecionada.")
+            messagebox.showwarning("", "Nenhuma reparação selecionada. Por favor selecione primeiro uma reparação.")
             root.focus_force()
             return
 
@@ -726,14 +726,14 @@ class App(baseApp):
         self.rep_newDetailsWindow[self.rep_detail_windows_count] = tk.Toplevel(
         )
         self.janela_detalhes_rep = detalhe_reparacao.repairDetailWindow(
-            self.rep_newDetailsWindow[self.rep_detail_windows_count], num_reparacao)
+            self.rep_newDetailsWindow[self.rep_detail_windows_count], num_reparacao, estado_app)
 
     def create_window_detalhe_msg(self, *event, num_mensagem=None):
         self.selectItemMsg()
         self.master.update_idletasks()
 
         if num_mensagem is None:
-            messagebox.showwarning("", "Nenhuma mensagem selecionada.")
+            messagebox.showwarning("", "Nenhuma mensagem selecionada. Por favor selecione primeiro uma mensagem.")
             root.focus_force()
             return
 
@@ -741,7 +741,7 @@ class App(baseApp):
         self.msg_newDetailsWindow[self.msg_detail_windows_count] = tk.Toplevel(
         )
         self.janela_detalhes_msg = detalhe_mensagem.msgDetailWindow(
-            self.msg_newDetailsWindow[self.msg_detail_windows_count], num_mensagem)
+            self.msg_newDetailsWindow[self.msg_detail_windows_count], num_mensagem, estado_app)
 
     def gerar_painel_mensagens(self):
         self.mensagens_frame = ttk.Frame(self.messagepane)
@@ -821,13 +821,13 @@ class App(baseApp):
 
     def abrir_painel_mensagens(self, *event):
         root.update_idletasks()
-        if estado.painel_mensagens_aberto == False:
+        if estado_app.painel_mensagens_aberto == False:
             self.mensagens_frame.pack()
             self.messagepane.pack(side='top', expand=True, fill='both')
             self.rightframe.grid()
             self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
             self.atualizar_soma_msgs()
-            estado.painel_mensagens_aberto = True
+            estado_app.painel_mensagens_aberto = True
         else:
             self.fechar_painel_mensagens()
 
@@ -836,14 +836,22 @@ class App(baseApp):
         self.messagepane.pack_forget()
         self.mensagens_frame.pack_forget()
         self.rightframe.grid_remove()
-        estado.painel_mensagens_aberto = False
+        estado_app.painel_mensagens_aberto = False
 
     def mostrar_painel_entrada(self, *event):
         self.MenuFicheiro.entryconfig("Nova reparação", state="disabled")
         # root.unbind_all("<Command-n>")
         self.show_entryform()
-        estado.painel_nova_reparacao_aberto = self.is_entryform_visible
-        self.ef_txt_num_cliente.focus_set()
+        estado_app.painel_nova_reparacao_aberto = self.is_entryform_visible
+
+        print(estado_app.contacto_para_nova_reparacao, estado_app.tipo_novo_contacto)
+        if estado_app.contacto_para_nova_reparacao:
+            if estado_app.tipo_novo_contacto == "Cliente":
+                self.ef_txt_num_cliente.delete(0, tk.END)
+                self.ef_txt_num_cliente.insert(0, str(estado_app.contacto_para_nova_reparacao))
+            else:
+                self.ef_txt_num_cliente.delete(0, tk.END)
+                self.ef_txt_num_fornecedor.insert(0, str(estado_app.contacto_para_nova_reparacao))
         self.entryframe.bind_all(
             "<Command-Escape>", self.fechar_painel_entrada)
 
@@ -852,11 +860,14 @@ class App(baseApp):
         self.clear_text()
         root.focus_force()
         self.tree.focus()
-        estado.painel_nova_reparacao_aberto = self.is_entryform_visible
+        estado_app.painel_nova_reparacao_aberto = self.is_entryform_visible
+        estado_app.tipo_novo_contacto = "Cliente"
+        estado_app.contacto_para_nova_reparacao = None
         # root.bind_all("<Command-n>")
 
     def clear_text(self):
         self.entryframe.focus()
+        self.ef_radio_tipo_cliente.focus_set()
         self.ef_var_tipo.set(0)
         self.ef_var_estado.set(0)
         self.ef_var_garantia.set(0)
@@ -905,7 +916,7 @@ class App(baseApp):
         self.ef_var_efetuar_copia = tk.IntVar()
         self.ef_var_find_my = tk.IntVar()
         self.ef_var_local_intervencao = tk.StringVar()
-        self.ef_var_local_intervencao.set("Loja X")
+        self.ef_var_local_intervencao.set("Loja X") #TODO: obter a loja a que pertence o utilizador atual
         self.ef_var_modo_entrega = tk.StringVar()
         self.ef_var_modo_entrega.set("Levantamento nas n/ instalações")
         self.ef_var_portes = tk.IntVar()
@@ -944,8 +955,8 @@ class App(baseApp):
             self.entryfr2, padding=4, style="Panel_Section_Title.TLabelframe", text="Dados do cliente")
         self.ef_txt_num_cliente = ttk.Entry(
             self.ef_lf_cliente, font=("Helvetica-Neue", 12), width=5)
-        self.dicas.bind(self.ef_txt_num_cliente,
-                        'Introduzir o número de cliente. (⌘T)')
+        self.dicas.bind(self.ef_txt_num_cliente, 'Introduzir o número de cliente.')
+        self.ef_txt_num_cliente.bind("<FocusOut>", self._on_num_contact_exit)
         self.ef_btn_buscar_cliente = ttk.Button(
             self.ef_lf_cliente, width=1, text="+", command=lambda *x: self.create_window_contacts(criar_novo_contacto="Cliente"))
         self.dicas.bind(self.ef_btn_buscar_cliente,
@@ -965,6 +976,7 @@ class App(baseApp):
             self.entryfr2, padding=4, style="Panel_Section_Title.TLabelframe", text="Dados do fornecedor")
         self.ef_txt_num_fornecedor = ttk.Entry(
             self.ef_lf_fornecedor, font=("Helvetica-Neue", 12), width=5)
+        self.ef_txt_num_fornecedor.bind("<FocusOut>", self._on_num_contact_exit)
         self.dicas.bind(self.ef_txt_num_fornecedor,
                         'Introduzir o número de fornecedor. (⌘T)')
         self.ef_btn_buscar_fornecedor = ttk.Button(
@@ -1236,6 +1248,41 @@ class App(baseApp):
         self.entryframe.bind_all(
             "<Command-Escape>", self.fechar_painel_entrada)
 
+    def _on_num_contact_exit(self, event):
+        """ Preencher nome do cliente/fornecedor ao sair do campo do numero de contacto
+        """
+        print("Widget do evento: ", event.widget.cget("text"))
+        if event.widget.cget("text") in ("Stock", "Cliente"):
+            return
+
+        tipo = self.ef_var_tipo.get()
+        if tipo == TIPO_REP_STOCK:
+            num_contacto = self.ef_txt_num_fornecedor.get()
+            contacto = db.obter_info_contacto(num_contacto, "Fornecedor")
+            if contacto:
+                self.ef_txt_nome_fornecedor.delete(0, tk.END)
+                self.ef_txt_nome_fornecedor.insert(0,contacto['nome'])
+                self.ef_lbl_telefone_info_fornecedor.config(text=contacto['telefone'])
+                self.ef_lbl_email_info_fornecedor.config(text=contacto['email'])
+            else:
+                self.ef_txt_num_fornecedor.delete(0, tk.END)
+                criar_contacto_forn = messagebox.askyesno("", "Não existe um fornecedor com o número indicado. Pretende criar um novo contacto?")
+                if criar_contacto_forn:
+                    self.create_window_contacts(criar_novo_contacto="Fornecedor")
+        else:
+            num_contacto = self.ef_txt_num_cliente.get()
+            contacto = db.obter_info_contacto(num_contacto, "Cliente")
+            if contacto:
+                self.ef_txt_nome_cliente.delete(0, tk.END)
+                self.ef_txt_nome_cliente.insert(0, contacto['nome'])
+                self.ef_lbl_telefone_info.config(text=contacto['telefone'])
+                self.ef_lbl_email_info.config(text=contacto['email'])
+            else:
+                self.ef_txt_num_cliente.delete(0, tk.END)
+                criar_contacto_cliente = messagebox.askyesno("", "Não existe um cliente com o número indicado. Pretende criar um novo contacto?")
+                if criar_contacto_cliente:
+                    self.create_window_contacts(criar_novo_contacto="Cliente")
+
     def adicionar_morada_entrega(self, *event):
         if self.ef_combo_modo_entrega.get() == "Enviar para outra morada...":
             self.ef_lbl_portes.grid(
@@ -1408,8 +1455,11 @@ class App(baseApp):
 
 
     def _on_repair_state_change(self, new_status):
+        if not self.reparacao_selecionada:
+            messagebox.showwarning("", "Nenhuma reparação selecionada. Por favor selecione primeiro uma reparação.")
+            return
         reparacao = db.obter_reparacao(self.reparacao_selecionada)
-        if reparacao.estado_reparacao == new_status:
+        if reparacao['estado_reparacao'] == new_status:
             self.popupMsg(f"A reparação nº {self.reparacao_selecionada} já tinha o estado selecionado.\nNenhuma alteração efetuada.")
             return
         db.update_repair_status(self.reparacao_selecionada, new_status)
@@ -1420,6 +1470,7 @@ class App(baseApp):
 
     def _on_repair_view_select(self, *event, status_list=None):
         self.cancelar_pesquisa()
+        self.reparacao_selecionada = None
         if not status_list:
             status_list = []
 
@@ -1828,9 +1879,9 @@ def restart_program():
 
 
 if __name__ == "__main__":
-    estado = AppStatus()
+    estado_app = AppStatus()
     root = tk.Tk()
-    estado.janela_principal = App(root)
+    estado_app.janela_principal = App(root)
     root.configure(background='grey95')
     root.title('RepService')
     root.geometry(ROOT_GEOMETRIA)

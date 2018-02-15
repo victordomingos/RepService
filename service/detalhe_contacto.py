@@ -24,9 +24,10 @@ else:
 class contactDetailWindow(ttk.Frame):
     """ Classe de base para a janela de detalhes de reparações """
 
-    def __init__(self, master, num_contacto, *args, **kwargs):
+    def __init__(self, master, num_contacto, estado_app, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.master = master
+        self.estado_app = estado_app
         self.master.bind("<Command-w>", self.on_btn_fechar)
         self.master.focus()
         self.num_contacto = num_contacto
@@ -50,6 +51,20 @@ class contactDetailWindow(ttk.Frame):
         self.atualizar_soma()
         self.alternar_cores(self.tree)
 
+    def _on_criar_nova_reparacao(self, *event):
+        """ Cria uma nova reparação utilizando o contacto atual.
+        """
+        print("a criar nova reparacao para o contacto nº", self.num_contacto)
+
+        if self.contacto['is_cliente']:
+            self.estado_app.contacto_para_nova_reparacao = self.num_contacto
+            self.estado_app.tipo_novo_contacto = "Cliente"
+        elif self.contacto['is_fornecedor']:
+            self.estado_app.contacto_para_nova_reparacao = self.num_contacto
+            self.estado_app.tipo_novo_contacto = "Fornecedor"
+
+        self.estado_app.janela_principal.mostrar_painel_entrada()
+
 
     def montar_barra_de_ferramentas(self):
         self.lbl_titulo = ttk.Label(self.topframe, style="Panel_Title.TLabel",
@@ -71,9 +86,8 @@ class contactDetailWindow(ttk.Frame):
         # ----------- fim de Botão com menu "Copiar" -------------
 
         self.btn_nova_rep = ttk.Button(
-            self.topframe, text="Criar reparação", style="secondary.TButton", command=None)
-        self.dicas.bind(self.btn_nova_rep,
-                        'Criar um novo processo de reparação.')
+            self.topframe, text="Criar reparação", style="secondary.TButton", command=self._on_criar_nova_reparacao)
+        self.dicas.bind(self.btn_nova_rep, 'Criar um novo processo de reparação.')
 
         self.btn_guardar_alteracoes = ttk.Button(
             self.topframe, text="Guardar", style="secondary.TButton", command=None)

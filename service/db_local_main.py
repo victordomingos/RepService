@@ -9,7 +9,7 @@ import os
 
 from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import sessionmaker, load_only
-from typing import Dict, Tuple, List, Union
+from typing import Dict, Tuple, List, Union, Optional, Any
 
 import db_local_models as db_models
 
@@ -421,6 +421,44 @@ def obter_contacto(num_contacto: int) -> Dict[str, Union[int, str]]:
         'updated_on': contacto.updated_on.isoformat(sep=' ', timespec='minutes'),
         'criado_por_utilizador_nome': contacto.criado_por_utilizador.nome,
         'atualizado_por_utilizador_nome': contacto.atualizado_por_utilizador.nome}
+
+
+def obter_info_contacto(num_contacto: int, tipo:str) -> Optional[Dict[str, Union[str, Any]]]:
+    """ Obter informação resumida de um contacto, para utilização no
+        formulário de nova reparação. Caso não exista na base de dados um
+        contacto que corresponda aos dados introduzidos (cliente ou fornecedor
+        com o número indicado), a função devolve None.
+    """
+    s, _ = iniciar_sessao_db()
+
+    contacto = s.query(db_models.Contact).get(num_contacto)
+
+    if not contacto:
+        return None
+
+    if tipo == "Fornecedor":
+        if not contacto.is_fornecedor:
+            return None
+    elif tipo == "Cliente":
+        if not contacto.is_cliente:
+            return None
+    else:
+        return None
+
+    if contacto.telefone:
+        telefone = contacto.telefone
+    elif contacto.telemovel:
+        telefone = contacto.telemovel
+    elif contacto.telefone_empresa:
+        telefone = contacto.telefone_empresa + " (Empresa)"
+    else:
+        telefone = "N/D"
+    return {
+        'id': contacto.id,
+        'nome': contacto.nome,
+        'telefone': telefone,
+        'email': contacto.email
+        }
 
 
 # =============================== Remessas ===============================

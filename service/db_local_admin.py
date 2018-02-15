@@ -287,9 +287,9 @@ if __name__ == "__main__":
     lojas = 2
 
     utilizadores = lojas * 8
-    contactos = lojas * 750
-    artigos = lojas * 500
-    reps = lojas * 1000
+    contactos = lojas * 850
+    artigos = lojas * 600
+    reps = lojas * 3000
 
     test_populate(num_lojas=lojas,
                   num_utilizadores=utilizadores,

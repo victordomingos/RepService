@@ -25,9 +25,9 @@ else:
 class ContactsWindow(baseApp):
     """ base class for application """
 
-    def __init__(self, master, estado, pesquisar, *args, **kwargs):
+    def __init__(self, master, estado_app, pesquisar, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
-        self.estado = estado
+        self.estado_app = estado_app
         self.contacto_newDetailsWindow = {}
         self.contact_detail_windows_count = 0
         self.contacto_selecionado = None
@@ -48,7 +48,7 @@ class ContactsWindow(baseApp):
         self.composeFrames()
         self.atualizar_lista(db.obter_clientes())
 
-        if self.estado.painel_novo_contacto_aberto:
+        if self.estado_app.painel_novo_contacto_aberto:
             self.mostrar_painel_entrada()
         if pesquisar:
             self.clique_a_pesquisar()
@@ -135,14 +135,14 @@ class ContactsWindow(baseApp):
         self.topframe.columnconfigure(2, weight=1)
 
     def mostrar_painel_entrada(self, *event):
-        self.estado.painel_novo_contacto_aberto = True
+        self.estado_app.painel_novo_contacto_aberto = True
         #self.MenuFicheiro.entryconfig("Novo contacto", state="disabled")
         # root.unbind_all("<Command-t>")
         self.show_entryform()
         self.ef_ltxt_nome.entry.focus()
 
     def fechar_painel_entrada(self, *event):
-        self.estado.painel_novo_contacto_aberto = False
+        self.estado_app.painel_novo_contacto_aberto = False
         self.clear_text()
         self.hide_entryform()
         # root.bind_all("<Command-n>")
@@ -178,7 +178,7 @@ class ContactsWindow(baseApp):
         self.ef_var_tipo_is_cliente = tk.IntVar()
         self.ef_var_tipo_is_cliente.set(True)
         self.ef_var_tipo_is_fornecedor = tk.IntVar()
-        if self.estado.tipo_novo_contacto == "Fornecedor":
+        if self.estado_app.tipo_novo_contacto == "Fornecedor":
             self.ef_var_tipo_is_fornecedor.set(True)
             self.ef_var_tipo_is_cliente.set(False)
         #self.ef_var_tipo_is_loja = tk.IntVar()
@@ -293,21 +293,20 @@ class ContactsWindow(baseApp):
 
 
     def adicionar_contacto(self, *event):
-        """
-        Guarda o contacto acabado de criar. Caso o utilizador esteja a criar uma
-        reparação, adiciona o contacto ao campo correspondente.
+        """ Guarda o contacto acabado de criar. Caso o utilizador esteja a criar uma
+            reparação, adiciona o contacto ao campo correspondente.
         """
         # guardar na base de dados e obter o nº do último contacto adicionado
-        if self.estado.tipo_novo_contacto == "Cliente":
-            self.estado.contacto_para_nova_reparacao = "123"
+        if self.estado_app.tipo_novo_contacto == "Cliente":
+            self.estado_app.contacto_para_nova_reparacao = "123"
             self.mostrar_clientes()
-            if self.estado.painel_nova_reparacao_aberto:
-                self.estado.janela_principal.close_window_contactos()
+            if self.estado_app.painel_nova_reparacao_aberto:
+                self.estado_app.janela_principal.close_window_contactos()
             # preencher o campo do nº de cliente com o último contacto de cliente criado; depois atribuir foco ao formulário da reparação e fechar a janela
-        elif self.estado.tipo_novo_contacto == "Fornecedor":
+        elif self.estado_app.tipo_novo_contacto == "Fornecedor":
             self.mostrar_fornecedores()
-            if self.estado.painel_nova_reparacao_aberto:
-                self.estado.janela_principal.close_window_contactos()
+            if self.estado_app.painel_nova_reparacao_aberto:
+                self.estado_app.janela_principal.close_window_contactos()
             # preencher o campo do nº de fornecedor com o último contacto de fornecedor criado; depois atribuir foco ao formulário da reparação e fechar a janela
         else:
             print("guardar e nao fazer mais nada")
@@ -376,10 +375,9 @@ class ContactsWindow(baseApp):
             f'Detalhe de contacto: {num_contacto}')
         self.janela_detalhes_contacto = contactDetailWindow(
             self.contacto_newDetailsWindow[self.contact_detail_windows_count],
-            num_contacto
-        )
-        self.contacto_newDetailsWindow[self.contact_detail_windows_count].focus(
-        )
+            num_contacto,
+            self.estado_app)
+        self.contacto_newDetailsWindow[self.contact_detail_windows_count].focus()
 
     def liga_desliga_menu_novo(self, *event):
         """
@@ -388,11 +386,11 @@ class ContactsWindow(baseApp):
         que o painel se feche inadvertidamente.
         """
         if self.is_entryform_visible:
-            self.estado.janela_principal.MenuFicheiro.entryconfigure("Novo contacto", state="disabled")
+            self.estado_app.janela_principal.MenuFicheiro.entryconfigure("Novo contacto", state="disabled")
             # TODO - corrigir bug: o atalho de teclado só fica realmente inativo depois de acedermos ao menu ficheiro. Porquê??
             # root.unbind_all("<Command-Option-n>")
         else:
-            self.estado.janela_principal.MenuFicheiro.entryconfigure("Novo contacto", state="active")
+            self.estado_app.janela_principal.MenuFicheiro.entryconfigure("Novo contacto", state="active")
             # root.bind_all("<Command-Option-n>")
 
     def on_save_contact(self, event=None):

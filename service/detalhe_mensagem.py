@@ -23,10 +23,11 @@ else:
 class msgDetailWindow(ttk.Frame):
     """ Classe de base para a janela de detalhes de mensagem """
 
-    def __init__(self, master, num_mensagem, *args, **kwargs):
+    def __init__(self, master, num_mensagem, estado_app, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.num_mensagem = num_mensagem
         self.master = master
+        self.estado_app = estado_app
         self.mensagem = db.obter_evento(num_mensagem)
         self.master.bind("<Command-w>", self.on_btn_fechar)
 
@@ -55,7 +56,7 @@ class msgDetailWindow(ttk.Frame):
         """
         self.rep_DetailsWindow = tk.Toplevel()
         self.janela_detalhes_rep = repairDetailWindow(
-            self.rep_DetailsWindow, self.num_rep)
+            self.rep_DetailsWindow, self.num_rep, self.estado_app)
 
     def on_btn_apagar_msg(self, event):
         """ Apaga a mensagem (remove-a da lista de mensagens) e fecha esta
