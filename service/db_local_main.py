@@ -48,7 +48,7 @@ def get_user_id(username: str) -> int:
         username.
     """
     s, _ = iniciar_sessao_db()
-    utilizador = s.query(db_models.User).filter(db_models.User.nome==username).one()
+    utilizador = s.query(db_models.User.id).filter(db_models.User.nome==username).one()
     return utilizador.id
 
 
@@ -97,40 +97,53 @@ def contar_remessas() -> int:
 
 
 def obter_todas_reparacoes() -> List[Dict[str, Union[int, str]]]:
+    """ Obtém lista de dicionários contendo todas as reparações, para preencher
+        a tabela principal (inclui apenas os campos necessários).
+    """
     s, _ = iniciar_sessao_db()
-    reps = s.query(db_models.Repair).all()
-    repair_list = [{'id': rep.id,
-                    'cliente_nome': rep.cliente.nome,
-                    'descr_artigo': rep.product.descr_product,
-                    'sn': rep.sn,
-                    'descr_servico': rep.descr_servico,
-                    'estado': rep.estado_reparacao,
-                    'dias': calcular_dias_desde(rep.created_on),
-                    'prioridade': rep.prioridade}
-                   for rep in reps]
 
-    return repair_list
+    return [{'id': rep.id,
+             'cliente_nome': rep.cliente.nome,
+             'descr_artigo': rep.product.descr_product,
+             'sn': rep.sn,
+             'descr_servico': rep.descr_servico,
+             'estado': rep.estado_reparacao,
+             'dias': calcular_dias_desde(rep.created_on),
+             'prioridade': rep.prioridade}
+            for rep in s.query(db_models.Repair)]
 
 
 def obter_reparacoes_por_estados(status_list: List[int]) -> List[Dict[str, Union[int, str]]]:
+    """ Obtem lista de dicionários contendo todas as reparações que se
+        encontram num dado estado, para preencher a tabela principal (inclui
+        apenas os campos necessários).
+    """
     s, _ = iniciar_sessao_db()
-    reparacoes = s.query(db_models.Repair).filter(db_models.Repair.estado_reparacao.in_(status_list))
-    reps = reparacoes.all()
 
-    repair_list = [{'id': rep.id,
-                    'cliente_nome': rep.cliente.nome,
-                    'descr_artigo': rep.product.descr_product,
-                    'sn': rep.sn,
-                    'descr_servico': rep.descr_servico,
-                    'estado': rep.estado_reparacao,
-                    'dias': calcular_dias_desde(rep.created_on),
-                    'prioridade': rep.prioridade}
-                   for rep in reps]
+    if not status_list:
+        return obter_todas_reparacoes()
 
-    return repair_list
+    reparacoes = s.query(db_models.Repair) \
+                         .filter(db_models.Repair.estado_reparacao.in_(status_list))
+
+    return [{'id': rep.id,
+            'cliente_nome': rep.cliente.nome,
+            'descr_artigo': rep.product.descr_product,
+            'sn': rep.sn,
+            'descr_servico': rep.descr_servico,
+            'estado': rep.estado_reparacao,
+            'dias': calcular_dias_desde(rep.created_on),
+            'prioridade': rep.prioridade}
+           for rep in reparacoes]
 
 
 def pesquisar_reparacoes(txt_pesquisa: str, estados: List[int]=None) -> List[Dict[str, Union[int, str]]]:
+    """ Obtem lista de dicionários contendo todas as reparações que se
+        correspondem ao termos de pesquisa indicado e que se encontram num
+        dado estado, para preencher a tabela principal (inclui apenas os
+        campos necessários). Para permitir um melhor desempenho, apenas é
+        mostrada uma parte dos registos.
+    """
     s, _ = iniciar_sessao_db()
 
     if estados is None:
@@ -167,124 +180,130 @@ def pesquisar_reparacoes(txt_pesquisa: str, estados: List[int]=None) -> List[Dic
                                  db_models.Repair.notas.ilike(termo_pesquisa),
                                  db_models.Repair.num_fatura.ilike(termo_pesquisa),
                                  db_models.Repair.sn.ilike(termo_pesquisa)
-                        ))).all()
+                        ))) \
+                .order_by(db_models.Repair.created_on)[:1000]
 
-    repair_list = [{'id': rep[0].id,
-                    'cliente_nome': rep[1].nome,
-                    'descr_artigo': rep[2].descr_product,
-                    'sn': rep[0].sn,
-                    'descr_servico': rep[0].descr_servico,
-                    'estado': rep[0].estado_reparacao,
-                    'dias': calcular_dias_desde(rep[0].created_on),
-                    'prioridade': rep[0].prioridade}
-                   for rep in reps]
-    return repair_list
+    return [{'id': rep[0].id,
+              'cliente_nome': rep[1].nome,
+              'descr_artigo': rep[2].descr_product,
+              'sn': rep[0].sn,
+              'descr_servico': rep[0].descr_servico,
+              'estado': rep[0].estado_reparacao,
+              'dias': calcular_dias_desde(rep[0].created_on),
+              'prioridade': rep[0].prioridade}
+            for rep in reps]
 
 
 def _obter_reparacao(num_rep: int):
     """ Returns a Repair object.
     """
     s, _ = iniciar_sessao_db()
-    reparacao = s.query(db_models.Repair).get(num_rep)
-    return reparacao
+    return s.query(db_models.Repair).get(num_rep)
 
 
-def obter_reparacao(num_rep: int) -> List[Dict[str, Union[int, str]]]:
-    """ 
+def obter_reparacao(num_rep: int) -> Dict[str, Union[int, str]]:
+    """ Obtém um dicionário contendo a informação referente a uma reparação
+        (inclui os campos necessários para preencher a janela de detalhes
+        de reparação).
     """
     rep = _obter_reparacao(num_rep)
+    return {'id': rep.id,
+            'cliente_id': rep.cliente.id,
+            'cliente_nome': rep.cliente.nome,
+            'cliente_telefone': rep.cliente.telefone,
+            'cliente_email': rep.cliente.email,
+            'product_id': rep.product.id,
+            'product_descr': rep.product.descr_product,
+            'product_part_number': rep.product.part_number,
+            'sn': rep.sn,
+            'fornecedor_id': rep.fornecedor_id,
+            'estado_artigo': rep.estado_artigo,
+            'obs_estado': rep.obs_estado,
+            'is_garantia': rep.is_garantia,
+            'data_compra': rep.data_compra,
+            'num_fatura': rep.num_fatura,
+            'loja_compra': rep.loja_compra,
+            'descr_servico': rep.descr_servico,
+            'avaria_reprod_loja': rep.avaria_reprod_loja,
+            'requer_copia_seg': rep.requer_copia_seg,
+            'is_find_my_ativo': rep.is_find_my_ativo,
+            'senha': rep.senha,
+            'acessorios_entregues': rep.acessorios_entregues,
+            'notas': rep.notas,
+            'local_reparacao_id': rep.local_reparacao_id,
+            'estado_reparacao': rep.estado_reparacao,
+            'fatura_fornecedor': rep.fatura_fornecedor,
+            'nar_autorizacao_rep': rep.nar_autorizacao_rep,
+            'data_fatura_fornecedor': rep.data_fatura_fornecedor,
+            'num_guia_rececao': rep.num_guia_rececao,
+            'data_guia_rececao': rep.data_guia_rececao,
+            'cod_resultado_reparacao': rep.cod_resultado_reparacao,
+            'descr_detalhe_reparacao': rep.descr_detalhe_reparacao,
+            'novo_sn_artigo': rep.novo_sn_artigo,
+            'notas_entrega': rep.notas_entrega,
+            'utilizador_entrega_id': rep.utilizador_entrega_id,
+            'data_entrega': rep.data_entrega,
+            'num_quebra_stock': rep.num_quebra_stock,
+            'is_rep_stock': rep.is_stock,
+            'is_rep_cliente': not rep.is_stock,
+            'modo_entrega': rep.modo_entrega,
+            'cliente_pagou_portes': rep.cliente_pagou_portes,
+            'reincidencia_processo_id': rep.reincidencia_processo_id,
+            'morada_entrega': rep.morada_entrega,
+            'prioridade': rep.prioridade,
+            'criado_por_utilizador_id': rep.criado_por_utilizador_id,
+            'ult_atualizacao_por_utilizador_id': rep.ult_atualizacao_por_utilizador_id,
 
-    reparacao_dict = {'id': rep.id,
-                    'cliente_id': rep.cliente.id,
-                    'cliente_nome': rep.cliente.nome,
-                    'cliente_telefone': rep.cliente.telefone,
-                    'cliente_email': rep.cliente.email,
-                    'product_id': rep.product.id,
-                    'product_descr': rep.product.descr_product,
-                    'product_part_number': rep.product.part_number,
-                    'sn': rep.sn,
-                    'fornecedor_id': rep.fornecedor_id,
-                    'estado_artigo': rep.estado_artigo,
-                    'obs_estado': rep.obs_estado,
-                    'is_garantia': rep.is_garantia,
-                    'data_compra': rep.data_compra,
-                    'num_fatura': rep.num_fatura,
-                    'loja_compra': rep.loja_compra,
-                    'descr_servico': rep.descr_servico,
-                    'avaria_reprod_loja': rep.avaria_reprod_loja,
-                    'requer_copia_seg': rep.requer_copia_seg,
-                    'is_find_my_ativo': rep.is_find_my_ativo,
-                    'senha': rep.senha,
-                    'acessorios_entregues': rep.acessorios_entregues,
-                    'notas': rep.notas,
-                    'local_reparacao_id': rep.local_reparacao_id,
-                    'estado_reparacao': rep.estado_reparacao,
-                    'fatura_fornecedor': rep.fatura_fornecedor,
-                    'nar_autorizacao_rep': rep.nar_autorizacao_rep,
-                    'data_fatura_fornecedor': rep.data_fatura_fornecedor,
-                    'num_guia_rececao': rep.num_guia_rececao,
-                    'data_guia_rececao': rep.data_guia_rececao,
-                    'cod_resultado_reparacao': rep.cod_resultado_reparacao,
-                    'descr_detalhe_reparacao': rep.descr_detalhe_reparacao,
-                    'novo_sn_artigo': rep.novo_sn_artigo,
-                    'notas_entrega': rep.notas_entrega,
-                    'utilizador_entrega_id': rep.utilizador_entrega_id,
-                    'data_entrega': rep.data_entrega,
-                    'num_quebra_stock': rep.num_quebra_stock,
-                    'is_rep_stock': rep.is_stock,
-                    'is_rep_cliente': not rep.is_stock,
-                    'modo_entrega': rep.modo_entrega,
-                    'cliente_pagou_portes': rep.cliente_pagou_portes,
-                    'reincidencia_processo_id': rep.reincidencia_processo_id,
-                    'morada_entrega': rep.morada_entrega,
-                    'prioridade': rep.prioridade,
-                    'criado_por_utilizador_id': rep.criado_por_utilizador_id,
-                    'ult_atualizacao_por_utilizador_id': rep.ult_atualizacao_por_utilizador_id,
+            'created_on': rep.created_on,
+            'updated_on': rep.updated_on,
 
-                    'created_on': rep.created_on,
-                    'updated_on': rep.updated_on,
-
-                    'fornecedor': rep.fornecedor,
-                    'local_reparacao': rep.local_reparacao,
-                    'utilizador_entrega': rep.utilizador_entrega,
-                    'criado_por_utilizador': rep.criado_por_utilizador,
-                    'atualizado_por_utilizador': rep.atualizado_por_utilizador
-                   }
-    return reparacao_dict
-
+            'fornecedor': rep.fornecedor,
+            'local_reparacao': rep.local_reparacao,
+            'utilizador_entrega': rep.utilizador_entrega,
+            'criado_por_utilizador': rep.criado_por_utilizador,
+            'atualizado_por_utilizador': rep.atualizado_por_utilizador
+            }
 
 
 # =============================== Mensagens/Eventos ===============================
 
 def obter_mensagens(user_id: int) -> List[Dict[str, Union[int, str]]]:
+    """ Obtém lista de dicionários contendo todas as mensagens visíveis, para
+        o utilizador atual, para apresentar na janela principal (inclui apenas
+        os campos necessários).
+    """
+
     s, _ = iniciar_sessao_db()
     utilizador = s.query(db_models.User).get(user_id)
 
     msgs = s.query(db_models.UtilizadorNotificadoPorEvento_link) \
-                        .filter_by(is_visible=1, user=utilizador).all()
+                        .filter_by(is_visible=1, user=utilizador)
 
-    msgs_list = [{'evento_id': msg.evento_id,
-                  'repair_id': msg.event.repair.id,
-                  'remetente_nome': msg.event.criado_por_utilizador.nome,
-                  'data': msg.event.created_on,
-                  'texto': msg.event.descricao,
-                  'estado_msg': msg.is_open}
-                 for msg in msgs]
-    return msgs_list
+    return [{'evento_id': msg.evento_id,
+             'repair_id': msg.event.repair.id,
+             'remetente_nome': msg.event.criado_por_utilizador.nome,
+             'data': msg.event.created_on,
+             'texto': msg.event.descricao,
+             'estado_msg': msg.is_open}
+            for msg in msgs]
 
 
-def obter_evento(event_id: int) -> List[Dict[str, Union[int, str]]]:
+def obter_evento(event_id: int) -> Dict[str, Union[int, str]]:
+    """ Obtém um dicionário contendo a informação referente a uma mensagem ou
+        evento (inclui os campos necessários para preencher a janela de detalhes
+        de mensagem/evento).
+    """
     s, _ = iniciar_sessao_db()
     evento = s.query(db_models.Event).get(event_id)
-    event_dict = {'repair_id': evento.repair.id,
-                  'cliente_nome': evento.repair.cliente.nome,
-                  'remetente_nome': evento.criado_por_utilizador.nome,
-                  'artigo': evento.repair.product.descr_product,
-                  'data': evento.created_on,
-                  'texto': evento.descricao,
-                  'estado_atual': evento.repair.estado_reparacao,
-                  'resultado': evento.repair.cod_resultado_reparacao}
-    return event_dict
+
+    return {'repair_id': evento.repair.id,
+            'cliente_nome': evento.repair.cliente.nome,
+            'remetente_nome': evento.criado_por_utilizador.nome,
+            'artigo': evento.repair.product.descr_product,
+            'data': evento.created_on,
+            'texto': evento.descricao,
+            'estado_atual': evento.repair.estado_reparacao,
+            'resultado': evento.repair.cod_resultado_reparacao}
 
 
 # =============================== Contactos ===============================
@@ -299,6 +318,7 @@ def pesquisar_contactos(txt_pesquisa: str="", tipo: str ="Clientes"):
 
     termo_pesquisa = txt_pesquisa
 
+    numeric = False
     for c in txt_pesquisa:
         if c in "1234567890.":
             numeric = True
@@ -323,7 +343,7 @@ def pesquisar_contactos(txt_pesquisa: str="", tipo: str ="Clientes"):
                 db_models.Contact.telefone.ilike(termo_pesquisa),
                 db_models.Contact.telemovel.ilike(termo_pesquisa),
                 db_models.Contact.email.ilike(termo_pesquisa),
-        ))).all()
+        )))
     else:
         contactos = s.query(db_models.Contact).filter(
         and_(db_models.Contact.is_fornecedor.is_(True),
@@ -333,56 +353,53 @@ def pesquisar_contactos(txt_pesquisa: str="", tipo: str ="Clientes"):
                 db_models.Contact.telefone.ilike(termo_pesquisa),
                 db_models.Contact.telemovel.ilike(termo_pesquisa),
                 db_models.Contact.email.ilike(termo_pesquisa),
-        ))).all()
-    contact_list = [{'id': contact.id,
-                     'nome': contact.nome,
-                     'telefone': contact.telefone,
-                     'email': contact.email}
-                   for contact in contactos]
+        )))
 
-    return contact_list
+    return [{'id': contact.id,
+             'nome': contact.nome,
+             'telefone': contact.telefone,
+             'email': contact.email}
+            for contact in contactos]
 
 
 def obter_clientes() -> List[Dict[str, Union[int, str]]]:
     s, _ = iniciar_sessao_db()
-    contactos = s.query(db_models.Contact).filter_by(is_cliente=True).all()
-    contact_list = [{'id': contact.id,
-                     'nome': contact.nome,
-                     'telefone': contact.telefone,
-                     'email': contact.email}
-                   for contact in contactos]
-
-    return contact_list
+    contactos = s.query(db_models.Contact).filter_by(is_cliente=True)
+    return [{'id': contact.id,
+             'nome': contact.nome,
+             'telefone': contact.telefone,
+             'email': contact.email}
+            for contact in contactos]
 
 
 def obter_fornecedores() -> List[Dict[str, Union[int, str]]]:
     s, _ = iniciar_sessao_db()
-    contactos = s.query(db_models.Contact).filter_by(is_fornecedor=True).all()
-    contact_list = [{'id': contact.id,
-                     'nome': contact.nome,
-                     'telefone': contact.telefone,
-                     'email': contact.email}
-                   for contact in contactos]
-
-    return contact_list
+    contactos = s.query(db_models.Contact).filter_by(is_fornecedor=True) \
+                        .options(load_only("id", "nome", "telefone", "email"))
+    return [{'id': contact.id,
+             'nome': contact.nome,
+             'telefone': contact.telefone,
+             'email': contact.email}
+            for contact in contactos]
 
 
 def obter_lista_fornecedores() -> List[Dict[str, Union[int, str]]]:
     """ Obter lista simplificada de fornecedores e/ou centros técnicos.
     """
     s, _ = iniciar_sessao_db()
-    contactos = s.query(db_models.Contact).filter_by(is_fornecedor=True).\
-        options(load_only("id", "nome")).all()
-    fornecedores_list = [{'id': contact.id, 'nome': contact.nome}
-                         for contact in contactos]
-    return fornecedores_list
+    contactos = s.query(db_models.Contact).filter_by(is_fornecedor=True)\
+                        .options(load_only("id", "nome"))
+
+    return [{'id': contact.id,
+             'nome': contact.nome}
+            for contact in contactos]
 
 
-def obter_contacto(num_contacto: int) -> List[Dict[str, Union[int, str]]]:
+def obter_contacto(num_contacto: int) -> Dict[str, Union[int, str]]:
     s, _ = iniciar_sessao_db()
     contacto = s.query(db_models.Contact).get(num_contacto)
 
-    this_contact = {
+    return {
         'id': contacto.id,
         'nome': contacto.nome,
         'empresa': contacto.empresa,
@@ -404,8 +421,6 @@ def obter_contacto(num_contacto: int) -> List[Dict[str, Union[int, str]]]:
         'updated_on': contacto.updated_on.isoformat(sep=' ', timespec='minutes'),
         'criado_por_utilizador_nome': contacto.criado_por_utilizador.nome,
         'atualizado_por_utilizador_nome': contacto.atualizado_por_utilizador.nome}
-
-    return this_contact
 
 
 # =============================== Remessas ===============================

@@ -12,17 +12,19 @@ uma intervenção em conformidade.
 Desenvolvido em Python 3 por Victor Domingos (http://victordomingos.com), com
 muitas noites em claro, a partir de uma ideia original de Márcio Araújo.
 
-© 2017 Victor Domingos, Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+© 2018 Victor Domingos, Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
+
+import textwrap
+import webbrowser
+import sys
 import tkinter as tk
 import tkinter.font
 from tkinter import ttk, messagebox
 from tkinter.scrolledtext import ScrolledText
 from string import ascii_letters
-
-import textwrap
-import webbrowser
-import sys  # For Atom compatibility
+from threading import Thread
+from queue import Queue
 
 import about_window, contactos, remessas, detalhe_reparacao, detalhe_mensagem
 import imprimir
@@ -633,7 +635,7 @@ class App(baseApp):
             keystr = '<KeyRelease-' + char + '>'
             self.text_input_pesquisa.bind(keystr, self.mostrar_pesquisa)
         self.text_input_pesquisa.bind('<Button-1>', self.clique_a_pesquisar_reps)
-        self.text_input_pesquisa.bind('<KeyRelease-Escape>', self.cancelar_pesquisa)
+        self.text_input_pesquisa.bind('<KeyRelease-Escape>', self._on_sair_da_pesquisa)
         self.text_input_pesquisa.bind('<Command-a>', lambda x: self.text_input_pesquisa.select_range(0, tk.END))
 
 
@@ -1416,9 +1418,12 @@ class App(baseApp):
             pass # TODO: procedimentos de entrega (registo do serviço realizado, verificar se há equipamentos emprestados, gerar documentos para impressão...)
 
 
-    def _on_repair_view_select(self, *event, status_list=[]):
-        self.text_input_pesquisa.delete(0, tk.END)
-        if len(status_list) == 0:
+    def _on_repair_view_select(self, *event, status_list=None):
+        self.cancelar_pesquisa()
+        if not status_list:
+            status_list = []
+
+        if not status_list:
             reparacoes = db.obter_todas_reparacoes()
             self.mbtn_mostrar.configure(text="Todos os processos")
         else:
@@ -1434,6 +1439,11 @@ class App(baseApp):
         self.atualizar_lista(reparacoes)
 
 
+    def obter_todas_reparacoes(self):
+        print("a atualizar...")
+        self.atualizar_lista(db.obter_todas_reparacoes())
+
+
     def clique_a_pesquisar_contactos(self, *event):
         self.create_window_contacts(criar_novo_contacto=None, pesquisar=True)
 
@@ -1443,9 +1453,14 @@ class App(baseApp):
         self.my_statusbar.set("Por favor, introduza o texto a pesquisar na base de dados.")
 
 
-    def cancelar_pesquisa(self, event):
-        self.tree.focus_set()
+    def _on_sair_da_pesquisa(self, event):
+        self.cancelar_pesquisa()
         self._on_repair_view_select(None, status_list=self.last_selected_view_repair_list)
+
+
+    def cancelar_pesquisa(self):
+        self.text_input_pesquisa.delete(0, tk.END)
+        self.tree.focus_set()
 
 
     def mostrar_pesquisa(self, *event):
@@ -1454,14 +1469,15 @@ class App(baseApp):
 
         # regressar ao campo de pesquisa caso não haja texto a pesquisar (resolve questão do atalho de teclado)
 
-        if termo_pesquisa == "":
-            estados = list(ESTADOS.keys())
-            reparacoes = db.obter_reparacoes_por_estados(self.last_selected_view_repair_list)
-            self.atualizar_lista(reparacoes)
+        if len(termo_pesquisa) < 1:
+        #    reparacoes = db.obter_reparacoes_por_estados(self.last_selected_view_repair_list)
+        #    self.atualizar_lista(reparacoes)
             return
         elif (len(termo_pesquisa) < 4) and not self.isNumeric(termo_pesquisa):
             return
-
+        else:
+            print("Else:", termo_pesquisa, self.isNumeric(termo_pesquisa))
+        print(termo_pesquisa, len(termo_pesquisa))
         self.my_statusbar.clear()
         self.my_statusbar.set(f"A pesquisar: {termo_pesquisa}")
 
@@ -1472,7 +1488,6 @@ class App(baseApp):
             estados = self.last_selected_view_repair_list
 
         reparacoes = db.pesquisar_reparacoes(termo_pesquisa, estados=estados)
-
         self.atualizar_lista(reparacoes)
 
         self.nprocessos = len(reparacoes)
@@ -1587,10 +1602,10 @@ class App(baseApp):
             lambda estados=PROCESSOS_FINALIZADOS:
                 self._on_repair_view_select(None, status_list=PROCESSOS_FINALIZADOS))
         self.menuMostraProcessos.add_command(label="Todos os processos",
-            command=lambda estados=[]:self._on_repair_view_select(None, status_list=[]),
+            command=lambda estados=[]:self._on_repair_view_select(None, status_list=None),
             accelerator="Command-6")
         self.menuVis.bind_all("<Command-KeyPress-6>",
-            lambda estados=[]:self._on_repair_view_select(None, status_list=[]))
+            lambda estados=[]:self._on_repair_view_select(None, status_list=None))
         self.menuMostraProcessos.add_separator()
 
         for estado in ESTADOS:
@@ -1803,6 +1818,7 @@ class App(baseApp):
         self.alternar_cores(self.tree)
 
 
+
 def restart_program():
     """Restarts the current program.
     Note: this function does not return. Any cleanup action (like
@@ -1812,9 +1828,6 @@ def restart_program():
 
 
 if __name__ == "__main__":
-    # sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')  # For Atom compatibility
-    # sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
-    # # For Atom compatibility
     estado = AppStatus()
     root = tk.Tk()
     estado.janela_principal = App(root)

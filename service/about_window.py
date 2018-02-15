@@ -112,19 +112,14 @@ class about_window:
         self.version_lbl = ttk.Label(
             self.pframe_topo, font=self.copyfont, text="Versão {}\n\n\n".format(__version__))
 
-
-        db_rep_count = db.contar_reparacoes()
         self.lbl_rep_count = ttk.Label(self.pframe_topo, font=self.copyfont,
-            text=f"Reparações: {db_rep_count}")
+            text=f"Reparações: {db.contar_reparacoes()}")
 
-        db_contact_count = db.contar_contactos()
         self.lbl_contact_count = ttk.Label(self.pframe_topo, font=self.copyfont,
-            text=f"Contactos: {db_contact_count}")
+            text=f"Contactos: {db.contar_contactos()}")
 
-        db_remessas_count = db.contar_remessas()
         self.lbl_remessas_count = ttk.Label(self.pframe_topo, font=self.copyfont,
-            text=f"Remessas: {db_remessas_count}")
-
+            text=f"Remessas: {db.contar_remessas()}")
 
         db_filesize = os.path.getsize(os.path.expanduser(LOCAL_DATABASE_PATH)) >> 10
         self.lbl_filesize = ttk.Label(self.pframe_topo, font=self.copyfont, 

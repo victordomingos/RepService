@@ -440,12 +440,14 @@ class repairDetailWindow(ttk.Frame):
 
             self.lbl_varias_linhas.grid(
                 column=4, row=9, columnspan=2, rowspan=4, sticky='wen', padx=4)
+
             """
             self.lbl_avaria_reprod_loja.grid(column=4, row=8, columnspan=2, sticky='we', padx=4)
             self.lbl_efetuar_copia.grid(column=4, row=9, columnspan=2, sticky='we', padx=4)
             self.lbl_find_my.grid(column=4, row=10, columnspan=2, sticky='we', padx=4)
             self.lbl_modo_entrega.grid(column=4, row=11, columnspan=2, sticky='we', padx=4)
             """
+
             ttk.Separator(self.geral_fr2).grid(
                 column=0, row=13, columnspan=5, sticky='we', pady=10)
 
