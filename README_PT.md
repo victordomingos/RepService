@@ -34,6 +34,6 @@ O desenvolvimento e testes têm sido realizados apenas em Mac, no entanto dever�
 ## Como usar
 Neste momento, é possível configurar alguns parâmetros da aplicação (tamanho e localização predefinida das janelas, redução de efeitos de animação para computadores mais lentos, localização do ficheiro de base de dados - apenas base de dados local sqlite presentemente!), alterando as constantes definidas no módulo `service/global_setup.py`.
 
-Antes da primeira utilização, é necessário inicializar a base de dados. Durante esta fase de desenvolvimento inicial, o módulo `service/db_local_main.py` pode ser executado diretamente, por forma a gerar uma pequena base de dados de exemplo, preenchida com informação fictícia.
+Antes da primeira utilização, é necessário inicializar a base de dados. Durante esta fase de desenvolvimento inicial, o módulo `service/db_local_admin.py` pode ser executado diretamente, por forma a gerar uma pequena base de dados de exemplo, preenchida com informação fictícia.
 
 Para iniciar a aplicação, basta executar o ficheiro `service/service.py` com o interpretador Python 3.6 ou superior. O utilizador predefinido é `npk` com a senha `...` (sim, ninguém no mundo se lembraria algum dia de uma senha tão segura).
