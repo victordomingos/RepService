@@ -3,6 +3,15 @@
 Histórico de versões:
 ====================
 
+---
+v.0.19 - 28/02/2018
+ * O botão "Criar reparação" na janela de detalhes de contacto já funciona.
+ * Ao sair do campo do número de contacto, o nome do cliente/fornecedor e a
+   informação de contacto são preenchidos automaticamente. Caso não exista
+   cliente ou fornecedor com o número indicado, é dada ao utilizador a opção
+   de criar um novo contacto.
+ *
+ *
 
 ---
 v.0.18 - 14/02/2018 - A comemorar 1 ano de desenvolvimento(s).
