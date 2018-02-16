@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3
 # encoding: utf-8
 """
 Este módulo é parte integrante da aplicação Promais Service, desenvolvida por
@@ -16,3 +16,8 @@ def calcular_dias_desde(data):
     hoje = datetime.today()
     diferenca = hoje - data
     return diferenca.days   # nº de dias que já passaram
+
+def txt_para_data(txt: str) -> datetime:
+    if not str.strip:
+        return None
+    return datetime.strptime(txt, '%d-%m-%Y')

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3
 # encoding: utf-8
 """
 Este módulo é parte integrante da aplicação Promais Service, desenvolvida por
@@ -21,11 +21,25 @@ from global_setup import LOCAL_DATABASE_PATH, ESTADOS, ENTREGUE, PRIORIDADES, RE
 
 
 def delete_database():
+    print("  - A apagar as tabelas existentes.")
     _, engine = db.iniciar_sessao_db()
     db_base.Base.metadata.drop_all(engine)
 
 
+def vacuum_db():
+    print('  - A "aspirar" a base de dados.')
+    import sqlalchemy
+    engine = sqlalchemy.create_engine('sqlite:///' + LOCAL_DATABASE_PATH)
+    con = engine.raw_connection()
+    cursor = con.cursor()
+    command = "VACUUM"
+    cursor.execute(command)
+    con.commit()
+    cursor.close()
+
+
 def init_database():
+    print("  - A (re)criar as tabelas necessárias.")
     _, engine = db.iniciar_sessao_db()
     db_base.Base.metadata.create_all(engine)
 
@@ -36,14 +50,14 @@ def init_database():
 
 def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=1, num_reparacoes=1):
     s, _ = db.iniciar_sessao_db()
-    print("A inserir dados de exemplo na base de dados.\n")
+    print("\nA inserir dados de exemplo na base de dados.")
 
     for i in range(num_lojas):
         print(f"{'  - A inserir lojas...'.ljust(55)}{i+1:7}", end="\r")
         loja = db_models.Loja(nome=f"That Great NPK Store #{str(i)}")
         s.add(loja)
 
-    s.commit()
+    #s.commit()
 
     print("")
     lojas = s.query(db_models.Loja)
@@ -56,7 +70,7 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
         utilizador = db_models.User(nome="utilizador" + str(i), email="test@networkprojectforknowledge.org" + str(i), password="abc1234567", loja=lojinha)
         s.add(utilizador)
 
-    s.commit()
+    #s.commit()
 
 
     print("")
@@ -104,7 +118,7 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
             atualizado_por_utilizador = atualizado_por_utilizador)
         s.add(contacto)
 
-    s.commit()
+    #s.commit()
 
 
     print("")
@@ -118,7 +132,7 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
         artigo = db_models.Product(descr_product=choice(artigos), part_number="NPKPN662"+str(i)+"ZQ"+str(i))
         s.add(artigo)
 
-    s.commit()
+    #s.commit()
 
     print("")
     contactos = s.query(db_models.Contact).all()
@@ -180,7 +194,7 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
             criado_por_utilizador = utilizadores[i%num_utilizadores])
         s.add(reparacao)
 
-    s.commit()
+    #s.commit()
 
 
     print("")
@@ -225,9 +239,6 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
                 break
 
     s.commit()
-
-    db_filesize = os.path.getsize(os.path.expanduser(LOCAL_DATABASE_PATH)) >> 10
-    print(f"\n\nOperação terminada.\nTamanho atual da base de dados: {db_filesize/1024:.1f}MB\n")
 
 
 def print_database():
@@ -281,7 +292,16 @@ def print_database():
 
 if __name__ == "__main__":
     # Testing...
+
+    try:
+        db_filesize = os.path.getsize(os.path.expanduser(LOCAL_DATABASE_PATH)) >> 10
+        print(f"\nEncontrado ficheiro de dase de dados (tamanho atual: {db_filesize/1024:.1f}MB)")
+    except:
+        print("\nNão foi encontrado nenhum ficheiro de base de dados. A criar um novo.")
+
+    print("\nA preparar o ficheiro de base de dados...")
     delete_database()
+    vacuum_db()
     init_database()
 
     lojas = 2
@@ -297,3 +317,5 @@ if __name__ == "__main__":
                   num_artigos=artigos,
                   num_reparacoes=int(reps))
     #print_database()
+    db_filesize = os.path.getsize(os.path.expanduser(LOCAL_DATABASE_PATH)) >> 10
+    print(f"\n\nOperação terminada.\nTamanho atual da base de dados: {db_filesize/1024:.1f}MB")

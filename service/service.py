@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3
 # encoding: utf-8
 """
 Aplicação de base de dados para registo de processos de garantia e reparações.
@@ -17,7 +17,6 @@ muitas noites em claro, a partir de uma ideia original de Márcio Araújo.
 
 import textwrap
 import webbrowser
-import sys
 import tkinter as tk
 import tkinter.font
 from tkinter import ttk, messagebox
@@ -30,6 +29,7 @@ import about_window, contactos, remessas, detalhe_reparacao, detalhe_mensagem
 import imprimir
 from base_app import baseApp, AppStatus
 from extra_tk_classes import LabelEntry, LabelText
+from misc import txt_para_data
 from global_setup import *
 
 if USE_LOCAL_DATABASE:
@@ -822,25 +822,28 @@ class App(baseApp):
     def abrir_painel_mensagens(self, *event):
         root.update_idletasks()
         if estado_app.painel_mensagens_aberto == False:
+            estado_app.painel_mensagens_aberto = True
             self.mensagens_frame.pack()
             self.messagepane.pack(side='top', expand=True, fill='both')
             self.rightframe.grid()
             self.alternar_cores(self.msgtree, inverso=False, fundo1='grey96')
             self.atualizar_soma_msgs()
-            estado_app.painel_mensagens_aberto = True
         else:
             self.fechar_painel_mensagens()
 
     def fechar_painel_mensagens(self, *event):
         root.update_idletasks()
+        estado_app.painel_mensagens_aberto = False
         self.messagepane.pack_forget()
         self.mensagens_frame.pack_forget()
         self.rightframe.grid_remove()
-        estado_app.painel_mensagens_aberto = False
 
     def mostrar_painel_entrada(self, *event):
         self.MenuFicheiro.entryconfig("Nova reparação", state="disabled")
         # root.unbind_all("<Command-n>")
+        if estado_app.painel_mensagens_aberto:
+            estado_app.painel_mensagens_estava_aberto = True
+            self.fechar_painel_mensagens()
         self.show_entryform()
         estado_app.painel_nova_reparacao_aberto = self.is_entryform_visible
 
@@ -849,13 +852,23 @@ class App(baseApp):
             if estado_app.tipo_novo_contacto == "Cliente":
                 self.ef_txt_num_cliente.delete(0, tk.END)
                 self.ef_txt_num_cliente.insert(0, str(estado_app.contacto_para_nova_reparacao))
+                self.ef_ltxt_descr_equipamento.focus()
+                self.ef_txt_num_cliente.bind("<FocusOut>", self._on_num_contact_exit)
             else:
-                self.ef_txt_num_cliente.delete(0, tk.END)
+                self.ef_txt_num_fornecedor.delete(0, tk.END)
                 self.ef_txt_num_fornecedor.insert(0, str(estado_app.contacto_para_nova_reparacao))
-        self.entryframe.bind_all(
-            "<Command-Escape>", self.fechar_painel_entrada)
+                self.ef_ltxt_descr_equipamento.focus()
+                self.ef_txt_num_fornecedor.bind("<FocusOut>", self._on_num_contact_exit)
+        else:
+            self.ef_txt_num_cliente.bind("<FocusOut>", self._on_num_contact_exit)
+            self.ef_txt_num_fornecedor.bind("<FocusOut>", self._on_num_contact_exit)
+
+
+        self.entryframe.bind_all("<Command-Escape>", self.fechar_painel_entrada)
 
     def fechar_painel_entrada(self, *event):
+        self.ef_txt_num_cliente.unbind_all("<FocusOut>")
+        self.ef_txt_num_fornecedor.unbind_all("<FocusOut>")
         self.hide_entryform()
         self.clear_text()
         root.focus_force()
@@ -863,6 +876,8 @@ class App(baseApp):
         estado_app.painel_nova_reparacao_aberto = self.is_entryform_visible
         estado_app.tipo_novo_contacto = "Cliente"
         estado_app.contacto_para_nova_reparacao = None
+        if estado_app.painel_mensagens_estava_aberto:
+            self.abrir_painel_mensagens()
         # root.bind_all("<Command-n>")
 
     def clear_text(self):
@@ -875,7 +890,7 @@ class App(baseApp):
         self.ef_var_efetuar_copia.set(0)
         self.ef_var_find_my.set(0)
         self.ef_var_local_intervencao.set("Loja X")
-        self.ef_var_modo_entrega.set("Levantamento nas n/ instalações")
+        self.ef_var_modo_entrega.set(MODOS_ENTREGA[LEVANTAMENTO])
         self.ef_var_portes.set(0)
         self.ef_txt_num_cliente.delete(0, 'end')
         self.ef_txt_nome_cliente.delete(0, 'end')
@@ -918,7 +933,7 @@ class App(baseApp):
         self.ef_var_local_intervencao = tk.StringVar()
         self.ef_var_local_intervencao.set("Loja X") #TODO: obter a loja a que pertence o utilizador atual
         self.ef_var_modo_entrega = tk.StringVar()
-        self.ef_var_modo_entrega.set("Levantamento nas n/ instalações")
+        self.ef_var_modo_entrega.set(MODOS_ENTREGA[LEVANTAMENTO])
         self.ef_var_portes = tk.IntVar()
 
         # entryfr1-----------------------------
@@ -956,7 +971,6 @@ class App(baseApp):
         self.ef_txt_num_cliente = ttk.Entry(
             self.ef_lf_cliente, font=("Helvetica-Neue", 12), width=5)
         self.dicas.bind(self.ef_txt_num_cliente, 'Introduzir o número de cliente.')
-        self.ef_txt_num_cliente.bind("<FocusOut>", self._on_num_contact_exit)
         self.ef_btn_buscar_cliente = ttk.Button(
             self.ef_lf_cliente, width=1, text="+", command=lambda *x: self.create_window_contacts(criar_novo_contacto="Cliente"))
         self.dicas.bind(self.ef_btn_buscar_cliente,
@@ -966,17 +980,16 @@ class App(baseApp):
         self.ef_lbl_telefone_lbl = ttk.Label(
             self.ef_lf_cliente, style="Panel_Body.TLabel", text="Tel.:")
         self.ef_lbl_telefone_info = ttk.Label(
-            self.ef_lf_cliente, style="Panel_Body.TLabel", text="00 351 000 000 000")
+            self.ef_lf_cliente, style="Panel_Body.TLabel", text="")
         self.ef_lbl_email_lbl = ttk.Label(
             self.ef_lf_cliente, style="Panel_Body.TLabel", text="Email:")
         self.ef_lbl_email_info = ttk.Label(
-            self.ef_lf_cliente, style="Panel_Body.TLabel", text="email.address@portugalmail.com")
+            self.ef_lf_cliente, style="Panel_Body.TLabel", text="")
 
         self.ef_lf_fornecedor = ttk.Labelframe(
             self.entryfr2, padding=4, style="Panel_Section_Title.TLabelframe", text="Dados do fornecedor")
         self.ef_txt_num_fornecedor = ttk.Entry(
             self.ef_lf_fornecedor, font=("Helvetica-Neue", 12), width=5)
-        self.ef_txt_num_fornecedor.bind("<FocusOut>", self._on_num_contact_exit)
         self.dicas.bind(self.ef_txt_num_fornecedor,
                         'Introduzir o número de fornecedor. (⌘T)')
         self.ef_btn_buscar_fornecedor = ttk.Button(
@@ -988,11 +1001,11 @@ class App(baseApp):
         self.ef_lbl_telefone_lbl_fornecedor = ttk.Label(
             self.ef_lf_fornecedor, style="Panel_Body.TLabel", text="Tel.:")
         self.ef_lbl_telefone_info_fornecedor = ttk.Label(
-            self.ef_lf_fornecedor, style="Panel_Body.TLabel", text="00 351 000 000 000")
+            self.ef_lf_fornecedor, style="Panel_Body.TLabel", text="")
         self.ef_lbl_email_lbl_fornecedor = ttk.Label(
             self.ef_lf_fornecedor, style="Panel_Body.TLabel", text="Email:")
         self.ef_lbl_email_info_fornecedor = ttk.Label(
-            self.ef_lf_fornecedor, style="Panel_Body.TLabel", text="email.address@portugalmail.com")
+            self.ef_lf_fornecedor, style="Panel_Body.TLabel", text="")
 
         self.ef_txt_num_cliente.grid(column=0, row=0, padx=5, sticky='w')
         self.ef_btn_buscar_cliente.grid(column=2, row=0, sticky='w')
@@ -1203,10 +1216,8 @@ class App(baseApp):
             self.ef_lf_outros_dados, style="Panel_Body.TLabel", text="Morada a utilizar na entrega:")
         self.ef_combo_modo_entrega = ttk.Combobox(self.ef_lf_outros_dados,
                                                   textvariable=self.ef_var_modo_entrega,
-                                                  values=("Levantamento nas n/ instalações",
-                                                          "Enviar para a morada da ficha de cliente",
-                                                          "Enviar para outra morada..."),
-                                                  state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
+                                                  values=(MODOS_ENTREGA),
+                                                  state='readonly')
 
         self.ef_lbl_portes = ttk.Label(
             self.ef_lf_outros_dados, style="Panel_Body.TLabel", text="Cliente pagou portes?")
@@ -1251,13 +1262,24 @@ class App(baseApp):
     def _on_num_contact_exit(self, event):
         """ Preencher nome do cliente/fornecedor ao sair do campo do numero de contacto
         """
-        print("Widget do evento: ", event.widget.cget("text"))
-        if event.widget.cget("text") in ("Stock", "Cliente"):
-            return
+        def limpar_dados_fornecedor():
+            self.ef_txt_num_fornecedor.delete(0, tk.END)
+            self.ef_txt_nome_fornecedor.delete(0, tk.END)
+            self.ef_lbl_telefone_info_fornecedor.config(text='')
+            self.ef_lbl_email_info_fornecedor.config(text='')
+
+        def limpar_dados_cliente():
+            self.ef_txt_num_cliente.delete(0, tk.END)
+            self.ef_txt_nome_cliente.delete(0, tk.END)
+            self.ef_lbl_telefone_info.config(text='')
+            self.ef_lbl_email_info.config(text='')
 
         tipo = self.ef_var_tipo.get()
         if tipo == TIPO_REP_STOCK:
-            num_contacto = self.ef_txt_num_fornecedor.get()
+            num_contacto = self.ef_txt_num_fornecedor.get().strip()
+            if len(num_contacto)<1:
+                limpar_dados_fornecedor()
+                return
             contacto = db.obter_info_contacto(num_contacto, "Fornecedor")
             if contacto:
                 self.ef_txt_nome_fornecedor.delete(0, tk.END)
@@ -1265,12 +1287,14 @@ class App(baseApp):
                 self.ef_lbl_telefone_info_fornecedor.config(text=contacto['telefone'])
                 self.ef_lbl_email_info_fornecedor.config(text=contacto['email'])
             else:
-                self.ef_txt_num_fornecedor.delete(0, tk.END)
                 criar_contacto_forn = messagebox.askyesno("", "Não existe um fornecedor com o número indicado. Pretende criar um novo contacto?")
+                limpar_dados_fornecedor()
                 if criar_contacto_forn:
                     self.create_window_contacts(criar_novo_contacto="Fornecedor")
         else:
             num_contacto = self.ef_txt_num_cliente.get()
+            if len(num_contacto)<1:
+                return
             contacto = db.obter_info_contacto(num_contacto, "Cliente")
             if contacto:
                 self.ef_txt_nome_cliente.delete(0, tk.END)
@@ -1278,13 +1302,13 @@ class App(baseApp):
                 self.ef_lbl_telefone_info.config(text=contacto['telefone'])
                 self.ef_lbl_email_info.config(text=contacto['email'])
             else:
-                self.ef_txt_num_cliente.delete(0, tk.END)
                 criar_contacto_cliente = messagebox.askyesno("", "Não existe um cliente com o número indicado. Pretende criar um novo contacto?")
+                limpar_dados_cliente()
                 if criar_contacto_cliente:
                     self.create_window_contacts(criar_novo_contacto="Cliente")
 
     def adicionar_morada_entrega(self, *event):
-        if self.ef_combo_modo_entrega.get() == "Enviar para outra morada...":
+        if self.ef_combo_modo_entrega.get() == MODOS_ENTREGA[ENVIAR_NOVA_MORADA]:
             self.ef_lbl_portes.grid(
                 column=3, row=3, columnspan=3, padx=5, sticky='wens')
             self.ef_radio_portes_sim.grid(column=3, row=4, padx=5, sticky='wn')
@@ -1295,7 +1319,7 @@ class App(baseApp):
                 column=6, row=0, rowspan=5, padx=5, sticky='wens')
             self.ef_lf_outros_dados.columnconfigure(6, weight=2)
             self.ef_ltxt_morada_entrega.scrolledtext.focus()
-        elif self.ef_combo_modo_entrega.get() == "Enviar para a morada da ficha de cliente":
+        elif self.ef_combo_modo_entrega.get() == MODOS_ENTREGA[ENVIAR_MORADA_FICHA]:
             self.ef_lbl_portes.grid(
                 column=3, row=3, columnspan=3, padx=5, sticky='wens')
             self.ef_radio_portes_sim.grid(column=3, row=4, padx=5, sticky='wn')
@@ -1729,50 +1753,88 @@ class App(baseApp):
         # validar aqui se dados estão corretos # TODO
 
         # Adaptar para o caso de ser uma reparação de stock #TODO
+        # pesquisar se existe artigo criado; se não existir, criar
+        if self.ef_ltxt_cod_artigo.get().strip:
+            artigo = db.obter_artigo(self.ef_ltxt_cod_artigo.get())
         tipo = self.ef_var_tipo.get()
         if tipo == TIPO_REP_STOCK:
-            pass
+            dados_rep = {#'cliente_id',
+                         'product_id': artigo['id'],
+                         'sn': self.ef_ltxt_num_serie.get(),
+                         'fornecedor_id': self.ef_txt_num_fornecedor,
+                         'estado_artigo': self.ef_var_estado.get(),
+                         'obs_estado': self.ef_ltxt_obs_estado_equipamento.get(),
+                         'is_garantia': self.ef_var_garantia.get(),
+                         #'data_compra': txt_para_data(self.ef_ltxt_data_compra.get()),
+                         #'num_fatura': self.ef_ltxt_num_fatura.get(),
+                         #'loja_compra': self.ef_ltxt_local_compra.get(),
+                         'desc_servico': self.ef_text_descr_avaria_servico.get(1.0, tk.END),
+                         'avaria_reprod_loja': self.ef_var_reprod_loja.get(),
+                         'requer_copia_seg': self.ef_var_efetuar_copia.get(),
+                         'is_find_my_ativo': self.ef_var_find_my.get(),
+                         'senha': self.ef_ltxt_senha.get(),  # todo: scramble text
+                         'acessorios_entregues': self.ef_ltxt_acessorios_entregues.get(),
+                         'notas': self.ef_ltxt_notas.get(),
+                         'local_reparacao_id': self.ef_var_local_intervencao.get(),
+                         'estado_reparacao': EM_PROCESSAMENTO,
+                         'fatura_fornecedor': self.ef_ltxt_num_fatura_fornecedor.get(),
+                         'nar_autorizacao_rep': self.ef_ltxt_nar.get(),
+                         'data_fatura_fornecedor': txt_para_data(self.ef_ltxt_data_fatura_fornecedor.get()),
+                         'num_guia_rececao': self.ef_ltxt_num_guia_rececao.get(),
+                         'data_guia_rececao': txt_para_data(self.ef_ltxt_data_entrada_stock.get()),
+                         # 'cod_resultado_reparacao': SEM_INFORMACAO,
+                         # 'descr_detalhe_reparacao': "",
+                         # 'novo_sn_artigo': ,
+                         # 'notas_entrega': ,
+                         # 'utilizador_entrega_id': ,
+                         # 'data_entrega': ,
+                         # 'num_quebra_stock': ,
+                         'is_stock': True,
+                         #'modo_entrega': self.ef_var_modo_entrega.get(),  # TODO_converter para int?
+                         #'reincidencia_processo_id': None,  # TODO
+                         #'morada_entrega': self.ef_ltxt_morada_entrega.get(),
+                         #'cliente_pagou_portes': self.ef_var_portes.get(),
+                         'criado_por_utilizador_id': db.get_user_id(self.username)
+                         }
         else:
-            pass
-
-        dados_rep = {'cliente_id': self.ef_txt_num_cliente.get(),
-            'product_id': self.ef_ltxt_cod_artigo.get(),
-            'sn': self.ef_ltxt_num_serie.get(),
-            'fornecedor_id': self.ef_txt_num_fornecedor.get(),
-            'estado_artigo': self.ef_var_estado.get(),
-            'obs_estado': self.ef_ltxt_obs_estado_equipamento.get(),
-            'is_garantia': self.ef_var_garantia.get(),
-            'data_compra': self.ef_ltxt_data_compra.get(),
-            'num_fatura': self.ef_ltxt_num_fatura.get(),
-            'loja_compra': self.ef_ltxt_local_compra.get(),
-            'desc_servico': self.ef_text_descr_avaria_servico.get(1.0, tk.END),
-            'avaria_reprod_loja': self.ef_var_reprod_loja.get(),
-            'requer_copia_seg': self.ef_var_efetuar_copia.get(),
-            'is_find_my_ativo': self.ef_var_find_my.get(),
-            'senha': self.ef_ltxt_senha.get(),  # todo: scramble text
-            'acessorios_entregues': self.ef_ltxt_acessorios_entregues.get(),
-            'notas': self.ef_ltxt_notas.get(),
-            'local_reparacao_id': self.ef_var_local_intervencao.get(),
-            'estado_reparacao': ESTADOS[EM_PROCESSAMENTO],
-            'fatura_fornecedor': self.ef_ltxt_num_fatura_fornecedor.get(),
-            'nar_autorizacao_rep': self.ef_ltxt_nar.get(),
-            'data_fatura_fornecedor': self.ef_ltxt_data_fatura_fornecedor.get(),
-            'num_guia_rececao': self.ef_ltxt_num_guia_rececao.get(),
-            'data_guia_rececao': self.ef_ltxt_data_entrada_stock.get(),
-            #'cod_resultado_reparacao': SEM_INFORMACAO,
-            #'descr_detalhe_reparacao': "",
-            #'novo_sn_artigo': ,
-            #'notas_entrega': ,
-            #'utilizador_entrega_id': ,
-            #'data_entrega': ,
-            #'num_quebra_stock': ,
-            'is_stock': self.ef_var_tipo.get(),
-            'modo_entrega': self.ef_var_modo_entrega.get(),  #TODO_converter para int?
-            'reincidencia_processo_id': None,  #TODO
-            'morada_entrega': self.ef_ltxt_morada_entrega.get(),
-            'cliente_pagou_portes': self.ef_var_portes.get(),
-            'criado_por_utilizador_id': db.get_user_id(self.username)
-        }
+            dados_rep = {'cliente_id': self.ef_txt_num_cliente.get(),
+                         'product_id': artigo['id'],
+                         'sn': self.ef_ltxt_num_serie.get(),
+                         #'fornecedor_id': "",
+                         'estado_artigo': self.ef_var_estado.get(),
+                         'obs_estado': self.ef_ltxt_obs_estado_equipamento.get(),
+                         'is_garantia': self.ef_var_garantia.get(),
+                         'data_compra': txt_para_data(self.ef_ltxt_data_compra.get()),
+                         'num_fatura': self.ef_ltxt_num_fatura.get(),
+                         'loja_compra': self.ef_ltxt_local_compra.get(),
+                         'descr_servico': self.ef_text_descr_avaria_servico.get(1.0, tk.END),
+                         'avaria_reprod_loja': self.ef_var_reprod_loja.get(),
+                         'requer_copia_seg': self.ef_var_efetuar_copia.get(),
+                         'is_find_my_ativo': self.ef_var_find_my.get(),
+                         'senha': self.ef_ltxt_senha.get(),  # todo: scramble text
+                         'acessorios_entregues': self.ef_ltxt_acessorios_entregues.get(),
+                         'notas': self.ef_ltxt_notas.get(),
+                         'local_reparacao_id': self.ef_var_local_intervencao.get(),
+                         'estado_reparacao': EM_PROCESSAMENTO,
+                         #'fatura_fornecedor': self.ef_ltxt_num_fatura_fornecedor.get(),
+                         'nar_autorizacao_rep': self.ef_ltxt_nar.get(),
+                         #'data_fatura_fornecedor': txt_para_data(self.ef_ltxt_data_fatura_fornecedor.get()),
+                         #'num_guia_rececao': self.ef_ltxt_num_guia_rececao.get(),
+                         #'data_guia_rececao': txt_para_data(self.ef_ltxt_data_entrada_stock.get()),
+                         # 'cod_resultado_reparacao': SEM_INFORMACAO,
+                         # 'descr_detalhe_reparacao': "",
+                         # 'novo_sn_artigo': ,
+                         # 'notas_entrega': ,
+                         # 'utilizador_entrega_id': ,
+                         # 'data_entrega': ,
+                         # 'num_quebra_stock': ,
+                         'is_stock': False,
+                         'modo_entrega': list(MODOS_ENTREGA.keys())[list(MODOS_ENTREGA.values()).index(self.ef_var_modo_entrega.get())],
+                         'reincidencia_processo_id': None,  # TODO
+                         'morada_entrega': self.ef_ltxt_morada_entrega.get(),
+                         'cliente_pagou_portes': self.ef_var_portes.get(),
+                         'criado_por_utilizador_id': db.get_user_id(self.username)
+                         }
 
         self.ultima_reparacao = db.save_repair(dados_rep)
 
@@ -1874,6 +1936,7 @@ def restart_program():
     """Restarts the current program.
     Note: this function does not return. Any cleanup action (like
     saving data) must be done before calling this function."""
+    import sys
     python = sys.executable
     os.execl(python, python, * sys.argv)
 

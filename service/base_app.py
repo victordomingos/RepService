@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3
 # encoding: utf-8
 """
 Este módulo é parte integrante da aplicação RepService, desenvolvida por
@@ -25,6 +25,7 @@ class AppStatus:
         self.janela_remessas_aberta = False
         self.janela_contactos_aberta = False
         self.painel_mensagens_aberto = False
+        self.painel_mensagens_estava_aberto = False
         self.painel_nova_reparacao_aberto = False
         self.painel_novo_contacto_aberto = False
         self.painel_nova_remessa_aberto = False

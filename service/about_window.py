@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3
 # encoding: utf-8
 """
 Este módulo é parte integrante da aplicação Promais Service, desenvolvida por

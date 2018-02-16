@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3
 # encoding: utf-8
 """
 Este módulo é parte integrante da aplicação RepService, desenvolvida por
@@ -124,8 +124,18 @@ RESULTADOS = {0: "Sem informação",
               4: "Garantia recusada",
               5: "Orçamento aceite",
               6: "Orçamento recusado",
-              7: "Intervenção impossível",
-              }
+              7: "Intervenção impossível"}
+
+
+# Modos de entrega (como serão registados na base de dados)
+LEVANTAMENTO = 0
+ENVIAR_MORADA_FICHA = 1
+ENVIAR_NOVA_MORADA = 2
+
+# Lista de modos de entrega (mesma sequência, para quando precisamos de uma string)
+MODOS_ENTREGA = {0: "Levantamento nas n/ instalações",
+                 1: "Enviar para a morada da ficha de cliente",
+                 2: "Enviar para outra morada..."}
 
 
 PRIORIDADES = {0: "Normal", 1: "Alta", 2: "Urgente"}

@@ -85,7 +85,7 @@ class Product(Base):
 class Repair(Base):
     __tablename__ = 'repair'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     cliente_id = Column(Integer, ForeignKey('contact.id'))
     product_id = Column(Integer, ForeignKey('product.id'))
     sn = Column(String)

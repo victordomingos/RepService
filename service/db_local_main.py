@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3
 # encoding: utf-8
 """
 Este módulo é parte integrante da aplicação Promais Service, desenvolvida por
@@ -60,12 +60,22 @@ def change_password(username: str, old_password: str, new_password1: str) -> boo
     result = True  # TODO
     return result
 
+# =============================== Produtos ===============================
+def obter_artigo(part_number: str):
+    return {'id': 1,
+            'descr': "This is the description for this product",
+            'part_number': "ZD123"}
+
 
 # =============================== Reparações ===============================
 def save_repair(repair) -> int:
     print("a guardar o processo de reparação", repair)
-    db_last_rep_number = 12341
-    return db_last_rep_number
+    s, _ = iniciar_sessao_db()
+    new_repair = db_models.Repair(**repair)
+    s.add(new_repair)
+    s.commit()
+    print(new_repair, type(new_repair), new_repair.id)
+    return new_repair.id
 
 
 def update_repair_status(rep_num: int, status: int):
