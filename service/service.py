@@ -28,7 +28,7 @@ from queue import Queue
 import about_window, contactos, remessas, detalhe_reparacao, detalhe_mensagem
 import imprimir
 from base_app import baseApp, AppStatus
-from extra_tk_classes import LabelEntry, LabelText
+from extra_tk_classes import LabelEntry, LabelText, ShowDatePicker
 from misc import txt_para_data
 from global_setup import *
 
@@ -1076,7 +1076,7 @@ class App(baseApp):
 
         self.ef_ltxt_data_compra = LabelEntry(
             self.ef_lf_equipamento, "\nData de compra:", style="Panel_Body.TLabel", width=15)
-
+        self.ef_ltxt_data_compra.bind('<FocusIn>', self._on_data_compra_enter)
         """now = time.localtime(time.time())
         now_value = f"{now[2]}-{now[1]}-{now[0]}"
         now_validate = f"{now[2]}-{now[1]}-{now[0]}"
@@ -1102,12 +1102,14 @@ class App(baseApp):
             self.ef_lf_equipamento, "Nº fatura fornecedor:", style="Panel_Body.TLabel", width=15)
         self.ef_ltxt_data_fatura_fornecedor = LabelEntry(
             self.ef_lf_equipamento, "Data fatura fornecedor:", style="Panel_Body.TLabel", width=15)
+        self.ef_ltxt_data_fatura_fornecedor.bind('<FocusIn>', self._on_data_fatura_forn_enter)
         self.ef_ltxt_nar = LabelEntry(
             self.ef_lf_equipamento, "NAR:", style="Panel_Body.TLabel", width=15)
         self.ef_ltxt_num_guia_rececao = LabelEntry(
             self.ef_lf_equipamento, "Guia de receção:", style="Panel_Body.TLabel", width=15)
         self.ef_ltxt_data_entrada_stock = LabelEntry(
             self.ef_lf_equipamento, "Data de entrada em stock:", style="Panel_Body.TLabel", width=15)
+        self.ef_ltxt_data_entrada_stock.bind('<FocusIn>', self._on_data_entrada_stock)
         self.ef_ltxt_num_quebra_stock = LabelEntry(
             self.ef_lf_equipamento, "Nº de quebra de stock:", style="Panel_Body.TLabel", width=15)
 
@@ -1216,7 +1218,7 @@ class App(baseApp):
             self.ef_lf_outros_dados, style="Panel_Body.TLabel", text="Morada a utilizar na entrega:")
         self.ef_combo_modo_entrega = ttk.Combobox(self.ef_lf_outros_dados,
                                                   textvariable=self.ef_var_modo_entrega,
-                                                  values=(MODOS_ENTREGA),
+                                                  values=(list(MODOS_ENTREGA.values())),
                                                   state='readonly')
 
         self.ef_lbl_portes = ttk.Label(
@@ -1258,6 +1260,16 @@ class App(baseApp):
         #--- acabaram os 'entryfr', apenas código geral para o entryframe a partir daqui ---
         self.entryframe.bind_all(
             "<Command-Escape>", self.fechar_painel_entrada)
+
+
+    def _on_data_compra_enter(self, *event):
+        ShowDatePicker(self.entryframe, self.ef_ltxt_data_compra)
+
+    def _on_data_fatura_forn_enter(self, *event):
+        ShowDatePicker(self.entryframe, self.ef_ltxt_data_fatura_fornecedor)
+
+    def _on_data_entrada_stock(self, *event):
+        ShowDatePicker(self.entryframe, self.ef_ltxt_data_entrada_stock)
 
     def _on_num_contact_exit(self, event):
         """ Preencher nome do cliente/fornecedor ao sair do campo do numero de contacto

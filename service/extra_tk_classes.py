@@ -13,6 +13,57 @@ import tkinter.font
 
 from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
+from tkcalendar import Calendar, DateEntry
+
+
+class ShowDatePicker(ttk.Labelframe):
+    def __init__(self, master, target=None):
+        self.target = target
+        if self.target.calendar_open:
+            return
+        ttk.Labelframe.__init__(self, master, labelwidget=ttk.Separator(), labelanchor='s')
+        self.target.calendar_open = True
+        self.target.bind("<FocusOut>", lambda x: self.close_calendar)
+        x = self.target.winfo_rootx()
+        y = self.target.winfo_rooty()
+
+        self.cal = Calendar(self,
+                       font="Helvetica 11",
+                       locale="pt_PT",
+                       selectforeground="Blue",
+                       othermonthforeground="Gray80",
+                       othermonthweforeground="Gray85",
+                       normalforeground="Gray30",  # Cor dos números dos dias do mês selecionado
+                       headersforeground="Royalblue2",
+                       # Dias da semana (cabeçalho) e números de semana (coluna da esquerda)
+                       cursor="hand2",
+                       background="LightGray",  # Botões com setas, no cabeçalho
+                       foreground="Gray",  # Mês e ano no cabeçalho
+                       selectbackground="White",
+                       weekendforeground="medium purple",
+                       headersbackground="DarkGray",
+                       borderwidth=3,
+                       # selectmode="day",  # ou "none", em alternativa
+                       # year=2018,
+                       # month=1,
+                       # day=1
+                    )
+        self.cal.pack(fill="both", expand=True)
+        self.focus()
+        self.cal.bind("<<CalendarSelected>>", self.select_date)
+        self.place(in_=self.target, relx=0, rely=1, anchor='nw')
+        self.after_id = self.after(15000, self.close_calendar)
+
+    def close_calendar(self):
+        self.target.calendar_open = False
+        self.target.unbind("<FocusOut>")
+        self.after_cancel(self.after_id)
+        self.destroy()
+
+    def select_date(self, event):
+        data = self.cal.selection_get()
+        self.target.set(str(data))
+        self.close_calendar()
 
 
 class AutocompleteEntry(ttk.Entry):
@@ -98,10 +149,10 @@ class AutoScrollbar(ttk.Scrollbar):
         ttk.Scrollbar.set(self, lo, hi)
 
     def pack(self, **kw):
-        raise TclError("cannot use pack with this widget")
+        raise tk.TclError("cannot use pack with this widget")
 
     def place(self, **kw):
-        raise TclError("cannot use place with this widget")
+        raise tk.TclError("cannot use place with this widget")
 
 
 class LabelEntry(ttk.Frame):
@@ -111,6 +162,7 @@ class LabelEntry(ttk.Frame):
 
     def __init__(self, parent, label, default_text="", style=None, width=0):
         ttk.Frame.__init__(self, parent)
+        self.calendar_open = False
 
         if style:
             self.label = ttk.Label(self, text=label, style=style, anchor="w")
@@ -130,6 +182,7 @@ class LabelEntry(ttk.Frame):
         return self.entry.get()
 
     def set(self, text):
+        self.clear()
         self.entry.insert(0, text)
 
     def set_label(self, text):
@@ -167,6 +220,7 @@ class LabelText(ttk.Frame):
         return self.scrolledtext.get(1.0, tk.END)
 
     def set(self, text):
+        self.clear()
         self.scrolledtext.insert('insert', text)
 
     def clear(self):
@@ -204,3 +258,4 @@ class StatusBar(ttk.Frame):
     def clear(self):
         self.label.config(text="")
         self.label.update_idletasks()
+

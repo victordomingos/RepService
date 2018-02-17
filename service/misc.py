@@ -20,4 +20,4 @@ def calcular_dias_desde(data):
 def txt_para_data(txt: str) -> datetime:
     if not str.strip:
         return None
-    return datetime.strptime(txt, '%d-%m-%Y')
+    return datetime.strptime(txt, '%Y-%m-%d')
