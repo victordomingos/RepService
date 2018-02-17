@@ -26,6 +26,7 @@ Requer, na versão atual, os seguintes pacotes externos:
 
 - Python MegaWidgets 2.0.1
 - SQL Alchemy 1.1.5
+- tkcalendar 1.1.4
 
 
 O desenvolvimento e testes têm sido realizados apenas em Mac, no entanto deverá ser bastante simples a adaptação para funcionar sem problemas em Windows ou Linux. A interface gráfica foi desenhada por forma a se parecer tanto quanto possível com as aplicações nativas para Mac. É por isso natural que alguns elementos, como as barras de ferramentas, apresentem um aspeto um tanto ou quanto pouco fora do habitual noutras plataformas. Em sistemas operativos antigos, alguns ícones Unicode poderão não aparecer corretamente. Em ambiente Mac, é altamente recomendável usar o ActiveTCL 8.5.18, conforme as notas de lançamento da linguagem Python, de modo a assegurar a compatibilidade e estabilidade do tkinter no macOS.

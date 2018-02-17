@@ -10,7 +10,8 @@ v.0.19 - 28/02/2018
    informação de contacto são preenchidos automaticamente. Caso não exista
    cliente ou fornecedor com o número indicado, é dada ao utilizador a opção
    de criar um novo contacto.
- *
+ * Adicionados calendários para facilitar a introdução de datas nos
+   formulários.
  *
 
 ---
