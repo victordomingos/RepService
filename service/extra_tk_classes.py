@@ -13,19 +13,15 @@ import tkinter.font
 
 from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
-from tkcalendar import Calendar, DateEntry
+
+from tkcalendar import Calendar
 
 
-class ShowDatePicker(ttk.Labelframe):
+class DatePicker(ttk.Labelframe):
     def __init__(self, master, target=None):
         self.target = target
-        if self.target.calendar_open:
-            return
-        ttk.Labelframe.__init__(self, master, labelwidget=ttk.Separator(), labelanchor='s')
-        self.target.calendar_open = True
-        self.target.bind("<FocusOut>", lambda x: self.close_calendar)
-        x = self.target.winfo_rootx()
-        y = self.target.winfo_rooty()
+        ttk.Labelframe.__init__(self, master, width=180, height=130, labelwidget=ttk.Separator(),
+                                labelanchor='s')
 
         self.cal = Calendar(self,
                        font="Helvetica 11",
@@ -47,18 +43,27 @@ class ShowDatePicker(ttk.Labelframe):
                        # year=2018,
                        # month=1,
                        # day=1
-                    )
-        self.cal.pack(fill="both", expand=True)
-        self.focus()
+                      )
+
+        self.cal.pack(fill=None, expand=False)
         self.cal.bind("<<CalendarSelected>>", self.select_date)
-        self.place(in_=self.target, relx=0, rely=1, anchor='nw')
+
+
+    def show(self, *event):
+        if self.target.calendar_open:
+            return
+        self.target.calendar_open = True
+        self.focus()
+        self.target.bind("<FocusOut>", lambda x: self.close_calendar)
+        self.place(in_=self.target, relx=0, rely=1, width=210, height=148, anchor='nw')
+        self.cal.focus()
         self.after_id = self.after(15000, self.close_calendar)
 
     def close_calendar(self):
         self.target.calendar_open = False
         self.target.unbind("<FocusOut>")
-        self.after_cancel(self.after_id)
-        self.destroy()
+        # self.after_cancel(self.after_id)
+        self.place_forget()
 
     def select_date(self, event):
         data = self.cal.selection_get()
@@ -258,4 +263,3 @@ class StatusBar(ttk.Frame):
     def clear(self):
         self.label.config(text="")
         self.label.update_idletasks()
-

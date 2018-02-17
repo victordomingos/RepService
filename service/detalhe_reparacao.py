@@ -572,7 +572,7 @@ class repairDetailWindow(ttk.Frame):
                         'Clique para selecionar o resultado do novo evento.')
 
         self.hfr1_chkbtn_notificar = ttk.Checkbutton(
-            self.historico_fr1, variable=self.var_notificar, style="Panel_Body.Checkbutton", text="Notificar equipa")
+            self.historico_fr1, variable=self.var_notificar, text="Notificar equipa")
         self.dicas.bind(self.hfr1_chkbtn_notificar,
                         'Assinale esta opção para enviar uma mensagem\ncom o conteúdo deste evento ao resto da sua equipa.')
 

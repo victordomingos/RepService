@@ -66,6 +66,11 @@ W_DETALHE_MSG_MAX_HEIGHT = 480
 # no entryframe)
 SLOW_MACHINE = False
 
+# Usar estilo 'aqua' para obter visual nativo no macOS. Noutras plataformas,
+# pode ser necessário alterar para outro estilo. Alguns widgets ttk podem
+# necessitar de alguns ajustes ao usar estilos diferentes.
+ESTILO_APP = 'aqua'
+
 # Alterar para False para utilizar uma ligação remota via web API.
 USE_LOCAL_DATABASE = True
 
@@ -222,5 +227,5 @@ TODOS_OS_PAISES = ("Angola", "Alemanha", "Afeganistão", "África do Sul",
 
 
 CREDITS = ("António Cascalheira", "Bjorn Pettersen", "Brian Oakley",
-           "Jackjr300", "Jannick", "Jay Loden", "Márcio Araújo", "Nelson Brochado",
+           "Jackjr300", "Jannick", "Jay Loden", "Juliette Monsel", "Márcio Araújo", "Nelson Brochado",
            "Pat Thoyts", "Patrick Seemann", "Ruocheng Wang")

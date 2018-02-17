@@ -102,14 +102,11 @@ class baseApp(ttk.Frame):
                               font=("Lucida Grande", 11))
 
         # Copia o estilo padrão dos widgets Checkbutton.
-        self.estilo.layout('Panel_Body.Checkbutton',
-                           self.estilo.layout('TCheckbutton'))
-        self.estilo.map('Panel_Body.Checkbutton', **
-                        self.estilo.map('TCheckbutton'))
-        self.estilo.configure('Panel_Body.Checkbutton', **
-                              self.estilo.map('TCheckbutton'))
-        self.estilo.configure('Panel_Body.Checkbutton',
-                              font=("Lucida Grande", 11))
+        self.estilo.layout('Panel_Body.Checkbutton', self.estilo.layout('TCheckbutton'))
+        self.estilo.map('Panel_Body.Checkbutton', **self.estilo.map('TCheckbutton'))
+        self.estilo.configure('Panel_Body.Checkbutton', **self.estilo.map('TCheckbutton'))
+        self.estilo.configure('Panel_Body.Checkbutton',font=("Lucida Grande", 11))
+
 
         #self.estilo.configure(".TLabel", foreground="grey25", font=("Helvetica Neue", 18, "bold"))
 

@@ -258,9 +258,9 @@ class contactDetailWindow(ttk.Frame):
         self.ef_lbl_tipo = ttk.Label(
             self.ef_cabecalho, text="Tipo:", style="Panel_Body.TLabel")
         self.ef_chkbtn_tipo_cliente = ttk.Checkbutton(
-            self.ef_cabecalho, text="Cliente", style="Panel_Body.Checkbutton", variable=self.var_tipo_is_cliente)
+            self.ef_cabecalho, text="Cliente", variable=self.var_tipo_is_cliente)
         self.ef_chkbtn_tipo_fornecedor = ttk.Checkbutton(
-            self.ef_cabecalho, text="Fornecedor ou centro técnico", style="Panel_Body.Checkbutton", variable=self.var_tipo_is_fornecedor)
+            self.ef_cabecalho, text="Fornecedor ou centro técnico", variable=self.var_tipo_is_fornecedor)
         #self.ef_chkbtn_tipo_loja = ttk.Checkbutton(self.ef_cabecalho, text="Loja do nosso grupo", style="Panel_Body.Checkbutton", variable=self.var_tipo_is_loja)
 
         self.ef_lstxt_notas = LabelText(
