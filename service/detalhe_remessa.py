@@ -19,9 +19,10 @@ from global_setup import *
 class remessaDetailWindow(ttk.Frame):
     """ Classe de base para a janela de detalhes de remessa """
 
-    def __init__(self, master, num_remessa, *args, **kwargs):
+    def __init__(self, master, num_remessa, estado_app, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.num_remessa = num_remessa
+        self.estado_app = estado_app
         self.reparacao_selecionada = ""
         self.master = master
         self.rep_newDetailsWindow = {}
@@ -356,7 +357,8 @@ class remessaDetailWindow(ttk.Frame):
         self.rep_newDetailsWindow[self.rep_detail_windows_count] = tk.Toplevel(
         )
         self.janela_detalhes_rep = repairDetailWindow(
-            self.rep_newDetailsWindow[self.rep_detail_windows_count], num_reparacao)
+            self.rep_newDetailsWindow[self.rep_detail_windows_count], num_reparacao,
+            self.estado_app)
 
     def inserir_dados_de_exemplo(self):
         for i in range(1, 36, 4):

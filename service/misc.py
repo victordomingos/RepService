@@ -18,6 +18,9 @@ def calcular_dias_desde(data):
     return diferenca.days   # nº de dias que já passaram
 
 def txt_para_data(txt: str) -> datetime:
+    """ Converte uma string contendo uma data do tipo 2013-08-13 (obtida por
+        exemplo através do tkcalendar/DatePicker) num objeto do tipo datetime.
+    """
     if not str.strip:
         return None
     return datetime.strptime(txt, '%Y-%m-%d')

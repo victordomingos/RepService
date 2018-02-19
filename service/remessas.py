@@ -24,9 +24,9 @@ else:
 class RemessasWindow(baseApp):
     """ Classe de base para a janela de remessas """
 
-    def __init__(self, master, estado, *args, **kwargs):
+    def __init__(self, master, estado_app, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
-        self.estado = estado
+        self.estado_app = estado_app
         self.master.minsize(REMESSAS_MIN_WIDTH, REMESSAS_MIN_HEIGHT)
         self.master.maxsize(REMESSAS_MAX_WIDTH, REMESSAS_MAX_HEIGHT)
         self.master.geometry(REMESSAS_GEOMETRIA)
@@ -48,7 +48,7 @@ class RemessasWindow(baseApp):
         self.inserir_dados_de_exemplo()
         self.alternar_cores(self.tree)
         self.atualizar_soma()
-        if self.estado.painel_nova_remessa_aberto:
+        if self.estado_app.painel_nova_remessa_aberto:
             self.mostrar_painel_entrada()
 
     def gerar_menu(self):
@@ -134,7 +134,7 @@ class RemessasWindow(baseApp):
         self.topframe.columnconfigure(2, weight=1)
 
     def mostrar_painel_entrada(self, *event):
-        self.estado.painel_nova_remessa_aberto = True
+        self.estado_app.painel_nova_remessa_aberto = True
         #self.MenuFicheiro.entryconfig("Novo contacto", state="disabled")
         # root.unbind_all("<Command-n>")
         self.show_entryform()
@@ -142,7 +142,7 @@ class RemessasWindow(baseApp):
         self.ef_radio_tipo_saida.focus()
 
     def fechar_painel_entrada(self, *event):
-        self.estado.painel_nova_remessa_aberto = False
+        self.estado_app.painel_nova_remessa_aberto = False
         self.clear_text()
         self.hide_entryform()
         # root.bind_all("<Command-n>")
@@ -361,7 +361,7 @@ class RemessasWindow(baseApp):
             f'Detalhe de remessa: {num_remessa}')
         self.janela_detalhes_remessa = remessaDetailWindow(
             self.remessa_newDetailsWindow[self.remessa_detail_windows_count],
-            num_remessa)
+            num_remessa, self.estado_app)
 
     def radio_tipo_command(self, *event):
         """

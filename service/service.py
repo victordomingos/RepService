@@ -354,6 +354,7 @@ class App(baseApp):
         self.gerar_painel_entrada()
 
         self.composeFrames()
+        self.my_statusbar.show_progress()
 
         self.atualizar_lista(db.obter_reparacoes_por_estados(PROCESSOS_EM_CURSO))
         self.atualizar_lista_msgs()
@@ -361,6 +362,9 @@ class App(baseApp):
         if self.contar_linhas(self.msgtree) > 0:
             #self.after(1200, self.abrir_painel_mensagens)
             self.abrir_painel_mensagens()
+
+        self.my_statusbar.hide_progress()
+
 
 
     def contar_linhas(self, tree):
@@ -1530,6 +1534,8 @@ class App(baseApp):
         if not status_list:
             status_list = []
 
+        self.my_statusbar.show_progress()
+
         if not status_list:
             reparacoes = db.obter_todas_reparacoes()
             self.mbtn_mostrar.configure(text="Todos os processos")
@@ -1544,11 +1550,7 @@ class App(baseApp):
 
         self.last_selected_view_repair_list = status_list
         self.atualizar_lista(reparacoes)
-
-
-    def obter_todas_reparacoes(self):
-        print("a atualizar...")
-        self.atualizar_lista(db.obter_todas_reparacoes())
+        self.my_statusbar.hide_progress()
 
 
     def clique_a_pesquisar_contactos(self, *event):
@@ -1594,6 +1596,7 @@ class App(baseApp):
         else:
             estados = self.last_selected_view_repair_list
 
+        self.my_statusbar.show_progress()
         reparacoes = db.pesquisar_reparacoes(termo_pesquisa, estados=estados)
         self.atualizar_lista(reparacoes)
 
@@ -1608,6 +1611,7 @@ class App(baseApp):
         else:
             s_status = f"""Pesquisa: {'"'+termo_pesquisa.upper()+'"'}. Encontrados {self.nprocessos} processos ({em_curso} em curso)."""
         self.my_statusbar.set(s_status)
+        self.my_statusbar.hide_progress()
 
 
     def radio_estado_command(self, *event):
@@ -1950,6 +1954,7 @@ class App(baseApp):
         for i in self.tree.get_children():  # Limpar tabela primeiro
             self.tree.delete(i)
 
+        self.master.update()
         for reparacao in reparacoes:
             self.inserir_rep(rep_num=reparacao['id'],
                 nome_cliente=reparacao['cliente_nome'],
@@ -1961,7 +1966,6 @@ class App(baseApp):
 
         self.atualizar_soma_processos()
         self.alternar_cores(self.tree)
-
 
 
 def restart_program():
