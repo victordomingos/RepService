@@ -12,7 +12,7 @@ v.0.19 - 28/02/2018
    de criar um novo contacto.
  * Adicionados calendários para facilitar a introdução de datas nos
    formulários.
- *
+ * Adicionada barra de progresso (apenas modo indeterminado)
 
 ---
 v.0.18 - 14/02/2018 - A comemorar 1 ano de desenvolvimento(s).
