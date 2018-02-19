@@ -191,7 +191,7 @@ def pesquisar_reparacoes(txt_pesquisa: str, estados: List[int]=None) -> List[Dic
                                  db_models.Repair.num_fatura.ilike(termo_pesquisa),
                                  db_models.Repair.sn.ilike(termo_pesquisa)
                         ))) \
-                .order_by(db_models.Repair.created_on)[:1000]
+                .order_by(db_models.Repair.created_on)[:3000]
 
     return [{'id': rep[0].id,
               'cliente_nome': rep[1].nome,

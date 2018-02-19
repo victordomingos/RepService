@@ -354,16 +354,19 @@ class App(baseApp):
         self.gerar_painel_entrada()
 
         self.composeFrames()
-        self.my_statusbar.show_progress()
 
-        self.atualizar_lista(db.obter_reparacoes_por_estados(PROCESSOS_EM_CURSO))
+        self.my_statusbar.show_progress(value=30, mode="determinate")
+        reps = db.obter_reparacoes_por_estados(PROCESSOS_EM_CURSO)
+        self.my_statusbar.show_progress(value=60, mode="determinate")
+        self.atualizar_lista(reps)
+        self.my_statusbar.progress_update(80)
         self.atualizar_lista_msgs()
-
+        self.my_statusbar.progress_update(90)
         if self.contar_linhas(self.msgtree) > 0:
             #self.after(1200, self.abrir_painel_mensagens)
             self.abrir_painel_mensagens()
 
-        self.my_statusbar.hide_progress()
+        self.my_statusbar.hide_progress(last_update=100)
 
 
 
@@ -826,6 +829,7 @@ class App(baseApp):
     def abrir_painel_mensagens(self, *event):
         root.update_idletasks()
         if estado_app.painel_mensagens_aberto == False:
+            self.atualizar_lista_msgs()
             estado_app.painel_mensagens_aberto = True
             self.mensagens_frame.pack()
             self.messagepane.pack(side='top', expand=True, fill='both')
@@ -1534,23 +1538,31 @@ class App(baseApp):
         if not status_list:
             status_list = []
 
-        self.my_statusbar.show_progress()
+        self.my_statusbar.show_progress(mode='determinate', value=25)
 
         if not status_list:
-            reparacoes = db.obter_todas_reparacoes()
             self.mbtn_mostrar.configure(text="Todos os processos")
+            self.my_statusbar.set("A consultar a base de dados. Esta operação poderá demorar. Por favor, aguarde.")
+            reparacoes = db.obter_todas_reparacoes()
         else:
-            reparacoes = db.obter_reparacoes_por_estados(status_list)
             if len(status_list) == 1:
-                self.mbtn_mostrar.configure(text=f"{ESTADOS[status_list[0]]}")
+                txt = f"{ESTADOS[status_list[0]]}"
+                self.mbtn_mostrar.configure(text=txt)
+                self.my_statusbar.set(f"A consultar a lista de processos ({txt.lower()}) na base de dados.")
             elif status_list == PROCESSOS_FINALIZADOS:
-                self.mbtn_mostrar.configure(text="Processos finalizados")
+                txt = "Processos finalizados"
+                self.mbtn_mostrar.configure(text=txt)
+                self.my_statusbar.set(f"A consultar a lista de {txt.lower()} na base de dados. Esta operação poderá demorar. Por favor, aguarde.")
             elif status_list == PROCESSOS_EM_CURSO:
-                self.mbtn_mostrar.configure(text="Processos em curso")
+                txt = "Processos em curso"
+                self.mbtn_mostrar.configure(text=txt)
+                self.my_statusbar.set(f"A consultar a lista de {txt.lower()} na base de dados.")
+            reparacoes = db.obter_reparacoes_por_estados(status_list)
 
+        self.my_statusbar.progress_update(75)
         self.last_selected_view_repair_list = status_list
         self.atualizar_lista(reparacoes)
-        self.my_statusbar.hide_progress()
+        self.my_statusbar.hide_progress(last_update=100)
 
 
     def clique_a_pesquisar_contactos(self, *event):
@@ -1596,8 +1608,9 @@ class App(baseApp):
         else:
             estados = self.last_selected_view_repair_list
 
-        self.my_statusbar.show_progress()
+        self.my_statusbar.show_progress(mode='determinate', value=30)
         reparacoes = db.pesquisar_reparacoes(termo_pesquisa, estados=estados)
+        self.my_statusbar.progress_update(90)
         self.atualizar_lista(reparacoes)
 
         self.nprocessos = len(reparacoes)
@@ -1611,7 +1624,7 @@ class App(baseApp):
         else:
             s_status = f"""Pesquisa: {'"'+termo_pesquisa.upper()+'"'}. Encontrados {self.nprocessos} processos ({em_curso} em curso)."""
         self.my_statusbar.set(s_status)
-        self.my_statusbar.hide_progress()
+        self.my_statusbar.hide_progress(last_update=100)
 
 
     def radio_estado_command(self, *event):
