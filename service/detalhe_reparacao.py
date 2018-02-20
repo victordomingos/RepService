@@ -35,15 +35,7 @@ class repairDetailWindow(ttk.Frame):
         self.master.focus()
         self.num_reparacao = num_reparacao
         self.repair = db.obter_reparacao(self.num_reparacao)
-        #self.cliente = self.repair.cliente
-        #self.fornecedor = self.repair.fornecedor
-        #self.prioridade = self.repair.prioridade
         self.tipo_processo = "Cliente" if (self.repair['is_rep_stock'] == 0) else "Stock"
-        #self.is_rep_cliente = not self.repair['is_rep_stock']
-        #self.estado = self.repair.estado_reparacao
-        #self.is_garantia = self.repair.is_garantia
-        #self.modo_entrega = self.repair.modo_entrega  # todo - obter da base de dados
-        #self.portes = self.repair.cliente_pagou_portes  # todo - obter da base de dados
 
         if self.repair['is_rep_cliente']:
             self.numero_contacto = self.repair['cliente_id']
@@ -52,11 +44,9 @@ class repairDetailWindow(ttk.Frame):
             self.email = self.repair['cliente_email']
             self.var_combo_artigos_emprest = tk.StringVar()
             self.var_combo_artigos_emprest.set("Selecionar artigo...")
-            self.var_combo_artigos_emprest.trace(
-                'w', self._on_combo_artigos_emprest_changed)
+            self.var_combo_artigos_emprest.trace('w', self._on_combo_artigos_emprest_changed)
             self.var_combo_meio_pag_emprest = tk.StringVar()
-            self.var_combo_meio_pag_emprest.set(
-                "Selecionar forma de pagamento...")
+            self.var_combo_meio_pag_emprest.set("Selecionar forma de pagamento...")
             self.var_id_art_emprest = tk.StringVar()
             self.var_id_art_emprest.trace('w', self._on_id_art_emprest_changed)
         else:
@@ -243,15 +233,13 @@ class repairDetailWindow(ttk.Frame):
 
     def create_window_detalhe_contacto(self, *event):
         self.contact_detail_windows_count += 1
-        self.contacto_newDetailsWindow[self.contact_detail_windows_count] = tk.Toplevel(
-        )
-        self.contacto_newDetailsWindow[self.contact_detail_windows_count].title(
-            f'Detalhe de contacto: {self.numero_contacto}')
+        self.contacto_newDetailsWindow[self.contact_detail_windows_count] = tk.Toplevel()
+        self.contacto_newDetailsWindow[self.contact_detail_windows_count] \
+            .title(f'Detalhe de contacto: {self.numero_contacto}')
         self.janela_detalhes_contacto = detalhe_contacto.contactDetailWindow(
             self.contacto_newDetailsWindow[self.contact_detail_windows_count],
             self.numero_contacto, self.estado_app)
-        self.contacto_newDetailsWindow[self.contact_detail_windows_count].focus(
-        )
+        self.contacto_newDetailsWindow[self.contact_detail_windows_count].focus()
 
     def gerar_tab_geral(self):
         # TAB Geral ~~~~~~~~~~~~~~~~
@@ -267,49 +255,57 @@ class repairDetailWindow(ttk.Frame):
         self.txt_nome = ttk.Entry(
             self.geral_fr1, font=("Helvetica-Neue", 12), width=35)
         self.lbl_telefone = ttk.Label(
-            self.geral_fr1, style="Panel_Body.TLabel", text=f"Tel.:{self.telefone}")
+            self.geral_fr1, style="Panel_Body.TLabel", text=f"Tel.:{self.repair['cliente_telefone']}")
         self.lbl_email = ttk.Label(
-            self.geral_fr1, style="Panel_Body.TLabel", text=f"Email:{self.email}")
+            self.geral_fr1, style="Panel_Body.TLabel", text=f"Email:{self.repair['cliente_email']}")
 
         self.ltxt_descr_equipamento = LabelText(
             self.geral_fr2, "Descrição:", style="Panel_Body.TLabel", height=2, width=40)
 
         if self.repair['is_rep_cliente']:
-            # TODO: obter string do estado do equipamento
             estado = f"Estado: {ESTADOS[self.repair['estado_artigo']]}"
-            self.ltxt_obs_estado_equipamento = LabelText(
-                self.geral_fr2, estado, style="Panel_Body.TLabel", height=2)
-            self.ltxt_local_intervencao = LabelEntry(
-                self.geral_fr2, "Local da intervenção:", style="Panel_Body.TLabel", width=25)
-            self.ltxt_acessorios = LabelText(
-                self.geral_fr2, "Acessórios entregues:", style="Panel_Body.TLabel")
+            self.ltxt_obs_estado_equipamento = LabelText(self.geral_fr2, estado,
+                                                         style="Panel_Body.TLabel",
+                                                         height=2)
+            self.ltxt_local_intervencao = LabelEntry(self.geral_fr2,
+                                                     "Local da intervenção:",
+                                                     style="Panel_Body.TLabel",
+                                                     width=25)
+            self.ltxt_acessorios = LabelText(self.geral_fr2,
+                                             "Acessórios entregues:",
+                                             style="Panel_Body.TLabel")
             if self.repair['is_garantia']:
-                self.ltxt_data_compra = LabelEntry(
-                    self.geral_fr2, "Data de compra:", style="Panel_Body.TLabel", width=10)
-                self.ltxt_num_fatura = LabelEntry(
-                    self.geral_fr2, "Nº da fatura:", style="Panel_Body.TLabel", width=15)
-                self.ltxt_garantia = LabelEntry(
-                    self.geral_fr2, "Garantia em:", style="Panel_Body.TLabel")
+                self.ltxt_data_compra = LabelEntry(self.geral_fr2, "Data de compra:",
+                                                   style="Panel_Body.TLabel", width=10)
+                self.ltxt_num_fatura = LabelEntry(self.geral_fr2, "Nº da fatura:",
+                                                  style="Panel_Body.TLabel", width=15)
+                self.ltxt_garantia = LabelEntry(self.geral_fr2, "Garantia em:",
+                                                style="Panel_Body.TLabel")
             else:
-                self.lbl_garantia = ttk.Label(
-                    self.geral_fr2, text="Garantia:\nFora de garantia", style="Panel_Body.TLabel")
+                self.lbl_garantia = ttk.Label(self.geral_fr2,
+                                              text="Garantia:\nFora de garantia",
+                                              style="Panel_Body.TLabel")
 
-        self.ltxt_cod_artigo = LabelEntry(
-            self.geral_fr2, "Código de artigo:", style="Panel_Body.TLabel")
-        self.ltxt_num_serie = LabelEntry(
-            self.geral_fr2, "Nº de série:", style="Panel_Body.TLabel")
+        self.ltxt_cod_artigo = LabelEntry(self.geral_fr2, "Código de artigo:",
+                                          style="Panel_Body.TLabel")
+        self.ltxt_num_serie = LabelEntry(self.geral_fr2, "Nº de série:",
+                                         style="Panel_Body.TLabel")
 
-        self.ltxt_descr_avaria = LabelText(
-            self.geral_fr2, "Avaria/Serviço:", style="Panel_Body.TLabel")
-        self.ltxt_notas = LabelText(
-            self.geral_fr2, "Notas:", style="Panel_Body.TLabel")
+        self.ltxt_descr_avaria = LabelText(self.geral_fr2, "Avaria/Serviço:",
+                                           style="Panel_Body.TLabel")
+        self.ltxt_notas = LabelText(self.geral_fr2, "Notas:",
+                                    style="Panel_Body.TLabel")
 
         if self.repair['is_rep_cliente']:
             self.ltxt_senha = LabelEntry(
                 self.geral_fr2, "Senha:", style="Panel_Body.TLabel", width=22)
-            varias_linhas = "• Avaria reproduzida na loja"
-            varias_linhas += "\n• Find my iPhone ativo"
-            varias_linhas += "\n• Efetuar cópia de segurança"
+            varias_linhas = ''
+            if self.repair['avaria_reprod_loja']:
+                varias_linhas = "• Avaria reproduzida na loja"
+            if self.repair['is_find_my_ativo']:
+                varias_linhas += "\n• Find my iPhone ativo"
+            if self.repair['requer_copia_seg']:
+                varias_linhas += "\n• Efetuar cópia de segurança"
 
             if self.repair['modo_entrega'] == 0:
                 varias_linhas += "\n• Levantamento nas n/ instalações"
@@ -321,15 +317,16 @@ class repairDetailWindow(ttk.Frame):
                     self.geral_fr2, "Morada a utilizar na entrega:", style="Panel_Body.TLabel")
 
             if self.repair['modo_entrega'] != 0:
-                if self.portes == 0:
+                if self.repair['cliente_pagou_portes'] == 0:
                     varias_linhas += "\n• Cliente ainda não pagou portes"
-                elif self.portes == 1:
+                elif self.repair['cliente_pagou_portes'] == 1:
                     varias_linhas += "\n• Cliente já pagou portes"
-                elif self.portes == 2:
+                elif self.repair['cliente_pagou_portes'] == 2:
                     varias_linhas += "\n• Oferta de portes grátis"
 
-            self.lbl_varias_linhas = ttk.Label(
-                self.geral_fr2, style="Panel_Body.TLabel", text=varias_linhas)
+            self.lbl_varias_linhas = ttk.Label(self.geral_fr2,
+                                               style="Panel_Body.TLabel",
+                                               text=varias_linhas)
 
             """
             self.lbl_avaria_reprod_loja = ttk.Label(self.geral_fr2, style="Panel_Body.TLabel", text="- Avaria reproduzida na loja")
@@ -344,53 +341,56 @@ class repairDetailWindow(ttk.Frame):
                 self.ltxt_morada_entrega = LabelText(self.geral_fr2, "Morada a utilizar na entrega:", style="Panel_Body.TLabel")
             """
         else:
-            self.ltxt_num_fatura_fornecedor = LabelEntry(
-                self.geral_fr2, "Nº fatura fornecedor:", style="Panel_Body.TLabel", width=15)
-            self.ltxt_data_fatura_fornecedor = LabelEntry(
-                self.geral_fr2, "Data fatura fornecedor:", style="Panel_Body.TLabel", width=10)
-            self.ltxt_nar = LabelEntry(
-                self.geral_fr2, "NAR:", style="Panel_Body.TLabel", width=7)
-            self.ltxt_num_guia_rececao = LabelEntry(
-                self.geral_fr2, "Guia de receção:", style="Panel_Body.TLabel", width=6)
-            self.ltxt_data_entrada_stock = LabelEntry(
-                self.geral_fr2, "Data de entrada em stock:", style="Panel_Body.TLabel", width=15)
-            self.ltxt_num_quebra_stock = LabelEntry(
-                self.geral_fr2, "Nº de quebra de stock:", style="Panel_Body.TLabel", width=6)
+            self.ltxt_num_fatura_fornecedor = LabelEntry(self.geral_fr2,
+                                                         "Nº fatura fornecedor:",
+                                                         style="Panel_Body.TLabel",
+                                                         width=15)
+            self.ltxt_data_fatura_fornecedor = LabelEntry(self.geral_fr2,
+                                                          "Data fatura fornecedor:",
+                                                          style="Panel_Body.TLabel",
+                                                          width=10)
+            self.ltxt_nar = LabelEntry(self.geral_fr2, "NAR:",
+                                       style="Panel_Body.TLabel",
+                                       width=7)
+            self.ltxt_num_guia_rececao = LabelEntry(self.geral_fr2, "Guia de receção:",
+                                                    style="Panel_Body.TLabel",
+                                                    width=6)
+            self.ltxt_data_entrada_stock = LabelEntry(self.geral_fr2,
+                                                      "Data de entrada em stock:",
+                                                      style="Panel_Body.TLabel",
+                                                      width=15)
+            self.ltxt_num_quebra_stock = LabelEntry(self.geral_fr2, "Nº de quebra de stock:",
+                                                    style="Panel_Body.TLabel",
+                                                    width=6)
 
         # Preencher com dados da base de dados --------------------------------
         self.txt_numero_contacto.insert(0, self.numero_contacto)
         self.txt_nome.insert(0, self.nome)
 
-        self.ltxt_descr_equipamento.set(
-            'Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
+        self.ltxt_descr_equipamento.set(self.repair['product_descr'])
         if self.repair['is_rep_cliente']:
-            self.ltxt_obs_estado_equipamento.set(
-                'Texto de exemplo para experimentar como sai na prática.\n Equipamentos em excelente estado.')
-            self.ltxt_local_intervencao.set('Aquele Tal Centro Técnico')
-            self.ltxt_acessorios.set(
-                'Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
-            self.ltxt_senha.set('12343112121')
+            self.ltxt_obs_estado_equipamento.set(self.repair['obs_estado'])
+            self.ltxt_local_intervencao.set(self.repair['local_reparacao'])
+            self.ltxt_acessorios.set(self.repair['acessorios_entregues'])
+            self.ltxt_senha.set(self.repair['senha'])
             if self.repair['is_garantia']:
-                self.ltxt_data_compra.set('29-07-2035')
-                self.ltxt_num_fatura.set('FCR 1234567890/2035')
-                self.ltxt_garantia.set('NPK International Online Store')
+                self.ltxt_data_compra.set(self.repair['data_compra'])
+                self.ltxt_num_fatura.set(self.repair['num_fatura'])
+                self.ltxt_garantia.set(self.repair['loja_compra'])
             if self.repair['modo_entrega'] > 1:
-                self.ltxt_morada_entrega.set(
-                    "José manuel da silva fictício\nRua imaginária da conceição esplendorosa, nº 31, 3º andar frente\n1234-567 CIDADE MARAVILHOSA BRG\nPortugal")
+                self.ltxt_morada_entrega.set(self.repair['morada_entrega'])
         else:
-            self.ltxt_num_fatura_fornecedor.set('C23918237323812371237/2017')
-            self.ltxt_data_fatura_fornecedor.set('01-04-1974')
-            self.ltxt_num_guia_rececao.set('231454')
-            self.ltxt_data_entrada_stock.set('01-01-1984')
-            self.ltxt_num_quebra_stock.set('321123')
-            self.ltxt_nar.set('2139467')
+            self.ltxt_num_fatura_fornecedor.set(self.repair['fatura_fornecedor'])
+            self.ltxt_data_fatura_fornecedor.set(self.repair['data_fatura_fornecedor'])
+            self.ltxt_num_guia_rececao.set(self.repair['num_guia_rececao'])
+            self.ltxt_data_entrada_stock.set(self.repair['data_guia_rececao'])
+            self.ltxt_num_quebra_stock.set(self.repair['num_quebra_stock'])
+            self.ltxt_nar.set(self.repair['nar_autorizacao_rep'])
 
-        self.ltxt_cod_artigo.set('Z0GV2345623P')
-        self.ltxt_num_serie.set('C02G387HJG7865BNFV')
-        self.ltxt_descr_avaria.set(
-            'Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
-        self.ltxt_notas.set(
-            'Texto de exemplo para experimentar como sai na prática.\nIsto fica noutra linha...')
+        self.ltxt_cod_artigo.set(self.repair['product_part_number'])
+        self.ltxt_num_serie.set(self.repair['sn'])
+        self.ltxt_descr_avaria.set(self.repair['descr_servico'])
+        self.ltxt_notas.set(self.repair['notas'])
 
     def montar_tab_geral(self):
         # Montar todos os campos na grid --------------------------------------

@@ -30,8 +30,7 @@ class DatePicker(ttk.Labelframe):
                        othermonthforeground="Gray80",
                        othermonthweforeground="Gray85",
                        normalforeground="Gray30",  # Cor dos números dos dias do mês selecionado
-                       headersforeground="Royalblue2",
-                       # Dias da semana (cabeçalho) e números de semana (coluna da esquerda)
+                       headersforeground="Royalblue2", # Dias da semana (cabeçalho) e números de semana (coluna da esquerda)
                        cursor="hand2",
                        background="LightGray",  # Botões com setas, no cabeçalho
                        foreground="Gray",  # Mês e ano no cabeçalho
@@ -275,7 +274,7 @@ class StatusBar(ttk.Frame):
         self.label.config(text="")
         self.label.update_idletasks()
 
-    def show_progress(self, max_value=100, value=0, mode='indeterminate'):
+    def show_progress(self, max_value=100, value=0, length=125, mode='indeterminate'):
         """ Display a progress bar in the right side of the status bar. It
             can accept a different maximum value, if needed. Mode must be
             either "determinate" (it will display a real progress bar that
@@ -284,6 +283,8 @@ class StatusBar(ttk.Frame):
         """
         self.progress_reset()
         self.progress_bar['mode'] = mode
+        if length:
+            self.progress_bar['length'] = length
         if mode == 'indeterminate':
             self.progress_bar.start()
         else:
@@ -292,7 +293,7 @@ class StatusBar(ttk.Frame):
 
         self.progress_bar.pack(side='right', padx="0 14")
         self.progress_bar.update()
-        self.right_frame.place(in_=self, relx=1, rely=1, y=-10, anchor='e')
+        self.right_frame.place(in_=self, relx=1, rely=1, y=-9, anchor='e')
         self.master.update()
 
     def _hide_progress(self):

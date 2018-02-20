@@ -7,9 +7,9 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
 import os
 import pprint
+import random
+import string
 
-#from sqlalchemy import create_engine, func, or_, and_
-#from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 
 import db_local_base as db_base
@@ -154,13 +154,13 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
         reparacao = db_models.Repair(
             cliente = contactos[i%num_contactos],
             product = artigos[i%num_artigos],
-            sn = "W123132JJG123B123ZLT",
+            sn = ''.join(random.choices(string.ascii_uppercase + string.digits, k=21)),
             fornecedor = contactos[(i+5)%num_contactos],
             estado_artigo = 1,
             obs_estado = "Marcas de acidente, com amolgadelas e vidro partido",
             is_garantia = 0,
             data_compra = datetime(2017,1,31),
-            num_fatura = "12345FC",
+            num_fatura = ''.join(random.choices(string.digits, k=12)),
             loja_compra = "NPK Store",
             descr_servico = choice(servicos),
             avaria_reprod_loja = True,
@@ -171,14 +171,14 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
             notas = "",
             local_reparacao = contactos[i%2],
             estado_reparacao = estado,
-            fatura_fornecedor = "FC123400001",
-            nar_autorizacao_rep = "1234000",
+            fatura_fornecedor = "FC12341"+''.join(random.choices(string.ascii_uppercase + string.digits, k=5)),
+            nar_autorizacao_rep = random.randint(1,999999),
             data_fatura_fornecedor = datetime(2017,1,31),
-            num_guia_rececao = "123455",
+            num_guia_rececao = random.randint(1,99999),
             data_guia_rececao = datetime(2017,1,31),
             cod_resultado_reparacao = choice(list(RESULTADOS.keys())),
             descr_detalhe_reparacao = "Foi substituído em garantia o neurónio avariado",
-            novo_sn_artigo = "G1231000TYZ",
+            novo_sn_artigo = ''.join(random.choices(string.ascii_uppercase + string.digits, k=21)),
             notas_entrega = "Entregue a José Manuel da Silva Curioso",
 
             utilizador_entrega = utilizadores[(i+5)%num_utilizadores],

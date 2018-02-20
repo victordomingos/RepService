@@ -28,6 +28,11 @@ class ContactsWindow(baseApp):
     def __init__(self, master, estado_app, pesquisar, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.estado_app = estado_app
+
+        # Obtém uma referência para a barra de estado da janela principal,
+        # para poder utilizar a barra de progresso nessa janela.
+        self.main_statusbar = estado_app.janela_principal.my_statusbar
+        self.main_statusbar.show_progress(value=50, mode="determinate")
         self.contacto_newDetailsWindow = {}
         self.contact_detail_windows_count = 0
         self.contacto_selecionado = None
@@ -46,12 +51,18 @@ class ContactsWindow(baseApp):
 
         self.gerar_painel_entrada()
         self.composeFrames()
-        self.atualizar_lista(db.obter_clientes())
+        self.main_statusbar.hide_progress(last_update=100)
+        self.my_statusbar.show_progress(value=30, length=60, mode="determinate")
+        clientes = db.obter_clientes()
+        self.my_statusbar.progress_update(70)
+        self.atualizar_lista(clientes)
+        self.my_statusbar.hide_progress(last_update=100)
 
         if self.estado_app.painel_novo_contacto_aberto:
             self.mostrar_painel_entrada()
         if pesquisar:
             self.clique_a_pesquisar()
+
 
     def contar_linhas(self):
         """ Obtém o número de linhas da tabela de contactos. """
@@ -281,15 +292,23 @@ class ContactsWindow(baseApp):
     def mostrar_fornecedores(self, *event):
         self.master.title("Fornecedores")
         self.last_selected_view_contacts_list = "Fornecedores"
+        self.my_statusbar.clear()
+        self.my_statusbar.show_progress(value=30, length=60, mode="determinate")
         fornecedores = db.obter_fornecedores()
+        self.my_statusbar.progress_update(70)
         self.atualizar_lista(fornecedores)
+        self.my_statusbar.hide_progress(last_update=100)
 
 
     def mostrar_clientes(self, *event):
         self.master.title("Clientes")
         self.last_selected_view_contacts_list = "Clientes"
+        self.my_statusbar.show_progress(value=30, length=60, mode="determinate")
         clientes = db.obter_clientes()
+        self.my_statusbar.progress_update(70)
         self.atualizar_lista(clientes)
+        self.my_statusbar.hide_progress(last_update=100)
+
 
 
     def adicionar_contacto(self, *event):
@@ -446,8 +465,6 @@ class ContactsWindow(baseApp):
     def atualizar_lista(self, contactos):
         """ Atualizar a lista de reparações na tabela principal.
         """
-        quantidade_contactos = len(contactos)
-
         for i in self.tree.get_children():  # Limpar tabela primeiro
             self.tree.delete(i)
 
@@ -480,7 +497,6 @@ class ContactsWindow(baseApp):
         termo_pesquisa = termo_pesquisa.strip()
 
         # regressar ao campo de pesquisa caso não haja texto a pesquisar (resolve questão do atalho de teclado)
-
         if termo_pesquisa == "":
             if self.last_selected_view_contacts_list == "Clientes":
                 contactos = db.obter_clientes()
@@ -491,18 +507,19 @@ class ContactsWindow(baseApp):
         elif (len(termo_pesquisa) < 3) and not self.isNumeric(termo_pesquisa):
             return
 
-        self.my_statusbar.set(f"A pesquisar: {termo_pesquisa}")
+        self.my_statusbar.show_progress(value=30, length=60, mode="determinate")
+        #self.my_statusbar.set(f"A pesquisar: {termo_pesquisa}")
 
         # Pesquisar filtrando pelo tipo de contacto selecionado (cliente/fornecedor)
         contactos = db.pesquisar_contactos(termo_pesquisa,
             tipo=self.last_selected_view_contacts_list)
-
+        self.my_statusbar.progress_update(70)
         self.atualizar_lista(contactos)
-
         self.ncontactos = len(contactos)
+        self.my_statusbar.hide_progress(last_update=100)
 
         if self.ncontactos == 0:
-            s_status = f"""Pesquisa: {'"'+termo_pesquisa.upper()+'"'}. Não foi encontrado nenhum contacto com o termo de pesquisa introduzido."""
+            s_status = f"""Pesquisa: {'"'+termo_pesquisa.upper()+'"'}. Não foram encontrados contactos."""
         else:
             s_status = f"""Pesquisa: {'"'+termo_pesquisa.upper()+'"'}. Encontrados {self.ncontactos} contactos."""
         self.my_statusbar.set(s_status)

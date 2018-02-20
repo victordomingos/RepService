@@ -27,6 +27,11 @@ class RemessasWindow(baseApp):
     def __init__(self, master, estado_app, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.estado_app = estado_app
+
+        # Obtém uma referência para a barra de estado da janela principal,
+        # para poder utilizar a barra de progresso nessa janela.
+        self.main_statusbar = estado_app.janela_principal.my_statusbar
+        self.main_statusbar.show_progress(value=50, mode="determinate")
         self.master.minsize(REMESSAS_MIN_WIDTH, REMESSAS_MIN_HEIGHT)
         self.master.maxsize(REMESSAS_MAX_WIDTH, REMESSAS_MAX_HEIGHT)
         self.master.geometry(REMESSAS_GEOMETRIA)
@@ -45,11 +50,17 @@ class RemessasWindow(baseApp):
         self.gerar_menu()
 
         self.composeFrames()
-        self.inserir_dados_de_exemplo()
+        self.main_statusbar.hide_progress(last_update=100)
+        self.my_statusbar.show_progress(value=30, length=60, mode="determinate")
+        self.inserir_dados_de_exemplo()  # TODO: obter dados da base de dados
+        self.my_statusbar.progress_update(70)
+
         self.alternar_cores(self.tree)
         self.atualizar_soma()
         if self.estado_app.painel_nova_remessa_aberto:
             self.mostrar_painel_entrada()
+        self.my_statusbar.hide_progress(last_update=100)
+
 
     def gerar_menu(self):
         self.menu = tk.Menu(self.master)

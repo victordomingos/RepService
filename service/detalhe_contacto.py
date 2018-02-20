@@ -28,10 +28,13 @@ class contactDetailWindow(ttk.Frame):
         super().__init__(master, *args, **kwargs)
         self.master = master
         self.estado_app = estado_app
+        self.main_statusbar = estado_app.janela_principal.my_statusbar
+        self.main_statusbar.show_progress(value=50, mode="determinate")
         self.master.bind("<Command-w>", self.on_btn_fechar)
         self.master.focus()
         self.num_contacto = num_contacto
         self.contacto = db.obter_contacto(num_contacto)
+        self.main_statusbar.hide_progress(last_update=100)
         self.contacto_selecionado = ""
         self.rep_newDetailsWindow = {}
         self.rep_detail_windows_count = 0

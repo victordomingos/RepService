@@ -22,8 +22,6 @@ import tkinter.font
 from tkinter import ttk, messagebox
 from tkinter.scrolledtext import ScrolledText
 from string import ascii_letters
-from threading import Thread
-from queue import Queue
 
 import about_window, contactos, remessas, detalhe_reparacao, detalhe_mensagem
 import imprimir
@@ -494,11 +492,11 @@ class App(baseApp):
         curItem = self.tree.focus()
         tree_linha = self.tree.item(curItem)
 
-        processo = tree_linha["values"][0]
+        num_rep = tree_linha["values"][0]
         equipamento = tree_linha["values"][2]
-        num_serie = "S/N: CK992737632POT234B"  # TODO: obter num serie
+        num_serie = db.obter_num_serie(num_rep)
         self.my_statusbar.set(f"{equipamento} • {num_serie}")
-        self.reparacao_selecionada = processo
+        self.reparacao_selecionada = num_rep
 
     def montar_tabela(self):
         self.tree['columns'] = (

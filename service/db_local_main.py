@@ -217,6 +217,8 @@ def obter_reparacao(num_rep: int) -> Dict[str, Union[int, str]]:
         de reparação).
     """
     rep = _obter_reparacao(num_rep)
+
+    #TODO: distinguir e adaptar para rep. cliente/stock
     return {'id': rep.id,
             'cliente_id': rep.cliente.id,
             'cliente_nome': rep.cliente.nome,
@@ -268,11 +270,15 @@ def obter_reparacao(num_rep: int) -> Dict[str, Union[int, str]]:
             'updated_on': rep.updated_on,
 
             'fornecedor': rep.fornecedor,
-            'local_reparacao': rep.local_reparacao,
+            'local_reparacao': rep.local_reparacao.nome,
             'utilizador_entrega': rep.utilizador_entrega,
             'criado_por_utilizador': rep.criado_por_utilizador,
             'atualizado_por_utilizador': rep.atualizado_por_utilizador
             }
+
+def obter_num_serie(num_rep: int) -> str:
+    rep = _obter_reparacao(num_rep)
+    return rep.sn
 
 
 # =============================== Mensagens/Eventos ===============================
