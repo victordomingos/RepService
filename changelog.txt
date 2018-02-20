@@ -12,7 +12,11 @@ v.0.19 - 28/02/2018
    de criar um novo contacto.
  * Adicionados calendários para facilitar a introdução de datas nos
    formulários.
- * Adicionada barra de progresso à janela de reparações.
+ * Adicionadas barras de progresso à janela principal, contactos e remessas.
+ * Ao selecionar uma reparação na janela principal, já mostra na barra de
+   estado o número de série do artigo a que se refere esse processo.
+ * O separador "Geral" da janela de detalhes da reparação já mostra dados
+   obtidos a partir da base de dados.
  *
 
 ---
