@@ -11,10 +11,10 @@ from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import sessionmaker, load_only
 from typing import Dict, Tuple, List, Union, Optional, Any
 
-import db_local_models as db_models
-
-from misc import calcular_dias_desde
-from global_setup import LOCAL_DATABASE_PATH, ESTADOS, PRIORIDADES
+from local_db import db_models
+from misc.misc_funcs import calcular_dias_desde
+from global_setup import LOCAL_DATABASE_PATH
+from misc.constants import ESTADOS, PRIORIDADES
 
 
 def iniciar_sessao_db():

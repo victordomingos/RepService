@@ -5,10 +5,10 @@ Este módulo é parte integrante da aplicação Promais Service, desenvolvida po
 Victor Domingos e distribuída sob os termos da licença Creative Commons
 Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
-from sqlalchemy import Column, Integer, String, Boolean, Date, ForeignKey, MetaData, DateTime, func
+from sqlalchemy import Column, Integer, String, Boolean, Date, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship, backref
 
-from db_local_base import Base
+from local_db.db_base import Base
 
 
 class Loja(Base):

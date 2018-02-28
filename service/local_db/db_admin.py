@@ -12,13 +12,11 @@ import string
 
 from datetime import datetime
 
-import db_local_base as db_base
-import db_local_models as db_models
+from local_db import db_models, db_base
+from local_db import db_main as db
 
-import db_local_main as db
-
-from global_setup import LOCAL_DATABASE_PATH, ESTADOS, ENTREGUE, PRIORIDADES, RESULTADOS
-
+from global_setup import LOCAL_DATABASE_PATH
+from misc.constants import ESTADOS, ENTREGUE, PRIORIDADES, RESULTADOS
 
 def delete_database():
     print("  - A apagar as tabelas existentes.")
