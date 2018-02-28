@@ -10,16 +10,16 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from string import ascii_uppercase, ascii_letters
 
-from base_app import baseApp
-from extra_tk_classes import LabelEntry, LabelText
-from detalhe_contacto import contactDetailWindow
+from gui.base_app import baseApp
+from gui.extra_tk_classes import LabelEntry, LabelText
+from gui.detalhe_contacto import contactDetailWindow
 from global_setup import *
-
+from misc.constants import TODOS_OS_PAISES
 
 if USE_LOCAL_DATABASE:
-    import db_local_main as db
+    from local_db import db_main as db
 else:
-    import db_remote as db
+    from remote_db import db_main as db
 
 
 class ContactsWindow(baseApp):
@@ -124,7 +124,7 @@ class ContactsWindow(baseApp):
                         'Mostrar apenas fornecedores\ne centros técnicos.')
 
         self.btn_add = ttk.Button(
-            self.topframe, text=" ➕", width=3, command=self.show_entryform)
+            self.topframe, text=" ➕", style="secondary.TButton",  width=3, command=self.show_entryform)
         self.btn_add.grid(column=3, row=0)
         self.dicas.bind(self.btn_add, 'Criar novo contacto.')
 
@@ -147,16 +147,15 @@ class ContactsWindow(baseApp):
 
     def mostrar_painel_entrada(self, *event):
         self.estado_app.painel_novo_contacto_aberto = True
-        #self.MenuFicheiro.entryconfig("Novo contacto", state="disabled")
-        # root.unbind_all("<Command-t>")
         self.show_entryform()
         self.ef_ltxt_nome.entry.focus()
+        self.liga_desliga_menu_novo()
 
     def fechar_painel_entrada(self, *event):
         self.estado_app.painel_novo_contacto_aberto = False
         self.clear_text()
         self.hide_entryform()
-        # root.bind_all("<Command-n>")
+        self.liga_desliga_menu_novo()
 
     def clear_text(self):
         self.entryframe.focus()
@@ -407,10 +406,10 @@ class ContactsWindow(baseApp):
         if self.is_entryform_visible:
             self.estado_app.janela_principal.MenuFicheiro.entryconfigure("Novo contacto", state="disabled")
             # TODO - corrigir bug: o atalho de teclado só fica realmente inativo depois de acedermos ao menu ficheiro. Porquê??
-            # root.unbind_all("<Command-Option-n>")
+            self.estado_app.janela_principal.unbind_all("<Command-t>")
         else:
             self.estado_app.janela_principal.MenuFicheiro.entryconfigure("Novo contacto", state="active")
-            # root.bind_all("<Command-Option-n>")
+            self.estado_app.janela_principal.bind_all("<Command-t>")
 
     def on_save_contact(self, event=None):
             # reparacao = recolher todos os dados do formulário  #TODO

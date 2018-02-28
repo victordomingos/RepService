@@ -9,15 +9,15 @@ import tkinter as tk
 from tkinter import ttk
 import Pmw
 
-from extra_tk_classes import LabelText
-from detalhe_reparacao import repairDetailWindow
+from gui.extra_tk_classes import LabelText
+from gui.detalhe_reparacao import repairDetailWindow
 from global_setup import *
+from misc.constants import *
 
 if USE_LOCAL_DATABASE:
-    import db_local_main as db
-    import db_local_models as db_models
+    from local_db import db_main as db
 else:
-    import db_remote as db
+    from remote_db import db_main as db
 
 
 class msgDetailWindow(ttk.Frame):

@@ -11,14 +11,15 @@ import Pmw
 from string import ascii_uppercase
 #import textwrap
 
-from extra_tk_classes import AutoScrollbar, LabelEntry, LabelText
-from detalhe_reparacao import repairDetailWindow
+from gui.extra_tk_classes import AutoScrollbar, LabelEntry, LabelText
+from gui import detalhe_reparacao
 from global_setup import *
+from misc.constants import TODOS_OS_PAISES
 
 if USE_LOCAL_DATABASE:
-    import db_local_main as db
+    from local_db import db_main as db
 else:
-    import db_remote as db
+    from remote_db import db_main as db
 
 
 class contactDetailWindow(ttk.Frame):
@@ -47,12 +48,16 @@ class contactDetailWindow(ttk.Frame):
 
         self.configurar_frames_e_estilos()
         self.montar_barra_de_ferramentas()
+
         self.gerar_painel_principal()
+        if self.var_tipo_is_cliente.get():
+            self.atualizar_soma()
+            self.alternar_cores(self.tree)
+
         self.mostrar_painel_principal()
         self.montar_rodape()
         self.composeFrames()
-        self.atualizar_soma()
-        self.alternar_cores(self.tree)
+
 
     def _on_criar_nova_reparacao(self, *event):
         """ Cria uma nova reparação utilizando o contacto atual.
@@ -525,7 +530,7 @@ class contactDetailWindow(ttk.Frame):
     def create_window_detalhe_rep(self, num_reparacao=None):
         self.rep_detail_windows_count += 1
         self.rep_newDetailsWindow[self.rep_detail_windows_count] = tk.Toplevel()
-        self.janela_detalhes_rep = repairDetailWindow(
+        self.janela_detalhes_rep = detalhe_reparacao.repairDetailWindow(
             self.rep_newDetailsWindow[self.rep_detail_windows_count],
             num_reparacao)
 

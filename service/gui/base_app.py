@@ -10,7 +10,7 @@ from tkinter import ttk
 import tkinter.font
 import Pmw
 
-from extra_tk_classes import StatusBar, AutoScrollbar
+from gui.extra_tk_classes import StatusBar, AutoScrollbar
 from global_setup import *
 
 
@@ -166,6 +166,7 @@ class baseApp(ttk.Frame):
                     y = y**2
                     self.entryframe.place(
                         in_=self.my_statusbar, relx=1, y=y, anchor="se", relwidth=1, bordermode="outside")
+
                 for y in range(-12, -3, 3):
                     self.entryframe.update()
                     y = y**2
@@ -174,11 +175,13 @@ class baseApp(ttk.Frame):
                 for y in range(-3, 0, 1):
                     self.entryframe.update()
                     y = y**2
+
                     self.entryframe.place(
                         in_=self.my_statusbar, relx=1, y=y, anchor="se", relwidth=1, bordermode="outside")
 
             self.entryframe.lift()
             #self.entryframe.bind_all("<Escape>", self.hide_entryform)
+
 
     def hide_entryform(self, *event):
         if self.is_entryform_visible:

@@ -11,23 +11,15 @@ import tkinter.font
 from tkinter import ttk
 
 from global_setup import *
+from misc.constants import *
 
 if USE_LOCAL_DATABASE:
-    import db_local_main as db
+    from local_db import db_main as db
 else:
-    import db_remote as db
+    from remote_db import db_main as db
 
 
-__app_name__ = "RepService 2018"
-__author__ = "Victor Domingos"
-__copyright__ = "Copyright 2018 Victor Domingos"
-__license__ = "Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)"
-__version__ = "v0.19 development"
-__email__ = "web@victordomingos.com"
-__status__ = "Development"
-
-
-class thanks_window:
+class ThanksWindow:
     def __init__(self):
         self.about_w = 320
         self.about_h = 370
@@ -70,7 +62,7 @@ class thanks_window:
         return "break"
 
 
-class about_window:
+class AboutWindow:
     def __init__(self, *event):
         self.about_w = 320
         self.about_h = 370
@@ -106,11 +98,11 @@ class about_window:
 
         #---------- TOPO -----------
         self.app_lbl = ttk.Label(
-            self.pframe_topo, font=self.appfont, text=__app_name__)
+            self.pframe_topo, font=self.appfont, text=APP_NAME)
         self.assin_lbl = ttk.Label(
             self.pframe_topo, text="\nO seu gestor avançado de reparações.\n")
         self.version_lbl = ttk.Label(
-            self.pframe_topo, font=self.copyfont, text="Versão {}\n\n\n".format(__version__))
+            self.pframe_topo, font=self.copyfont, text="Versão {}\n\n\n".format(APP_VERSION))
 
         self.lbl_rep_count = ttk.Label(self.pframe_topo, font=self.copyfont,
             text=f"Reparações: {db.contar_reparacoes()}")
@@ -132,7 +124,7 @@ class about_window:
         self.copyright_lbl = ttk.Label(
             self.pframe_fundo, font=self.copyfont, text="\n\n© 2018 Victor Domingos")
         self.license_lbl = ttk.Label(
-            self.pframe_fundo, font=self.copyfont, text=__license__)
+            self.pframe_fundo, font=self.copyfont, text=APP_LICENSE)
 
         self.app_lbl.pack()
         self.assin_lbl.pack()
@@ -159,9 +151,8 @@ class about_window:
 
 
 def thanks(*event):
-    janela_thanks = thanks_window()
+    ThanksWindow()
 
 
 def about(*event):
-    janela_thanks.destroy()
-    janela_about = about_window()
+    AboutWindow()

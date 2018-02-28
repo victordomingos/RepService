@@ -11,15 +11,16 @@ from tkinter import ttk
 import Pmw
 import textwrap
 
-import detalhe_contacto
-from extra_tk_classes import AutoScrollbar, LabelEntry, LabelText
+from gui import detalhe_contacto
+from gui.extra_tk_classes import AutoScrollbar, LabelEntry, LabelText
 from global_setup import *
+from misc.constants import *
 
 
 if USE_LOCAL_DATABASE:
-    import db_local_main as db
+    from local_db import db_main as db
 else:
-    import db_remote as db
+    from remote_db import db_main as db
 
 
 class repairDetailWindow(ttk.Frame):
@@ -263,8 +264,7 @@ class repairDetailWindow(ttk.Frame):
             self.geral_fr2, "Descrição:", style="Panel_Body.TLabel", height=2, width=40)
 
         if self.repair['is_rep_cliente']:
-            estado = f"Estado: {ESTADOS[self.repair['estado_artigo']]}"
-            self.ltxt_obs_estado_equipamento = LabelText(self.geral_fr2, estado,
+            self.ltxt_obs_estado_equipamento = LabelText(self.geral_fr2, "Estado:",
                                                          style="Panel_Body.TLabel",
                                                          height=2)
             self.ltxt_local_intervencao = LabelEntry(self.geral_fr2,
@@ -646,7 +646,7 @@ class repairDetailWindow(ttk.Frame):
 
     def _on_id_art_emprest_changed(self, index, value, op):
         id_artigo_introduzido = self.ltxt_id_art.get()
-        artigos = obter_lista_artigos_emprest()
+        artigos = db.obter_lista_artigos_emprest()
 
         if id_artigo_introduzido in artigos.keys():
             if artigos[id_artigo_introduzido][1] == "":

@@ -8,17 +8,18 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-import imprimir
-from base_app import baseApp
-from extra_tk_classes import AutoScrollbar, LabelEntry, LabelText
-from detalhe_remessa import remessaDetailWindow
+from printing import imprimir
+from gui.base_app import baseApp
+from gui.extra_tk_classes import AutoScrollbar
+from gui.detalhe_remessa import remessaDetailWindow
 from global_setup import *
+from misc.constants import *
 
 
 if USE_LOCAL_DATABASE:
-    import db_local_main as db
+    from local_db import db_main as db
 else:
-    import db_remote as db
+    from remote_db import db_main as db
 
 
 class RemessasWindow(baseApp):
@@ -39,8 +40,6 @@ class RemessasWindow(baseApp):
         self.remessa_selecionada = None
         self.remessa_newDetailsWindow = {}
         self.remessa_detail_windows_count = 0
-        # self.centerframe = ttk.Frame(self.mainframe, padding="4 0 4 0")
-        # #apagar isto
         self.nremessas = 0
 
         self.montar_barra_de_ferramentas()
@@ -146,9 +145,8 @@ class RemessasWindow(baseApp):
 
     def mostrar_painel_entrada(self, *event):
         self.estado_app.painel_nova_remessa_aberto = True
-        #self.MenuFicheiro.entryconfig("Novo contacto", state="disabled")
-        # root.unbind_all("<Command-n>")
         self.show_entryform()
+        self.liga_desliga_menu_novo()
         self.my_statusbar.set(self.str_num_processos)
         self.ef_radio_tipo_saida.focus()
 
@@ -156,7 +154,7 @@ class RemessasWindow(baseApp):
         self.estado_app.painel_nova_remessa_aberto = False
         self.clear_text()
         self.hide_entryform()
-        # root.bind_all("<Command-n>")
+        self.liga_desliga_menu_novo()
 
     def gerar_painel_entrada(self):
         # entryfr1-----------------------------
@@ -395,12 +393,11 @@ class RemessasWindow(baseApp):
         que o painel se feche inadvertidamente.
         """
         if self.is_entryform_visible == True:
-            self.MenuFicheiro.entryconfigure("Nova remessa", state="disabled")
-            # TODO - corrigir bug: o atalho de teclado só fica realmente inativo depois de acedermos ao menu ficheiro. Porquê??
-            # root.unbind_all("<Command-Option-n>")
+            self.estado_app.janela_principal.MenuFicheiro.entryconfigure("Nova remessa", state="disabled")
+            self.estado_app.janela_principal.unbind_all("<Command-r>")
         else:
-            self.MenuFicheiro.entryconfigure("Nova remessa", state="active")
-            # root.bind_all("<Command-Option-n>")
+            self.estado_app.janela_principal.MenuFicheiro.entryconfigure("Nova remessa", state="active")
+            self.estado_app.janela_principal.bind_all("<Command-r>")
 
     def clear_text(self):
         self.entryframe.focus()
@@ -465,3 +462,4 @@ class RemessasWindow(baseApp):
                 str(i + 1), "Centro técnico", "Loja X", "10", "2017-01-12"))
             self.tree.insert("", "end", text="", values=(
                 str(i + 2), "Loja X", "Distribuidor internacional", "10", "2017-02-01"))
+
