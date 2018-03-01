@@ -4,6 +4,13 @@ Histórico de versões:
 ====================
 
 ---
+v.0.20 - 17/03/2018
+ * As janelas de contactos e remessas são agora apresentadas no ecrã
+   encostadas ao lado direito da janela principal. No caso de não haver espaço
+   suficiente, aparecem encostadas à extremidade direita do ecrã.
+ * Alguns ajustes visuais.
+
+---
 v.0.19 - 1/03/2018
  * O botão "Criar reparação" na janela de detalhes de contacto já funciona.
  * Ao sair do campo do número de contacto, o nome do cliente/fornecedor e a
