@@ -666,6 +666,15 @@ class App(baseApp):
 
     def close_window_remessas(self, *event):
         self.master.update_idletasks()
+
+        if self.janela_remessas.is_entryform_visible:
+            self.janela_remessas.on_remessa_cancel()
+            if not self.estado_app.painel_nova_remessa_aberto:
+                self.janela_remessas.is_entryform_visible = False
+                self.janela_remessas.liga_desliga_menu_novo()
+            self.bind_all("<Command-r>", lambda
+                *x: self.create_window_remessas(criar_nova_remessa=True))
+
         self.estado_app.janela_remessas_aberta = False
         self.estado_app.painel_nova_remessa_aberto = False
         self.estado_app.janela_remessas.destroy()
@@ -695,6 +704,15 @@ class App(baseApp):
 
     def close_window_contactos(self, *event):
         self.master.update_idletasks()
+
+        if self.janela_contactos.is_entryform_visible:
+            self.janela_contactos.on_contact_cancel()
+            if not self.estado_app.painel_novo_contacto_aberto:
+                self.janela_contactos.is_entryform_visible = False
+                self.janela_contactos.liga_desliga_menu_novo()
+            self.bind_all("<Command-t>", lambda
+                *x: self.create_window_contacts(criar_novo_contacto="Cliente"))
+
         if self.estado_app.contacto_para_nova_reparacao:
             if self.estado_app.tipo_novo_contacto == "Cliente":
                 self.ef_txt_num_cliente.delete(0, tk.END)

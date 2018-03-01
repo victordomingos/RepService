@@ -28,6 +28,7 @@ class ContactsWindow(baseApp):
     def __init__(self, master, estado_app, pesquisar, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.estado_app = estado_app
+        self.master = master
 
         # Obtém uma referência para a barra de estado da janela principal,
         # para poder utilizar a barra de progresso nessa janela.
@@ -400,7 +401,7 @@ class ContactsWindow(baseApp):
     def liga_desliga_menu_novo(self, *event):
         """
         Liga e desliga menus com base na configuração atual da janela. Por exemplo, ao
-        abrir o painel de entrada de dados, desativa o menu "nova reparação", para evitar
+        abrir o painel de entrada de dados, desativa o menu "novo contacto", para evitar
         que o painel se feche inadvertidamente.
         """
         if self.is_entryform_visible:
@@ -409,7 +410,8 @@ class ContactsWindow(baseApp):
             self.estado_app.janela_principal.unbind_all("<Command-t>")
         else:
             self.estado_app.janela_principal.MenuFicheiro.entryconfigure("Novo contacto", state="active")
-            self.estado_app.janela_principal.bind_all("<Command-t>")
+            self.estado_app.janela_principal.bind_all("<Command-t>", lambda
+                *x: self.estado_app.janela_principal.create_window_contacts(criar_novo_contacto="Cliente"))
 
     def on_save_contact(self, event=None):
             # reparacao = recolher todos os dados do formulário  #TODO
@@ -419,7 +421,9 @@ class ContactsWindow(baseApp):
         if self.ultimo_contacto:
             self.on_contact_save_success()
         else:
-            wants_to_try_again_save = messagebox.askquestion(message='Não foi possível guardar este contacto na base de dados. Deseja tentar novamente?',
+            wants_to_try_again_save = messagebox.askquestion(message='Não foi possível '
+                                                                     'guardar este contacto na '
+                                                                     'base de dados. Deseja tentar novamente?',
                                                              default='yes',
                                                              parent=self)
             if wants_to_try_again_save == 'yes':

@@ -28,6 +28,7 @@ class RemessasWindow(baseApp):
     def __init__(self, master, estado_app, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.estado_app = estado_app
+        self.master = master
 
         # Obtém uma referência para a barra de estado da janela principal,
         # para poder utilizar a barra de progresso nessa janela.
@@ -155,6 +156,9 @@ class RemessasWindow(baseApp):
         self.clear_text()
         self.hide_entryform()
         self.liga_desliga_menu_novo()
+        self.update()
+        self.estado_app.janela_principal.bind_all("<Command-r>", lambda
+            *x: self.estado_app.janela_principal.create_window_remessas(criar_nova_remessa=True))
 
     def gerar_painel_entrada(self):
         # entryfr1-----------------------------
@@ -371,6 +375,22 @@ class RemessasWindow(baseApp):
         self.janela_detalhes_remessa = remessaDetailWindow(
             self.remessa_newDetailsWindow[self.remessa_detail_windows_count],
             num_remessa, self.estado_app)
+
+    def liga_desliga_menu_novo(self, *event):
+        """
+        Liga e desliga menus com base na configuração atual da janela. Por exemplo, ao
+        abrir o painel de entrada de dados, desativa o menu "nova remessa", para evitar
+        que o painel se feche inadvertidamente.
+        """
+        if self.is_entryform_visible:
+            self.estado_app.janela_principal.MenuFicheiro.entryconfigure("Nova remessa", state="disabled")
+            # TODO - corrigir bug: o atalho de teclado só fica realmente inativo depois de acedermos ao menu ficheiro. Porquê??
+            self.estado_app.janela_principal.unbind_all("<Command-r>")
+        else:
+            self.estado_app.janela_principal.MenuFicheiro.entryconfigure("Nova remessa", state="active")
+            self.estado_app.janela_principal.bind_all("<Command-r>", lambda
+                *x: self.estado_app.janela_principal.create_window_remessas(criar_nova_remessa=True))
+
 
     def radio_tipo_command(self, *event):
         """
