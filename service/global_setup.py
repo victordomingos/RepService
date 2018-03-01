@@ -10,7 +10,7 @@ import os.path
 
 # Alterar para True no caso de se tratar de uma máquina lenta (animações
 # no entryframe)
-SLOW_MACHINE = True
+SLOW_MACHINE = False
 
 # Usar estilo 'aqua' para obter visual nativo no macOS. Noutras plataformas,
 # pode ser necessário alterar para outro estilo. Alguns widgets ttk podem
@@ -45,7 +45,7 @@ CHPWD_MAX_HEIGHT = 320
 ROOT_GEOMETRIA = '1060x800+0+0'
 MASTER_MIN_WIDTH = 970
 MASTER_MIN_HEIGHT = 750
-MASTER_MAX_WIDTH = 1366
+MASTER_MAX_WIDTH = 2000
 MASTER_MAX_HEIGHT = 2000
 
 # Janela da lista de contactos
