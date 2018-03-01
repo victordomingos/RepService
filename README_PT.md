@@ -20,7 +20,7 @@ Aplicação de base de dados para registo em loja de processos de garantia e rep
 
 
 ## Dependências
-Esta aplicação é desenvolvida em Python 3.6 e tkinter, a partir de uma ideia original de Márcio Araújo.
+Esta aplicação é desenvolvida em Python 3.6+ e tkinter, a partir de uma ideia original de Márcio Araújo.
 
 Requer, na versão atual, os seguintes pacotes externos:
 
@@ -38,3 +38,9 @@ Neste momento, é possível configurar alguns parâmetros da aplicação (tamanh
 Antes da primeira utilização, é necessário inicializar a base de dados. Durante esta fase de desenvolvimento inicial, o módulo `service/db_local_admin.py` pode ser executado diretamente, por forma a gerar uma pequena base de dados de exemplo, preenchida com informação fictícia.
 
 Para iniciar a aplicação, basta executar o ficheiro `service/service.py` com o interpretador Python 3.6 ou superior. O utilizador predefinido é `npk` com a senha `...` (sim, ninguém no mundo se lembraria algum dia de uma senha tão segura).
+
+## Current status
+Esta aplicação encontra-se numa fase inicial de desenvolvimento e ainda não pode ser utilizada em contexto de produção. Quase tudo na área de base de dados está ou por fazer, ou apenas parcialmente implementado.
+
+## Contributing
+Se sabe alguma coisa sobre programação e deseja ajudar, por favor esteja à vontade para abrir um "issue" aqui no GitHub e dizer-nos o que pensa. 

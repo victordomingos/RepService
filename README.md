@@ -21,7 +21,7 @@ Database application for in-store registering of warranty and service/repair pro
 
 
 ## Dependencies
-This application is being developed in Python 3.6 and tkinter, after and original idea by Márcio Araújo.
+This application is being developed in Python 3.6+ and tkinter, after and original idea by Márcio Araújo.
 
 It requires, in its current version, the following external packages:
 
@@ -39,3 +39,9 @@ At this time, it is possible to configure some of the application's parameters (
 Before running the application for the first time, you will need to initialize the database. During this early development stage, the module `service/db_local_admin.py` can be executed directly, in order to generate a small sample database, populated with fake data.
 
 To run the application, you just need to execute the module `service/service.py` with Python 3.6 or later. The default user is `npk` with the password `...` (yeah, no one in the entire world would ever come up with such a strong and safe password).
+
+## Current status
+This application is in an early stage of development and is still not suited for production. Almost everything in the database backend is either still missing or only partly implemented. 
+
+## Contributing
+If you know something about programming and want to help, please feel free to open an issue and let us know. 
