@@ -956,7 +956,7 @@ class App(baseApp):
         # entryfr1-----------------------------
         self.ef_cabecalho = ttk.Frame(self.entryfr1, padding=4)
         self.ef_lbl_titulo = ttk.Label(
-            self.ef_cabecalho, style="Panel_Title.TLabel", text="Adicionar Reparação:\n")
+            self.ef_cabecalho, style="Panel_Title.TLabel", text="Adicionar Reparação:")
         self.ef_lbl_tipo = ttk.Label(
             self.ef_cabecalho, text="Tipo de processo:", style="Panel_Body.TLabel")
         self.ef_radio_tipo_cliente = ttk.Radiobutton(self.ef_cabecalho, text="Cliente", style="Panel_Body.TRadiobutton",
@@ -968,7 +968,7 @@ class App(baseApp):
         self.btn_cancelar = ttk.Button(
             self.ef_cabecalho, text="Cancelar", command=self.on_repair_cancel)
 
-        self.ef_lbl_titulo.grid(column=0, row=0, columnspan=3, sticky='w')
+        self.ef_lbl_titulo.grid(column=0, row=0, columnspan=3, sticky='w', pady="0 10")
         self.ef_lbl_tipo.grid(column=0, row=1, sticky='e')
         self.ef_radio_tipo_cliente.grid(column=1, row=1, sticky='w')
         self.ef_radio_tipo_stock.grid(column=2, row=1, sticky='w')
@@ -1061,7 +1061,7 @@ class App(baseApp):
 
         # entryfr3-----------------------------
         self.ef_lf_equipamento = ttk.Labelframe(
-            self.entryfr3, padding=4, style="Panel_Section_Title.TLabelframe", text="\nDados do equipamento")
+            self.entryfr3, padding=4, style="Panel_Section_Title.TLabelframe", text="Dados do equipamento")
         self.ef_ltxt_descr_equipamento = LabelText(
             self.ef_lf_equipamento, "Descrição:", style="Panel_Body.TLabel", width=30, height=2)
         self.ef_lbl_estado_equipamento = ttk.Label(
@@ -1172,7 +1172,7 @@ class App(baseApp):
 
         # entryfr4-----------------------------
         self.ef_lf_servico = ttk.Labelframe(
-            self.entryfr4, padding=4, style="Panel_Section_Title.TLabelframe", text="\nAvaria e/ou serviço a realizar")
+            self.entryfr4, padding=4, style="Panel_Section_Title.TLabelframe", text="Avaria e/ou serviço a realizar")
         self.ef_text_descr_avaria_servico = ScrolledText(self.ef_lf_servico, highlightcolor="LightSteelBlue2", font=(
             "Helvetica-Neue", 12), wrap='word', width=20, height=4)
         self.ef_chkbtn_avaria_reprod_loja = ttk.Checkbutton(
@@ -1226,7 +1226,7 @@ class App(baseApp):
         # Notas: text 3 linhas
         # local intervenção lbl + combobox(contactos>fornecedores)
         self.ef_lf_outros_dados = ttk.Labelframe(
-            self.entryfr5, padding=4, style="Panel_Section_Title.TLabelframe", text="\nOutros dados")
+            self.entryfr5, padding=4, style="Panel_Section_Title.TLabelframe", text="Outros dados")
         self.ef_ltxt_acessorios_entregues = LabelText(
             self.ef_lf_outros_dados, "Acessórios entregues:", style="Panel_Body.TLabel", width=12, height=4)
         self.ef_ltxt_notas = LabelText(
@@ -1519,7 +1519,7 @@ class App(baseApp):
             self.ef_ltxt_cod_artigo.grid(column=0, row=5, padx=5, sticky='we')
             self.ef_ltxt_num_serie.grid(column=1, row=5, padx=5, sticky='we')
 
-            self.ef_lf_outros_dados.configure(text="\nOutros dados")
+            self.ef_lf_outros_dados.configure(text="Outros dados")
             self.ef_ltxt_notas.grid(
                 column=1, row=0, columnspan=1, rowspan=5, padx=5, sticky='wens')
 

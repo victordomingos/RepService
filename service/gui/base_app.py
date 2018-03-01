@@ -92,7 +92,7 @@ class baseApp(ttk.Frame):
             self.leftframe, height=60, selectmode='browse')
 
         # Formulário de introdução de dados (aparece somente quando o utilizado
-        self.entryframe = ttk.Frame(master, padding="4 8 4 0")
+        self.entryframe = ttk.Frame(master, padding="4 6 4 0")
         self.estilo.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=(
             "Helvetica Neue", 18, "bold"))
         self.estilo.configure("Panel_Section_Title.TLabelframe.Label",
@@ -128,6 +128,10 @@ class baseApp(ttk.Frame):
 
         self.composeFrames()
 
+    def screen_size(self):
+        w = self.master.winfo_screenwidth()
+        h = self.master.winfo_screenheight()
+        return w, h
 
     def shake_window(self, root_object):
         """ Shakes a Toplevel window, for instance when username and password don't match.
@@ -204,11 +208,12 @@ class baseApp(ttk.Frame):
         self.bottomframe.pack(side='bottom', fill='x')
         self.mainframe.pack(side='top', expand=True, fill='both')
 
-        self.entryfr1.pack(side='top', expand=True, fill='both')
-        self.entryfr2.pack(side='top', expand=True, fill='both')
-        self.entryfr3.pack(side='top', expand=True, fill='both')
-        self.entryfr4.pack(side='top', expand=True, fill='both')
-        self.entryfr5.pack(side='top', expand=True, fill='both')
+        self.entryfr1.pack(side='top', expand=True, fill='both', pady=0)
+
+        for frame in [self.entryfr2, self.entryfr3, self.entryfr4, self.entryfr5]:
+            if frame.winfo_children():
+                frame.pack(side='top', expand=True, fill='both', pady="6 0")
+
         self.estilo.configure("secondary.TButton", font=("Lucida Grande", 11))
 
     def popupMsg(self, msg):

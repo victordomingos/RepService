@@ -43,7 +43,21 @@ class ContactsWindow(baseApp):
 
         self.master.minsize(CONTACTOS_MIN_WIDTH, CONTACTOS_MIN_HEIGHT)
         self.master.maxsize(CONTACTOS_MAX_WIDTH, CONTACTOS_MAX_HEIGHT)
-        self.master.geometry(CONTACTOS_GEOMETRIA)
+
+        width, height = self.screen_size()
+        main_width = self.estado_app.janela_principal.master.winfo_width()
+
+        if width - CONTACTOS_MIN_WIDTH < main_width:
+            pos_x = width - CONTACTOS_MIN_WIDTH
+        else:
+            pos_x = main_width+ 1
+
+        if height < (CONTACTOS_MIN_HEIGHT+92):
+            pos_y = height - CONTACTOS_MIN_HEIGHT - 22
+        else:
+            pos_y = 92
+
+        self.master.geometry(f'430x730+{pos_x}+{pos_y}')
         self.master.title("Contactos")
 
         self.montar_barra_de_ferramentas()
@@ -51,7 +65,7 @@ class ContactsWindow(baseApp):
         self.gerar_menu()
 
         self.gerar_painel_entrada()
-        self.composeFrames()
+        self.frames = self.composeFrames()
         self.main_statusbar.hide_progress(last_update=100)
         self.my_statusbar.show_progress(value=30, length=60, mode="determinate")
         clientes = db.obter_clientes()
@@ -196,7 +210,7 @@ class ContactsWindow(baseApp):
 
         self.ef_cabecalho = ttk.Frame(self.entryfr1, padding=4)
         self.ef_lbl_titulo = ttk.Label(
-            self.ef_cabecalho, style="Panel_Title.TLabel", text="Adicionar Contacto:\n")
+            self.ef_cabecalho, style="Panel_Title.TLabel", text="Adicionar Contacto:")
         self.ef_lbl_tipo = ttk.Label(
             self.ef_cabecalho, text="Tipo:", style="Panel_Body.TLabel")
 
@@ -211,7 +225,7 @@ class ContactsWindow(baseApp):
         self.btn_cancelar = ttk.Button(
             self.ef_cabecalho, text="Cancelar", command=self.on_contact_cancel)
 
-        self.ef_lbl_titulo.grid(column=0, row=0, columnspan=3, sticky='w')
+        self.ef_lbl_titulo.grid(column=0, row=0, columnspan=3, sticky='w', pady="0 10")
         self.ef_lbl_tipo.grid(column=0, row=1, sticky='e')
         self.ef_chkbtn_tipo_cliente.grid(column=1, row=1, sticky='w')
         self.ef_chkbtn_tipo_fornecedor.grid(column=1, row=2, sticky='w')

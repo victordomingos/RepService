@@ -36,7 +36,22 @@ class RemessasWindow(baseApp):
         self.main_statusbar.show_progress(value=50, mode="determinate")
         self.master.minsize(REMESSAS_MIN_WIDTH, REMESSAS_MIN_HEIGHT)
         self.master.maxsize(REMESSAS_MAX_WIDTH, REMESSAS_MAX_HEIGHT)
-        self.master.geometry(REMESSAS_GEOMETRIA)
+
+        width, height = self.screen_size()
+        main_width = self.estado_app.janela_principal.master.winfo_width()
+
+        if width - REMESSAS_MIN_WIDTH < main_width:
+            pos_x = width - REMESSAS_MIN_WIDTH
+        else:
+            pos_x = main_width + 1
+
+        if height < (REMESSAS_MIN_HEIGHT + 92):
+            pos_y = height - REMESSAS_MIN_HEIGHT - 22
+        else:
+            pos_y = 92
+
+        self.master.geometry(f'430x730+{pos_x}+{pos_y}')
+
         self.master.title('Remessas')
         self.remessa_selecionada = None
         self.remessa_newDetailsWindow = {}
@@ -174,7 +189,7 @@ class RemessasWindow(baseApp):
 
         self.ef_cabecalho = ttk.Frame(self.entryfr1, padding=4)
         self.ef_lbl_titulo = ttk.Label(
-            self.ef_cabecalho, style="Panel_Title.TLabel", text="Adicionar Remessa:\n")
+            self.ef_cabecalho, style="Panel_Title.TLabel", text="Adicionar Remessa:")
         self.ef_lbl_tipo = ttk.Label(
             self.ef_cabecalho, text="Tipo:", style="Panel_Body.TLabel")
         self.ef_radio_tipo_saida = ttk.Radiobutton(self.ef_cabecalho, text="Envio", style="Panel_Body.TRadiobutton",
@@ -186,7 +201,7 @@ class RemessasWindow(baseApp):
         self.btn_cancelar = ttk.Button(
             self.ef_cabecalho, text="Cancelar", command=self.on_remessa_cancel)
 
-        self.ef_lbl_titulo.grid(column=0, row=0, columnspan=3, sticky="w")
+        self.ef_lbl_titulo.grid(column=0, row=0, columnspan=3, sticky="w", pady="0 10")
         self.ef_lbl_tipo.grid(column=0, row=1, sticky="e")
         self.ef_radio_tipo_saida.grid(column=1, row=1, sticky="w")
         self.ef_radio_tipo_entrada.grid(column=2, row=1, sticky="w")
@@ -204,18 +219,19 @@ class RemessasWindow(baseApp):
         self.ef_lbl_destino = ttk.Label(
             self.entryfr2, width=27, text="Destino:", style="Panel_Body.TLabel")
         self.ef_combo_destino = ttk.Combobox(self.entryfr2,
-                                             width=21,
+                                             width=40,
                                              textvariable=self.ef_var_destino,
                                              postcommand=self.atualizar_combo_lista_destino,
                                              state='readonly')  # TODO: Obter estes valores a partir da base de dados, a utilizar também no formulário de Remessas.
         self.ef_lbl_destino.grid(column=0, row=0, padx=5, sticky='we')
-        self.ef_combo_destino.grid(column=0, row=1, padx=5, sticky='we')
+        self.ef_combo_destino.grid(column=0, row=1, padx=5, sticky='we', pady="0 5")
         self.dicas.bind(self.ef_combo_destino,
                         'Clique aqui para selecionar a partir\nde uma lista o fornecedor ou centro técnico.')
+        self.entryfr2.grid_columnconfigure(0, weight=1)
 
         # Entryfr3
         self.ef_lbl_num_rep = ttk.Label(
-            self.entryfr3, text="\nNº rep.:", style="Panel_Body.TLabel")
+            self.entryfr3, text="Nº rep.:", style="Panel_Body.TLabel")
         self.ef_txt_num_reparacao = ttk.Entry(self.entryfr3, width=7)
         self.dicas.bind(self.ef_txt_num_reparacao,
                         'Clique aqui para escrever o número de um\nprocesso de reparação a incluir na remessa.')
