@@ -17,7 +17,10 @@ v.0.19 - 28/02/2018
    estado o número de série do artigo a que se refere esse processo.
  * O separador "Geral" da janela de detalhes da reparação já mostra dados
    obtidos a partir da base de dados.
- * Foi efetuada uma reorganização dos módulos agrupando-os em pacotes.
+ * Os itens de menu "Nova reparação", "Novo contacto" e "Nova remessa" são
+   desativados ou ativados automaticamente conforme, respetivamente, estejam
+   visíveis ou não os respetivos formulários de introdução de dados.
+ * Foi efetuada uma reorganização dos módulos agrupando-os em pacotes/pastas.
 
 ---
 v.0.18 - 14/02/2018 - A comemorar 1 ano de desenvolvimento(s).
