@@ -10,7 +10,7 @@ from tkinter import ttk
 import Pmw
 import textwrap
 
-import printing
+from printing import imprimir
 from gui.extra_tk_classes import AutoScrollbar, LabelEntry, LabelText
 from gui.detalhe_reparacao import repairDetailWindow
 from global_setup import *
@@ -73,7 +73,7 @@ class remessaDetailWindow(ttk.Frame):
         pass
 
     def on_btn_imprimir(self, event):
-        printing.imprimir_guia_de_remessa(self.num_remessa)
+        imprimir.imprimir_guia_de_remessa(self.num_remessa)
 
     def contar_linhas(self):
         """ Obtém o número de linhas da tabela de processos desta remessa. """
