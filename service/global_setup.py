@@ -6,7 +6,7 @@ Victor Domingos e distribuída sob os termos da licença Creative Commons
 Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
 """
 import os.path
-
+import tkinter as tk
 
 # Alterar para True no caso de se tratar de uma máquina lenta (animações
 # no entryframe)
@@ -49,14 +49,16 @@ MASTER_MAX_WIDTH = 2000
 MASTER_MAX_HEIGHT = 2000
 
 # Janela da lista de contactos
-CONTACTOS_GEOMETRIA = '430x730+1062+92'
 CONTACTOS_MIN_WIDTH = 430
 CONTACTOS_MIN_HEIGHT = 730
 CONTACTOS_MAX_WIDTH = 600
 CONTACTOS_MAX_HEIGHT = 2000
+#CONTACTOS_GEOMETRIA = '430x730'
+
 
 # Janela da lista de remessas
-REMESSAS_GEOMETRIA = '430x730+1062+92'
+#REMESSAS_GEOMETRIA = '430x730+1062+92'
+#REMESSAS_GEOMETRIA = '430x730'
 REMESSAS_MIN_WIDTH = 430
 REMESSAS_MIN_HEIGHT = 730
 REMESSAS_MAX_WIDTH = 600
