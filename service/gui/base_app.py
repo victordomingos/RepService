@@ -92,7 +92,7 @@ class baseApp(ttk.Frame):
             self.leftframe, height=60, selectmode='browse')
 
         # Formulário de introdução de dados (aparece somente quando o utilizado
-        self.entryframe = ttk.Frame(master, padding="4 8 4 10")
+        self.entryframe = ttk.Frame(master, padding="4 8 4 0")
         self.estilo.configure("Panel_Title.TLabel", pady=10, foreground="grey25", font=(
             "Helvetica Neue", 18, "bold"))
         self.estilo.configure("Panel_Section_Title.TLabelframe.Label",
