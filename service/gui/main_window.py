@@ -1063,7 +1063,7 @@ class App(baseApp):
         self.ef_lf_equipamento = ttk.Labelframe(
             self.entryfr3, padding=4, style="Panel_Section_Title.TLabelframe", text="Dados do equipamento")
         self.ef_ltxt_descr_equipamento = LabelText(
-            self.ef_lf_equipamento, "Descrição:", style="Panel_Body.TLabel", width=30, height=2)
+            self.ef_lf_equipamento, "Descrição:", style="Panel_Body.TLabel", width=30, height=5)
         self.ef_lbl_estado_equipamento = ttk.Label(
             self.ef_lf_equipamento, style="Panel_Body.TLabel", text="Estado:")
         self.ef_radio_estado_marcas_uso = ttk.Radiobutton(
@@ -1075,7 +1075,7 @@ class App(baseApp):
         self.ef_radio_estado_faltam_pecas = ttk.Radiobutton(
             self.ef_lf_equipamento, text="Faltam peças", style="Panel_Body.TRadiobutton", variable=self.ef_var_estado, value=3, command=self.radio_estado_command)
         self.ef_ltxt_obs_estado_equipamento = LabelText(
-            self.ef_lf_equipamento, "Observações acerca do estado:", style="Panel_Body.TLabel", width=27, height=2)
+            self.ef_lf_equipamento, "Observações acerca do estado:", style="Panel_Body.TLabel", width=27, height=5)
 
         self.ef_lbl_garantia = ttk.Label(
             self.ef_lf_equipamento, style="Panel_Body.TLabel", text="Garantia:")
@@ -1139,7 +1139,7 @@ class App(baseApp):
             self.ef_lf_equipamento, "Nº de quebra de stock:", style="Panel_Body.TLabel", width=15)
 
         self.ef_ltxt_descr_equipamento.grid(
-            column=0, columnspan=2, rowspan=5, row=0, padx=5, sticky='wen')
+            column=0, columnspan=2, rowspan=5, row=0, padx=5, sticky='wens')
         self.ef_lbl_estado_equipamento.grid(
             column=2, row=0, padx=5, sticky='w')
         self.ef_radio_estado_marcas_uso.grid(
@@ -1173,7 +1173,7 @@ class App(baseApp):
         # entryfr4-----------------------------
         self.ef_lf_servico = ttk.Labelframe(
             self.entryfr4, padding=4, style="Panel_Section_Title.TLabelframe", text="Avaria e/ou serviço a realizar")
-        self.ef_text_descr_avaria_servico = ScrolledText(self.ef_lf_servico, highlightcolor="LightSteelBlue2", font=(
+        self.ef_text_descr_avaria_servico = tk.Text(self.ef_lf_servico, highlightcolor="LightSteelBlue2", font=(
             "Helvetica-Neue", 12), wrap='word', width=20, height=4)
         self.ef_chkbtn_avaria_reprod_loja = ttk.Checkbutton(
             self.ef_lf_servico, variable=self.ef_var_reprod_loja, style="Panel_Body.Checkbutton", width=27, text="Avaria reproduzida na loja")
@@ -1209,9 +1209,9 @@ class App(baseApp):
         self.ef_radio_find_my_sim.grid(column=6, row=1, padx=5, sticky='nw')
         self.ef_radio_find_my_nao.grid(column=7, row=1, sticky='nw')
         self.ef_radio_find_my_nao_aplic.grid(column=8, row=1, sticky='nw')
-        self.ef_lbl_espaco.grid(column=8, row=2, sticky='w')
+        #self.ef_lbl_espaco.grid(column=8, row=2, sticky='w')
         self.ef_lbl_efetuar_copia.grid(
-            column=6, row=3, columnspan=3, padx=5, sticky='w')
+            column=6, row=3, columnspan=3, padx=5, pady="6 0", sticky='w')
         self.ef_radio_efetuar_copia_sim.grid(
             column=6, row=4, padx=5, sticky='w')
         self.ef_radio_efetuar_copia_nao.grid(column=7, row=4, sticky='w')

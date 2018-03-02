@@ -7,6 +7,7 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
 import tkinter as tk
 from tkinter import ttk
+from tkinter.scrolledtext import ScrolledText
 import Pmw
 
 from gui.extra_tk_classes import LabelText
@@ -101,29 +102,34 @@ class msgDetailWindow(ttk.Frame):
         self.topframe.grid_columnconfigure(5, weight=1)
 
     def montar_painel_principal(self):
+        self.lf = ttk.LabelFrame(self.centerframe, text="", padding="8 4 8 4", labelanchor="s")
+
         self.lbl_nome = ttk.Label(
-            self.centerframe, text="Nome:", style="Panel_Body.TLabel")
+            self.lf, text="Nome:", style="Panel_Body.TLabel")
         self.lbl_nome_ = ttk.Label(
-            self.centerframe, text=self.nome, style="Panel_Body.TLabel")
+            self.lf, text=self.nome, style="Panel_Body.TLabel")
 
         self.lbl_artigo = ttk.Label(
-            self.centerframe, text="Artigo:", style="Panel_Body.TLabel")
+            self.lf, text="Artigo:", style="Panel_Body.TLabel")
         self.lbl_artigo_ = ttk.Label(
-            self.centerframe, text=self.artigo, style="Panel_Body.TLabel")
+            self.lf, text=self.artigo, style="Panel_Body.TLabel")
 
         self.lbl_estado_atual = ttk.Label(
-            self.centerframe, text="Estado atual:", style="Panel_Body.TLabel")
+            self.lf, text="Estado atual:", style="Panel_Body.TLabel")
         self.lbl_estado_atual_ = ttk.Label(
-            self.centerframe, text=self.estado_atual, style="Panel_Body.TLabel")
+            self.lf, text=self.estado_atual, style="Panel_Body.TLabel")
 
         self.lbl_resultado_evento = ttk.Label(
-            self.centerframe, text="Resultado:", style="Panel_Body.TLabel")
+            self.lf, text="Resultado:", style="Panel_Body.TLabel")
         self.lbl_resultado_evento_ = ttk.Label(
-            self.centerframe, text=self.resultado, style="Panel_Body.TLabel")
+            self.lf, text=self.resultado, style="Panel_Body.TLabel")
 
-        self.ltxt_detalhe = LabelText(
-            self.centerframe, "\n\nDetalhes:", width=35, height=3, style="Panel_Body.TLabel")
-        self.ltxt_detalhe.set(self.detalhe)
+        self.ltxt_detalhe = tk.Text(self.centerframe,
+                                    font=("Helvetica-Neue", 12),
+                                    highlightcolor="LightSteelBlue2",
+                                    wrap='word',
+                                    padx=4, pady=4)
+        self.ltxt_detalhe.insert('insert', self.detalhe)
 
         self.lbl_nome.grid(column=0, row=1, sticky='ne')
         self.lbl_nome_.grid(column=1, row=1, sticky='nw')
@@ -133,7 +139,9 @@ class msgDetailWindow(ttk.Frame):
         self.lbl_estado_atual_.grid(column=1, row=3, sticky='w')
         self.lbl_resultado_evento.grid(column=0, row=4, sticky='e')
         self.lbl_resultado_evento_.grid(column=1, row=4, sticky='w')
-        self.ltxt_detalhe.grid(column=0, row=5, columnspan=2, sticky='wens')
+        self.ltxt_detalhe.grid(column=0, row=5, columnspan=2, sticky='wens', pady="0 0")
+
+        self.lf.grid(column=0, columnspan=3, row=0, sticky="we")
 
         self.centerframe.grid_columnconfigure(0, weight=0)
         self.centerframe.grid_columnconfigure(1, weight=1)
@@ -144,7 +152,10 @@ class msgDetailWindow(ttk.Frame):
 
     def desativar_campos(self):
         # Desativar todos os campos de texto para não permitir alterações. ----
-        self.ltxt_detalhe.disable()
+        self.ltxt_detalhe.configure(state="disabled",
+                                    bg="#fafafa",
+                                    highlightbackground="#fafafa",
+                                    highlightthickness=1)
 
     def montar_rodape(self):
         # TODO - obter dados da base de dados
@@ -171,8 +182,8 @@ class msgDetailWindow(ttk.Frame):
 
         self.master.title(f'Detalhes')
         self.mainframe = ttk.Frame(self.master)
-        self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 20")
-        self.centerframe = ttk.Frame(self.mainframe, padding="5 8 5 5")
+        self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 5")
+        self.centerframe = ttk.Frame(self.mainframe, padding="5 5 5 5")
         self.bottomframe = ttk.Frame(self.mainframe, padding="3 1 3 1")
 
         self.estilo = ttk.Style()

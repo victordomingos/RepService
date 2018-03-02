@@ -12,7 +12,7 @@ import tkinter as tk
 import tkinter.font
 
 from tkinter import ttk
-from tkinter.scrolledtext import ScrolledText
+#from tkinter.scrolledtext import ScrolledText
 
 from tkcalendar import Calendar
 
@@ -211,7 +211,7 @@ class LabelText(ttk.Frame):
         else:
             self.label = ttk.Label(self, text=label, anchor="w")
 
-        self.scrolledtext = ScrolledText(self, font=("Helvetica-Neue", 12),
+        self.scrolledtext = tk.Text(self, font=("Helvetica-Neue", 12),
                                          highlightcolor="LightSteelBlue2",
                                          wrap='word',
                                          width=width,

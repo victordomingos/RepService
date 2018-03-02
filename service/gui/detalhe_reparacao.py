@@ -577,7 +577,7 @@ class repairDetailWindow(ttk.Frame):
                         'Assinale esta opção para enviar uma mensagem\ncom o conteúdo deste evento ao resto da sua equipa.')
 
         self.ef_ltxt_detalhes_evento = LabelText(
-            self.historico_fr1, "\nDetalhes:", style="Panel_Body.TLabel", width=30, height=2)
+            self.historico_fr1, "\nDetalhes:", style="Panel_Body.TLabel", width=30, height=3)
 
         self.btn_adicionar = ttk.Button(self.historico_fr1, default="active",
                                         style="Active.TButton", text="Adicionar", command=self._on_save_evento)
