@@ -8,7 +8,9 @@ v.0.20 - 17/03/2018
  * As janelas de contactos e remessas são agora apresentadas no ecrã
    encostadas ao lado direito da janela principal. No caso de não haver espaço
    suficiente, aparecem encostadas à extremidade direita do ecrã.
- * Alguns ajustes visuais.
+ * As caixas ScrolledText foram substituídas por caixas simples tk.Text().
+ * Alguns ajustes visuais para permitir a interface ajustar-se melhor a ecrãs
+   mais pequenos.
 
 ---
 v.0.19 - 1/03/2018
