@@ -18,7 +18,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from gui.base_app import AppStatus
-from gui.main import App
+from gui.main_window import App
 from global_setup import *
 
 
