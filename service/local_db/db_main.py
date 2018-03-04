@@ -415,6 +415,11 @@ def obter_contacto(num_contacto: int) -> Dict[str, Union[int, str]]:
     s, _ = iniciar_sessao_db()
     contacto = s.query(db_models.Contact).get(num_contacto)
 
+    if contacto.atualizado_por_utilizador:
+        atualizado_por_utilizador_nome = contacto.atualizado_por_utilizador.nome
+    else:
+        atualizado_por_utilizador_nome = None
+
     return {
         'id': contacto.id,
         'nome': contacto.nome,
@@ -436,7 +441,7 @@ def obter_contacto(num_contacto: int) -> Dict[str, Union[int, str]]:
         'created_on': contacto.created_on.isoformat(sep=' ', timespec='minutes'),
         'updated_on': contacto.updated_on.isoformat(sep=' ', timespec='minutes'),
         'criado_por_utilizador_nome': contacto.criado_por_utilizador.nome,
-        'atualizado_por_utilizador_nome': contacto.atualizado_por_utilizador.nome}
+        'atualizado_por_utilizador_nome': atualizado_por_utilizador_nome}
 
 
 def obter_info_contacto(num_contacto: int, tipo:str) -> Optional[Dict[str, Union[str, Any]]]:
@@ -476,6 +481,23 @@ def obter_info_contacto(num_contacto: int, tipo:str) -> Optional[Dict[str, Union
         'email': contacto.email
         }
 
+def contact_exists(nif: int) -> Optional[Dict[str, Union[str, Any]]]:
+    """ Verifica se já existe na base de dados algum contacto com o NIF indicado
+        e, caso exista, obtém o ID e nome respetivos. Caso não exista, a função
+        devolve None.
+    """
+    s, _ = iniciar_sessao_db()
+
+    contacto = s.query(db_models.Contact.id, db_models.Contact.nome) \
+                        .filter(db_models.Contact.nif==nif).first()
+
+    if contacto:
+        return {
+            'id': contacto.id,
+            'nome': contacto.nome,
+            }
+    else:
+        return None
 
 # =============================== Remessas ===============================
 def save_remessa(remessa: int) -> int:
