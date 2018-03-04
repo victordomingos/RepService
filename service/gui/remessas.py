@@ -50,7 +50,7 @@ class RemessasWindow(baseApp):
         else:
             pos_y = 92
 
-        self.master.geometry(f'430x730+{pos_x}+{pos_y}')
+        self.master.geometry(f'{REMESSAS_MIN_WIDTH}x{REMESSAS_MIN_HEIGHT}+{pos_x}+{pos_y}')
 
         self.master.title('Remessas')
         self.remessa_selecionada = None

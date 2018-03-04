@@ -16,6 +16,7 @@ from gui.detalhe_contacto import contactDetailWindow
 from global_setup import *
 from misc.constants import TODOS_OS_PAISES
 
+
 if USE_LOCAL_DATABASE:
     from local_db import db_main as db
 else:
@@ -24,6 +25,7 @@ else:
 
 class ContactsWindow(baseApp):
     """ base class for application """
+
 
     def __init__(self, master, estado_app, pesquisar, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
@@ -50,14 +52,14 @@ class ContactsWindow(baseApp):
         if width - CONTACTOS_MIN_WIDTH < main_width:
             pos_x = width - CONTACTOS_MIN_WIDTH
         else:
-            pos_x = main_width+ 1
+            pos_x = main_width + 1
 
-        if height < (CONTACTOS_MIN_HEIGHT+92):
+        if height < (CONTACTOS_MIN_HEIGHT + 92):
             pos_y = height - CONTACTOS_MIN_HEIGHT - 22
         else:
             pos_y = 92
 
-        self.master.geometry(f'430x730+{pos_x}+{pos_y}')
+        self.master.geometry(f'{CONTACTOS_MIN_WIDTH}x{CONTACTOS_MIN_HEIGHT}+{pos_x}+{pos_y}')
         self.master.title("Contactos")
 
         self.montar_barra_de_ferramentas()
@@ -84,6 +86,7 @@ class ContactsWindow(baseApp):
         linhas = self.tree.get_children("")
         return len(linhas)
 
+
     def atualizar_soma(self):
         """
         Atualiza a barra de estado com o número de contactos.
@@ -91,21 +94,24 @@ class ContactsWindow(baseApp):
         self.ncontactos = self.contar_linhas()
         self.my_statusbar.set(f"{self.ncontactos} contactos")
 
+
     def gerar_menu(self):
         self.menu = tk.Menu(self.master)
-        #----------------Menu contextual tabela principal---------------------
+        # ----------------Menu contextual tabela principal---------------------
         self.contextMenu = tk.Menu(self.menu)
-        self.contextMenu.add_command(label="Informações", command=lambda: self.create_window_detalhe_contacto(
-            num_contacto=self.contacto_selecionado))
-        #self.contextMenu.add_command(label="Abrir no site da transportadora", command=self.abrir_url_browser)
+        self.contextMenu.add_command(label="Informações",
+                                     command=lambda: self.create_window_detalhe_contacto(
+                                         num_contacto=self.contacto_selecionado))
+        # self.contextMenu.add_command(label="Abrir no site da transportadora", command=self.abrir_url_browser)
         self.contextMenu.add_separator()
-        #self.contextMenu.add_command(label="Copiar número de objeto", command=self.copiar_obj_num)
-        #self.contextMenu.add_command(label="Copiar mensagem de expedição", command=self.copiar_msg)
+        # self.contextMenu.add_command(label="Copiar número de objeto", command=self.copiar_obj_num)
+        # self.contextMenu.add_command(label="Copiar mensagem de expedição", command=self.copiar_msg)
         # self.contextMenu.add_separator()
-        #self.contextMenu.add_command(label="Arquivar/restaurar remessa", command=self.del_remessa)
+        # self.contextMenu.add_command(label="Arquivar/restaurar remessa", command=self.del_remessa)
         # self.contextMenu.add_separator()
-        #self.contextMenu.add_command(label="Registar cheque recebido", command=self.pag_recebido)
-        #self.contextMenu.add_command(label="Registar cheque depositado", command=self.chq_depositado)
+        # self.contextMenu.add_command(label="Registar cheque recebido", command=self.pag_recebido)
+        # self.contextMenu.add_command(label="Registar cheque depositado", command=self.chq_depositado)
+
 
     def montar_tabela(self):
         self.tree = ttk.Treeview(
@@ -126,20 +132,24 @@ class ContactsWindow(baseApp):
         self.leftframe.grid_rowconfigure(0, weight=1)
         self.bind_tree()
 
+
     def montar_barra_de_ferramentas(self):
         self.btn_clientes = ttk.Button(
-            self.topframe, style="secondary.TButton", text="Clientes", command=self.mostrar_clientes)
+            self.topframe, style="secondary.TButton", text="Clientes",
+            command=self.mostrar_clientes)
         self.btn_clientes.grid(column=0, row=0)
         self.dicas.bind(self.btn_clientes, 'Mostrar apenas clientes.')
 
         self.btn_fornecedores = ttk.Button(
-            self.topframe, style="secondary.TButton", text="Fornecedores", command=self.mostrar_fornecedores)
+            self.topframe, style="secondary.TButton", text="Fornecedores",
+            command=self.mostrar_fornecedores)
         self.btn_fornecedores.grid(column=1, row=0)
         self.dicas.bind(self.btn_fornecedores,
                         'Mostrar apenas fornecedores\ne centros técnicos.')
 
         self.btn_add = ttk.Button(
-            self.topframe, text=" ➕", style="secondary.TButton",  width=3, command=self.show_entryform)
+            self.topframe, text=" ➕", style="secondary.TButton", width=3,
+            command=self.show_entryform)
         self.btn_add.grid(column=3, row=0)
         self.dicas.bind(self.btn_add, 'Criar novo contacto.')
 
@@ -154,11 +164,13 @@ class ContactsWindow(baseApp):
             self.text_input_pesquisa.bind(keystr, self.mostrar_pesquisa)
         self.text_input_pesquisa.bind('<Button-1>', self.clique_a_pesquisar)
         self.text_input_pesquisa.bind('<KeyRelease-Escape>', self.cancelar_pesquisa)
-        self.text_input_pesquisa.bind('<Command-a>', lambda x: self.text_input_pesquisa.select_range(0, tk.END))
+        self.text_input_pesquisa.bind('<Command-a>',
+                                      lambda x: self.text_input_pesquisa.select_range(0, tk.END))
 
         for col in range(1, 4):
             self.topframe.columnconfigure(col, weight=0)
         self.topframe.columnconfigure(2, weight=1)
+
 
     def mostrar_painel_entrada(self, *event):
         self.estado_app.painel_novo_contacto_aberto = True
@@ -166,11 +178,13 @@ class ContactsWindow(baseApp):
         self.ef_ltxt_nome.entry.focus()
         self.liga_desliga_menu_novo()
 
+
     def fechar_painel_entrada(self, *event):
         self.estado_app.painel_novo_contacto_aberto = False
         self.clear_text()
         self.hide_entryform()
         self.liga_desliga_menu_novo()
+
 
     def clear_text(self):
         self.entryframe.focus()
@@ -193,6 +207,7 @@ class ContactsWindow(baseApp):
         for widget in widgets:
             widget.clear()
 
+
     def gerar_painel_entrada(self):
 
         # entryfr1-----------------------------
@@ -206,7 +221,7 @@ class ContactsWindow(baseApp):
         if self.estado_app.tipo_novo_contacto == "Fornecedor":
             self.ef_var_tipo_is_fornecedor.set(True)
             self.ef_var_tipo_is_cliente.set(False)
-        #self.ef_var_tipo_is_loja = tk.IntVar()
+        # self.ef_var_tipo_is_loja = tk.IntVar()
 
         self.ef_cabecalho = ttk.Frame(self.entryfr1, padding=4)
         self.ef_lbl_titulo = ttk.Label(
@@ -215,13 +230,16 @@ class ContactsWindow(baseApp):
             self.ef_cabecalho, text="Tipo:", style="Panel_Body.TLabel")
 
         self.ef_chkbtn_tipo_cliente = ttk.Checkbutton(
-            self.ef_cabecalho, text="Cliente", style="Panel_Body.Checkbutton", variable=self.ef_var_tipo_is_cliente)
+            self.ef_cabecalho, text="Cliente", style="Panel_Body.Checkbutton",
+            variable=self.ef_var_tipo_is_cliente)
         self.ef_chkbtn_tipo_fornecedor = ttk.Checkbutton(
-            self.ef_cabecalho, text="Fornecedor ou centro técnico", style="Panel_Body.Checkbutton", variable=self.ef_var_tipo_is_fornecedor)
-        #self.ef_chkbtn_tipo_loja = ttk.Checkbutton(self.ef_cabecalho, text="Loja do nosso grupo", style="Panel_Body.Checkbutton", variable=self.ef_var_tipo_is_loja)
+            self.ef_cabecalho, text="Fornecedor ou centro técnico", style="Panel_Body.Checkbutton",
+            variable=self.ef_var_tipo_is_fornecedor)
+        # self.ef_chkbtn_tipo_loja = ttk.Checkbutton(self.ef_cabecalho, text="Loja do nosso grupo", style="Panel_Body.Checkbutton", variable=self.ef_var_tipo_is_loja)
 
         self.btn_adicionar = ttk.Button(self.ef_cabecalho, default="active",
-                                        style="Active.TButton", text="Adicionar", command=self.on_save_contact)
+                                        style="Active.TButton", text="Adicionar",
+                                        command=self.on_save_contact)
         self.btn_cancelar = ttk.Button(
             self.ef_cabecalho, text="Cancelar", command=self.on_contact_cancel)
 
@@ -229,7 +247,7 @@ class ContactsWindow(baseApp):
         self.ef_lbl_tipo.grid(column=0, row=1, sticky='e')
         self.ef_chkbtn_tipo_cliente.grid(column=1, row=1, sticky='w')
         self.ef_chkbtn_tipo_fornecedor.grid(column=1, row=2, sticky='w')
-        #self.ef_chkbtn_tipo_loja.grid(column=1, row=3, sticky='w')
+        # self.ef_chkbtn_tipo_loja.grid(column=1, row=3, sticky='w')
 
         self.btn_adicionar.grid(column=3, row=1, sticky='we')
         self.btn_cancelar.grid(column=3, row=2, sticky='we')
@@ -238,22 +256,29 @@ class ContactsWindow(baseApp):
         self.entryfr1.columnconfigure(0, weight=1)
         self.ef_cabecalho.columnconfigure(2, weight=1)
 
-        #self.btn_adicionar.bind('<Button-1>', self.add_remessa)
+        # self.btn_adicionar.bind('<Button-1>', self.add_remessa)
 
         # entryfr2-----------------------------
         self.ef_lf_top = ttk.Labelframe(self.entryfr2, padding=4, text="")
         self.ef_ltxt_nome = LabelEntry(self.ef_lf_top, "Nome", style="Panel_Body.TLabel")
         self.ef_ltxt_empresa = LabelEntry(self.ef_lf_top, "Empresa", style="Panel_Body.TLabel")
         self.ef_ltxt_nif = LabelEntry(self.ef_lf_top, "NIF", style="Panel_Body.TLabel")
-        self.ef_ltxt_telefone = LabelEntry(self.ef_lf_top, "\nTel.", width=14, style="Panel_Body.TLabel")
+        self.ef_ltxt_nif.bind("<FocusOut>", self.validar_nif)
+
+        self.ef_ltxt_telefone = LabelEntry(self.ef_lf_top, "\nTel.", width=14,
+                                           style="Panel_Body.TLabel")
         self.ef_ltxt_tlm = LabelEntry(self.ef_lf_top, "\nTlm.", width=14, style="Panel_Body.TLabel")
-        self.ef_ltxt_tel_empresa = LabelEntry(self.ef_lf_top, "\nTel. empresa", width=14, style="Panel_Body.TLabel")
+        self.ef_ltxt_tel_empresa = LabelEntry(self.ef_lf_top, "\nTel. empresa", width=14,
+                                              style="Panel_Body.TLabel")
 
         self.ef_ltxt_email = LabelEntry(self.ef_lf_top, "Email", style="Panel_Body.TLabel")
-        self.ef_lstxt_morada = LabelText(self.ef_lf_top, "\nMorada", height=2, style="Panel_Body.TLabel")
+        self.ef_lstxt_morada = LabelText(self.ef_lf_top, "\nMorada", height=2,
+                                         style="Panel_Body.TLabel")
 
-        self.ef_ltxt_cod_postal = LabelEntry(self.ef_lf_top, "Código Postal", style="Panel_Body.TLabel")
-        self.ef_ltxt_localidade = LabelEntry(self.ef_lf_top, "Localidade", style="Panel_Body.TLabel")
+        self.ef_ltxt_cod_postal = LabelEntry(self.ef_lf_top, "Código Postal",
+                                             style="Panel_Body.TLabel")
+        self.ef_ltxt_localidade = LabelEntry(self.ef_lf_top, "Localidade",
+                                             style="Panel_Body.TLabel")
 
         self.ef_lbl_pais = ttk.Label(self.ef_lf_top, text="País", style="Panel_Body.TLabel")
         self.paises_value = tk.StringVar()
@@ -263,7 +288,8 @@ class ContactsWindow(baseApp):
         self.ef_combo_pais.current(178)
         self.ef_combo_pais.bind("<Key>", self.procurar_em_combobox)
 
-        self.ef_lstxt_notas = LabelText(self.ef_lf_top, "\nNotas:", height=3, style="Panel_Body.TLabel")
+        self.ef_lstxt_notas = LabelText(self.ef_lf_top, "\nNotas:", height=3,
+                                        style="Panel_Body.TLabel")
 
         self.ef_ltxt_nome.grid(column=0, row=0, columnspan=3, padx=5, sticky='we')
         self.ef_ltxt_empresa.grid(column=0, row=1, columnspan=2, padx=5, sticky='we')
@@ -288,8 +314,9 @@ class ContactsWindow(baseApp):
         self.ef_lf_top.columnconfigure(2, weight=1)
         self.entryfr2.columnconfigure(0, weight=1)
 
-        #--- acabaram os 'entryfr', apenas código geral para o entryframe a partir daqui ---
+        # --- acabaram os 'entryfr', apenas código geral para o entryframe a partir daqui ---
         self.entryframe.bind_all("<Command-Escape>", self.fechar_painel_entrada)
+
 
     def procurar_em_combobox(self, event):
         """
@@ -302,6 +329,7 @@ class ContactsWindow(baseApp):
                 if pais[0] == tecla_pressionada:
                     self.ef_combo_pais.current(index)
                     break
+
 
     def mostrar_fornecedores(self, *event):
         self.master.title("Fornecedores")
@@ -324,7 +352,6 @@ class ContactsWindow(baseApp):
         self.my_statusbar.hide_progress(last_update=100)
 
 
-
     def adicionar_contacto(self, *event):
         """ Guarda o contacto acabado de criar. Caso o utilizador esteja a criar uma
             reparação, adiciona o contacto ao campo correspondente.
@@ -345,6 +372,7 @@ class ContactsWindow(baseApp):
             print("guardar e nao fazer mais nada")
             self.mostrar_clientes()  # atualizar a lista de contactos nesta janela fechar o formulário
 
+
     def bind_tree(self):
         self.tree.bind('<<TreeviewSelect>>', self.selectItem_popup)
         self.tree.bind('<Double-1>', lambda x: self.create_window_detalhe_contacto(
@@ -352,17 +380,20 @@ class ContactsWindow(baseApp):
         self.tree.bind("<Button-2>", self.popupMenu)
         self.tree.bind("<Button-3>", self.popupMenu)
 
+
     def unbind_tree(self):
         self.tree.bind('<<TreeviewSelect>>', None)
         self.tree.bind('<Double-1>', None)
         self.tree.bind("<Button-2>", None)
         self.tree.bind("<Button-3>", None)
 
+
     def selectItem_popup(self, event):
         """ # Hacking moment: Uma função que junta duas funções, para assegurar a sequência...
         """
         self.selectItem()
         self.popupMenu(event)
+
 
     def popupMenu(self, event):
         """action in event of button 3 on tree view"""
@@ -388,6 +419,7 @@ class ContactsWindow(baseApp):
             # no action required
             pass
 
+
     def selectItem(self, *event):
         """
         Obter contacto selecionado (após clique de rato na linha correspondente)
@@ -399,6 +431,7 @@ class ContactsWindow(baseApp):
         nome = tree_linha["values"][1]
         self.my_statusbar.set(f"{contacto} • {nome}")
         self.contacto_selecionado = contacto
+
 
     def create_window_detalhe_contacto(self, *event, num_contacto=None):
         self.contact_detail_windows_count += 1
@@ -412,6 +445,7 @@ class ContactsWindow(baseApp):
             self.estado_app)
         self.contacto_newDetailsWindow[self.contact_detail_windows_count].focus()
 
+
     def liga_desliga_menu_novo(self, *event):
         """
         Liga e desliga menus com base na configuração atual da janela. Por exemplo, ao
@@ -419,19 +453,34 @@ class ContactsWindow(baseApp):
         que o painel se feche inadvertidamente.
         """
         if self.is_entryform_visible:
-            self.estado_app.janela_principal.MenuFicheiro.entryconfigure("Novo contacto", state="disabled")
+            self.estado_app.janela_principal.MenuFicheiro.entryconfigure("Novo contacto",
+                                                                         state="disabled")
             # TODO - corrigir bug: o atalho de teclado só fica realmente inativo depois de acedermos ao menu ficheiro. Porquê??
             self.estado_app.janela_principal.unbind_all("<Command-t>")
         else:
-            self.estado_app.janela_principal.MenuFicheiro.entryconfigure("Novo contacto", state="active")
+            self.estado_app.janela_principal.MenuFicheiro.entryconfigure("Novo contacto",
+                                                                         state="active")
             self.estado_app.janela_principal.bind_all("<Command-t>", lambda
-                *x: self.estado_app.janela_principal.create_window_contacts(criar_novo_contacto="Cliente"))
+                *x: self.estado_app.janela_principal.create_window_contacts(
+                criar_novo_contacto="Cliente"))
+
 
     def on_save_contact(self, event=None):
-            # reparacao = recolher todos os dados do formulário  #TODO
+        # reparacao = recolher todos os dados do formulário  #TODO
         contacto = "teste"
-        self.ultimo_contacto = db.save_contact(
-            contacto)  # TODO - None se falhar
+
+        # validar aqui se dados estão corretos # TODO
+
+        """
+        tipo = self.ef_var_tipo.get()
+        if tipo == TIPO_REP_STOCK:
+            dados_rep = {  # 'cliente_id',
+                'product_id': artigo['id'],
+                'sn': self.e
+
+        """
+        self.ultimo_contacto = db.save_contact(contacto)  # TODO - None se falhar
+
         if self.ultimo_contacto:
             self.on_contact_save_success()
         else:
@@ -444,6 +493,7 @@ class ContactsWindow(baseApp):
                 self.on_save_contact()
             else:
                 self.on_contact_cancel()
+
 
     def on_contact_save_success(self):
         print("Contacto guardado com sucesso")
@@ -459,13 +509,15 @@ class ContactsWindow(baseApp):
                 self.entryframe.focus()
         """
 
+
     # TODO
     def on_contact_cancel(self, event=None):
         # caso haja informação introduzida no formulário TODO: verificar
         # primeiro
-        wants_to_cancel = messagebox.askyesno(message='Tem a certeza que deseja cancelar a introdução de dados? Toda a informação não guardada será eliminada de forma irreversível.',
-                                              default='no',
-                                              parent=self)
+        wants_to_cancel = messagebox.askyesno(
+            message='Tem a certeza que deseja cancelar a introdução de dados? Toda a informação não guardada será eliminada de forma irreversível.',
+            default='no',
+            parent=self)
         if wants_to_cancel:
             self.fechar_painel_entrada()
         else:
@@ -476,7 +528,7 @@ class ContactsWindow(baseApp):
         """ Adicionar umo contacto à lista, na tabela principal.
         """
         self.tree.insert("", "end", values=(str(contact_num), nome,
-            telefone, email))
+                                            telefone, email))
 
 
     def atualizar_lista(self, contactos):
@@ -487,13 +539,12 @@ class ContactsWindow(baseApp):
 
         for contacto in contactos:
             self.inserir_contacto(contact_num=contacto['id'],
-                nome=contacto['nome'],
-                telefone=contacto['telefone'],
-                email=contacto['email'])
+                                  nome=contacto['nome'],
+                                  telefone=contacto['telefone'],
+                                  email=contacto['email'])
 
         self.atualizar_soma()
         self.alternar_cores(self.tree)
-
 
 
     def clique_a_pesquisar(self, *event):
@@ -525,11 +576,11 @@ class ContactsWindow(baseApp):
             return
 
         self.my_statusbar.show_progress(value=30, length=60, mode="determinate")
-        #self.my_statusbar.set(f"A pesquisar: {termo_pesquisa}")
+        # self.my_statusbar.set(f"A pesquisar: {termo_pesquisa}")
 
         # Pesquisar filtrando pelo tipo de contacto selecionado (cliente/fornecedor)
         contactos = db.pesquisar_contactos(termo_pesquisa,
-            tipo=self.last_selected_view_contacts_list)
+                                           tipo=self.last_selected_view_contacts_list)
         self.my_statusbar.progress_update(70)
         self.atualizar_lista(contactos)
         self.ncontactos = len(contactos)
@@ -541,3 +592,34 @@ class ContactsWindow(baseApp):
             s_status = f"""Pesquisa: {'"'+termo_pesquisa.upper()+'"'}. Encontrados {self.ncontactos} contactos."""
         self.my_statusbar.set(s_status)
 
+
+    def validar_nif(self, *event):
+        """ Verifica se já existe na base de dados um contacto criado com o NIF
+            indicado. Se existir, propor abrir a janela de detalhes. Se não
+            existir, continuar a criar o novo contacto.
+        """
+
+        nif = self.ef_ltxt_nif.get().strip()
+        if nif:
+            contacto = db.contact_exists(nif)
+        else:
+            contacto = None
+
+        if contacto:
+            msg = f"Já existe na base de dados um contacto com o NIF indicado ({contacto['id']} " \
+                  f"- {contacto['nome']}). Pretende verificar o contacto existente?"
+            verificar = messagebox.askquestion(message=msg, default='yes', parent=self)
+            if verificar == 'yes':
+                self.create_window_detalhe_contacto(num_contacto=contacto['id'])
+
+
+    def validar_form(self, *event):
+        """ Verifica se todos os campos obrigatórios foram preenchidos e se os
+            dados introduzidos estão corretos.
+        """
+        # Nome required
+        # telefone ou tlm ou tlf empresa ou email (pelo menos 1 contacto)
+        # formato email (regex?)
+        # tipo cliente/fornecedor (pelo menos 1)
+
+        pass

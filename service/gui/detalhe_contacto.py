@@ -35,6 +35,7 @@ class contactDetailWindow(ttk.Frame):
         self.master.focus()
         self.num_contacto = num_contacto
         self.contacto = db.obter_contacto(num_contacto)
+
         self.main_statusbar.hide_progress(last_update=100)
         self.contacto_selecionado = ""
         self.rep_newDetailsWindow = {}
@@ -277,7 +278,7 @@ class contactDetailWindow(ttk.Frame):
 
         self.var_tipo_is_cliente.set(self.contacto['is_cliente'])
         self.var_tipo_is_fornecedor.set(self.contacto['is_fornecedor'])
-        #elf.var_tipo_is_loja.set(False)  # TODO
+        # self.var_tipo_is_loja.set(False)
         self.ef_lstxt_notas.set(self.contacto['notas'])
 
 
@@ -301,7 +302,7 @@ class contactDetailWindow(ttk.Frame):
         #ttk.Separator(self.tab_notas).pack(side='top', expand=False, fill='x', pady=10)
         #self.notas_fr2.pack(side='top', expand=True, fill='both')
 
-    def gerar_tab_reparacoes(self):
+    def gerar_tab_reparacoes(self):  # TODO
         self.reparacoes_fr1 = ttk.Frame(self.tab_reparacoes)
         self.treeframe = ttk.Frame(self.reparacoes_fr1, padding="0 0 0 0")
 
