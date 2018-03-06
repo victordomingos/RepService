@@ -10,7 +10,6 @@ import os
 from datetime import datetime
 from typing import Optional
 
-
 def calcular_dias_desde(data: datetime) -> int:
     """ Calcular número de dias que passaram desde data indicada.
         Ex: calcular_dias_desde(data)
