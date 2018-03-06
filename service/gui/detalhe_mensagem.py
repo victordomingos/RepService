@@ -183,7 +183,7 @@ class msgDetailWindow(ttk.Frame):
         self.master.title(f'Detalhes')
         self.mainframe = ttk.Frame(self.master)
         self.topframe = ttk.Frame(self.mainframe, padding="5 8 5 5")
-        self.centerframe = ttk.Frame(self.mainframe, padding="5 5 5 5")
+        self.centerframe = ttk.Frame(self.mainframe, padding="5 5 5 0")
         self.bottomframe = ttk.Frame(self.mainframe, padding="3 1 3 1")
 
         self.estilo = ttk.Style()

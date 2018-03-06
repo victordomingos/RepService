@@ -10,6 +10,8 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from string import ascii_uppercase, ascii_letters
 
+from pyisemail import is_email
+
 from gui.base_app import baseApp
 from gui.extra_tk_classes import LabelEntry, LabelText
 from gui.detalhe_contacto import contactDetailWindow
@@ -239,7 +241,7 @@ class ContactsWindow(baseApp):
 
         self.btn_adicionar = ttk.Button(self.ef_cabecalho, default="active",
                                         style="Active.TButton", text="Adicionar",
-                                        command=self.on_save_contact)
+                                        command=self._on_save_contact)
         self.btn_cancelar = ttk.Button(
             self.ef_cabecalho, text="Cancelar", command=self.on_contact_cancel)
 
@@ -465,11 +467,12 @@ class ContactsWindow(baseApp):
                 criar_novo_contacto="Cliente"))
 
 
-    def on_save_contact(self, event=None):
+    def _on_save_contact(self, event=None):
         # reparacao = recolher todos os dados do formulário  #TODO
         contacto = "teste"
 
-        # validar aqui se dados estão corretos # TODO
+        if not self._is_form_data_valid():
+            return
 
         """
         tipo = self.ef_var_tipo.get()
@@ -613,7 +616,7 @@ class ContactsWindow(baseApp):
                 self.create_window_detalhe_contacto(num_contacto=contacto['id'])
 
 
-    def validar_form(self, *event):
+    def _is_form_data_valid(self) -> bool:
         """ Verifica se todos os campos obrigatórios foram preenchidos e se os
             dados introduzidos estão corretos.
         """
@@ -621,5 +624,28 @@ class ContactsWindow(baseApp):
         # telefone ou tlm ou tlf empresa ou email (pelo menos 1 contacto)
         # formato email (regex?)
         # tipo cliente/fornecedor (pelo menos 1)
-
-        pass
+        if not self.ef_ltxt_nome.get().strip():
+            msg = 'O campo "Nome" é de preenchimento obrigatório.'
+            messagebox.showwarning(message=msg, parent=self)
+            self.ef_ltxt_nome.entry.focus()
+            return False
+        elif not (self.ef_ltxt_telefone.get().strip()
+                  or self.ef_ltxt_tlm.get().strip()
+                  or self.ef_ltxt_tel_empresa.get().strip()):
+            msg = 'Deverá indicar, pelo menos, um número de contacto telefónico.'
+            messagebox.showwarning(message=msg, parent=self)
+            self.ef_ltxt_telefone.entry.focus()
+            return False
+        elif not is_email(self.ef_ltxt_email.get().strip()):
+            msg = 'O endereço de email introduzido não parece ser válido.'
+            messagebox.showwarning(message=msg, parent=self)
+            self.ef_ltxt_email.entry.focus()
+            return False
+        elif not (self.ef_var_tipo_is_cliente.get()
+                  or self.ef_var_tipo_is_fornecedor.get()):
+            msg = 'Por favor, especifique qual a categoria (cliente/fornecedor) a atribuir a este contacto.'
+            messagebox.showwarning(message=msg, parent=self)
+            self.ef_chkbtn_tipo_cliente.entry.focus()
+            return False
+        else:
+            return True
