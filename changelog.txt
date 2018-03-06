@@ -7,10 +7,11 @@ Histórico de versões:
 v.0.20 - 17/03/2018
  * Ao criar um novo contacto, se já existir na base de dados algum contacto
    com o NIF introduzido, o utilizador é informado.
+ * Implementada validação básica de email e outros dados ao criar um contacto.
  * As janelas de contactos e remessas são agora apresentadas no ecrã
    encostadas ao lado direito da janela principal. No caso de não haver espaço
    suficiente, aparecem encostadas à extremidade direita do ecrã.
- * As caixas ScrolledText foram substituídas por caixas simples tk.Text().
+ * As caixas ttk.ScrolledText foram substituídas por caixas simples tk.Text.
  * Alguns ajustes visuais para permitir a interface ajustar-se melhor a ecrãs
    mais pequenos.
 
