@@ -11,12 +11,15 @@ from tkinter import ttk, messagebox
 from string import ascii_uppercase, ascii_letters
 
 from pyisemail import is_email
+from phonenumbers import parse, is_valid_number, normalize_diallable_chars_only
+from phonenumbers import format_out_of_country_keeping_alpha_chars
 
 from gui.base_app import baseApp
 from gui.extra_tk_classes import LabelEntry, LabelText
 from gui.detalhe_contacto import contactDetailWindow
 from global_setup import *
 from misc.constants import TODOS_OS_PAISES
+from misc.misc_funcs import check_and_normalize_phone_number, validate_phone_entry
 
 
 if USE_LOCAL_DATABASE:
@@ -44,6 +47,9 @@ class ContactsWindow(baseApp):
         self.ultimo_contacto = None
         self.ncontactos = 0
         self.last_selected_view_contacts_list = "Clientes"  # ou "Fornecedores"
+        self.new_contact_telefone = None
+        self.new_contact_telemovel = None
+        self.new_contact_tel_emp = None
 
         self.master.minsize(CONTACTOS_MIN_WIDTH, CONTACTOS_MIN_HEIGHT)
         self.master.maxsize(CONTACTOS_MAX_WIDTH, CONTACTOS_MAX_HEIGHT)
@@ -272,6 +278,10 @@ class ContactsWindow(baseApp):
         self.ef_ltxt_tlm = LabelEntry(self.ef_lf_top, "\nTlm.", width=14, style="Panel_Body.TLabel")
         self.ef_ltxt_tel_empresa = LabelEntry(self.ef_lf_top, "\nTel. empresa", width=14,
                                               style="Panel_Body.TLabel")
+        self.ef_ltxt_telefone.entry.bind("<FocusOut>", self._on_tel_exit)
+        self.ef_ltxt_tlm.entry.bind("<FocusOut>", self._on_tel_exit)
+        self.ef_ltxt_tel_empresa.entry.bind("<FocusOut>", self._on_tel_exit)
+
 
         self.ef_ltxt_email = LabelEntry(self.ef_lf_top, "Email", style="Panel_Body.TLabel")
         self.ef_lstxt_morada = LabelText(self.ef_lf_top, "\nMorada", height=2,
@@ -487,9 +497,7 @@ class ContactsWindow(baseApp):
         if self.ultimo_contacto:
             self.on_contact_save_success()
         else:
-            wants_to_try_again_save = messagebox.askquestion(message='Não foi possível '
-                                                                     'guardar este contacto na '
-                                                                     'base de dados. Deseja tentar novamente?',
+            wants_to_try_again_save = messagebox.askquestion(message='Não foi possível guardar este contacto na base de dados. Pretende tentar novamente?',
                                                              default='yes',
                                                              parent=self)
             if wants_to_try_again_save == 'yes':
@@ -502,6 +510,7 @@ class ContactsWindow(baseApp):
         print("Contacto guardado com sucesso")
         self.fechar_painel_entrada()
         self.adicionar_contacto()
+
         """
         self.ultimo_contacto = "1234" #TODO - criar um mecanismo para obter o número da reparação acabada de introduzir na base de dados
         wants_to_create = messagebox.askquestion(message='O novo contacto foi guardado com sucesso. Deseja criar uma nova reparação?', default='yes', parent=self)
@@ -511,6 +520,10 @@ class ContactsWindow(baseApp):
         else:
                 self.entryframe.focus()
         """
+
+        # selecionar na lista de contactos o contacto mais recente e depois limpar
+
+        self.ultimo_contacto = None
 
 
     # TODO
@@ -615,26 +628,51 @@ class ContactsWindow(baseApp):
             if verificar == 'yes':
                 self.create_window_detalhe_contacto(num_contacto=contacto['id'])
 
+    def _on_tel_exit(self, event):
+        validate_phone_entry(self, event.widget)
+
+
+    def _validar_telefones(self, *event) -> bool:
+            self.new_contact_telemovel = None
+            self.new_contact_telefone = None
+            self.new_contact_tel_emp = None
+
+            try:
+                self.new_contact_telefone = check_and_normalize_phone_number(self.ef_ltxt_telefone.get()).replace(" ","")
+            except Exception as e:
+                print("[TELEFONE]", e)
+
+            try:
+                self.new_contact_telemovel = check_and_normalize_phone_number(self.ef_ltxt_tlm.get()).replace(" ", "")
+            except Exception as e:
+                print("[TELEMOVEL]", e)
+
+            try:
+                self.new_contact_tel_emp = check_and_normalize_phone_number(self.ef_ltxt_tel_empresa.get()).replace(" ", "")
+            except Exception as e:
+                print("[TLF_EMPRESA]", e)
+
+            # Verificar já se temos pelo menos um contacto telefónico
+            if (self.new_contact_telefone
+                 or self.new_contact_telemovel
+                 or self.new_contact_tel_emp):
+                return True
+            else:
+                return False
+
 
     def _is_form_data_valid(self) -> bool:
         """ Verifica se todos os campos obrigatórios foram preenchidos e se os
             dados introduzidos estão corretos.
         """
-        # Nome required
-        # telefone ou tlm ou tlf empresa ou email (pelo menos 1 contacto)
-        # formato email (regex?)
-        # tipo cliente/fornecedor (pelo menos 1)
         if not self.ef_ltxt_nome.get().strip():
             msg = 'O campo "Nome" é de preenchimento obrigatório.'
             messagebox.showwarning(message=msg, parent=self)
             self.ef_ltxt_nome.entry.focus()
             return False
-        elif not (self.ef_ltxt_telefone.get().strip()
-                  or self.ef_ltxt_tlm.get().strip()
-                  or self.ef_ltxt_tel_empresa.get().strip()):
+        elif not self._validar_telefones():
             msg = 'Deverá indicar, pelo menos, um número de contacto telefónico.'
             messagebox.showwarning(message=msg, parent=self)
-            self.ef_ltxt_telefone.entry.focus()
             return False
         elif not is_email(self.ef_ltxt_email.get().strip()):
             msg = 'O endereço de email introduzido não parece ser válido.'
