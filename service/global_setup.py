@@ -26,6 +26,10 @@ if USE_LOCAL_DATABASE:
 else:
     REMOTE_API_URL = 'http://localhost:5000'
 
+# This will be used for phone number validation by the package phonenumbers,
+# when the user types a phone number without region code.
+DEFAULT_PHONE_REGION = "PT"
+
 
 # --- Dimensões e posições predefinidas dos vários tipos de janelas ---
 
