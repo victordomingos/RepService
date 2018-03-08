@@ -306,6 +306,7 @@ if __name__ == "__main__":
         print("Não foi possível inicializar a base de dados na localização indicada. É possível "
               "que a seguinte pasta não exista ou não tenha as permissões necessárias:")
         print(LOCAL_DATABASE_PATH)
+        exit()
 
     lojas = 2
 
