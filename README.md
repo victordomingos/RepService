@@ -30,6 +30,7 @@ It requires, in its current version, the following external packages:
 - tkcalendar 1.1.4
 - pyIsEmail 1.3.1
 - dnspython3 1.15.0
+- phonenumberslite 8.9.0
 
 
 Development and testing has been done only on Mac, however it should be pretty straightforward to make a few adaptations to make it run in Windows or Linux. The visual interface has been tweaked to match as much as possible Mac native applications, so at least the toolbars will certainly look a bit awkward in other plaforms. In older operating systems, some Unicode icons or emojis may not be correctly displayed. In Mac, it's highly recomendable to use ActiveTCL 8.5.18, as stated in Python language release documentation, in order to ensure compatibility and stability for tkinter in macOS.
