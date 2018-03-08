@@ -323,10 +323,14 @@ def obter_evento(event_id: int) -> Dict[str, Union[int, str]]:
 
 
 # =============================== Contactos ===============================
-def save_contact(contacto) -> int:
-    print("a guardar o contacto", contacto)
-    db_last_contact_number = 999
-    return db_last_contact_number
+def save_contact(contact) -> int:
+    print("a guardar o contacto", contact)
+    s, _ = iniciar_sessao_db()
+    new_contact = db_models.Contact(**contact)
+    s.add(new_contact)
+    s.commit()
+    print(new_contact, type(new_contact), new_contact.id)
+    return new_contact.id
 
 
 def pesquisar_contactos(txt_pesquisa: str="", tipo: str ="Clientes"):
