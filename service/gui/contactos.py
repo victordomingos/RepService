@@ -47,9 +47,9 @@ class ContactsWindow(baseApp):
         self.ultimo_contacto = None
         self.ncontactos = 0
         self.last_selected_view_contacts_list = "Clientes"  # ou "Fornecedores"
-        self.new_contact_telefone = None
-        self.new_contact_telemovel = None
-        self.new_contact_tel_emp = None
+        self.new_contact_telefone = ""
+        self.new_contact_telemovel = ""
+        self.new_contact_tel_emp = ""
 
         self.master.minsize(CONTACTOS_MIN_WIDTH, CONTACTOS_MIN_HEIGHT)
         self.master.maxsize(CONTACTOS_MAX_WIDTH, CONTACTOS_MAX_HEIGHT)
@@ -478,35 +478,44 @@ class ContactsWindow(baseApp):
 
 
     def _on_save_contact(self, event=None):
-        # reparacao = recolher todos os dados do formulário  #TODO
-        contacto = "teste"
+        """ Recolhe todos os dados do formulário e guarda um novo contacto"""
 
         if not self._is_form_data_valid():
             return
 
-        """
-        tipo = self.ef_var_tipo.get()
-        if tipo == TIPO_REP_STOCK:
-            dados_rep = {  # 'cliente_id',
-                'product_id': artigo['id'],
-                'sn': self.e
+        new_contact = {
+            'nome': self.ef_ltxt_nome.get(),
+            'empresa': self.ef_ltxt_empresa.get(),
+            'telefone': self.new_contact_telefone,
+            'telemovel': self.new_contact_telemovel,
+            'telefone_empresa': self.new_contact_tel_emp,
+            'email': self.ef_ltxt_email.get(),
+            'morada': self.ef_lstxt_morada.get(),
+            'cod_postal': self.ef_ltxt_cod_postal.get(),
+            'localidade': self.ef_ltxt_localidade.get(),
+            'pais': self.ef_combo_pais.get(),
+            'nif': self.ef_ltxt_nif.get(),
+            'notas': self.ef_lstxt_notas.get(),
+            'is_cliente': self.ef_var_tipo_is_cliente.get(),
+            'is_fornecedor': self.ef_var_tipo_is_fornecedor.get(),
+            'criado_por_utilizador_id': self.estado_app.janela_principal.user_id,
+        }
 
-        """
-        self.ultimo_contacto = db.save_contact(contacto)  # TODO - None se falhar
+        self.ultimo_contacto = db.save_contact(new_contact)
 
         if self.ultimo_contacto:
-            self.on_contact_save_success()
+            self._on_contact_save_success()
         else:
             wants_to_try_again_save = messagebox.askquestion(message='Não foi possível guardar este contacto na base de dados. Pretende tentar novamente?',
                                                              default='yes',
                                                              parent=self)
             if wants_to_try_again_save == 'yes':
-                self.on_save_contact()
+                self._on_save_contact()
             else:
                 self.on_contact_cancel()
 
 
-    def on_contact_save_success(self):
+    def _on_contact_save_success(self):
         print("Contacto guardado com sucesso")
         self.fechar_painel_entrada()
         self.adicionar_contacto()
@@ -633,9 +642,9 @@ class ContactsWindow(baseApp):
 
 
     def _validar_telefones(self, *event) -> bool:
-            self.new_contact_telemovel = None
-            self.new_contact_telefone = None
-            self.new_contact_tel_emp = None
+            self.new_contact_telemovel = ""
+            self.new_contact_telefone = ""
+            self.new_contact_tel_emp = ""
 
             try:
                 self.new_contact_telefone = check_and_normalize_phone_number(self.ef_ltxt_telefone.get()).replace(" ","")

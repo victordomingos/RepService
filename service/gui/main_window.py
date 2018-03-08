@@ -1851,7 +1851,7 @@ class App(baseApp):
                          #'reincidencia_processo_id': None,  # TODO
                          #'morada_entrega': self.ef_ltxt_morada_entrega.get(),
                          #'cliente_pagou_portes': self.ef_var_portes.get(),
-                         'criado_por_utilizador_id': db.get_user_id(self.username)
+                         'criado_por_utilizador_id': self.user_id,
                          }
         else:
             dados_rep = {'cliente_id': self.ef_txt_num_cliente.get(),
