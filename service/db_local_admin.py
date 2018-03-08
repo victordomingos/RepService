@@ -298,9 +298,14 @@ if __name__ == "__main__":
         print("\nNão foi encontrado nenhum ficheiro de base de dados. A criar um novo.")
 
     print("\nA preparar o ficheiro de base de dados...")
-    delete_database()
-    vacuum_db()
-    init_database()
+    try:
+        delete_database()
+        vacuum_db()
+        init_database()
+    except:
+        print("Não foi possível inicializar a base de dados na localização indicada. É possível "
+              "que a seguinte pasta não exista ou não tenha as permissões necessárias:")
+        print(LOCAL_DATABASE_PATH)
 
     lojas = 2
 
