@@ -4,7 +4,7 @@ Histórico de versões:
 ====================
 
 ---
-v.0.20 - 17/03/2018
+v.0.20 - 9/03/2018
  * Já é possível inserir novos contactos na base de dados utilizando o
    respetivo formulário.
  * Implementada validação básica de endereços de email, números de telefone e
