@@ -468,6 +468,7 @@ def obter_info_contacto(num_contacto: int, tipo:str) -> Optional[Dict[str, Union
         if not contacto.is_cliente:
             return None
     else:
+        print("Tipo de contacto desconhecido:", tipo)
         return None
 
     if contacto.telefone:
