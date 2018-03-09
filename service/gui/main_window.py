@@ -715,13 +715,13 @@ class App(baseApp):
 
         if self.estado_app.contacto_para_nova_reparacao:
             if self.estado_app.tipo_novo_contacto == "Cliente":
+                self.ef_txt_num_cliente.focus()
                 self.ef_txt_num_cliente.delete(0, tk.END)
-                self.ef_txt_num_cliente.insert(
-                    0, self.estado_app.contacto_para_nova_reparacao)
+                self.ef_txt_num_cliente.insert(0, self.estado_app.contacto_para_nova_reparacao)
             elif self.estado_app.tipo_novo_contacto == "Fornecedor":
+                self.ef_txt_num_fornecedor.focus()
                 self.ef_txt_num_fornecedor.delete(0, tk.END)
-                self.ef_txt_num_fornecedor.insert(
-                    0, self.estado_app.contacto_para_nova_reparacao)
+                self.ef_txt_num_fornecedor.insert(0, self.estado_app.contacto_para_nova_reparacao)
             else:
                 print("Qual é afinal o tipo de contacto a criar???")
                 pass
@@ -1326,9 +1326,11 @@ class App(baseApp):
         tipo = self.ef_var_tipo.get()
         if tipo == TIPO_REP_STOCK:
             num_contacto = self.ef_txt_num_fornecedor.get().strip()
+            print("DEBUG: suposto fornecedor:", num_contacto)
             if len(num_contacto)<1:
                 limpar_dados_fornecedor()
                 return
+
             contacto = db.obter_info_contacto(num_contacto, "Fornecedor")
             if contacto:
                 self.ef_txt_nome_fornecedor.delete(0, tk.END)
@@ -1804,13 +1806,40 @@ class App(baseApp):
             self.MenuFicheiro.entryconfigure("Nova reparação", state="active")
             # self.master.bind_all("<Command-n>")
 
+
+    def _is_form_data_valid(self) -> bool:
+        """ Verifica se todos os campos obrigatórios foram preenchidos e se os
+            dados introduzidos estão corretos.
+        """
+        # validar aqui se dados estão corretos # TODO
+        return True
+
+        """
+        if not self.ef_ltxt_nome.get().strip():
+            msg = 'O campo "Nome" é de preenchimento obrigatório.'
+            messagebox.showwarning(message=msg, parent=self)
+            self.ef_ltxt_nome.entry.focus()
+            return False
+        
+        elif not (self.ef_var_tipo_is_cliente.get()
+                  or self.ef_var_tipo_is_fornecedor.get()):
+            msg = 'Por favor, especifique qual a categoria (cliente/fornecedor) a atribuir a este contacto.'
+            messagebox.showwarning(message=msg, parent=self)
+            self.ef_chkbtn_tipo_cliente.entry.focus()
+            return False
+        else:
+            return True
+        """
+
     def on_save_repair(self, event=None):
         """ Recolhe todos os dados do formulário e guarda uma nova reparação """
 
-        # validar aqui se dados estão corretos # TODO
+        if not self._is_form_data_valid():
+            return
 
         # Adaptar para o caso de ser uma reparação de stock #TODO
         # pesquisar se existe artigo criado; se não existir, criar
+
         if self.ef_ltxt_cod_artigo.get().strip:
             artigo = db.obter_artigo(self.ef_ltxt_cod_artigo.get())
         tipo = self.ef_var_tipo.get()

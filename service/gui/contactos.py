@@ -370,15 +370,18 @@ class ContactsWindow(baseApp):
         """
         # guardar na base de dados e obter o nº do último contacto adicionado
         if self.estado_app.tipo_novo_contacto == "Cliente":
-            self.estado_app.contacto_para_nova_reparacao = "123"
-            self.mostrar_clientes()
+            self.estado_app.contacto_para_nova_reparacao = self.ultimo_contacto
             if self.estado_app.painel_nova_reparacao_aberto:
                 self.estado_app.janela_principal.close_window_contactos()
+            else:
+                self.mostrar_clientes()
             # preencher o campo do nº de cliente com o último contacto de cliente criado; depois atribuir foco ao formulário da reparação e fechar a janela
         elif self.estado_app.tipo_novo_contacto == "Fornecedor":
-            self.mostrar_fornecedores()
+            self.estado_app.contacto_para_nova_reparacao = self.ultimo_contacto
             if self.estado_app.painel_nova_reparacao_aberto:
                 self.estado_app.janela_principal.close_window_contactos()
+            else:
+                self.mostrar_fornecedores()
             # preencher o campo do nº de fornecedor com o último contacto de fornecedor criado; depois atribuir foco ao formulário da reparação e fechar a janela
         else:
             print("guardar e nao fazer mais nada")
