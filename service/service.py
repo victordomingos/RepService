@@ -28,20 +28,10 @@ if __name__ == "__main__":
     estado_app.janela_principal = App(root, estado_app)
     estilo_global = ttk.Style(root)
     estilo_global.theme_use(ESTILO_APP)
-    #estilo_global.theme_use("default")
+    #estilo_global.theme_use("clam")
     root.configure(background='grey95')
     root.title('RepService')
     root.geometry(ROOT_GEOMETRIA)
     root.bind_all("<Mod2-q>", root.quit)
-
-    # Remove bad AquaTk Button-2 (right) and Paste bindings.
-    root.unbind_class('Text', '<B2>')
-    root.unbind_class('Text', '<B2-Motion>')
-    root.unbind_class('Text', '<<PasteSelection>>')
-
-    root.unbind_class('TEntry', '<B2>')
-    root.bind_class('Tentry', '<Button-2>', lambda: print("bla"))
-    root.unbind_class('TEntry', '<B2-Motion>')
-    root.unbind_class('TEntry', '<<PasteSelection>>')
 
     root.mainloop()

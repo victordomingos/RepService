@@ -10,7 +10,10 @@ import pprint
 import random
 import string
 
+from getpass import getpass
 from datetime import datetime
+
+from passlib.hash import pbkdf2_sha256
 
 from local_db import db_models, db_base
 from local_db import db_main as db
@@ -46,7 +49,7 @@ def init_database():
 # Just a bunch of experiences to get the hang of SQLalchemy while developing the models...
 # ----------------------------------------------------------------------------------------
 
-def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=1, num_reparacoes=1):
+def test_populate(num_lojas=1, admin_password_hash="", num_utilizadores=1, num_contactos=1, num_artigos=1, num_reparacoes=1):
     s, _ = db.iniciar_sessao_db()
     print("\nA inserir dados de exemplo na base de dados.")
 
@@ -59,7 +62,7 @@ def test_populate(num_lojas=1, num_utilizadores=1, num_contactos=1, num_artigos=
 
     print("")
     lojas = s.query(db_models.Loja)
-    admin = db_models.User(nome="npk", email="admin@networkprojectforknowledge.org", password="...", loja=lojas.get(1))
+    admin = db_models.User(nome="npk", email="admin@networkprojectforknowledge.org", password=admin_password_hash, loja=lojas.get(1))
     s.add(admin)
     lojas = lojas.all()
     for i in range(num_utilizadores):
@@ -308,6 +311,9 @@ if __name__ == "__main__":
         print(LOCAL_DATABASE_PATH)
         exit()
 
+    admin_password = getpass("\nPor favor introduza a senha para o administrador (npk): ")
+    password_hash = pbkdf2_sha256.using(salt_size=8).hash(admin_password)
+
     lojas = 2
 
     utilizadores = lojas * 8
@@ -316,6 +322,7 @@ if __name__ == "__main__":
     reps = lojas * 3000
 
     test_populate(num_lojas=lojas,
+                  admin_password_hash = password_hash,
                   num_utilizadores=utilizadores,
                   num_contactos=contactos,
                   num_artigos=artigos,
