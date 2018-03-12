@@ -3,6 +3,17 @@
 Histórico de versões:
 ====================
 
+
+---
+v.0.21 - 17/03/2018
+ * As senhas dos utilizadores já não são armazenadas na base dados. Em vez
+   disso, é gerado e armazenado um hash.
+ * Ao executar db_local_admin.py, é pedida a introdução de uma senha inicial
+   para o administrador (npk).
+ * Já é possível alterar efetivamente a senha de utilizador.
+ * A lista de dependências (requirements.txt) foi atualizada de modo a melhor
+   refletir as dependências secundárias.
+
 ---
 v.0.20 - 9/03/2018
  * Já é possível inserir novos contactos na base de dados utilizando o
