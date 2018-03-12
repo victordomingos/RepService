@@ -11,6 +11,8 @@ from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import sessionmaker, load_only
 from typing import Dict, Tuple, List, Union, Optional, Any
 
+from passlib.hash import pbkdf2_sha256
+
 from local_db import db_models
 from misc.misc_funcs import calcular_dias_desde
 from global_setup import LOCAL_DATABASE_PATH
@@ -25,7 +27,6 @@ def iniciar_sessao_db():
 
 
 # =============================== LOGIN ===============================
-# TODO
 def validate_login(username: str, password: str) -> Tuple[bool, str]:
     """ Check if username and password match the info in database. Token stuff
         is provided here only to ensure code compatibility for future web API
@@ -33,7 +34,10 @@ def validate_login(username: str, password: str) -> Tuple[bool, str]:
     """
     s, _ = iniciar_sessao_db()
 
-    if username == "npk" and password == "...":  # change this
+    user = s.query(db_models.User.id, db_models.User.password) \
+        .filter(db_models.User.nome == username).one()
+
+    if pbkdf2_sha256.verify(password, user.password):  # change this
         loggedin = True
         token = "The amazing NPK Token"
     else:
@@ -56,9 +60,18 @@ def change_password(username: str, old_password: str, new_password1: str) -> boo
     """ Change the password for the given user if the old password matches.
         Returns False if it fails for some reason.
     """
-    print("DB: Changing password for the user {username}.")
-    result = True  # TODO
-    return result
+    if validate_login(username, old_password):
+        try:
+            s, _ = iniciar_sessao_db()
+            utilizador = s.query(db_models.User).filter(db_models.User.nome == username).one()
+            utilizador.password = pbkdf2_sha256.using(salt_size=8).hash(new_password1)
+            s.commit()
+            return True
+        except Exception as e:
+            print(e)
+            return False
+    else:
+        return False
 
 # =============================== Produtos ===============================
 def obter_artigo(part_number: str):
