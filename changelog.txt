@@ -11,6 +11,14 @@ v.0.21 - 17/03/2018
  * Ao executar db_local_admin.py, é pedida a introdução de uma senha inicial
    para o administrador (npk).
  * Já é possível alterar efetivamente a senha de utilizador.
+ * Ao adicionar um contacto novo, caso não esteja já a ser criada uma nova
+   reparação, é apresentada ao utilizador uma caixa de diálogo perguntando se
+   deseja criar reparação utilizando esse contacto. O tipo da reparação a
+   criar (artigo de stock ou de cliente) é selecionado automaticamente com
+   base no tipo de contacto.
+ * A pesquisa de contactos agora abrange também o campo NIF.
+ * Ao pesquisar contactos com um termo de pesquisa numérico, é adicionado
+   automaticamente um wildcard no final, por forma a fornecer mais resultados.
  * A lista de dependências (requirements.txt) foi atualizada de modo a melhor
    refletir as dependências secundárias.
 
