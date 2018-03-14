@@ -14,6 +14,9 @@ v.0.21 - 17/03/2018
  * Já é possível efetuar a alteração da senha de utilizador.
  * Já é possível atualizar os dados dos contactos a partir da respetiva janela
    de detalhes.
+ * Os números de telefone na janela de detalhes de contactos são agora
+   formatados automaticamente, à semelhança do que já contecia no painel de
+   introdução de novo contacto.
  * Ao adicionar um contacto novo, caso não esteja já a ser criada uma nova
    reparação, é apresentada ao utilizador uma caixa de diálogo perguntando se
    deseja criar reparação utilizando esse contacto. O tipo da reparação a
