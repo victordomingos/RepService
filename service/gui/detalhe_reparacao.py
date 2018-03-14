@@ -15,6 +15,7 @@ from gui import detalhe_contacto
 from gui.extra_tk_classes import AutoScrollbar, LabelEntry, LabelText
 from global_setup import *
 from misc.constants import *
+from misc.misc_funcs import reveal_text
 
 
 if USE_LOCAL_DATABASE:
@@ -299,6 +300,9 @@ class repairDetailWindow(ttk.Frame):
         if self.repair['is_rep_cliente']:
             self.ltxt_senha = LabelEntry(
                 self.geral_fr2, "Senha:", style="Panel_Body.TLabel", width=22)
+            self.ltxt_senha.bind("<Enter>", self._on_senha_enter)
+            self.ltxt_senha.bind("<Leave>", self._on_senha_leave)
+
             varias_linhas = ''
             if self.repair['avaria_reprod_loja']:
                 varias_linhas = "• Avaria reproduzida na loja"
@@ -372,7 +376,7 @@ class repairDetailWindow(ttk.Frame):
             self.ltxt_obs_estado_equipamento.set(self.repair['obs_estado'])
             self.ltxt_local_intervencao.set(self.repair['local_reparacao'])
             self.ltxt_acessorios.set(self.repair['acessorios_entregues'])
-            self.ltxt_senha.set(self.repair['senha'])
+            self.ltxt_senha.set("•••••••••")
             if self.repair['is_garantia']:
                 self.ltxt_data_compra.set(self.repair['data_compra'])
                 self.ltxt_num_fatura.set(self.repair['num_fatura'])
@@ -391,6 +395,16 @@ class repairDetailWindow(ttk.Frame):
         self.ltxt_num_serie.set(self.repair['sn'])
         self.ltxt_descr_avaria.set(self.repair['descr_servico'])
         self.ltxt_notas.set(self.repair['notas'])
+
+    def _on_senha_enter(self, *event):
+        self.ltxt_senha.entry.config(state="enabled")
+        self.ltxt_senha.set(reveal_text(self.repair['senha']))
+        self.ltxt_senha.entry.config(state="disabled")
+
+    def _on_senha_leave(self, *event):
+        self.ltxt_senha.entry.config(state="enabled")
+        self.ltxt_senha.set("•••••••••")
+        self.ltxt_senha.entry.config(state="disabled")
 
     def montar_tab_geral(self):
         # Montar todos os campos na grid --------------------------------------
