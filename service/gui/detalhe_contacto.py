@@ -497,7 +497,13 @@ class contactDetailWindow(ttk.Frame):
 
     def _on_contact_upd_success(self):
         print("Contacto atualizado com sucesso!")
-        pass
+        self.atualizar_rodape()
+        if self.estado_app.janela_contactos_aberta:
+            if self.var_tipo_is_cliente:
+                self.estado_app.janela_principal.janela_contactos.mostrar_clientes()
+            elif self.var_tipo_is_fornecedor:
+                if
+                self.estado_app.janela_principal.janela_contactos.mostrar_fornecedores()
 
     def desativar_campos(self):
         # Desativar todos os campos de texto para não permitir alterações. ----
@@ -552,6 +558,17 @@ class contactDetailWindow(ttk.Frame):
                                  font=self.rodapeFont, foreground=self.rodapeTxtColor)
         self.esquerda.pack(side="left")
         self.direita.pack(side="right")
+
+
+    def atualizar_rodape(self):
+        try:
+            self.contacto = db.obter_contacto(self.num_contacto)
+            nome_updt = self.contacto['atualizado_por_utilizador_nome']
+            data_updt = self.contacto['updated_on']
+            txt_direita = f"Atualizado por {nome_updt} em {data_updt}."
+            self.direita.config(text=txt_direita)
+        except:
+            pass
 
     def bind_tree(self):
         self.tree.bind('<<TreeviewSelect>>', self.selectItem_popup)
