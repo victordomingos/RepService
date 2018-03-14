@@ -186,7 +186,7 @@ def obter_todas_reparacoes() -> List[Dict[str, Union[int, str]]]:
     """
     s, _ = iniciar_sessao_db()
 
-    return [{'id': rep.id,
+    reps = [{'id': rep.id,
              'cliente_nome': rep.cliente.nome,
              'descr_artigo': rep.product.descr_product,
              'sn': rep.sn,
@@ -195,6 +195,9 @@ def obter_todas_reparacoes() -> List[Dict[str, Union[int, str]]]:
              'dias': calcular_dias_desde(rep.created_on),
              'prioridade': rep.prioridade}
             for rep in s.query(db_models.Repair)]
+
+    s.close()
+    return reps
 
 
 def obter_reparacoes_por_estados(status_list: List[int]) -> List[Dict[str, Union[int, str]]]:
@@ -210,7 +213,7 @@ def obter_reparacoes_por_estados(status_list: List[int]) -> List[Dict[str, Union
     reparacoes = s.query(db_models.Repair) \
                          .filter(db_models.Repair.estado_reparacao.in_(status_list))
 
-    return [{'id': rep.id,
+    reps = [{'id': rep.id,
             'cliente_nome': rep.cliente.nome,
             'descr_artigo': rep.product.descr_product,
             'sn': rep.sn,
@@ -219,6 +222,32 @@ def obter_reparacoes_por_estados(status_list: List[int]) -> List[Dict[str, Union
             'dias': calcular_dias_desde(rep.created_on),
             'prioridade': rep.prioridade}
            for rep in reparacoes]
+    s.close()
+    return reps
+
+
+def obter_reparacoes_por_contacto(contact_id: int) -> List[Dict[str, Union[int, str]]]:
+    """ Obtem lista de dicionários contendo todas as reparações relacionadas
+        com um determinado contacto (cliente ou fornecedor), para preencher a
+        tabela do separador Reparações na janela de detalhes de contacto
+        (inclui apenas os campos necessários).
+    """
+    s, _ = iniciar_sessao_db()
+
+    reparacoes = s.query(db_models.Repair) \
+        .filter(or_(db_models.Repair.cliente_id == contact_id,
+                    db_models.Repair.fornecedor_id == contact_id))
+
+    reps = [{'id': rep.id,
+             'data': rep.created_on,
+             'descr_artigo': rep.product.descr_product,
+             'descr_servico': rep.descr_servico,
+             'resultado': rep.cod_resultado_reparacao,
+             'reincidencia_id': rep.reincidencia_processo_id}
+            for rep in reparacoes]
+
+    s.close()
+    return reps
 
 
 def pesquisar_reparacoes(txt_pesquisa: str, estados: List[int]=None) -> List[Dict[str, Union[int, str]]]:
@@ -406,7 +435,7 @@ def save_contact(contact: Union[str, int, Any]) -> Union[int, bool]:
         contact_id = new_contact.id
         s.close()
         return contact_id
-    except:
+    except Exception as e:
         print("Não foi possível guardar o contacto:", e)
         return False
 
