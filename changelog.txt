@@ -31,6 +31,9 @@ v.0.21 - 17/03/2018
    apropriação não autorizada, a senha apenas é mostrada quando o ponteiro do
    rato é colocado por cima do campo correspondente e é novamente ocultada
    assim que o ponteiro do rato se afaste.
+ * Na janela de detalhes de contactos o separador "Reparações" já apresenta a
+   lista de reparações obtida a partir da base de dados. Ao clicar numa dessas
+   reparações, é aberta a respetiva janela de detalhes, conforme esperado.
  * A lista de dependências (requirements.txt) foi atualizada de modo a melhor
    refletir as dependências secundárias.
 
