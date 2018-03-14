@@ -14,7 +14,7 @@ from pyisemail import is_email
 from gui.extra_tk_classes import AutoScrollbar, LabelEntry, LabelText
 from gui import detalhe_reparacao
 from global_setup import *
-from misc.constants import TODOS_OS_PAISES
+from misc.constants import TODOS_OS_PAISES, TIPO_REP_STOCK, TIPO_REP_CLIENTE, RESULTADOS
 from misc.misc_funcs import check_and_normalize_phone_number, validate_phone_entry
 
 if USE_LOCAL_DATABASE:
@@ -36,6 +36,7 @@ class contactDetailWindow(ttk.Frame):
         self.master.focus()
         self.num_contacto = num_contacto
         self.contacto = db.obter_contacto(num_contacto)
+        self.reparacoes = db.obter_reparacoes_por_contacto(num_contacto)
 
         self.main_statusbar.hide_progress(last_update=100)
         self.contacto_selecionado = ""
@@ -72,11 +73,14 @@ class contactDetailWindow(ttk.Frame):
         if self.contacto['is_cliente']:
             self.estado_app.contacto_para_nova_reparacao = self.num_contacto
             self.estado_app.tipo_novo_contacto = "Cliente"
+            self.estado_app.janela_principal.ef_var_tipo.set(TIPO_REP_CLIENTE)
         elif self.contacto['is_fornecedor']:
             self.estado_app.contacto_para_nova_reparacao = self.num_contacto
             self.estado_app.tipo_novo_contacto = "Fornecedor"
+            self.estado_app.janela_principal.ef_var_tipo.set(TIPO_REP_STOCK)
 
         self.estado_app.janela_principal.mostrar_painel_entrada()
+        self.estado_app.janela_principal.radio_tipo_command()
 
 
     def montar_barra_de_ferramentas(self):
@@ -134,8 +138,6 @@ class contactDetailWindow(ttk.Frame):
             self.note.add(self.tab_reparacoes, text="Reparações")
             self.gerar_tab_reparacoes()
             self.montar_tab_reparacoes()
-
-        self.desativar_campos()
 
 
     def _on_tab_changed(self, event):
@@ -331,7 +333,7 @@ class contactDetailWindow(ttk.Frame):
         self.tree.column('Serviço', anchor='nw',
                          minwidth=200, stretch=1, width=200)
         self.tree.column('Resultado', anchor='nw',
-                         minwidth=200, stretch=1, width=200)
+                         minwidth=180, stretch=1, width=180)
         self.tree.column('Reincid.', anchor='nw',
                          minwidth=50, stretch=0, width=50)
 
@@ -345,6 +347,14 @@ class contactDetailWindow(ttk.Frame):
             self.treeframe, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=self.vsb.set)
         self.vsb.grid(column=1, row=0, sticky="ns", in_=self.treeframe)
+
+        for rep in self.reparacoes:
+            self.tree.insert("", "end", values=(str(rep['id']),
+                                                rep['data'],
+                                                rep['descr_artigo'],
+                                                rep['descr_servico'],
+                                                RESULTADOS[rep['resultado']],
+                                                rep['reincidencia_id']))
 
         self.bind_tree()
         self.alternar_cores(self.tree)
@@ -502,17 +512,8 @@ class contactDetailWindow(ttk.Frame):
             if self.var_tipo_is_cliente:
                 self.estado_app.janela_principal.janela_contactos.mostrar_clientes()
             elif self.var_tipo_is_fornecedor:
-                if
                 self.estado_app.janela_principal.janela_contactos.mostrar_fornecedores()
 
-    def desativar_campos(self):
-        # Desativar todos os campos de texto para não permitir alterações. ----
-        # self.txt_numero_contacto.configure(state="disabled")
-        # self.txt_nome.configure(state="disabled")
-        pass
-        # widgets = (,)
-        # for widget in widgets:
-        #    widget.disable()
 
     def on_btn_fechar(self, event):
         """ will test for some condition before closing, save if necessary and
@@ -573,7 +574,7 @@ class contactDetailWindow(ttk.Frame):
     def bind_tree(self):
         self.tree.bind('<<TreeviewSelect>>', self.selectItem_popup)
         self.tree.bind('<Double-1>', lambda x: self.create_window_detalhe_rep(
-            num_reparacao=self.contacto_selecionado))
+            num_reparacao=self.reparacao_selecionada))
         self.tree.bind("<Button-2>", self.popupMenu)
         self.tree.bind("<Button-3>", self.popupMenu)
         self.update_idletasks()
@@ -667,11 +668,8 @@ class contactDetailWindow(ttk.Frame):
         """
         curItem = self.tree.focus()
         tree_linha = self.tree.item(curItem)
+        self.reparacao_selecionada = tree_linha["values"][0]
 
-        num_contacto = tree_linha["values"][0]
-        nome =  tree_linha["values"][1]
-        self.my_statusbar.set(f"{num_contacto} • {nome}")
-        self.contacto_selecionado = num_contacto
 
     def alternar_cores(self, tree, inverso=False, fundo1='grey98', fundo2='white'):
         tree = tree
@@ -697,7 +695,7 @@ class contactDetailWindow(ttk.Frame):
         self.rep_newDetailsWindow[self.rep_detail_windows_count] = tk.Toplevel()
         self.janela_detalhes_rep = detalhe_reparacao.repairDetailWindow(
             self.rep_newDetailsWindow[self.rep_detail_windows_count],
-            num_reparacao)
+            num_reparacao, self.estado_app)
 
     def contar_linhas(self):
         """ Obtém o número de linhas da tabela de processos desta remessa. """
