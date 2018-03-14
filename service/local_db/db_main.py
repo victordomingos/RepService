@@ -34,26 +34,53 @@ def validate_login(username: str, password: str) -> Tuple[bool, str]:
     """
     s, _ = iniciar_sessao_db()
 
-    user = s.query(db_models.User.id, db_models.User.password) \
+    try:
+        user = s.query(db_models.User.id, db_models.User.password) \
         .filter(db_models.User.nome == username).one()
-
-    if pbkdf2_sha256.verify(password, user.password):  # change this
-        loggedin = True
-        token = "The amazing NPK Token"
-    else:
+        if pbkdf2_sha256.verify(password, user.password):
+            loggedin = True
+            token = "The amazing NPK Token"
+        else:
+            loggedin = False
+            token = None
+    except:
         loggedin = False
         token = None
-
+    s.close()
     return loggedin, token
 
 
-def get_user_id(username: str) -> int:
+def get_user_id(username: str) -> Union[int, bool]:
     """ Return the user ID from database, queried with a string containing the
         username.
     """
+    try:
+        s, _ = iniciar_sessao_db()
+        utilizador = s.query(db_models.User.id).filter(db_models.User.nome==username).one()
+        user_id = utilizador.id
+        s.close
+        return user_id
+    except:
+        return False
+
+
+def create_user(username: str, email: str, password: str, loja_id: int) -> bool:
     s, _ = iniciar_sessao_db()
-    utilizador = s.query(db_models.User.id).filter(db_models.User.nome==username).one()
-    return utilizador.id
+
+    # verificar se já existe utilizador com o nome indicado
+    if get_user_id(username):
+        return False
+
+    try:
+        utilizador = db_models.User(nome=username, email=email,
+                                password=password, loja_id=loja_id)
+        s.add(utilizador)
+        s.commit()
+        s.close()
+        return True
+    except Exception as e:
+        print("An exception was found while trying to create new user:", e)
+        return False
 
 
 def change_password(username: str, old_password: str, new_password1: str) -> bool:
@@ -73,6 +100,40 @@ def change_password(username: str, old_password: str, new_password1: str) -> boo
     else:
         return False
 
+
+# =============================== Lojas ===============================
+def get_store_id(nome: str) -> int:
+    """ Return the store ID from database, queried with a string containing the
+        store name.
+    """
+    s, _ = iniciar_sessao_db()
+    store = s.query(db_models.Loja.id).filter(db_models.Loja.nome==nome).one()
+    store_id = store.id
+    s.close()
+    return store_id
+
+
+def create_store(nome: str) -> Union[int, bool]:
+    # verificar se já existe loja com o nome indicado
+    try:
+        store_id = get_store_id(nome)
+        print(f"A store already exists with the specified name (ID: {store_id}).")
+        return False
+    except:
+        pass
+
+    try:
+        s, _ = iniciar_sessao_db()
+        store = db_models.Loja(nome=nome)
+        s.add(store)
+        s.commit()
+        store_id = store.id
+        s.close()
+        return store_id
+    except Exception as e:
+        print("An exception was found while trying to create new store:", e)
+        return False
+
 # =============================== Produtos ===============================
 def obter_artigo(part_number: str):
     return {'id': 1,
@@ -87,8 +148,9 @@ def save_repair(repair) -> int:
     new_repair = db_models.Repair(**repair)
     s.add(new_repair)
     s.commit()
-    print(new_repair, type(new_repair), new_repair.id)
-    return new_repair.id
+    repair_id = new_repair.id
+    s.close()
+    return repair_id
 
 
 def update_repair_status(rep_num: int, status: int):
@@ -98,6 +160,17 @@ def update_repair_status(rep_num: int, status: int):
     s, _ = iniciar_sessao_db()
 
     pass  # TODO atualizar reparacao com novo estado.
+
+def obfuscate_text(text: str):
+    """ Create a simple insecure obfuscated string """
+    xxx
+import base64
+def stringToBase64(s):
+    return base64.b64encode(s.encode('utf-8'))
+
+def base64ToString(b):
+    return base64.b64decode(b).decode('utf-8')
+
 
 
 def update_repair_priority(rep_num: int, priority: int):
@@ -336,14 +409,46 @@ def obter_evento(event_id: int) -> Dict[str, Union[int, str]]:
 
 
 # =============================== Contactos ===============================
-def save_contact(contact) -> int:
-    print("a guardar o contacto", contact)
-    s, _ = iniciar_sessao_db()
-    new_contact = db_models.Contact(**contact)
-    s.add(new_contact)
-    s.commit()
-    print(new_contact, type(new_contact), new_contact.id)
-    return new_contact.id
+def save_contact(contact: Union[str, int, Any]) -> Union[int, bool]:
+    try:
+        s, _ = iniciar_sessao_db()
+        new_contact = db_models.Contact(**contact)
+        s.add(new_contact)
+        s.commit()
+        contact_id = new_contact.id
+        s.close()
+        return contact_id
+    except:
+        print("Não foi possível guardar o contacto:", e)
+        return False
+
+
+def update_contact(contact) -> bool:
+    try:
+        s, _ = iniciar_sessao_db()
+        db_contact = s.query(db_models.Contact).get(contact['id'])
+
+        db_contact.nome = contact['nome']
+        db_contact.empresa = contact['empresa']
+        db_contact.telefone = contact['telefone']
+        db_contact.telemovel = contact['telemovel']
+        db_contact.telefone_empresa = contact['telefone_empresa']
+        db_contact.email = contact['email']
+        db_contact.morada = contact['morada']
+        db_contact.cod_postal= contact['cod_postal']
+        db_contact.localidade = contact['localidade']
+        db_contact.pais = contact['pais']
+        db_contact.nif = contact['nif']
+        db_contact.notas = contact['notas']
+        db_contact.is_cliente = contact['is_cliente']
+        db_contact.is_fornecedor = contact['is_fornecedor']
+        db_contact.ult_atualizacao_por_utilizador_id = contact['atualizado_por_utilizador_id']
+        s.commit()
+        s.close()
+        return True
+    except Exception as e:
+        print("Não foi possível atualizar o contacto:", e)
+        return False
 
 
 def pesquisar_contactos(txt_pesquisa: str="", tipo: str ="Clientes"):
@@ -371,21 +476,23 @@ def pesquisar_contactos(txt_pesquisa: str="", tipo: str ="Clientes"):
         contactos = s.query(db_models.Contact).filter(
         and_(db_models.Contact.is_cliente.is_(True),
             or_(
-                db_models.Contact.id.like(termo_pesquisa),
+                db_models.Contact.id.like(termo_pesquisa+"%"),
                 db_models.Contact.nome.ilike(termo_pesquisa),
-                db_models.Contact.telefone.ilike(termo_pesquisa),
-                db_models.Contact.telemovel.ilike(termo_pesquisa),
+                db_models.Contact.telefone.ilike(termo_pesquisa+"%"),
+                db_models.Contact.telemovel.ilike(termo_pesquisa+"%"),
                 db_models.Contact.email.ilike(termo_pesquisa),
+                db_models.Contact.nif.like(termo_pesquisa+"%"),
         )))
     else:
         contactos = s.query(db_models.Contact).filter(
         and_(db_models.Contact.is_fornecedor.is_(True),
             or_(
-                db_models.Contact.id.like(termo_pesquisa),
+                db_models.Contact.id.like(termo_pesquisa+"%"),
                 db_models.Contact.nome.ilike(termo_pesquisa),
-                db_models.Contact.telefone.ilike(termo_pesquisa),
-                db_models.Contact.telemovel.ilike(termo_pesquisa),
+                db_models.Contact.telefone.ilike(termo_pesquisa+"%"),
+                db_models.Contact.telemovel.ilike(termo_pesquisa+"%"),
                 db_models.Contact.email.ilike(termo_pesquisa),
+                db_models.Contact.nif.like(termo_pesquisa+"%"),
         )))
 
     return [{'id': contact.id,
