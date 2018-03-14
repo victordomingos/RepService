@@ -5,16 +5,17 @@ Este módulo é parte integrante da aplicação RepService, desenvolvida por
 Victor Domingos e distribuída sob os termos da licença Creative Commons
 Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
-import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import Pmw
 from string import ascii_uppercase
-#import textwrap
+
+from pyisemail import is_email
 
 from gui.extra_tk_classes import AutoScrollbar, LabelEntry, LabelText
 from gui import detalhe_reparacao
 from global_setup import *
 from misc.constants import TODOS_OS_PAISES
+from misc.misc_funcs import check_and_normalize_phone_number, validate_phone_entry
 
 if USE_LOCAL_DATABASE:
     from local_db import db_main as db
@@ -40,8 +41,13 @@ class contactDetailWindow(ttk.Frame):
         self.contacto_selecionado = ""
         self.rep_newDetailsWindow = {}
         self.rep_detail_windows_count = 0
+        self.contacto_newDetailsWindow = {}
+        self.contact_detail_windows_count = 0
         self.soma_reparacoes = 0
         self.soma_reincidencias = 0
+        self.new_contact_telefone = ""
+        self.new_contact_telemovel = ""
+        self.new_contact_tel_emp = ""
 
         self.var_tipo_is_cliente = tk.IntVar()
         self.var_tipo_is_fornecedor = tk.IntVar()
@@ -63,8 +69,6 @@ class contactDetailWindow(ttk.Frame):
     def _on_criar_nova_reparacao(self, *event):
         """ Cria uma nova reparação utilizando o contacto atual.
         """
-        print("a criar nova reparacao para o contacto nº", self.num_contacto)
-
         if self.contacto['is_cliente']:
             self.estado_app.contacto_para_nova_reparacao = self.num_contacto
             self.estado_app.tipo_novo_contacto = "Cliente"
@@ -99,7 +103,8 @@ class contactDetailWindow(ttk.Frame):
         self.dicas.bind(self.btn_nova_rep, 'Criar um novo processo de reparação.')
 
         self.btn_guardar_alteracoes = ttk.Button(
-            self.topframe, text="Guardar", style="secondary.TButton", command=None)
+            self.topframe, text="Guardar", style="secondary.TButton",
+            command=self._on_update_contact)
         self.dicas.bind(self.btn_guardar_alteracoes,
                         'Clique para guardar quaisquer alterações\nefetuadas a esta ficha de contacto.')
 
@@ -131,6 +136,7 @@ class contactDetailWindow(ttk.Frame):
             self.montar_tab_reparacoes()
 
         self.desativar_campos()
+
 
     def _on_tab_changed(self, event):
         w = event.widget  # get the current widget
@@ -175,6 +181,7 @@ class contactDetailWindow(ttk.Frame):
             self.geral_fr1, "Empresa", style="Panel_Body.TLabel")
         self.ef_ltxt_nif = LabelEntry(
             self.geral_fr1, "NIF", style="Panel_Body.TLabel")
+        self.ef_ltxt_nif.bind("<FocusOut>", self.validar_nif)
         self.ef_ltxt_telefone = LabelEntry(
             self.geral_fr1, "\nTel.", width=14, style="Panel_Body.TLabel")
         self.ef_ltxt_tlm = LabelEntry(
@@ -209,6 +216,12 @@ class contactDetailWindow(ttk.Frame):
         self.ef_ltxt_telefone.set(self.contacto['telefone'])
         self.ef_ltxt_tlm.set(self.contacto['telemovel'])
         self.ef_ltxt_tel_empresa.set(self.contacto['telefone_empresa'])
+
+        self.ef_ltxt_telefone.entry.bind("<FocusOut>", self._on_tel_exit)
+        self.ef_ltxt_tlm.entry.bind("<FocusOut>", self._on_tel_exit)
+        self.ef_ltxt_tel_empresa.entry.bind("<FocusOut>", self._on_tel_exit)
+        self._validar_telefones()
+
         self.ef_ltxt_email.set(self.contacto['email'])
         self.ef_lstxt_morada.set(self.contacto['morada'])
         self.ef_ltxt_cod_postal.set(self.contacto['cod_postal'])
@@ -351,6 +364,140 @@ class contactDetailWindow(ttk.Frame):
         self.reparacoes_fr1.grid_columnconfigure(0, weight=1)
         self.reparacoes_fr1.grid_rowconfigure(0, weight=1)
         self.atualizar_soma()
+
+    def validar_nif(self, *event):
+        """ Verifica se já existe na base de dados um contacto criado com o NIF
+            indicado. Se existir, propor abrir a janela de detalhes. Se não
+            existir, continuar a criar o novo contacto.
+        """
+
+        nif = self.ef_ltxt_nif.get().strip()
+        if nif:
+            contacto = db.contact_exists(nif)
+        else:
+            contacto = None
+
+        if contacto:
+            msg = f"Já existe na base de dados um outro contacto com o NIF indicado ({contacto['id']} " \
+                  f"- {contacto['nome']}). Pretende verificar o contacto existente?"
+            verificar = messagebox.askquestion(message=msg, default='yes', parent=self)
+            if verificar == 'yes':
+                self.create_window_detalhe_contacto(num_contacto=contacto['id'])
+
+    def _on_tel_exit(self, event):
+        validate_phone_entry(self, event.widget)
+
+
+    def _validar_telefones(self, *event) -> bool:
+            self.new_contact_telemovel = ""
+            self.new_contact_telefone = ""
+            self.new_contact_tel_emp = ""
+
+            try:
+                self.new_contact_telefone = check_and_normalize_phone_number(self.ef_ltxt_telefone.get()).replace(" ","")
+            except Exception as e:
+                pass
+
+            try:
+                self.new_contact_telemovel = check_and_normalize_phone_number(self.ef_ltxt_tlm.get()).replace(" ", "")
+            except Exception as e:
+                pass
+
+            try:
+                self.new_contact_tel_emp = check_and_normalize_phone_number(self.ef_ltxt_tel_empresa.get()).replace(" ", "")
+            except Exception as e:
+                pass
+
+            # Verificar já se temos pelo menos um contacto telefónico
+            if (self.new_contact_telefone
+                 or self.new_contact_telemovel
+                 or self.new_contact_tel_emp):
+                return True
+            else:
+                return False
+
+    def _is_form_data_valid(self) -> bool:
+        """ Verifica se todos os campos obrigatórios foram preenchidos e se os
+            dados introduzidos estão corretos.
+        """
+        if not self.ef_ltxt_nome.get().strip():
+            msg = 'O campo "Nome" é de preenchimento obrigatório.'
+            messagebox.showwarning(message=msg, parent=self)
+            self.ef_ltxt_nome.entry.focus()
+            return False
+        elif not self._validar_telefones():
+            msg = 'Deverá indicar, pelo menos, um número de contacto telefónico.'
+            messagebox.showwarning(message=msg, parent=self)
+            return False
+        elif not is_email(self.ef_ltxt_email.get().strip()):
+            msg = 'O endereço de email introduzido não parece ser válido.'
+            messagebox.showwarning(message=msg, parent=self)
+            self.ef_ltxt_email.entry.focus()
+            return False
+        elif not (self.var_tipo_is_cliente.get()
+                  or self.var_tipo_is_fornecedor.get()):
+            msg = 'Por favor, especifique qual a categoria (cliente/fornecedor) a atribuir a este contacto.'
+            messagebox.showwarning(message=msg, parent=self)
+            self.ef_chkbtn_tipo_cliente.focus()
+            return False
+        else:
+            return True
+
+
+    def _on_update_contact(self, event=None):
+        """ Recolhe todos os dados do formulário e guarda um novo contacto"""
+
+        if not self._is_form_data_valid():
+            return
+
+        new_contact = {
+            'id': self.num_contacto,
+            'nome': self.ef_ltxt_nome.get(),
+            'empresa': self.ef_ltxt_empresa.get(),
+            'telefone': self.new_contact_telefone,
+            'telemovel': self.new_contact_telemovel,
+            'telefone_empresa': self.new_contact_tel_emp,
+            'email': self.ef_ltxt_email.get(),
+            'morada': self.ef_lstxt_morada.get(),
+            'cod_postal': self.ef_ltxt_cod_postal.get(),
+            'localidade': self.ef_ltxt_localidade.get(),
+            'pais': self.ef_combo_pais.get(),
+            'nif': self.ef_ltxt_nif.get(),
+            'notas': self.ef_lstxt_notas.get(),
+            'is_cliente': self.var_tipo_is_cliente.get(),
+            'is_fornecedor': self.var_tipo_is_fornecedor.get(),
+            'atualizado_por_utilizador_id': self.estado_app.janela_principal.user_id,
+        }
+
+        is_upd_successful = db.update_contact(new_contact)
+
+        if is_upd_successful:
+            self._on_contact_upd_success()
+        else:
+            wants_to_try_again_save = messagebox.askquestion(message='Não foi possível guardar este contacto na base de dados. Pretende tentar novamente?',
+                                                             default='yes',
+                                                             parent=self)
+            if wants_to_try_again_save == 'yes':
+                self._on_update_contact()
+            else:
+                self.on_contact_cancel()
+
+    def create_window_detalhe_contacto(self, *event, num_contacto=None):
+        self.contact_detail_windows_count += 1
+        self.contacto_newDetailsWindow[self.contact_detail_windows_count] = tk.Toplevel(
+        )
+        self.contacto_newDetailsWindow[self.contact_detail_windows_count].title(
+            f'Detalhe de contacto: {num_contacto}')
+        self.janela_detalhes_contacto = contactDetailWindow(
+            self.contacto_newDetailsWindow[self.contact_detail_windows_count],
+            num_contacto,
+            self.estado_app)
+        self.contacto_newDetailsWindow[self.contact_detail_windows_count].focus()
+
+
+    def _on_contact_upd_success(self):
+        print("Contacto atualizado com sucesso!")
+        pass
 
     def desativar_campos(self):
         # Desativar todos os campos de texto para não permitir alterações. ----

@@ -693,7 +693,6 @@ class App(baseApp):
                 self.close_window_contactos()
         else:
             if criar_novo_contacto in ["Cliente", "Fornecedor"]:
-                print("Sim:", criar_novo_contacto)
                 self.estado_app.painel_novo_contacto_aberto = True
             self.estado_app.janela_contactos = tk.Toplevel(self.master)
             self.janela_contactos = contactos.ContactsWindow(
@@ -864,7 +863,7 @@ class App(baseApp):
 
         self.estado_app.painel_nova_reparacao_aberto = self.is_entryform_visible
 
-        print(self.estado_app.contacto_para_nova_reparacao, self.estado_app.tipo_novo_contacto)
+        #print(self.estado_app.contacto_para_nova_reparacao, self.estado_app.tipo_novo_contacto)
         if self.estado_app.contacto_para_nova_reparacao:
             if self.estado_app.tipo_novo_contacto == "Cliente":
                 self.ef_txt_num_cliente.delete(0, tk.END)
@@ -1175,8 +1174,18 @@ class App(baseApp):
             self.entryfr4, padding=4, style="Panel_Section_Title.TLabelframe", text="Avaria e/ou serviço a realizar")
         self.ef_text_descr_avaria_servico = tk.Text(self.ef_lf_servico, highlightcolor="LightSteelBlue2", font=(
             "Helvetica-Neue", 12), wrap='word', width=20, height=4)
-        self.ef_chkbtn_avaria_reprod_loja = ttk.Checkbutton(
-            self.ef_lf_servico, variable=self.ef_var_reprod_loja, style="Panel_Body.Checkbutton", width=27, text="Avaria reproduzida na loja")
+
+        # Evita o aparecimento de um erro estranho ao não usar o tema "Aqua"...
+        try:
+            self.ef_chkbtn_avaria_reprod_loja = ttk.Checkbutton(
+                self.ef_lf_servico, variable=self.ef_var_reprod_loja,
+                style="Panel_Body.Checkbutton", width=27,
+                text="Avaria reproduzida na loja")
+        except:
+            self.ef_chkbtn_avaria_reprod_loja = ttk.Checkbutton(
+                self.ef_lf_servico, variable=self.ef_var_reprod_loja,
+                width=27, text="Avaria reproduzida na loja")
+
         self.ef_ltxt_senha = LabelEntry(
             self.ef_lf_servico, "Senha:", style="Panel_Body.TLabel", width=22)
         self.ef_lbl_find_my = ttk.Label(
@@ -1326,7 +1335,6 @@ class App(baseApp):
         tipo = self.ef_var_tipo.get()
         if tipo == TIPO_REP_STOCK:
             num_contacto = self.ef_txt_num_fornecedor.get().strip()
-            print("DEBUG: suposto fornecedor:", num_contacto)
             if len(num_contacto)<1:
                 limpar_dados_fornecedor()
                 return

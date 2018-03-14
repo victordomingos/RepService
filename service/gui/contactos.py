@@ -5,20 +5,16 @@ Este módulo é parte integrante da aplicação RepService, desenvolvida por
 Victor Domingos e distribuída sob os termos da licença Creative Commons
 Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
-
-import tkinter as tk
 from tkinter import ttk, messagebox
 from string import ascii_uppercase, ascii_letters
 
 from pyisemail import is_email
-from phonenumbers import parse, is_valid_number, normalize_diallable_chars_only
-from phonenumbers import format_out_of_country_keeping_alpha_chars
 
 from gui.base_app import baseApp
 from gui.extra_tk_classes import LabelEntry, LabelText
 from gui.detalhe_contacto import contactDetailWindow
 from global_setup import *
-from misc.constants import TODOS_OS_PAISES
+from misc.constants import TODOS_OS_PAISES, TIPO_REP_STOCK
 from misc.misc_funcs import check_and_normalize_phone_number, validate_phone_entry
 
 
@@ -282,7 +278,6 @@ class ContactsWindow(baseApp):
         self.ef_ltxt_tlm.entry.bind("<FocusOut>", self._on_tel_exit)
         self.ef_ltxt_tel_empresa.entry.bind("<FocusOut>", self._on_tel_exit)
 
-
         self.ef_ltxt_email = LabelEntry(self.ef_lf_top, "Email", style="Panel_Body.TLabel")
         self.ef_lstxt_morada = LabelText(self.ef_lf_top, "\nMorada", height=2,
                                          style="Panel_Body.TLabel")
@@ -364,27 +359,40 @@ class ContactsWindow(baseApp):
         self.my_statusbar.hide_progress(last_update=100)
 
 
-    def adicionar_contacto(self, *event):
-        """ Guarda o contacto acabado de criar. Caso o utilizador esteja a criar uma
-            reparação, adiciona o contacto ao campo correspondente.
+    def after_adicionar_contacto(self, *event):
+        """ Este médodo é executado após guardar com sucesso um contacto. Caso
+            o utilizador esteja a criar uma reparação, adiciona o contacto ao
+            campo correspondente.
         """
-        # guardar na base de dados e obter o nº do último contacto adicionado
         if self.estado_app.tipo_novo_contacto == "Cliente":
             self.estado_app.contacto_para_nova_reparacao = self.ultimo_contacto
             if self.estado_app.painel_nova_reparacao_aberto:
                 self.estado_app.janela_principal.close_window_contactos()
             else:
+                wants_to_create = messagebox.askquestion(
+                    message='O novo cliente foi guardado com sucesso. Deseja criar uma nova reparação?',
+                    default='yes',
+                    parent=self)
+                if wants_to_create == 'yes':
+                    self.estado_app.contacto_para_nova_reparacao = self.ultimo_contacto
+                    self.estado_app.janela_principal.mostrar_painel_entrada()
                 self.mostrar_clientes()
-            # preencher o campo do nº de cliente com o último contacto de cliente criado; depois atribuir foco ao formulário da reparação e fechar a janela
         elif self.estado_app.tipo_novo_contacto == "Fornecedor":
             self.estado_app.contacto_para_nova_reparacao = self.ultimo_contacto
             if self.estado_app.painel_nova_reparacao_aberto:
                 self.estado_app.janela_principal.close_window_contactos()
             else:
+                wants_to_create = messagebox.askquestion(
+                    message='O novo fornecedor foi guardado com sucesso. Deseja criar uma nova reparação?',
+                    default='yes',
+                    parent=self)
+                if wants_to_create == 'yes':
+                    self.estado_app.contacto_para_nova_reparacao = self.ultimo_contacto
+                    self.estado_app.janela_principal.mostrar_painel_entrada()
+                    self.estado_app.janela_principal.ef_var_tipo.set(TIPO_REP_STOCK)
+                    self.estado_app.janela_principal.radio_tipo_command()
                 self.mostrar_fornecedores()
-            # preencher o campo do nº de fornecedor com o último contacto de fornecedor criado; depois atribuir foco ao formulário da reparação e fechar a janela
         else:
-            print("guardar e nao fazer mais nada")
             self.mostrar_clientes()  # atualizar a lista de contactos nesta janela fechar o formulário
 
 
@@ -506,6 +514,11 @@ class ContactsWindow(baseApp):
 
         self.ultimo_contacto = db.save_contact(new_contact)
 
+        if new_contact['is_cliente']:
+            self.estado_app.tipo_novo_contacto = "Cliente"
+        elif new_contact['is_fornecedor']:
+            self.estado_app.tipo_novo_contacto = "Fornecedor"
+
         if self.ultimo_contacto:
             self._on_contact_save_success()
         else:
@@ -519,22 +532,8 @@ class ContactsWindow(baseApp):
 
 
     def _on_contact_save_success(self):
-        print("Contacto guardado com sucesso")
         self.fechar_painel_entrada()
-        self.adicionar_contacto()
-
-        """
-        self.ultimo_contacto = "1234" #TODO - criar um mecanismo para obter o número da reparação acabada de introduzir na base de dados
-        wants_to_create = messagebox.askquestion(message='O novo contacto foi guardado com sucesso. Deseja criar uma nova reparação?', default='yes', parent=self)
-        if wants_to_create == 'yes':
-                imprimir_folhas_de_reparacao(self.ultima_reparacao)
-                self.fechar_painel_entrada()
-        else:
-                self.entryframe.focus()
-        """
-
-        # selecionar na lista de contactos o contacto mais recente e depois limpar
-
+        self.after_adicionar_contacto()
         self.ultimo_contacto = None
 
 
@@ -652,17 +651,17 @@ class ContactsWindow(baseApp):
             try:
                 self.new_contact_telefone = check_and_normalize_phone_number(self.ef_ltxt_telefone.get()).replace(" ","")
             except Exception as e:
-                print("[TELEFONE]", e)
+                pass
 
             try:
                 self.new_contact_telemovel = check_and_normalize_phone_number(self.ef_ltxt_tlm.get()).replace(" ", "")
             except Exception as e:
-                print("[TELEMOVEL]", e)
+                pass
 
             try:
                 self.new_contact_tel_emp = check_and_normalize_phone_number(self.ef_ltxt_tel_empresa.get()).replace(" ", "")
             except Exception as e:
-                print("[TLF_EMPRESA]", e)
+                pass
 
             # Verificar já se temos pelo menos um contacto telefónico
             if (self.new_contact_telefone
@@ -695,7 +694,7 @@ class ContactsWindow(baseApp):
                   or self.ef_var_tipo_is_fornecedor.get()):
             msg = 'Por favor, especifique qual a categoria (cliente/fornecedor) a atribuir a este contacto.'
             messagebox.showwarning(message=msg, parent=self)
-            self.ef_chkbtn_tipo_cliente.entry.focus()
+            self.ef_chkbtn_tipo_cliente.focus()
             return False
         else:
             return True
