@@ -20,7 +20,7 @@ from local_db import db_main as db
 
 from global_setup import LOCAL_DATABASE_PATH
 from misc.constants import ESTADOS, ENTREGUE, PRIORIDADES, RESULTADOS
-from misc.misc_funcs import check_and_normalize_phone_number
+from misc.misc_funcs import check_and_normalize_phone_number, obfuscate_text
 
 def delete_database():
     print("  - A apagar as tabelas existentes.")
@@ -176,7 +176,7 @@ def test_populate(num_lojas=1, admin_password_hash="", num_utilizadores=1, num_c
             avaria_reprod_loja = True,
             requer_copia_seg = 0,
             is_find_my_ativo = 1,
-            senha = "123456",
+            senha = obfuscate_text("123456"),
             acessorios_entregues = "Bolsa da marca NPK Accessories",
             notas = "",
             local_reparacao = contactos[i%2],
