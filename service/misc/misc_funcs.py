@@ -7,6 +7,7 @@ Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 """
 import sys
 import os
+import base64
 from datetime import datetime
 from typing import Optional
 from tkinter import messagebox
@@ -88,3 +89,13 @@ def validate_phone_entry(master, widget):
     else:
         msg = 'Por favor, escreva o número de telefone no formato correto.'
         messagebox.showwarning(message=msg, parent=master)
+
+
+def obfuscate_text(text: str) -> str:
+    """ Create a simple insecure obfuscated string """
+    return base64.b64encode(text.encode('utf-8'))
+
+
+def reveal_text(text: str) -> str:
+    """ Reveal the content of an obfuscated string """
+    return base64.b64decode(text).decode('utf-8')
