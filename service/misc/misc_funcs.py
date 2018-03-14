@@ -92,7 +92,7 @@ def validate_phone_entry(master, widget):
 
 
 def obfuscate_text(text: str) -> str:
-    """ Create a simple insecure obfuscated string """
+    """ Create a simple (insecure) obfuscated string """
     return base64.b64encode(text.encode('utf-8'))
 
 
