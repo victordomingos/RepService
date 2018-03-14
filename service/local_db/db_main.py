@@ -161,18 +161,6 @@ def update_repair_status(rep_num: int, status: int):
 
     pass  # TODO atualizar reparacao com novo estado.
 
-def obfuscate_text(text: str):
-    """ Create a simple insecure obfuscated string """
-    xxx
-import base64
-def stringToBase64(s):
-    return base64.b64encode(s.encode('utf-8'))
-
-def base64ToString(b):
-    return base64.b64decode(b).decode('utf-8')
-
-
-
 def update_repair_priority(rep_num: int, priority: int):
     print(f"A atualizar a prioridade da reparação nº {rep_num}: {priority} ({PRIORIDADES[priority]})")
     reparacao = _obter_reparacao(rep_num)
