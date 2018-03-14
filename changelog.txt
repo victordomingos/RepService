@@ -6,6 +6,8 @@ Histórico de versões:
 
 ---
 v.0.21 - 17/03/2018
+ * Já é possível atualizar os dados dos contactos a partir da respetiva janela
+   de detalhes.
  * As senhas dos utilizadores já não são armazenadas na base dados. Em vez
    disso, é gerado e armazenado um hash.
  * Ao executar db_local_admin.py, é pedida a introdução de uma senha inicial
