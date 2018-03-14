@@ -20,11 +20,14 @@ from local_db import db_main as db
 
 from global_setup import LOCAL_DATABASE_PATH
 from misc.constants import ESTADOS, ENTREGUE, PRIORIDADES, RESULTADOS
+from misc.misc_funcs import check_and_normalize_phone_number
 
 def delete_database():
     print("  - A apagar as tabelas existentes.")
-    _, engine = db.iniciar_sessao_db()
+    s, engine = db.iniciar_sessao_db()
     db_base.Base.metadata.drop_all(engine)
+    s.commit()
+    s.close()
 
 
 def vacuum_db():
@@ -41,8 +44,10 @@ def vacuum_db():
 
 def init_database():
     print("  - A (re)criar as tabelas necessárias.")
-    _, engine = db.iniciar_sessao_db()
+    s, engine = db.iniciar_sessao_db()
     db_base.Base.metadata.create_all(engine)
+    s.commit()
+    s.close()
 
 
 # ----------------------------------------------------------------------------------------
@@ -50,30 +55,34 @@ def init_database():
 # ----------------------------------------------------------------------------------------
 
 def test_populate(num_lojas=1, admin_password_hash="", num_utilizadores=1, num_contactos=1, num_artigos=1, num_reparacoes=1):
-    s, _ = db.iniciar_sessao_db()
     print("\nA inserir dados de exemplo na base de dados.")
+
+    print("  - A criar o grupo de administradores...")
+    db.create_store(nome=f"The System Administration Guys")
+
+    print("  - A criar um administrador para a base de dados...")
+    db.create_user(username="npk", email="admin@networkprojectforknowledge.org",
+                   password=admin_password_hash, loja_id=1)
+
 
     for i in range(num_lojas):
         print(f"{'  - A inserir lojas...'.ljust(55)}{i+1:7}", end="\r")
-        loja = db_models.Loja(nome=f"That Great NPK Store #{str(i)}")
-        s.add(loja)
-
-    #s.commit()
+        db.create_store(nome=f"That Great NPK Store #{str(i)}")
 
     print("")
-    lojas = s.query(db_models.Loja)
-    admin = db_models.User(nome="npk", email="admin@networkprojectforknowledge.org", password=admin_password_hash, loja=lojas.get(1))
-    s.add(admin)
-    lojas = lojas.all()
+
+
+    s, _ = db.iniciar_sessao_db()
+    lojas_q = s.query(db_models.Loja)
+    lojas = lojas_q.all()
+
     for i in range(num_utilizadores):
         print(f"{'  - A inserir utilizadores...'.ljust(55)}{i+1:7}", end="\r")
         lojinha = lojas[i % 2]
-        utilizador = db_models.User(nome="utilizador" + str(i), email="test@networkprojectforknowledge.org" + str(i), password="abc1234567", loja=lojinha)
-        s.add(utilizador)
-
-    #s.commit()
+        db.create_user(username="utilizador" + str(i), email="test@networkprojectforknowledge.org" + str(i), password=pbkdf2_sha256.hash("abc1234567"), loja_id=lojinha.id)
 
 
+    s, _ = db.iniciar_sessao_db()
     print("")
     utilizadores = s.query(db_models.User).all()
     nomes = ("José", "Rita", "Shawn", "Francelina", "Eufrazina", "Eleutério", "Joana Manuela", "Manuel", "Maria", "Guilhermina", "Estêvão", "Joaninha", "Apólito", "John", "Loja X")
@@ -103,10 +112,10 @@ def test_populate(num_lojas=1, admin_password_hash="", num_utilizadores=1, num_c
         contacto = db_models.Contact(
             nome=f"{choice(nomes)} {choice(apelidos)}",
             empresa=choice(empresas),
-            telefone=choice(telefones),
-            telemovel = choice(telefones),
-            telefone_empresa = choice(telefones),
-            email=choice(emails) + "@" + choice(dominios),
+            telefone= check_and_normalize_phone_number(choice(telefones)),
+            telemovel = check_and_normalize_phone_number(choice(telefones)),
+            telefone_empresa = check_and_normalize_phone_number(choice(telefones)),
+            email = choice(emails) + "@" + choice(dominios),
             morada = "Rua da Santa Paciência Que Nos Acuda Em Dias Daqueles\nEdifício Especial XXI, porta 789, 3º Esquerdo Trás",
             cod_postal = "4700-000",
             localidade = "Braga",
@@ -314,19 +323,19 @@ if __name__ == "__main__":
     admin_password = getpass("\nPor favor introduza a senha para o administrador (npk): ")
     password_hash = pbkdf2_sha256.using(salt_size=8).hash(admin_password)
 
-    lojas = 2
+    num_lojas = 2
 
-    utilizadores = lojas * 8
-    contactos = lojas * 850
-    artigos = lojas * 600
-    reps = lojas * 3000
+    utilizadores = num_lojas * 8
+    contactos = num_lojas * 850
+    artigos = num_lojas * 600
+    reps = num_lojas * 3000
 
-    test_populate(num_lojas=lojas,
+    test_populate(num_lojas=num_lojas,
                   admin_password_hash = password_hash,
                   num_utilizadores=utilizadores,
                   num_contactos=contactos,
                   num_artigos=artigos,
                   num_reparacoes=int(reps))
-    #print_database()
+
     db_filesize = os.path.getsize(os.path.expanduser(LOCAL_DATABASE_PATH)) >> 10
     print(f"\n\nOperação terminada.\nTamanho atual da base de dados: {db_filesize/1024:.1f}MB")
