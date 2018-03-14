@@ -9,7 +9,14 @@ v.0.21 - 17/03/2018
  * Já é possível atualizar os dados dos contactos a partir da respetiva janela
    de detalhes.
  * As senhas dos utilizadores já não são armazenadas na base dados. Em vez
-   disso, é gerado e armazenado um hash.
+   disso, é gerado e armazenado um hash, que é depois utilizado para a
+   verificação da senha no momento do login.
+ * As senhas de equipamentos de clientes são sujeitas a um procedimento de
+   ofuscação simples antes de guardar na base de dados. Adicionalmente, na
+   janela de detalhes de reparação, para reduzir a probabilidade de
+   apropriação não autorizada, a senha apenas é mostrada quando o ponteiro do
+   rato é colocado por cima do campo correspondente e é novamente ocultada
+   assim que o ponteiro do rato se afaste.
  * Ao executar db_local_admin.py, é pedida a introdução de uma senha inicial
    para o administrador (npk).
  * Já é possível alterar efetivamente a senha de utilizador.
