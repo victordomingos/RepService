@@ -326,3 +326,31 @@ class StatusBar(ttk.Frame):
         self.progress_value = 0
         self.progress_bar['value'] = 0
         self.progress_bar.update()
+
+
+def popup_message(window, msg):
+    """Mostrar um painel de notificação com uma mensagem
+
+    Recebe como parâmetros o widget da janela onde deverá ser apresentado o
+    painel de notificação e uma string com o texto a mostrar.
+    """
+    window.update_idletasks()
+    x, y = int(window.master.winfo_width() / 2), 76
+
+    window.popupframe = tk.Frame(window.master, background="grey75")
+    window.internalframe = tk.Frame(window.popupframe,
+                                    background="white",
+                                    padx=4, pady=4)
+
+    window.msglabel = tk.Label(window.internalframe,
+                                font=tkinter.font.Font(family="Lucida Grande", size=11),
+                                foreground="grey22",
+                                text=msg)
+
+    window.internalframe.pack(side="top", padx=1, pady=1)
+
+    window.msglabel.pack()
+    for i in range(1, 10, 2):
+        window.popupframe.place(x=x, y=y+i, anchor="n", bordermode="outside")
+        window.popupframe.update()
+    window.popupframe.after(1500, window.popupframe.destroy)

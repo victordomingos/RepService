@@ -26,7 +26,7 @@ from string import ascii_letters
 from gui import detalhe_reparacao, about_window, contactos, detalhe_mensagem, remessas
 from printing import imprimir
 from gui.base_app import baseApp
-from gui.extra_tk_classes import LabelEntry, LabelText, DatePicker
+from gui.extra_tk_utilities import LabelEntry, LabelText, DatePicker
 from misc.misc_funcs import txt_para_data, restart_program
 from global_setup import *
 from misc.constants import *

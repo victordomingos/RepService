@@ -11,7 +11,7 @@ from string import ascii_uppercase
 
 from pyisemail import is_email
 
-from gui.extra_tk_classes import AutoScrollbar, LabelEntry, LabelText
+from gui.extra_tk_utilities import AutoScrollbar, LabelEntry, LabelText, popup_message
 from gui import detalhe_reparacao
 from global_setup import *
 from misc.constants import TODOS_OS_PAISES, TIPO_REP_STOCK, TIPO_REP_CLIENTE, RESULTADOS
@@ -58,7 +58,9 @@ class contactDetailWindow(ttk.Frame):
         self.montar_barra_de_ferramentas()
 
         self.gerar_painel_principal()
-        if self.var_tipo_is_cliente.get():
+
+        if True:
+        #if self.var_tipo_is_cliente.get():
             self.atualizar_soma()
             self.alternar_cores(self.tree)
 
@@ -70,12 +72,12 @@ class contactDetailWindow(ttk.Frame):
     def _on_criar_nova_reparacao(self, *event):
         """ Cria uma nova reparação utilizando o contacto atual.
         """
+        self.estado_app.contacto_para_nova_reparacao = self.num_contacto
+
         if self.contacto['is_cliente']:
-            self.estado_app.contacto_para_nova_reparacao = self.num_contacto
             self.estado_app.tipo_novo_contacto = "Cliente"
             self.estado_app.janela_principal.ef_var_tipo.set(TIPO_REP_CLIENTE)
         elif self.contacto['is_fornecedor']:
-            self.estado_app.contacto_para_nova_reparacao = self.num_contacto
             self.estado_app.tipo_novo_contacto = "Fornecedor"
             self.estado_app.janela_principal.ef_var_tipo.set(TIPO_REP_STOCK)
 
@@ -91,13 +93,21 @@ class contactDetailWindow(ttk.Frame):
         self.mbtn_copiar = ttk.Menubutton(self.topframe, text=" ⚡")
         self.mbtn_copiar.menu = tk.Menu(self.mbtn_copiar, tearoff=0)
         self.mbtn_copiar["menu"] = self.mbtn_copiar.menu
-        self.mbtn_copiar.menu.add_command(label="Nome", command=None)
-        self.mbtn_copiar.menu.add_command(label="NIF", command=None)
-        self.mbtn_copiar.menu.add_command(label="Morada", command=None)
-        self.mbtn_copiar.menu.add_command(label="Código Postal", command=None)
-        self.mbtn_copiar.menu.add_command(label="Localidade", command=None)
-        self.mbtn_copiar.menu.add_command(label="Email", command=None)
-        self.mbtn_copiar.menu.add_command(label="Telefone", command=None)
+        self.mbtn_copiar.menu.add_command(label="Nome",
+            command=lambda: self.copiar_para_clibpboard(self.ef_ltxt_nome.get()))
+        self.mbtn_copiar.menu.add_command(label="Número de contribuinte", command=lambda: self.copiar_para_clibpboard(self.ef_ltxt_nif.get()))
+        self.mbtn_copiar.menu.add_separator()
+        self.mbtn_copiar.menu.add_command(label="Morada", command=lambda: self.copiar_para_clibpboard(self.ef_lstxt_morada.get()))
+        self.mbtn_copiar.menu.add_command(label="Código Postal", command=lambda: self.copiar_para_clibpboard(self.ef_ltxt_cod_postal.get()))
+        self.mbtn_copiar.menu.add_command(label="Localidade", command=lambda: self.copiar_para_clibpboard(self.ef_ltxt_localidade.get()))
+        self.mbtn_copiar.menu.add_separator()
+        self.mbtn_copiar.menu.add_command(label="Email", command=lambda: self.copiar_para_clibpboard(self.ef_ltxt_email.get()))
+        self.mbtn_copiar.menu.add_separator()
+        self.mbtn_copiar.menu.add_command(label="Telefone", command=lambda: self.copiar_para_clibpboard(self.ef_ltxt_telefone.get()))
+        self.mbtn_copiar.menu.add_command(label="Telemóvel",
+                                          command=lambda: self.copiar_para_clibpboard(self.ef_ltxt_tlm.get()))
+        self.mbtn_copiar.menu.add_command(label="Telefone na empresa",
+                                          command=lambda: self.copiar_para_clibpboard(self.ef_ltxt_tel_empresa.get()))
         self.dicas.bind(
             self.mbtn_copiar, 'Clique para selecionar e copiar\ndados referentes a este contacto\npara a Área de Transferência.')
         # ----------- fim de Botão com menu "Copiar" -------------
@@ -133,7 +143,8 @@ class contactDetailWindow(ttk.Frame):
         self.gerar_tab_notas()
         self.montar_tab_notas()
 
-        if self.var_tipo_is_cliente.get():
+        if True:
+        #if self.var_tipo_is_cliente.get():
             self.tab_reparacoes = ttk.Frame(self.note, padding=0)
             self.note.add(self.tab_reparacoes, text="Reparações")
             self.gerar_tab_reparacoes()
@@ -195,7 +206,7 @@ class contactDetailWindow(ttk.Frame):
             self.geral_fr1, "Email", style="Panel_Body.TLabel")
 
         self.ef_lstxt_morada = LabelText(
-            self.morada_fr1, "\n\nMorada", height=2, style="Panel_Body.TLabel")
+            self.morada_fr1, "\n\nMorada", height=3, style="Panel_Body.TLabel")
 
         self.ef_ltxt_cod_postal = LabelEntry(
             self.morada_fr1, "Código Postal", style="Panel_Body.TLabel", width=10)
@@ -754,3 +765,14 @@ class contactDetailWindow(ttk.Frame):
         self.centerframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
         self.bottomframe.pack(side=tk.BOTTOM, fill=tk.X)
         self.mainframe.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
+
+
+    def copiar_para_clibpboard(self, texto):
+        """ Copia o texto fornecido para a Área de Transferência
+
+        O texto copiado é mostrado por instantes numa mensagem popup dentro da
+        própria janela.
+        """
+        self.estado_app.janela_principal.clipboard_clear()
+        self.estado_app.janela_principal.clipboard_append(texto)
+        popup_message(self, "⚡ " + texto)

@@ -10,7 +10,7 @@ from tkinter import ttk, messagebox
 
 from printing import imprimir
 from gui.base_app import baseApp
-from gui.extra_tk_classes import AutoScrollbar
+from gui.extra_tk_utilities import AutoScrollbar
 from gui.detalhe_remessa import remessaDetailWindow
 from global_setup import *
 from misc.constants import *

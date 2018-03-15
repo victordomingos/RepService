@@ -12,7 +12,7 @@ import Pmw
 import textwrap
 
 from gui import detalhe_contacto
-from gui.extra_tk_classes import AutoScrollbar, LabelEntry, LabelText
+from gui.extra_tk_utilities import AutoScrollbar, LabelEntry, LabelText
 from global_setup import *
 from misc.constants import *
 from misc.misc_funcs import reveal_text

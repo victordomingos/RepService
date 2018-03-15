@@ -11,7 +11,7 @@ import Pmw
 import textwrap
 
 from printing import imprimir
-from gui.extra_tk_classes import AutoScrollbar, LabelEntry, LabelText
+from gui.extra_tk_utilities import AutoScrollbar, LabelEntry, LabelText
 from gui.detalhe_reparacao import repairDetailWindow
 from global_setup import *
 

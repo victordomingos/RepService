@@ -10,7 +10,7 @@ from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 import Pmw
 
-from gui.extra_tk_classes import LabelText
+from gui.extra_tk_utilities import LabelText
 from gui.detalhe_reparacao import repairDetailWindow
 from global_setup import *
 from misc.constants import *

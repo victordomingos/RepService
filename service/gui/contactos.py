@@ -11,7 +11,7 @@ from string import ascii_uppercase, ascii_letters
 from pyisemail import is_email
 
 from gui.base_app import baseApp
-from gui.extra_tk_classes import LabelEntry, LabelText
+from gui.extra_tk_utilities import LabelEntry, LabelText
 from gui.detalhe_contacto import contactDetailWindow
 from global_setup import *
 from misc.constants import TODOS_OS_PAISES, TIPO_REP_STOCK

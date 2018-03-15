@@ -10,7 +10,7 @@ from tkinter import ttk
 import tkinter.font
 import Pmw
 
-from gui.extra_tk_classes import StatusBar, AutoScrollbar
+from gui.extra_tk_utilities import StatusBar, AutoScrollbar, popup_message
 from global_setup import *
 
 
@@ -49,9 +49,6 @@ class baseApp(ttk.Frame):
            - entryfr1...entryfr5 (5 frames para organizar widgets, empacotados
              verticalmente e ocupando a totalidade do entryframe)
            - todos os widgets devem ser criados como descendentes de um destes subframes
-
-    São criados alguns objetos e métodos comuns às várias janelas da aplicação:
-        - popupMsg() - mensagens breves dentro da janela (tipo notificações)
     """
 
     def __init__(self, master, *args, **kwargs):
@@ -216,22 +213,6 @@ class baseApp(ttk.Frame):
 
         self.estilo.configure("secondary.TButton", font=("Lucida Grande", 11))
 
-    def popupMsg(self, msg):
-        """
-        Mostrar um painel de notificação com uma mensagem
-        """
-        self.update_idletasks()
-        x, y = int(self.master.winfo_width() / 2), 76
-        self.popupframe = ttk.Frame(self.master, padding="15 15 15 15")
-        self.msglabel = ttk.Label(
-            self.popupframe, font=self.statusFont, foreground=self.btnTxtColor, text=msg)
-        self.msglabel.pack()
-        for i in range(1, 10, 2):
-            self.popupframe.place(
-                x=x, y=y + i, anchor="n", bordermode="outside")
-            self.popupframe.update()
-        self.popupframe.after(1500, self.popupframe.destroy)
-
     # ------ Permitir que a tabela possa ser ordenada clicando no cabeçalho --
     def isNumeric(self, s):
         """
@@ -295,6 +276,7 @@ class baseApp(ttk.Frame):
         tree.tag_configure('impar', background=fundo2)
         self.update_idletasks()
 
+
     def configurarTree(self):
         # Ordenar por coluna ao clicar no respetivo cabeçalho
         for col in self.tree['columns']:
@@ -307,3 +289,14 @@ class baseApp(ttk.Frame):
             self.leftframe, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=self.vsb.set)
         self.vsb.grid(column=1, row=0, sticky="ns", in_=self.leftframe)
+
+
+    def copiar_para_clibpboard(self, texto):
+        """ Copia o texto fornecido para a Área de Transferência
+
+        O texto copiado é mostrado por instantes numa mensagem popup dentro da
+        própria janela.
+        """
+        self.estado_app.janela_principal.clipboard_clear()
+        self.estado_app.janela_principal.clipboard_append(texto)
+        popup_message(self, "⚡ " + texto)
