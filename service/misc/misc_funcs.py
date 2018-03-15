@@ -11,7 +11,9 @@ import base64
 from datetime import datetime
 from typing import Optional
 from tkinter import messagebox
-
+import tkinter as tk
+import tkinter.ttk as ttk
+import tkinter.font
 
 from global_setup import DEFAULT_PHONE_REGION
 
