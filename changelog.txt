@@ -7,11 +7,12 @@ Histórico de versões:
 ---
 v.0.22 - 31/03/2018
  * As sessões de acesso à base de dados passam a ser geradas através de um
-   `@contextmanager` chamado `db_main.db_session_scope()`. (EM CURSO)
+   `@contextmanager` chamado `db_main.db_session_scope()`.
  * Reorganização geral do código referente ao acesso à base de dados,
-   repartindo-o por vários classes e módulos de acordo com as suas áreas de
-   ação. (EM CURSO)
- * 
+   repartindo-o por várias classes e módulos de acordo com as suas áreas de
+   ação.
+ * Corrigido um bug que poderia fazer com que uma janela de detalhes de
+   contacto abrisse ocasionalmente em branco e sem quaisquer controlos.
 
 ---
 v.0.21 - 15/03/2018 - Área de contactos 100% operacional!
