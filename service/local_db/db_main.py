@@ -1,9 +1,29 @@
-#!/usr/bin/env python3
-# encoding: utf-8
-"""
-Este módulo é parte integrante da aplicação Promais Service, desenvolvida por
-Victor Domingos e distribuída sob os termos da licença Creative Commons
-Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+""" Database public API with session scope context manager.
+
+This module provides an API that is meant to be used by the GUI callbacks to
+access all funtions related to database I/O. It implements a session scope as
+context manager in order to allow multiple operations in a single session,
+while automatically committing them and closing the session if the operation is
+successful. The idea behind this apparently redundant approach is to make the
+current API compatible with an eventual web API in the future, by keeping all
+the database functions completely independent from the GUI code.
+
+The functions available here should wrap the call to the database method in
+the db_session_scope() context, include the context manager as the first
+argument and then pass all the parameters. The value returned by the database
+methods should be also returned back, without any manipulation.
+
+    Example:
+
+        from local_db.db_user import DBUser
+        from typing import Tuple
+
+        def validate_login(username: str, password: str) -> Tuple[bool, str]:
+            with db_session_scope() as s
+                return DBUser.validate_login(s, username, password)
+
+The docstrings documenting these database operations will be located in their
+respective modules.
 """
 import os
 
@@ -39,14 +59,6 @@ def db_session_scope():
         raise
     finally:
         session.close()
-
-
-def iniciar_sessao_db():
-    """ Open a SQLalchemy session. (This will be deprecated soon) """
-    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
-    session = sessionmaker()
-    session.configure(bind=engine)
-    return session(), engine
 
 
 # ============================ LOGIN / Utilizadores ============================
@@ -152,7 +164,9 @@ def obter_evento(event_id: int) -> Dict[str, Union[int, str]]:
 # =============================== Contactos ===============================
 def save_contact(contact: Union[str, int, Any]) -> Union[int, bool]:
     with db_session_scope() as s:
-        return DBContact.save_contact(s, contact)
+        cont_id = DBContact.save_contact(s, contact)
+        print("cont_id:", cont_id)
+        return cont_id
 
 
 def update_contact(contact) -> bool:
@@ -177,7 +191,7 @@ def obter_clientes() -> List[Dict[str, Union[int, str]]]:
 
 def obter_fornecedores() -> List[Dict[str, Union[int, str]]]:
     with db_session_scope() as s:
-        return DBContact.get_costumers(s)
+        return DBContact.get_suppliers(s)
 
 
 def obter_lista_fornecedores() -> List[Dict[str, Union[int, str]]]:

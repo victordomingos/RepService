@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# encoding: utf-8
-"""
-Este módulo é parte integrante da aplicação Promais Service, desenvolvida por
-Victor Domingos e distribuída sob os termos da licença Creative Commons
-Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
-"""
-
 from typing import Dict, List, Union, Optional, Any
 
 from sqlalchemy import or_, and_
@@ -21,6 +13,7 @@ class DBContact(object):
         try:
             new_contact = db_models.Contact(**contact)
             session.add(new_contact)
+            session.commit()
             return new_contact.id
         except Exception as e:
             print("Não foi possível guardar o contacto:", e)
