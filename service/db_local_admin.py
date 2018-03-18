@@ -10,6 +10,8 @@ import pprint
 import random
 import string
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from getpass import getpass
 from datetime import datetime
 
@@ -22,9 +24,18 @@ from global_setup import LOCAL_DATABASE_PATH
 from misc.constants import ESTADOS, ENTREGUE, PRIORIDADES, RESULTADOS
 from misc.misc_funcs import check_and_normalize_phone_number, obfuscate_text
 
+
+def iniciar_sessao_db():
+    """ Open a SQLalchemy session and return session and engine objects """
+    engine = create_engine('sqlite+pysqlite:///' + os.path.expanduser(LOCAL_DATABASE_PATH))
+    session = sessionmaker()
+    session.configure(bind=engine)
+    return session(), engine
+
+
 def delete_database():
     print("  - A apagar as tabelas existentes.")
-    s, engine = db.iniciar_sessao_db()
+    s, engine = iniciar_sessao_db()
     db_base.Base.metadata.drop_all(engine)
     s.commit()
     s.close()
@@ -32,8 +43,7 @@ def delete_database():
 
 def vacuum_db():
     print('  - A "aspirar" a base de dados.')
-    import sqlalchemy
-    engine = sqlalchemy.create_engine('sqlite:///' + LOCAL_DATABASE_PATH)
+    engine = create_engine('sqlite:///' + LOCAL_DATABASE_PATH)
     con = engine.raw_connection()
     cursor = con.cursor()
     command = "VACUUM"
@@ -44,7 +54,7 @@ def vacuum_db():
 
 def init_database():
     print("  - A (re)criar as tabelas necessárias.")
-    s, engine = db.iniciar_sessao_db()
+    s, engine = iniciar_sessao_db()
     db_base.Base.metadata.create_all(engine)
     s.commit()
     s.close()
@@ -64,7 +74,6 @@ def test_populate(num_lojas=1, admin_password_hash="", num_utilizadores=1, num_c
     db.create_user(username="npk", email="admin@networkprojectforknowledge.org",
                    password=admin_password_hash, loja_id=1)
 
-
     for i in range(num_lojas):
         print(f"{'  - A inserir lojas...'.ljust(55)}{i+1:7}", end="\r")
         db.create_store(nome=f"That Great NPK Store #{str(i)}")
@@ -72,7 +81,7 @@ def test_populate(num_lojas=1, admin_password_hash="", num_utilizadores=1, num_c
     print("")
 
 
-    s, _ = db.iniciar_sessao_db()
+    s, _ = iniciar_sessao_db()
     lojas_q = s.query(db_models.Loja)
     lojas = lojas_q.all()
 
@@ -82,7 +91,7 @@ def test_populate(num_lojas=1, admin_password_hash="", num_utilizadores=1, num_c
         db.create_user(username="utilizador" + str(i), email="test@networkprojectforknowledge.org" + str(i), password=pbkdf2_sha256.hash("abc1234567"), loja_id=lojinha.id)
 
 
-    s, _ = db.iniciar_sessao_db()
+    s, _ = iniciar_sessao_db()
     print("")
     utilizadores = s.query(db_models.User).all()
     nomes = ("José", "Rita", "Shawn", "Francelina", "Eufrazina", "Eleutério", "Joana Manuela", "Manuel", "Maria", "Guilhermina", "Estêvão", "Joaninha", "Apólito", "John", "Loja X")
@@ -252,7 +261,7 @@ def test_populate(num_lojas=1, admin_password_hash="", num_utilizadores=1, num_c
 
 
 def print_database():
-    s, _ = db.iniciar_sessao_db()
+    s, _ = iniciar_sessao_db()
 
     lojas = s.query(db_models.Loja).all()
     utilizadores = s.query(db_models.User).all()
