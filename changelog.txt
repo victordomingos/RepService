@@ -12,7 +12,8 @@ v.0.22 - 31/03/2018
    repartindo-o por várias classes e módulos de acordo com as suas áreas de
    ação.
  * Corrigido um bug que poderia fazer com que uma janela de detalhes de
-   contacto abrisse ocasionalmente em branco e sem quaisquer controlos.
+   contacto ou de remessa abrissem ocasionalmente em branco e sem quaisquer
+   controlos.
 
 ---
 v.0.21 - 15/03/2018 - Área de contactos 100% operacional!
