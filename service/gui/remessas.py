@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-# encoding: utf-8
-"""
-Este módulo é parte integrante da aplicação RepService, desenvolvida por
-Victor Domingos e distribuída sob os termos da licença Creative Commons
-Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
-"""
 import tkinter as tk
 from tkinter import ttk, messagebox
 
@@ -383,6 +376,8 @@ class RemessasWindow(baseApp):
         self.remessa_selecionada = remessa
 
     def create_window_detalhe_remessa(self, *event, num_remessa=None):
+        if num_remessa is None:
+            return
         self.remessa_detail_windows_count += 1
         self.remessa_newDetailsWindow[self.remessa_detail_windows_count] = tk.Toplevel(
         )

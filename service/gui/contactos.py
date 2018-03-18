@@ -1,10 +1,3 @@
-#!/usr/bin/env python3.6
-# encoding: utf-8
-"""
-Este módulo é parte integrante da aplicação RepService, desenvolvida por
-Victor Domingos e distribuída sob os termos da licença Creative Commons
-Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
-"""
 from tkinter import ttk, messagebox
 from string import ascii_uppercase, ascii_letters
 
@@ -457,6 +450,8 @@ class ContactsWindow(baseApp):
 
 
     def create_window_detalhe_contacto(self, *event, num_contacto=None):
+        if num_contacto is None:
+            return
         self.contact_detail_windows_count += 1
         self.contacto_newDetailsWindow[self.contact_detail_windows_count] = tk.Toplevel(
         )
@@ -513,6 +508,11 @@ class ContactsWindow(baseApp):
         }
 
         self.ultimo_contacto = db.save_contact(new_contact)
+
+
+        print("self.ultimo_contacto:", self.ultimo_contacto )
+        print("new_contact:", new_contact)
+
 
         if new_contact['is_cliente']:
             self.estado_app.tipo_novo_contacto = "Cliente"
