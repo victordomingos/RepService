@@ -64,7 +64,7 @@ def init_database():
 # Just a bunch of experiences to get the hang of SQLalchemy while developing the models...
 # ----------------------------------------------------------------------------------------
 
-def test_populate(num_lojas=1, admin_password_hash="", num_utilizadores=1, num_contactos=1, num_artigos=1, num_reparacoes=1):
+def test_populate(num_lojas=1, admin_password_hash="", num_utilizadores=1, num_contactos=1, num_reparacoes=1):
     print("\nA inserir dados de exemplo na base de dados.")
 
     print("  - A criar o grupo de administradores...")
@@ -139,7 +139,7 @@ def test_populate(num_lojas=1, admin_password_hash="", num_utilizadores=1, num_c
 
     #s.commit()
 
-
+    """
     print("")
     artigos = ("Artigo Muito Jeitoso (Early 2015)", "Outro Artigo Bem Jeitoso",
         "Smartphone Daqueles Bons", "Computador do modelo ABCD",
@@ -148,21 +148,25 @@ def test_populate(num_lojas=1, admin_password_hash="", num_utilizadores=1, num_c
     for i in range(num_artigos):
         print(f"{'  - A inserir artigos...'.ljust(55)}{i+1:7}", end="\r")
 
-        artigo = db_models.Product(descr_product=choice(artigos), part_number="NPKPN662"+str(i)+"ZQ"+str(i))
+        artigo = db_models.Product(descr_product=choice(artigos), part_number=choice(artigos[:7])+str(i))
         s.add(artigo)
 
     #s.commit()
+    """
 
     print("")
     contactos = s.query(db_models.Contact).all()
     num_contactos = s.query(db_models.Contact).count()
-    artigos = s.query(db_models.Product).all()
-    num_artigos = s.query(db_models.Product).count()
+    #artigos = s.query(db_models.Product).all()
+    #num_artigos = s.query(db_models.Product).count()
     utilizadores = s.query(db_models.User).all()
     num_utilizadores = s.query(db_models.User).count()
     servicos = ("Substituição de ecrã", "Bateria não carrega",
         "Formatar disco e reinstalar sistema operativo",
         "Substituição ao abrigo da garantia")
+    artigos = ("Artigo Muito Jeitoso (Early 2015)", "Outro Artigo Bem Jeitoso",
+               "Smartphone Daqueles Bons", "Computador do modelo ABCD",
+               "Coisa que não funciona devidamente", "Coisa que devia funcionar melhor")
 
     for i in range(num_reparacoes):
         print(f"{'  - A inserir reparações...'.ljust(55)}{i+1:7}", end="\r")
@@ -172,7 +176,8 @@ def test_populate(num_lojas=1, admin_password_hash="", num_utilizadores=1, num_c
             estado = choice(list(ESTADOS.keys()))
         reparacao = db_models.Repair(
             cliente = contactos[i%num_contactos],
-            product = artigos[i%num_artigos],
+            descr_product = choice(artigos),
+            part_number = choice(artigos[:7]) + str(i),
             sn = ''.join(random.choices(string.ascii_uppercase + string.digits, k=21)),
             fornecedor = contactos[(i+5)%num_contactos],
             estado_artigo = 1,
@@ -266,7 +271,7 @@ def print_database():
     lojas = s.query(db_models.Loja).all()
     utilizadores = s.query(db_models.User).all()
     contactos = s.query(db_models.Contact).all()
-    artigos = s.query(db_models.Product).all()
+    #artigos = s.query(db_models.Product).all()
     reparacoes = s.query(db_models.Repair).all()
     eventos = s.query(db_models.Event).all()
     eventos_visiveis = s.query(db_models.UtilizadorNotificadoPorEvento_link).filter_by(is_visible=1, user=utilizadores[2])
@@ -286,15 +291,15 @@ def print_database():
     for contacto in contactos:
         print(contacto)
         print("\nReparações como cliente:")
-        pprint.pprint([(rep.id, rep.product.descr_product, rep.cliente.nome) for rep in contacto.reparacoes_como_cliente])
+        pprint.pprint([(rep.id, rep.descr_product, rep.cliente.nome) for rep in contacto.reparacoes_como_cliente])
         print("\nReparações como fornecedor:")
-        pprint.pprint([(rep.id, rep.product.descr_product, rep.cliente.nome) for rep in contacto.reparacoes_como_fornecedor])
+        pprint.pprint([(rep.id, rep.descr_product, rep.cliente.nome) for rep in contacto.reparacoes_como_fornecedor])
 
-
+    """
     print("\n========================\n           ARTIGOS\n========================")
     for artigo in artigos:
         pprint.pprint(artigo)
-
+    """
 
     print("\n========================\n           REPARAÇÕES\n========================")
     for reparacao in reparacoes:
@@ -323,10 +328,11 @@ if __name__ == "__main__":
         delete_database()
         vacuum_db()
         init_database()
-    except:
+    except Exception as e:
         print("Não foi possível inicializar a base de dados na localização indicada. É possível "
               "que a seguinte pasta não exista ou não tenha as permissões necessárias:")
         print(LOCAL_DATABASE_PATH)
+        print(e)
         exit()
 
     admin_password = getpass("\nPor favor introduza a senha para o administrador (npk): ")
@@ -336,14 +342,14 @@ if __name__ == "__main__":
 
     utilizadores = num_lojas * 8
     contactos = num_lojas * 850
-    artigos = num_lojas * 600
+    # artigos = num_lojas * 600
     reps = num_lojas * 3000
 
     test_populate(num_lojas=num_lojas,
                   admin_password_hash = password_hash,
                   num_utilizadores=utilizadores,
                   num_contactos=contactos,
-                  num_artigos=artigos,
+                  # num_artigos=artigos,
                   num_reparacoes=int(reps))
 
     db_filesize = os.path.getsize(os.path.expanduser(LOCAL_DATABASE_PATH)) >> 10
