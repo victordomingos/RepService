@@ -1,10 +1,3 @@
-#!/usr/bin/env python3.6
-# encoding: utf-8
-"""
-Este módulo é parte integrante da aplicação Promais Service, desenvolvida por
-Victor Domingos e distribuída sob os termos da licença Creative Commons
-Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
-"""
 from sqlalchemy import Column, Integer, String, Boolean, Date, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship, backref
 
@@ -70,7 +63,7 @@ class Contact(Base):
     def __repr__(self):
         return f"<Contact(id={self.id}, name='{self.nome}', empresa='{self.empresa}', is_cliente='{self.is_cliente}', is_fornecedor='{self.is_fornecedor}'>"
 
-
+"""
 class Product(Base):
     __tablename__ = 'product'
 
@@ -80,14 +73,17 @@ class Product(Base):
 
     def __repr__(self):
         return f"<Article(id={self.id}, descr_product='{self.descr_product}', P/N='{self.part_number}'>"
-
+"""
 
 class Repair(Base):
     __tablename__ = 'repair'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     cliente_id = Column(Integer, ForeignKey('contact.id'))
-    product_id = Column(Integer, ForeignKey('product.id'))
+    # product_id = Column(Integer, ForeignKey('product.id'))
+    # Replaced by the following two lines. Opting for bit less normalization for now.
+    descr_product = Column(String, nullable=False)
+    part_number = Column(String)
     sn = Column(String)
     fornecedor_id = Column(Integer, ForeignKey('contact.id'))
     estado_artigo = Column(Integer)
@@ -131,8 +127,8 @@ class Repair(Base):
 
     cliente = relationship("Contact", foreign_keys=[cliente_id],
         backref=backref("reparacoes_como_cliente", uselist=True, order_by=id))
-    product = relationship("Product", foreign_keys=[product_id],
-        backref=backref("lista_reparacoes", uselist=True, order_by=id))
+    # product = relationship("Product", foreign_keys=[product_id],
+    #     backref=backref("lista_reparacoes", uselist=True, order_by=id))
     fornecedor = relationship("Contact", foreign_keys=[fornecedor_id],
         backref=backref("reparacoes_como_fornecedor", uselist=True, order_by=id))
     local_reparacao = relationship("Contact", foreign_keys=[local_reparacao_id],

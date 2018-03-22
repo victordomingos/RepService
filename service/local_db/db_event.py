@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# encoding: utf-8
-"""
-Este módulo é parte integrante da aplicação Promais Service, desenvolvida por
-Victor Domingos e distribuída sob os termos da licença Creative Commons
-Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
-"""
-
 from typing import Dict, List, Union
 
 from local_db import db_models
@@ -44,7 +36,7 @@ class DBEvent(object):
         return {'repair_id': evento.repair.id,
                 'cliente_nome': evento.repair.cliente.nome,
                 'remetente_nome': evento.criado_por_utilizador.nome,
-                'artigo': evento.repair.product.descr_product,
+                'artigo': evento.repair.descr_product,
                 'data': evento.created_on,
                 'texto': evento.descricao,
                 'estado_atual': evento.repair.estado_reparacao,

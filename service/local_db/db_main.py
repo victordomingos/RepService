@@ -37,7 +37,7 @@ from local_db.db_user import DBUser
 from local_db.db_store import DBStore
 from local_db.db_contact import DBContact
 from local_db.db_event import DBEvent
-from local_db.db_product import DBProduct
+#from local_db.db_product import DBProduct
 from local_db.db_repair import DBRepair
 from local_db.db_borrows import DBBorrow
 from local_db.db_shipment import DBShipment
@@ -92,12 +92,12 @@ def create_store(nome: str) -> Union[int, bool]:
     with db_session_scope() as s:
         return DBStore().create_store(s, nome)
 
-
+"""
 # =============================== Produtos ===============================
 def obter_artigo(part_number: str):
     with db_session_scope() as s:
         return DBProduct().obter_artigo(s, part_number)
-
+"""
 
 # =============================== Reparações ===============================
 def save_repair(repair) -> int:

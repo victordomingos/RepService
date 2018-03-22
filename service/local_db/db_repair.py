@@ -42,7 +42,7 @@ class DBRepair(object):
         """
         reps = [{'id': rep.id,
                  'cliente_nome': rep.cliente.nome,
-                 'descr_artigo': rep.product.descr_product,
+                 'descr_artigo': rep.descr_product,
                  'sn': rep.sn,
                  'descr_servico': rep.descr_servico,
                  'estado': rep.estado_reparacao,
@@ -67,7 +67,7 @@ class DBRepair(object):
 
         reps = [{'id': rep.id,
                  'cliente_nome': rep.cliente.nome,
-                 'descr_artigo': rep.product.descr_product,
+                 'descr_artigo': rep.descr_product,
                  'sn': rep.sn,
                  'descr_servico': rep.descr_servico,
                  'estado': rep.estado_reparacao,
@@ -91,7 +91,7 @@ class DBRepair(object):
 
         reps = [{'id': rep.id,
                  'data': rep.created_on,
-                 'descr_artigo': rep.product.descr_product,
+                 'descr_artigo': rep.descr_product,
                  'descr_servico': rep.descr_servico,
                  'resultado': rep.cod_resultado_reparacao,
                  'reincidencia_id': rep.reincidencia_processo_id}
@@ -127,9 +127,8 @@ class DBRepair(object):
             else:
                 termo_pesquisa = f"%{txt_pesquisa}%"
 
-        reps = session.query(db_models.Repair, db_models.Contact, db_models.Product) \
-                   .filter(and_(db_models.Repair.product_id == db_models.Product.id,
-                                db_models.Repair.cliente_id == db_models.Contact.id)) \
+        reps = session.query(db_models.Repair, db_models.Contact) \
+                   .filter(db_models.Repair.cliente_id == db_models.Contact.id) \
                    .filter(and_(db_models.Repair.estado_reparacao.in_(estados),
                                 or_(
                                     db_models.Repair.id.like(termo_pesquisa),
@@ -137,8 +136,8 @@ class DBRepair(object):
                                     db_models.Contact.telefone.ilike(termo_pesquisa),
                                     db_models.Contact.telemovel.ilike(termo_pesquisa),
                                     db_models.Contact.email.ilike(termo_pesquisa),
-                                    db_models.Product.descr_product.ilike(termo_pesquisa),
-                                    db_models.Product.part_number.ilike(termo_pesquisa),
+                                    db_models.Repair.descr_product.ilike(termo_pesquisa),
+                                    db_models.Repair.part_number.ilike(termo_pesquisa),
                                     db_models.Repair.descr_servico.ilike(termo_pesquisa),
                                     db_models.Repair.notas.ilike(termo_pesquisa),
                                     db_models.Repair.num_fatura.ilike(termo_pesquisa),
@@ -148,7 +147,7 @@ class DBRepair(object):
 
         return [{'id': rep[0].id,
                  'cliente_nome': rep[1].nome,
-                 'descr_artigo': rep[2].descr_product,
+                 'descr_artigo': rep[0].descr_product,
                  'sn': rep[0].sn,
                  'descr_servico': rep[0].descr_servico,
                  'estado': rep[0].estado_reparacao,
@@ -176,9 +175,8 @@ class DBRepair(object):
                 'cliente_nome': rep.cliente.nome,
                 'cliente_telefone': rep.cliente.telefone,
                 'cliente_email': rep.cliente.email,
-                'product_id': rep.product.id,
-                'product_descr': rep.product.descr_product,
-                'product_part_number': rep.product.part_number,
+                'product_descr': rep.descr_product,
+                'product_part_number': rep.part_number,
                 'sn': rep.sn,
                 'fornecedor_id': rep.fornecedor_id,
                 'estado_artigo': rep.estado_artigo,
