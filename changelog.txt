@@ -14,6 +14,9 @@ v.0.22 - 31/03/2018
  * Corrigido um bug que poderia fazer com que uma janela de detalhes de
    contacto ou de remessa abrissem ocasionalmente em branco e sem quaisquer
    controlos.
+ * Para simplificar um pouco o desenvolvimento, optou-se por eliminar a tabela
+   de produtos, incluindo os dois campos correspondentes na tabela reparações.
+
 
 ---
 v.0.21 - 15/03/2018 - Área de contactos 100% operacional!
