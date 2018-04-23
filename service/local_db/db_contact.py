@@ -192,6 +192,22 @@ class DBContact(object):
 
 
     @staticmethod
+    def is_supplier(session, num_contacto: int): -> bool
+        if get_contact_info(session, num_contacto=num_contacto, tipo="Fornecedor"):
+            return True
+        else:
+            return False
+
+
+    @staticmethod
+    def is_costumer(session, num_contacto: int): -> bool
+        if get_contact_info(session, num_contacto=num_contacto, tipo="Cliente"):
+            return True
+        else:
+            return False
+
+
+    @staticmethod
     def get_costumers(session) -> List[Dict[str, Union[int, str]]]:
         contactos = session.query(db_models.Contact).filter_by(is_cliente=True)
         return [{'id': contact.id,
