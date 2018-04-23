@@ -1813,11 +1813,19 @@ class App(baseApp):
             messagebox.showwarning(message=msg, parent=self)
             self.ef_ltxt_descr_equipamento.focus()
             return False
+        if not self.ef_text_descr_avaria_servico.get():
+            msg = 'Por favor, descreva a anomalia ou o serviço a realizar.'
+            messagebox.showwarning(message=msg, parent=self)
+            self.ef_text_descr_avaria_servico.focus()
+            return False
+
+
         if self.ef_var_garantia.get() is None:
             msg = 'Por favor, especifique se este processo se refere a um pedido de garantia.'
             messagebox.showwarning(message=msg, parent=self)
             self.ef_radio_garantia_fora_garantia.focus()
             return False
+
 
         # Dados apenas aplicáveis a reparação de cliente
         if self.ef_var_tipo == TIPO_REP_CLIENTE:
@@ -1826,15 +1834,21 @@ class App(baseApp):
                 messagebox.showwarning(message=msg, parent=self)
                 self.ef_txt_num_cliente.focus()
                 return False
+            else:
+                if not db.validar_cliente(self.ef_txt_num_cliente.get()):
+                    msg = 'O nº de contacto introduzido não corresponde a nenhum cliente existente na base de dados.'
+                    messagebox.showwarning(message=msg, parent=self)
+                    self.ef_txt_num_cliente.focus()
+                    return False
+
 
             data_compra = self.ef_ltxt_data_compra.get()
             if data_compra and not validate_past_date(data_compra):
                 return False
 
             """
-            * Num-cliente - validar se constacto existe e se é cliente.
-            * self.ef_ltxt_descr_equipamento - not null
-            * Desc avaria servico - not null
+            
+            
             * self.ef_lbl_estado_equipamento - não pré-selecionar - not null
                - self.ef_radio_estado_marcas_uso,
                - self.ef_radio_estado_bom,
@@ -1904,8 +1918,6 @@ class App(baseApp):
 
         """
         * self.ef_txt_num_fornecedor - validar se é contacto existente e se é fornecedor.
-        * self.ef_ltxt_descr_equipamento - Not null
-        * Desc avaria servico - not null
           self.ef_ltxt_data_fatura_fornecedor - se preenchido, deve ser data correta
           self.ef_ltxt_data_entrada_stock - se preenchido, deve ser data correta
         """
