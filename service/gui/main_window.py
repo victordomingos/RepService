@@ -1,33 +1,15 @@
-#!/usr/bin/env python3
-# encoding: utf-8
-"""
-Aplicação de base de dados para registo de processos de garantia e reparações.
-Permite manter um registo dos artigos entregues pelos clientes, do seu
-percurso durante a tramitação do processo e da comunicação realizada.
-
-Os processos que requerem atenção, devido a atrasos na entrega ou na receção de
-comunicação de cliente são destacados na lista principal, por forma a permitir
-uma intervenção em conformidade.
-
-Desenvolvido em Python 3 por Victor Domingos (http://victordomingos.com), com
-muitas noites em claro, a partir de uma ideia original de Márcio Araújo.
-
-© 2018 Victor Domingos, Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
-"""
-
 import textwrap
 import webbrowser
-import tkinter as tk
 import tkinter.font
+import tkinter as tk
 from tkinter import ttk, messagebox
-from tkinter.scrolledtext import ScrolledText
 from string import ascii_letters
 
 from gui import detalhe_reparacao, about_window, contactos, detalhe_mensagem, remessas
 from printing import imprimir
 from gui.base_app import baseApp
 from gui.extra_tk_utilities import LabelEntry, LabelText, DatePicker
-from misc.misc_funcs import txt_para_data, restart_program
+from misc.misc_funcs import txt_para_data, restart_program, validate_past_date
 from global_setup import *
 from misc.constants import *
 
@@ -63,6 +45,7 @@ class App(baseApp):
         self.username = None
         self.user_id = None
         self.password = None
+        self.loja_id = None
         self.loggedin = False
         self.token = None
         self.failed_login_attempts = 0
@@ -899,12 +882,12 @@ class App(baseApp):
     def clear_text(self):
         self.entryframe.focus()
         self.ef_radio_tipo_cliente.focus_set()
-        self.ef_var_tipo.set(0)
-        self.ef_var_estado.set(0)
-        self.ef_var_garantia.set(0)
+        self.ef_var_tipo.set(TIPO_REP_CLIENTE)
+        self.ef_var_estado.set(None)
+        self.ef_var_garantia.set(None)
         self.ef_var_reprod_loja.set(0)
-        self.ef_var_efetuar_copia.set(0)
-        self.ef_var_find_my.set(0)
+        self.ef_var_efetuar_copia.set(None)
+        self.ef_var_find_my.set(None)
         self.ef_var_local_intervencao.set("Loja X")
         self.ef_var_modo_entrega.set(MODOS_ENTREGA[LEVANTAMENTO])
         self.ef_var_portes.set(0)
@@ -943,7 +926,7 @@ class App(baseApp):
         self.ef_var_estado = tk.IntVar()
         self.ef_var_garantia = tk.IntVar()
         self.ef_var_reprod_loja = tk.IntVar()
-        self.ef_var_reprod_loja.set(0)
+        #self.ef_var_reprod_loja.set(0)
         self.ef_var_efetuar_copia = tk.IntVar()
         self.ef_var_find_my = tk.IntVar()
         self.ef_var_local_intervencao = tk.StringVar()
@@ -1094,6 +1077,7 @@ class App(baseApp):
             self.ef_lf_equipamento, "\nData de compra:", style="Panel_Body.TLabel", width=15)
         self.cal_data_compra = DatePicker(self.entryframe, self.ef_ltxt_data_compra)
         self.ef_ltxt_data_compra.bind('<FocusIn>', self._on_data_compra_enter)
+        self.ef_ltxt_data_compra.bind('<FocusOut>', self._on_date_field_exit)
         """now = time.localtime(time.time())
         now_value = f"{now[2]}-{now[1]}-{now[0]}"
         now_validate = f"{now[2]}-{now[1]}-{now[0]}"
@@ -1814,30 +1798,210 @@ class App(baseApp):
             self.MenuFicheiro.entryconfigure("Nova reparação", state="active")
             # self.master.bind_all("<Command-n>")
 
+    def _on_date_field_exit(self, event):
+        validate_past_date(event.widget.get())
 
     def _is_form_data_valid(self) -> bool:
         """ Verifica se todos os campos obrigatórios foram preenchidos e se os
             dados introduzidos estão corretos.
         """
         # validar aqui se dados estão corretos # TODO
-        return True
+
+        # Dados que não dependem do tipo de reparação (cliente/stock)
+        if not self.ef_ltxt_descr_equipamento.get():
+            msg = 'Por favor, introduza uma descrição do artigo entregue para garantia ou reparação.'
+            messagebox.showwarning(message=msg, parent=self)
+            self.ef_ltxt_descr_equipamento.focus()
+            return False
+        if self.ef_var_garantia.get() is None:
+            msg = 'Por favor, especifique se este processo se refere a um pedido de garantia.'
+            messagebox.showwarning(message=msg, parent=self)
+            self.ef_radio_garantia_fora_garantia.focus()
+            return False
+
+        # Dados apenas aplicáveis a reparação de cliente
+        if self.ef_var_tipo == TIPO_REP_CLIENTE:
+            if not self.ef_txt_num_cliente.get():
+                msg = 'Por favor, indique o nº de cliente.'
+                messagebox.showwarning(message=msg, parent=self)
+                self.ef_txt_num_cliente.focus()
+                return False
+
+            data_compra = self.ef_ltxt_data_compra.get()
+            if data_compra and not validate_past_date(data_compra):
+                return False
 
         """
-        if not self.ef_ltxt_nome.get().strip():
-            msg = 'O campo "Nome" é de preenchimento obrigatório.'
-            messagebox.showwarning(message=msg, parent=self)
-            self.ef_ltxt_nome.entry.focus()
-            return False
-        
-        elif not (self.ef_var_tipo_is_cliente.get()
-                  or self.ef_var_tipo_is_fornecedor.get()):
-            msg = 'Por favor, especifique qual a categoria (cliente/fornecedor) a atribuir a este contacto.'
-            messagebox.showwarning(message=msg, parent=self)
-            self.ef_chkbtn_tipo_cliente.entry.focus()
-            return False
         else:
-            return True
+            self.ef_ltxt_descr_equipamento.scrolledtext.configure(height=4)
+            self.ef_ltxt_descr_equipamento.grid_configure(rowspan=5)
+
+            widgets = (self.ef_lbl_estado_equipamento,
+                       self.ef_radio_estado_marcas_uso,
+                       self.ef_radio_estado_bom,
+                       self.ef_radio_estado_marcas_acidente,
+                       self.ef_radio_estado_faltam_pecas,
+                       self.ef_ltxt_obs_estado_equipamento,
+                       self.ef_lbl_garantia,
+                       self.ef_radio_garantia_fora_garantia,
+                       self.ef_radio_garantia_neste,
+                       self.ef_radio_garantia_noutro,
+                       self.ef_ltxt_data_compra,
+                       self.ef_ltxt_num_fatura,
+                       self.ef_lf_cliente,
+                       self.ef_chkbtn_avaria_reprod_loja,
+                       self.ef_ltxt_senha,
+                       self.ef_lbl_find_my,
+                       self.ef_radio_find_my_sim,
+                       self.ef_radio_find_my_nao,
+                       self.ef_radio_find_my_nao_aplic,
+                       self.ef_lbl_efetuar_copia,
+                       self.ef_radio_efetuar_copia_nao,
+                       self.ef_radio_efetuar_copia_sim,
+                       self.ef_radio_efetuar_copia_n_aplic,
+                       self.ef_ltxt_acessorios_entregues,
+                       self.ef_lbl_modo_entrega,
+                       self.ef_combo_modo_entrega,
+                       self.ef_lbl_local_intervencao,
+                       self.ef_combo_local_intervencao)
+            for widget in widgets:
+                widget.grid()
+
+            self.radio_garantia_command()
+
+            widgets = (self.ef_lf_fornecedor,
+                       self.ef_ltxt_nar,
+                       self.ef_ltxt_num_fatura_fornecedor,
+                       self.ef_ltxt_data_fatura_fornecedor,
+                       self.ef_ltxt_num_guia_rececao,
+                       self.ef_ltxt_data_entrada_stock,
+                       self.ef_ltxt_num_quebra_stock)
+            for widget in widgets:
+                widget.grid_remove()
+
+            self.ef_ltxt_num_serie.label.configure(text="\nNº de série")
+            self.ef_ltxt_cod_artigo.label.configure(text="\nCódigo de artigo")
+            self.ef_ltxt_cod_artigo.grid(column=0, row=5, padx=5, sticky='we')
+            self.ef_ltxt_num_serie.grid(column=1, row=5, padx=5, sticky='we')
+
+            self.ef_lf_outros_dados.configure(text="Outros dados")
+            self.ef_ltxt_notas.grid(
+                column=1, row=0, columnspan=1, rowspan=5, padx=5, sticky='wens')
+
+            if self.ef_combo_modo_entrega.get() == MODOS_ENTREGA[ENVIAR_NOVA_MORADA]:
+                self.ef_lbl_portes.grid(
+                    column=3, row=3, columnspan=3, padx=5, sticky='wens')
+                self.ef_radio_portes_sim.grid(column=3, row=4, padx=5, sticky='wn')
+                self.ef_radio_portes_nao.grid(column=4, row=4, padx=5, sticky='wn')
+                self.ef_radio_portes_oferta.grid(
+                    column=5, row=4, padx=5, sticky='wn')
+                self.ef_ltxt_morada_entrega.grid(
+                    column=6, row=0, rowspan=5, padx=5, sticky='wens')
+                self.ef_lf_outros_dados.columnconfigure(6, weight=2)
+                self.ef_ltxt_morada_entrega.scrolledtext.focus()
+            elif self.ef_combo_modo_entrega.get() == MODOS_ENTREGA[ENVIAR_MORADA_FICHA]:
+                self.ef_lbl_portes.grid(
+                    column=3, row=3, columnspan=3, padx=5, sticky='wens')
+                self.ef_radio_portes_sim.grid(column=3, row=4, padx=5, sticky='wn')
+                self.ef_radio_portes_nao.grid(column=4, row=4, padx=5, sticky='wn')
+                self.ef_radio_portes_oferta.grid(
+                    column=5, row=4, padx=5, sticky='wn')
+                self.ef_ltxt_morada_entrega.grid_remove()
+                self.ef_lf_outros_dados.columnconfigure(6, weight=0)
+            else:
+                self.ef_lbl_portes.grid_remove()
+                self.ef_radio_portes_sim.grid_remove()
+                self.ef_radio_portes_nao.grid_remove()
+                self.ef_radio_portes_oferta.grid_remove()
+                self.ef_ltxt_morada_entrega.grid_remove()
+                self.ef_lf_outros_dados.columnconfigure(6, weight=0)
         """
+
+        # Dados apenas aplicáveis a reparação de stock
+        else:
+            data_entr_stock = self.ef_ltxt_data_entrada_stock.get()
+            if data_entr_stock and not validate_past_date(data_entr_stock):
+                return False
+
+            data_fat_fornecedor= self.ef_ltxt_data_fatura_fornecedor.get()
+            if data_fat_fornecedor and not validate_past_date(data_fat_fornecedor):
+                return False
+
+        """
+        if tipo == TIPO_REP_STOCK:
+            self.ef_lf_fornecedor.grid(column=0, row=0, sticky='we')
+
+            self.ef_ltxt_descr_equipamento.scrolledtext.configure(height=7)
+            self.ef_ltxt_descr_equipamento.grid_configure(rowspan=8)
+
+            widgets = (self.ef_lf_cliente,
+                       self.ef_lbl_estado_equipamento,
+                       self.ef_radio_estado_marcas_uso,
+                       self.ef_radio_estado_bom,
+                       self.ef_radio_estado_marcas_acidente,
+                       self.ef_radio_estado_faltam_pecas,
+                       self.ef_ltxt_obs_estado_equipamento,
+                       self.ef_lbl_garantia,
+                       self.ef_radio_garantia_fora_garantia,
+                       self.ef_radio_garantia_neste,
+                       self.ef_radio_garantia_noutro,
+                       self.ef_ltxt_data_compra,
+                       self.ef_ltxt_num_fatura,
+                       self.ef_ltxt_local_compra,
+
+                       self.ef_chkbtn_avaria_reprod_loja,
+                       self.ef_ltxt_senha,
+                       self.ef_lbl_find_my,
+                       self.ef_radio_find_my_sim,
+                       self.ef_radio_find_my_nao,
+                       self.ef_radio_find_my_nao_aplic,
+                       self.ef_lbl_efetuar_copia,
+                       self.ef_radio_efetuar_copia_nao,
+                       self.ef_radio_efetuar_copia_sim,
+                       self.ef_radio_efetuar_copia_n_aplic,
+
+                       self.ef_ltxt_acessorios_entregues,
+                       self.ef_lbl_modo_entrega,
+                       self.ef_combo_modo_entrega,
+                       self.ef_lbl_local_intervencao,
+                       self.ef_combo_local_intervencao,
+                       self.ef_ltxt_morada_entrega,
+
+                       self.ef_lbl_portes,
+                       self.ef_radio_portes_sim,
+                       self.ef_radio_portes_nao,
+                       self.ef_radio_portes_oferta)
+            for widget in widgets:
+                widget.grid_remove()
+
+            self.ef_ltxt_notas.grid(
+                column=0, row=0, columnspan=7, rowspan=5, padx=5, sticky='wens')
+            self.ef_ltxt_num_serie.label.configure(text="Nº de série")
+            self.ef_ltxt_cod_artigo.label.configure(text="Código de artigo")
+            self.ef_ltxt_cod_artigo.grid(
+                column=2, row=0, rowspan=2, padx=5, sticky='we')
+            self.ef_ltxt_num_serie.grid(
+                column=2, row=2, rowspan=2, padx=5, sticky='we')
+            self.ef_ltxt_num_fatura_fornecedor.grid(
+                column=3, rowspan=2, row=0, padx=5, sticky='we')
+            self.ef_ltxt_data_fatura_fornecedor.grid(
+                column=3, row=2, rowspan=2, padx=5, sticky='we')
+            self.ef_ltxt_nar.grid(
+                column=3, row=4, rowspan=2, padx=5, sticky='we')
+            self.ef_ltxt_num_guia_rececao.grid(
+                column=4, row=0, rowspan=2, padx=5, sticky='we')
+            self.ef_ltxt_data_entrada_stock.grid(
+                column=4, row=2, rowspan=2, padx=5, sticky='we')
+            self.ef_ltxt_num_quebra_stock.grid(
+                column=4, row=4, rowspan=2, padx=5, sticky='we')
+            self.ef_txt_num_fornecedor.focus()
+        """
+
+
+        # Caso não sejam detetados erros na validação de dados, prosseguir...
+        return True
+
+
 
     def on_save_repair(self, event=None):
         """ Recolhe todos os dados do formulário e guarda uma nova reparação """
@@ -1848,14 +2012,14 @@ class App(baseApp):
         # Adaptar para o caso de ser uma reparação de stock #TODO
         # pesquisar se existe artigo criado; se não existir, criar
 
-        if self.ef_ltxt_cod_artigo.get().strip:
-            artigo = db.obter_artigo(self.ef_ltxt_cod_artigo.get())
+
         tipo = self.ef_var_tipo.get()
         if tipo == TIPO_REP_STOCK:
             dados_rep = {#'cliente_id',
-                         'product_id': artigo['id'],
-                         'sn': self.ef_ltxt_num_serie.get(),
                          'fornecedor_id': self.ef_txt_num_fornecedor,
+                         'product_descr': self.ef_ltxt_descr_equipamento.get(),
+                         'product_part_number': self.ef_ltxt_num_serie.get(),
+                         'sn': self.ef_ltxt_num_serie.get(),
                          'estado_artigo': self.ef_var_estado.get(),
                          'obs_estado': self.ef_ltxt_obs_estado_equipamento.get(),
                          'is_garantia': self.ef_var_garantia.get(),
@@ -1892,7 +2056,8 @@ class App(baseApp):
                          }
         else:
             dados_rep = {'cliente_id': self.ef_txt_num_cliente.get(),
-                         'product_id': artigo['id'],
+                         'product_descr': self.ef_ltxt_descr_equipamento.get(),
+                         'product_part_number': self.ef_ltxt_num_serie.get(),
                          'sn': self.ef_ltxt_num_serie.get(),
                          #'fornecedor_id': "",
                          'estado_artigo': self.ef_var_estado.get(),
@@ -1927,7 +2092,7 @@ class App(baseApp):
                          'reincidencia_processo_id': None,  # TODO
                          'morada_entrega': self.ef_ltxt_morada_entrega.get(),
                          'cliente_pagou_portes': self.ef_var_portes.get(),
-                         'criado_por_utilizador_id': db.get_user_id(self.username)
+                         'criado_por_utilizador_id': self.user_id
                          }
 
         self.ultima_reparacao = db.save_repair(dados_rep)
