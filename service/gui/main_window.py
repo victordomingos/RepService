@@ -1831,91 +1831,66 @@ class App(baseApp):
             if data_compra and not validate_past_date(data_compra):
                 return False
 
-        """
-        else:
-            self.ef_ltxt_descr_equipamento.scrolledtext.configure(height=4)
-            self.ef_ltxt_descr_equipamento.grid_configure(rowspan=5)
-
-            widgets = (self.ef_lbl_estado_equipamento,
-                       self.ef_radio_estado_marcas_uso,
-                       self.ef_radio_estado_bom,
-                       self.ef_radio_estado_marcas_acidente,
-                       self.ef_radio_estado_faltam_pecas,
-                       self.ef_ltxt_obs_estado_equipamento,
-                       self.ef_lbl_garantia,
-                       self.ef_radio_garantia_fora_garantia,
-                       self.ef_radio_garantia_neste,
-                       self.ef_radio_garantia_noutro,
-                       self.ef_ltxt_data_compra,
-                       self.ef_ltxt_num_fatura,
-                       self.ef_lf_cliente,
-                       self.ef_chkbtn_avaria_reprod_loja,
-                       self.ef_ltxt_senha,
-                       self.ef_lbl_find_my,
-                       self.ef_radio_find_my_sim,
-                       self.ef_radio_find_my_nao,
-                       self.ef_radio_find_my_nao_aplic,
-                       self.ef_lbl_efetuar_copia,
-                       self.ef_radio_efetuar_copia_nao,
-                       self.ef_radio_efetuar_copia_sim,
-                       self.ef_radio_efetuar_copia_n_aplic,
-                       self.ef_ltxt_acessorios_entregues,
-                       self.ef_lbl_modo_entrega,
-                       self.ef_combo_modo_entrega,
-                       self.ef_lbl_local_intervencao,
-                       self.ef_combo_local_intervencao)
-            for widget in widgets:
-                widget.grid()
-
-            self.radio_garantia_command()
-
-            widgets = (self.ef_lf_fornecedor,
-                       self.ef_ltxt_nar,
-                       self.ef_ltxt_num_fatura_fornecedor,
-                       self.ef_ltxt_data_fatura_fornecedor,
-                       self.ef_ltxt_num_guia_rececao,
-                       self.ef_ltxt_data_entrada_stock,
-                       self.ef_ltxt_num_quebra_stock)
-            for widget in widgets:
-                widget.grid_remove()
-
-            self.ef_ltxt_num_serie.label.configure(text="\nNº de série")
-            self.ef_ltxt_cod_artigo.label.configure(text="\nCódigo de artigo")
-            self.ef_ltxt_cod_artigo.grid(column=0, row=5, padx=5, sticky='we')
-            self.ef_ltxt_num_serie.grid(column=1, row=5, padx=5, sticky='we')
-
-            self.ef_lf_outros_dados.configure(text="Outros dados")
-            self.ef_ltxt_notas.grid(
-                column=1, row=0, columnspan=1, rowspan=5, padx=5, sticky='wens')
-
+            """
+            * Num-cliente - validar se constacto existe e se é cliente.
+            * self.ef_ltxt_descr_equipamento - not null
+            * Desc avaria servico - not null
+            * self.ef_lbl_estado_equipamento - não pré-selecionar - not null
+               - self.ef_radio_estado_marcas_uso,
+               - self.ef_radio_estado_bom,
+               - self.ef_radio_estado_marcas_acidente,
+               - self.ef_radio_estado_faltam_pecas,
+               
+            * self.ef_lbl_garantia - não pré-selecionar - not null
+               - self.ef_radio_garantia_fora_garantia,
+               - self.ef_radio_garantia_neste
+                  * verificar se num_fatura not null - self.ef_ltxt_num_fatura
+                  * verificar se data_compra not null - self.ef_ltxt_data_compra
+               - self.ef_radio_garantia_noutro
+                  * verificar se num_fatura not null - self.ef_ltxt_num_fatura
+                  * verificar se nome_estabelecimento not null
+                  * verificar se data_compra not null - self.ef_ltxt_data_compra
+                  
+               
+            * self.ef_lbl_find_my -  - não pré-selecionar - not null
+               - self.ef_radio_find_my_sim,
+               - self.ef_radio_find_my_nao,
+               - self.ef_radio_find_my_nao_aplic,
+               
+            * self.ef_lbl_efetuar_copia - não pré-selecionar - not null
+               - self.ef_radio_efetuar_copia_nao,
+               - self.ef_radio_efetuar_copia_sim,
+               - self.ef_radio_efetuar_copia_n_aplic,
+               
+               
+            * self.ef_combo_modo_entrega: not required, mas se for para enviar, verificar:
+               - Morada entrega - not null
+               - cliente pagou portes - não pré-selecionar; not null
+            
+            
+            self.ef_combo_local_intervencao) - não pré-selecionar
+            
+            
             if self.ef_combo_modo_entrega.get() == MODOS_ENTREGA[ENVIAR_NOVA_MORADA]:
-                self.ef_lbl_portes.grid(
-                    column=3, row=3, columnspan=3, padx=5, sticky='wens')
                 self.ef_radio_portes_sim.grid(column=3, row=4, padx=5, sticky='wn')
                 self.ef_radio_portes_nao.grid(column=4, row=4, padx=5, sticky='wn')
                 self.ef_radio_portes_oferta.grid(
                     column=5, row=4, padx=5, sticky='wn')
                 self.ef_ltxt_morada_entrega.grid(
                     column=6, row=0, rowspan=5, padx=5, sticky='wens')
-                self.ef_lf_outros_dados.columnconfigure(6, weight=2)
-                self.ef_ltxt_morada_entrega.scrolledtext.focus()
+                
             elif self.ef_combo_modo_entrega.get() == MODOS_ENTREGA[ENVIAR_MORADA_FICHA]:
-                self.ef_lbl_portes.grid(
-                    column=3, row=3, columnspan=3, padx=5, sticky='wens')
                 self.ef_radio_portes_sim.grid(column=3, row=4, padx=5, sticky='wn')
                 self.ef_radio_portes_nao.grid(column=4, row=4, padx=5, sticky='wn')
                 self.ef_radio_portes_oferta.grid(
                     column=5, row=4, padx=5, sticky='wn')
-                self.ef_ltxt_morada_entrega.grid_remove()
-                self.ef_lf_outros_dados.columnconfigure(6, weight=0)
             else:
                 self.ef_lbl_portes.grid_remove()
                 self.ef_radio_portes_sim.grid_remove()
                 self.ef_radio_portes_nao.grid_remove()
                 self.ef_radio_portes_oferta.grid_remove()
                 self.ef_ltxt_morada_entrega.grid_remove()
-                self.ef_lf_outros_dados.columnconfigure(6, weight=0)
-        """
+            """
 
         # Dados apenas aplicáveis a reparação de stock
         else:
@@ -1928,73 +1903,11 @@ class App(baseApp):
                 return False
 
         """
-        if tipo == TIPO_REP_STOCK:
-            self.ef_lf_fornecedor.grid(column=0, row=0, sticky='we')
-
-            self.ef_ltxt_descr_equipamento.scrolledtext.configure(height=7)
-            self.ef_ltxt_descr_equipamento.grid_configure(rowspan=8)
-
-            widgets = (self.ef_lf_cliente,
-                       self.ef_lbl_estado_equipamento,
-                       self.ef_radio_estado_marcas_uso,
-                       self.ef_radio_estado_bom,
-                       self.ef_radio_estado_marcas_acidente,
-                       self.ef_radio_estado_faltam_pecas,
-                       self.ef_ltxt_obs_estado_equipamento,
-                       self.ef_lbl_garantia,
-                       self.ef_radio_garantia_fora_garantia,
-                       self.ef_radio_garantia_neste,
-                       self.ef_radio_garantia_noutro,
-                       self.ef_ltxt_data_compra,
-                       self.ef_ltxt_num_fatura,
-                       self.ef_ltxt_local_compra,
-
-                       self.ef_chkbtn_avaria_reprod_loja,
-                       self.ef_ltxt_senha,
-                       self.ef_lbl_find_my,
-                       self.ef_radio_find_my_sim,
-                       self.ef_radio_find_my_nao,
-                       self.ef_radio_find_my_nao_aplic,
-                       self.ef_lbl_efetuar_copia,
-                       self.ef_radio_efetuar_copia_nao,
-                       self.ef_radio_efetuar_copia_sim,
-                       self.ef_radio_efetuar_copia_n_aplic,
-
-                       self.ef_ltxt_acessorios_entregues,
-                       self.ef_lbl_modo_entrega,
-                       self.ef_combo_modo_entrega,
-                       self.ef_lbl_local_intervencao,
-                       self.ef_combo_local_intervencao,
-                       self.ef_ltxt_morada_entrega,
-
-                       self.ef_lbl_portes,
-                       self.ef_radio_portes_sim,
-                       self.ef_radio_portes_nao,
-                       self.ef_radio_portes_oferta)
-            for widget in widgets:
-                widget.grid_remove()
-
-            self.ef_ltxt_notas.grid(
-                column=0, row=0, columnspan=7, rowspan=5, padx=5, sticky='wens')
-            self.ef_ltxt_num_serie.label.configure(text="Nº de série")
-            self.ef_ltxt_cod_artigo.label.configure(text="Código de artigo")
-            self.ef_ltxt_cod_artigo.grid(
-                column=2, row=0, rowspan=2, padx=5, sticky='we')
-            self.ef_ltxt_num_serie.grid(
-                column=2, row=2, rowspan=2, padx=5, sticky='we')
-            self.ef_ltxt_num_fatura_fornecedor.grid(
-                column=3, rowspan=2, row=0, padx=5, sticky='we')
-            self.ef_ltxt_data_fatura_fornecedor.grid(
-                column=3, row=2, rowspan=2, padx=5, sticky='we')
-            self.ef_ltxt_nar.grid(
-                column=3, row=4, rowspan=2, padx=5, sticky='we')
-            self.ef_ltxt_num_guia_rececao.grid(
-                column=4, row=0, rowspan=2, padx=5, sticky='we')
-            self.ef_ltxt_data_entrada_stock.grid(
-                column=4, row=2, rowspan=2, padx=5, sticky='we')
-            self.ef_ltxt_num_quebra_stock.grid(
-                column=4, row=4, rowspan=2, padx=5, sticky='we')
-            self.ef_txt_num_fornecedor.focus()
+        * self.ef_txt_num_fornecedor - validar se é contacto existente e se é fornecedor.
+        * self.ef_ltxt_descr_equipamento - Not null
+        * Desc avaria servico - not null
+          self.ef_ltxt_data_fatura_fornecedor - se preenchido, deve ser data correta
+          self.ef_ltxt_data_entrada_stock - se preenchido, deve ser data correta
         """
 
 
