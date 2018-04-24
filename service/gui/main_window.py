@@ -883,11 +883,11 @@ class App(baseApp):
         self.entryframe.focus()
         self.ef_radio_tipo_cliente.focus_set()
         self.ef_var_tipo.set(TIPO_REP_CLIENTE)
-        self.ef_var_estado.set(None)
-        self.ef_var_garantia.set(None)
+        self.ef_var_estado.set(0)
+        self.ef_var_garantia.set(0)
         self.ef_var_reprod_loja.set(0)
-        self.ef_var_efetuar_copia.set(None)
-        self.ef_var_find_my.set(None)
+        self.ef_var_efetuar_copia.set(0)
+        self.ef_var_find_my.set(0)
         self.ef_var_local_intervencao.set("Loja X")
         self.ef_var_modo_entrega.set(MODOS_ENTREGA[LEVANTAMENTO])
         self.ef_var_portes.set(0)
@@ -1639,7 +1639,9 @@ class App(baseApp):
         Ajustes que devem ocorrer no formulário quando o utilizador altera o
         estado da elegibilidade para garantia.
         """
+
         garantia = self.ef_var_garantia.get()
+        
         if garantia == GARANTIA_NOUTRO:
             self.ef_ltxt_local_compra.grid(
                 column=4, row=5, padx=5, sticky='we')
@@ -1813,7 +1815,7 @@ class App(baseApp):
             messagebox.showwarning(message=msg, parent=self)
             self.ef_ltxt_descr_equipamento.focus()
             return False
-        if not self.ef_text_descr_avaria_servico.get():
+        if not self.ef_text_descr_avaria_servico.get("1.0"):
             msg = 'Por favor, descreva a anomalia ou o serviço a realizar.'
             messagebox.showwarning(message=msg, parent=self)
             self.ef_text_descr_avaria_servico.focus()
@@ -1942,8 +1944,8 @@ class App(baseApp):
         if tipo == TIPO_REP_STOCK:
             dados_rep = {#'cliente_id',
                          'fornecedor_id': self.ef_txt_num_fornecedor,
-                         'product_descr': self.ef_ltxt_descr_equipamento.get(),
-                         'product_part_number': self.ef_ltxt_num_serie.get(),
+                         'descr_product': self.ef_ltxt_descr_equipamento.get(),
+                         'part_number': self.ef_ltxt_num_serie.get(),
                          'sn': self.ef_ltxt_num_serie.get(),
                          'estado_artigo': self.ef_var_estado.get(),
                          'obs_estado': self.ef_ltxt_obs_estado_equipamento.get(),
@@ -1981,8 +1983,8 @@ class App(baseApp):
                          }
         else:
             dados_rep = {'cliente_id': self.ef_txt_num_cliente.get(),
-                         'product_descr': self.ef_ltxt_descr_equipamento.get(),
-                         'product_part_number': self.ef_ltxt_num_serie.get(),
+                         'descr_product': self.ef_ltxt_descr_equipamento.get(),
+                         'part_number': self.ef_ltxt_num_serie.get(),
                          'sn': self.ef_ltxt_num_serie.get(),
                          #'fornecedor_id': "",
                          'estado_artigo': self.ef_var_estado.get(),
@@ -2046,6 +2048,7 @@ class App(baseApp):
 
         self.master.focus()
         self.fechar_painel_entrada()
+        print(self.ultima_reparacao)
         self.reparacao_selecionada = self.ultima_reparacao
         self.create_window_detalhe_rep(num_reparacao=self.ultima_reparacao)
 

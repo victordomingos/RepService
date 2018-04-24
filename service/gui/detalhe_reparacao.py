@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# encoding: utf-8
-"""
-Este módulo é parte integrante da aplicação RepService, desenvolvida por
-Victor Domingos e distribuída sob os termos da licença Creative Commons
-Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
-"""
-
 import tkinter as tk
 from tkinter import ttk
 import Pmw
@@ -374,7 +366,7 @@ class repairDetailWindow(ttk.Frame):
         self.ltxt_descr_equipamento.set(self.repair['product_descr'])
         if self.repair['is_rep_cliente']:
             self.ltxt_obs_estado_equipamento.set(self.repair['obs_estado'])
-            self.ltxt_local_intervencao.set(self.repair['local_reparacao'])
+            self.ltxt_local_intervencao.set(self.repair['local_reparacao_nome'])
             self.ltxt_acessorios.set(self.repair['acessorios_entregues'])
             self.ltxt_senha.set("•••••••••")
             if self.repair['is_garantia']:
