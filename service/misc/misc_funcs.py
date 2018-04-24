@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-# encoding: utf-8
-"""
-Este módulo é parte integrante da aplicação Promais Service, desenvolvida por
-Victor Domingos e distribuída sob os termos da licença Creative Commons
-Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
-"""
 import sys
 import os
 import base64
@@ -34,7 +27,7 @@ def txt_para_data(txt: str) -> Optional[datetime]:
     """ Converte uma string contendo uma data do tipo 2013-08-13 (obtida por
         exemplo através do tkcalendar/DatePicker) num objeto do tipo datetime.
     """
-    if not str.strip:
+    if not txt.strip():
         return None
     return datetime.strptime(txt, '%Y-%m-%d')
 
@@ -93,6 +86,28 @@ def validate_phone_entry(master, widget):
         messagebox.showwarning(message=msg, parent=master)
 
 
+def validate_past_date(given_date: str):
+    """ Ao sair de um campo de texto ttk.Entry referente a uma data, verifica
+        se o texto introduzido é válido e corresponde a uma data passada. Se
+        for válido, a função devolve o objeto datetime correspondente, caso
+        função devolve False caso o texto não seja válido.
+    """
+    if not given_date:
+        return False
+
+    try:
+        my_date = datetime.strptime(given_date, '%Y-%m-%d')
+        if my_date > datetime.now():
+            raise ValueError('The date is in the future, not in the past as expected!')
+        else:
+            return my_date
+    except Exception as e:
+        msg = 'Por favor, escreva a data no formato correto (AAAA-MM-DD).'
+        messagebox.showwarning(message=msg, parent=master)
+        print("Data validation exception (date string:", dt, "\n", e)
+        return False
+
+
 def obfuscate_text(text: str) -> str:
     """ Create a simple (insecure) obfuscated string """
     return base64.b64encode(text.encode('utf-8'))
@@ -101,3 +116,18 @@ def obfuscate_text(text: str) -> str:
 def reveal_text(text: str) -> str:
     """ Reveal the content of an obfuscated string """
     return base64.b64decode(text).decode('utf-8')
+
+
+def clean_data(data: dict) -> dict:
+    """ Return a copy of a dictionary, replacing None values by empty strings,
+    and datetime objects by properly formatted date strings. """
+    print(data)
+    clean_dataset = {}
+    for key, value in data.items():
+        print(key, "-", value)
+        if value is None:
+            value = ''
+        elif type(value) is datetime:
+            value = value.isoformat(sep=' ', timespec='minutes')
+        clean_dataset[key] = value
+    return clean_dataset
