@@ -4,7 +4,7 @@ from sqlalchemy import or_, and_
 
 from local_db import db_models
 from misc.constants import ESTADOS, PRIORIDADES
-from misc.misc_funcs import calcular_dias_desde
+from misc.misc_funcs import calcular_dias_desde, clean_data
 
 
 class DBRepair(object):
@@ -167,18 +167,39 @@ class DBRepair(object):
                 (inclui os campos necessários para preencher a janela de detalhes
                 de reparação).
             """
+
         rep = self._get_repair(session, num_rep)
 
-        # TODO: distinguir e adaptar para rep. cliente/stock
-        return {'id': rep.id,
+        if not rep:
+            return {'id': 0}
+
+        try:
+            local_rep = rep.local_reparacao.nome
+        except:
+            local_rep = ""
+
+        try:
+            nome_fornecedor = rep.fornecedor.nome
+        except:
+            nome_fornecedor = ""
+
+        try:
+            nome_cliente = rep.cliente.nome
+        except:
+            nome_cliente = ""
+
+        # TODO: distinguir e adaptar para rep. cliente/stock?
+        return clean_data(
+               {'id': rep.id,
                 'cliente_id': rep.cliente.id,
-                'cliente_nome': rep.cliente.nome,
+                'cliente_nome': nome_cliente,
                 'cliente_telefone': rep.cliente.telefone,
                 'cliente_email': rep.cliente.email,
                 'product_descr': rep.descr_product,
                 'product_part_number': rep.part_number,
                 'sn': rep.sn,
                 'fornecedor_id': rep.fornecedor_id,
+                'fornecedor_nome': nome_fornecedor,
                 'estado_artigo': rep.estado_artigo,
                 'obs_estado': rep.obs_estado,
                 'is_garantia': rep.is_garantia,
@@ -193,6 +214,7 @@ class DBRepair(object):
                 'acessorios_entregues': rep.acessorios_entregues,
                 'notas': rep.notas,
                 'local_reparacao_id': rep.local_reparacao_id,
+                'local_reparacao_nome': local_rep,
                 'estado_reparacao': rep.estado_reparacao,
                 'fatura_fornecedor': rep.fatura_fornecedor,
                 'nar_autorizacao_rep': rep.nar_autorizacao_rep,
@@ -216,15 +238,14 @@ class DBRepair(object):
                 'criado_por_utilizador_id': rep.criado_por_utilizador_id,
                 'ult_atualizacao_por_utilizador_id': rep.ult_atualizacao_por_utilizador_id,
 
-                'created_on': rep.created_on,
-                'updated_on': rep.updated_on,
+                'created_on': rep.created_on.isoformat(sep=' ', timespec='minutes'),
+                'updated_on': rep.updated_on.isoformat(sep=' ', timespec='minutes'),
 
-                'fornecedor': rep.fornecedor,
-                'local_reparacao': rep.local_reparacao.nome,
-                'utilizador_entrega': rep.utilizador_entrega,
-                'criado_por_utilizador': rep.criado_por_utilizador,
-                'atualizado_por_utilizador': rep.atualizado_por_utilizador
+                'utilizador_entrega': rep.utilizador_entrega_id,
+                'criado_por_utilizador': rep.criado_por_utilizador_id,
+                'atualizado_por_utilizador': rep.ult_atualizacao_por_utilizador_id,
                 }
+                )
 
 
     def get_serial_number(self, session, num_rep: int) -> str:

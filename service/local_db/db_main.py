@@ -214,12 +214,12 @@ def contact_exists(nif: int) -> Optional[Dict[str, Union[str, Any]]]:
         return DBContact.contact_exists(s, nif)
 
 
-def validar_fornecedor(num_contacto: int): -> bool
+def validar_fornecedor(num_contacto: int) -> bool:
     with db_session_scope() as s:
         return DBContact.is_supplier(s, num_contacto)
 
 
-def validar_cliente(num_contacto: int): -> bool
+def validar_cliente(num_contacto: int) -> bool:
     with db_session_scope() as s:
         return DBContact.is_costumer(s, num_contacto)
 

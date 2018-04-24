@@ -192,7 +192,7 @@ class DBContact(object):
 
 
     @staticmethod
-    def is_supplier(session, num_contacto: int): -> bool
+    def is_supplier(session, num_contacto: int) -> bool:
         if get_contact_info(session, num_contacto=num_contacto, tipo="Fornecedor"):
             return True
         else:
@@ -200,7 +200,7 @@ class DBContact(object):
 
 
     @staticmethod
-    def is_costumer(session, num_contacto: int): -> bool
+    def is_costumer(session, num_contacto: int) -> bool:
         if get_contact_info(session, num_contacto=num_contacto, tipo="Cliente"):
             return True
         else:
