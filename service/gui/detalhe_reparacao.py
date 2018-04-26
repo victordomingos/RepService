@@ -31,7 +31,7 @@ class repairDetailWindow(ttk.Frame):
         self.repair = db.obter_reparacao(self.num_reparacao)
         self.tipo_processo = "Cliente" if (self.repair['is_rep_stock'] == 0) else "Stock"
 
-        if self.repair['is_rep_cliente']:
+        if self.tipo_processo == "Cliente":
             self.numero_contacto = self.repair['cliente_id']
             self.nome = self.repair['cliente_nome']
             self.telefone = self.repair['cliente_telefone']

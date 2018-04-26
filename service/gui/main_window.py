@@ -1942,8 +1942,8 @@ class App(baseApp):
 
         tipo = self.ef_var_tipo.get()
         if tipo == TIPO_REP_STOCK:
-            dados_rep = {#'cliente_id',
-                         'fornecedor_id': self.ef_txt_num_fornecedor,
+            dados_rep = {
+                         'fornecedor_id': self.ef_txt_num_fornecedor.get(),
                          'descr_product': self.ef_ltxt_descr_equipamento.get(),
                          'part_number': self.ef_ltxt_num_serie.get(),
                          'sn': self.ef_ltxt_num_serie.get(),
@@ -1953,21 +1953,21 @@ class App(baseApp):
                          #'data_compra': txt_para_data(self.ef_ltxt_data_compra.get()),
                          #'num_fatura': self.ef_ltxt_num_fatura.get(),
                          #'loja_compra': self.ef_ltxt_local_compra.get(),
-                         'desc_servico': self.ef_text_descr_avaria_servico.get(1.0, tk.END),
+                         'descr_servico': self.ef_text_descr_avaria_servico.get(1.0, tk.END),
                          'avaria_reprod_loja': self.ef_var_reprod_loja.get(),
                          'requer_copia_seg': self.ef_var_efetuar_copia.get(),
                          'is_find_my_ativo': self.ef_var_find_my.get(),
                          'senha': self.ef_ltxt_senha.get(),  # todo: scramble text
                          'acessorios_entregues': self.ef_ltxt_acessorios_entregues.get(),
                          'notas': self.ef_ltxt_notas.get(),
-                         'local_reparacao_id': self.ef_var_local_intervencao.get(),
+                         'local_reparacao_id': self.ef_txt_num_fornecedor.get(),
                          'estado_reparacao': EM_PROCESSAMENTO,
                          'fatura_fornecedor': self.ef_ltxt_num_fatura_fornecedor.get(),
                          'nar_autorizacao_rep': self.ef_ltxt_nar.get(),
                          'data_fatura_fornecedor': txt_para_data(self.ef_ltxt_data_fatura_fornecedor.get()),
                          'num_guia_rececao': self.ef_ltxt_num_guia_rececao.get(),
                          'data_guia_rececao': txt_para_data(self.ef_ltxt_data_entrada_stock.get()),
-                         # 'cod_resultado_reparacao': SEM_INFORMACAO,
+                         'cod_resultado_reparacao': RESULTADOS[EV_SEM_INFORMACAO],
                          # 'descr_detalhe_reparacao': "",
                          # 'novo_sn_artigo': ,
                          # 'notas_entrega': ,
@@ -2000,14 +2000,14 @@ class App(baseApp):
                          'senha': self.ef_ltxt_senha.get(),  # todo: scramble text
                          'acessorios_entregues': self.ef_ltxt_acessorios_entregues.get(),
                          'notas': self.ef_ltxt_notas.get(),
-                         'local_reparacao_id': self.ef_var_local_intervencao.get(),
+                         'local_reparacao_id': int(self.ef_var_local_intervencao.get().split(sep=" - ", maxsplit=1)[0]),
                          'estado_reparacao': EM_PROCESSAMENTO,
                          #'fatura_fornecedor': self.ef_ltxt_num_fatura_fornecedor.get(),
                          'nar_autorizacao_rep': self.ef_ltxt_nar.get(),
                          #'data_fatura_fornecedor': txt_para_data(self.ef_ltxt_data_fatura_fornecedor.get()),
                          #'num_guia_rececao': self.ef_ltxt_num_guia_rececao.get(),
                          #'data_guia_rececao': txt_para_data(self.ef_ltxt_data_entrada_stock.get()),
-                         # 'cod_resultado_reparacao': SEM_INFORMACAO,
+                         'cod_resultado_reparacao': RESULTADOS[EV_SEM_INFORMACAO],
                          # 'descr_detalhe_reparacao': "",
                          # 'novo_sn_artigo': ,
                          # 'notas_entrega': ,
@@ -2108,7 +2108,7 @@ class App(baseApp):
         self.master.update()
         for reparacao in reparacoes:
             self.inserir_rep(rep_num=reparacao['id'],
-                nome_cliente=reparacao['cliente_nome'],
+                nome_cliente=reparacao['nome'],
                 descr_artigo=reparacao['descr_artigo'],
                 descr_servico=reparacao['descr_servico'],
                 estado=reparacao['estado'],
