@@ -3,8 +3,9 @@ from typing import Dict, List, Union
 from sqlalchemy import or_, and_
 
 from local_db import db_models
+from local_db import db_main as db
 from misc.constants import ESTADOS, PRIORIDADES
-from misc.misc_funcs import calcular_dias_desde, clean_data
+from misc.misc_funcs import calcular_dias_desde, clean_data, clean_data_field_txt, clean_data_field_int
 
 
 class DBRepair(object):
@@ -66,14 +67,24 @@ class DBRepair(object):
             .filter(db_models.Repair.estado_reparacao.in_(status_list))
 
         reps = [{'id': rep.id,
-                 'cliente_nome': rep.cliente.nome,
+                 'nome': rep.fornecedor.nome,
                  'descr_artigo': rep.descr_product,
                  'sn': rep.sn,
                  'descr_servico': rep.descr_servico,
                  'estado': rep.estado_reparacao,
                  'dias': calcular_dias_desde(rep.created_on),
                  'prioridade': rep.prioridade}
-                for rep in reparacoes]
+                if rep.is_stock
+                else {'id': rep.id,
+                      'nome': rep.cliente.nome,
+                      'descr_artigo': rep.descr_product,
+                      'sn': rep.sn,
+                      'descr_servico': rep.descr_servico,
+                      'estado': rep.estado_reparacao,
+                      'dias': calcular_dias_desde(rep.created_on),
+                      'prioridade': rep.prioridade}
+                for rep in reparacoes
+                ]
 
         return reps
 
@@ -145,14 +156,16 @@ class DBRepair(object):
                                 ))) \
                    .order_by(db_models.Repair.created_on)[:3000]
 
-        return [{'id': rep[0].id,
+        #TODO: verificar se não é necessário ajustar para reparação de stock/cliente.
+
+        return [clean_data({'id': rep[0].id,
                  'cliente_nome': rep[1].nome,
                  'descr_artigo': rep[0].descr_product,
                  'sn': rep[0].sn,
                  'descr_servico': rep[0].descr_servico,
                  'estado': rep[0].estado_reparacao,
                  'dias': calcular_dias_desde(rep[0].created_on),
-                 'prioridade': rep[0].prioridade}
+                 'prioridade': rep[0].prioridade})
                 for rep in reps]
 
 
@@ -170,82 +183,131 @@ class DBRepair(object):
 
         rep = self._get_repair(session, num_rep)
 
+        # TODO: verificar se é mesmo preciso fazer este tipo de validção de dados aqui,
+        # ou se é melhor fazer de outro modo noutro local.
         if not rep:
             return {'id': 0}
 
-        try:
-            local_rep = rep.local_reparacao.nome
-        except:
-            local_rep = ""
-
-        try:
-            nome_fornecedor = rep.fornecedor.nome
-        except:
-            nome_fornecedor = ""
-
-        try:
-            nome_cliente = rep.cliente.nome
-        except:
-            nome_cliente = ""
-
-        # TODO: distinguir e adaptar para rep. cliente/stock?
-        return clean_data(
+        if rep.is_stock:
+            rep_data = clean_data(
                {'id': rep.id,
-                'cliente_id': rep.cliente.id,
-                'cliente_nome': nome_cliente,
-                'cliente_telefone': rep.cliente.telefone,
-                'cliente_email': rep.cliente.email,
-                'product_descr': rep.descr_product,
-                'product_part_number': rep.part_number,
-                'sn': rep.sn,
-                'fornecedor_id': rep.fornecedor_id,
-                'fornecedor_nome': nome_fornecedor,
+                'cliente_id': 0,
+                'cliente_nome': "",
+                'cliente_telefone': "",
+                'cliente_email': "",
+                'product_descr': clean_data_field_txt(rep.descr_product),
+                'product_part_number': clean_data_field_txt(rep.part_number),
+                'sn': clean_data_field_txt(rep.sn),
+                'fornecedor_id': clean_data_field_int(rep.fornecedor.id),
+                'fornecedor_nome': clean_data_field_txt(rep.fornecedor.nome),
+                'fornecedor_telefone': rep.fornecedor.telefone,
+                'fornecedor_email': rep.fornecedor.email,
                 'estado_artigo': rep.estado_artigo,
-                'obs_estado': rep.obs_estado,
+                'obs_estado': clean_data_field_txt(rep.obs_estado),
                 'is_garantia': rep.is_garantia,
                 'data_compra': rep.data_compra,
-                'num_fatura': rep.num_fatura,
-                'loja_compra': rep.loja_compra,
-                'descr_servico': rep.descr_servico,
+                'num_fatura': clean_data_field_txt(rep.num_fatura),
+                'loja_compra': clean_data_field_txt(rep.loja_compra),
+                'descr_servico': clean_data_field_txt(rep.descr_servico),
                 'avaria_reprod_loja': rep.avaria_reprod_loja,
                 'requer_copia_seg': rep.requer_copia_seg,
                 'is_find_my_ativo': rep.is_find_my_ativo,
-                'senha': rep.senha,
-                'acessorios_entregues': rep.acessorios_entregues,
-                'notas': rep.notas,
-                'local_reparacao_id': rep.local_reparacao_id,
-                'local_reparacao_nome': local_rep,
+                'senha': clean_data_field_txt(rep.senha),
+                'acessorios_entregues': clean_data_field_txt(rep.acessorios_entregues),
+                'notas': clean_data_field_txt(rep.notas),
+                'local_reparacao_id': clean_data_field_int(rep.local_reparacao_id),
+                'local_reparacao_nome': db.obter_contacto(rep.local_reparacao_id)['nome'],
                 'estado_reparacao': rep.estado_reparacao,
-                'fatura_fornecedor': rep.fatura_fornecedor,
-                'nar_autorizacao_rep': rep.nar_autorizacao_rep,
+                'fatura_fornecedor': clean_data_field_txt(rep.fatura_fornecedor),
+                'nar_autorizacao_rep': clean_data_field_txt(rep.nar_autorizacao_rep),
                 'data_fatura_fornecedor': rep.data_fatura_fornecedor,
-                'num_guia_rececao': rep.num_guia_rececao,
+                'num_guia_rececao': clean_data_field_txt(rep.num_guia_rececao),
                 'data_guia_rececao': rep.data_guia_rececao,
                 'cod_resultado_reparacao': rep.cod_resultado_reparacao,
-                'descr_detalhe_reparacao': rep.descr_detalhe_reparacao,
-                'novo_sn_artigo': rep.novo_sn_artigo,
-                'notas_entrega': rep.notas_entrega,
-                'utilizador_entrega_id': rep.utilizador_entrega_id,
-                'data_entrega': rep.data_entrega,
-                'num_quebra_stock': rep.num_quebra_stock,
+                'descr_detalhe_reparacao': clean_data_field_txt(rep.descr_detalhe_reparacao),
+                'novo_sn_artigo': clean_data_field_txt(rep.novo_sn_artigo),
+                'notas_entrega': clean_data_field_txt(rep.notas_entrega),
+                'utilizador_entrega_id': clean_data_field_int(rep.utilizador_entrega_id),
+                'data_entrega': clean_data_field_txt(rep.data_entrega),
+                'num_quebra_stock': clean_data_field_txt(rep.num_quebra_stock),
                 'is_rep_stock': rep.is_stock,
                 'is_rep_cliente': not rep.is_stock,
                 'modo_entrega': rep.modo_entrega,
                 'cliente_pagou_portes': rep.cliente_pagou_portes,
-                'reincidencia_processo_id': rep.reincidencia_processo_id,
-                'morada_entrega': rep.morada_entrega,
+                'reincidencia_processo_id': clean_data_field_int(rep.reincidencia_processo_id),
+                'morada_entrega': clean_data_field_txt(rep.morada_entrega),
                 'prioridade': rep.prioridade,
                 'criado_por_utilizador_id': rep.criado_por_utilizador_id,
-                'ult_atualizacao_por_utilizador_id': rep.ult_atualizacao_por_utilizador_id,
+                'ult_atualizacao_por_utilizador_id': clean_data_field_int(rep.ult_atualizacao_por_utilizador_id),
 
                 'created_on': rep.created_on.isoformat(sep=' ', timespec='minutes'),
                 'updated_on': rep.updated_on.isoformat(sep=' ', timespec='minutes'),
 
-                'utilizador_entrega': rep.utilizador_entrega_id,
+                'utilizador_entrega': clean_data_field_int(rep.utilizador_entrega_id),
                 'criado_por_utilizador': rep.criado_por_utilizador_id,
-                'atualizado_por_utilizador': rep.ult_atualizacao_por_utilizador_id,
+                'atualizado_por_utilizador': clean_data_field_int(rep.ult_atualizacao_por_utilizador_id),
+                })
+        else:
+            rep_data = clean_data(
+               {'id': rep.id,
+                'cliente_id': clean_data_field_int(rep.cliente.id),
+                'cliente_nome': clean_data_field_txt(rep.cliente.nome),
+                'cliente_telefone': clean_data_field_txt(rep.cliente.telefone),
+                'cliente_email': clean_data_field_txt(rep.cliente.email),
+                'product_descr': clean_data_field_txt(rep.descr_product),
+                'product_part_number': clean_data_field_txt(rep.part_number),
+                'sn': clean_data_field_txt(rep.sn),
+                'fornecedor_id': 0,
+                'fornecedor_nome': "",
+                'estado_artigo': rep.estado_artigo,
+                'obs_estado': clean_data_field_txt(rep.obs_estado),
+                'is_garantia': rep.is_garantia,
+                'data_compra': rep.data_compra,
+                'num_fatura': clean_data_field_txt(rep.num_fatura),
+                'loja_compra': clean_data_field_txt(rep.loja_compra),
+                'descr_servico': clean_data_field_txt(rep.descr_servico),
+                'avaria_reprod_loja': rep.avaria_reprod_loja,
+                'requer_copia_seg': rep.requer_copia_seg,
+                'is_find_my_ativo': rep.is_find_my_ativo,
+                'senha': clean_data_field_txt(rep.senha),
+                'acessorios_entregues': clean_data_field_txt(rep.acessorios_entregues),
+                'notas': clean_data_field_txt(rep.notas),
+                'local_reparacao_id': clean_data_field_int(rep.local_reparacao_id),
+                'local_reparacao_nome': db.obter_contacto(rep.local_reparacao_id)['nome'],
+                'estado_reparacao': rep.estado_reparacao,
+                'fatura_fornecedor': clean_data_field_txt(rep.fatura_fornecedor),
+                'nar_autorizacao_rep': clean_data_field_txt(rep.nar_autorizacao_rep),
+                'data_fatura_fornecedor': rep.data_fatura_fornecedor,
+                'num_guia_rececao': clean_data_field_txt(rep.num_guia_rececao),
+                'data_guia_rececao': rep.data_guia_rececao,
+                'cod_resultado_reparacao': rep.cod_resultado_reparacao,
+                'descr_detalhe_reparacao': clean_data_field_txt(rep.descr_detalhe_reparacao),
+                'novo_sn_artigo': clean_data_field_txt(rep.novo_sn_artigo),
+                'notas_entrega': clean_data_field_txt(rep.notas_entrega),
+                'utilizador_entrega_id': clean_data_field_int(rep.utilizador_entrega_id),
+                'data_entrega': clean_data_field_txt(rep.data_entrega),
+                'num_quebra_stock': clean_data_field_txt(rep.num_quebra_stock),
+                'is_rep_stock': rep.is_stock,
+                'is_rep_cliente': not rep.is_stock,
+                'modo_entrega': rep.modo_entrega,
+                'cliente_pagou_portes': rep.cliente_pagou_portes,
+                'reincidencia_processo_id': clean_data_field_int(rep.reincidencia_processo_id),
+                'morada_entrega': clean_data_field_txt(rep.morada_entrega),
+                'prioridade': rep.prioridade,
+                'criado_por_utilizador_id': rep.criado_por_utilizador_id,
+                'ult_atualizacao_por_utilizador_id': clean_data_field_int(rep.ult_atualizacao_por_utilizador_id),
+
+                'created_on': rep.created_on.isoformat(sep=' ', timespec='minutes'),
+                'updated_on': rep.updated_on.isoformat(sep=' ', timespec='minutes'),
+
+                'utilizador_entrega': clean_data_field_int(rep.utilizador_entrega_id),
+                'criado_por_utilizador': rep.criado_por_utilizador_id,
+                'atualizado_por_utilizador': clean_data_field_int(rep.ult_atualizacao_por_utilizador_id),
                 }
                 )
+
+        return rep_data
+
 
 
     def get_serial_number(self, session, num_rep: int) -> str:
