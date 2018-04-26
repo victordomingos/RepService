@@ -131,3 +131,19 @@ def clean_data(data: dict) -> dict:
             value = value.isoformat(sep=' ', timespec='minutes')
         clean_dataset[key] = value
     return clean_dataset
+
+def clean_data_field_txt(data: Optional[str]) -> str:
+    """ Return a copy of a string, replacing None values by an empty string. """
+    clean_data = str(data)
+    if clean_data == "None":
+        return ""
+    else:
+        return clean_data
+
+def clean_data_field_int(data: Optional[int]) -> int:
+    """ Return a copy of a string, replacing None values by a 0 (zero) int. """
+    try:
+        clean_data = int(data)
+        return clean_data
+    except TypeError:
+        return 0
