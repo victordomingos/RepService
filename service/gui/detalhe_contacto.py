@@ -1,10 +1,3 @@
-#!/usr/bin/env python3.6
-# encoding: utf-8
-"""
-Este módulo é parte integrante da aplicação RepService, desenvolvida por
-Victor Domingos e distribuída sob os termos da licença Creative Commons
-Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
-"""
 from tkinter import ttk, messagebox
 import Pmw
 from string import ascii_uppercase
@@ -14,7 +7,7 @@ from pyisemail import is_email
 from gui.extra_tk_utilities import AutoScrollbar, LabelEntry, LabelText, popup_message
 from gui import detalhe_reparacao
 from global_setup import *
-from misc.constants import TODOS_OS_PAISES, TIPO_REP_STOCK, TIPO_REP_CLIENTE, RESULTADOS
+from misc.constants import *
 from misc.misc_funcs import check_and_normalize_phone_number, validate_phone_entry
 
 if USE_LOCAL_DATABASE:
@@ -360,11 +353,14 @@ class contactDetailWindow(ttk.Frame):
         self.vsb.grid(column=1, row=0, sticky="ns", in_=self.treeframe)
 
         for rep in self.reparacoes:
+            if rep['resultado']:
+                result = rep['resultado']
+            else: result = EV_SEM_INFORMACAO
             self.tree.insert("", "end", values=(str(rep['id']),
                                                 rep['data'],
                                                 rep['descr_artigo'],
                                                 rep['descr_servico'],
-                                                RESULTADOS[rep['resultado']],
+                                                RESULTADOS[result],
                                                 rep['reincidencia_id']))
 
         self.bind_tree()

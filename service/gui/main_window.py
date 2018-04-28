@@ -2007,7 +2007,7 @@ class App(baseApp):
                          #'data_fatura_fornecedor': txt_para_data(self.ef_ltxt_data_fatura_fornecedor.get()),
                          #'num_guia_rececao': self.ef_ltxt_num_guia_rececao.get(),
                          #'data_guia_rececao': txt_para_data(self.ef_ltxt_data_entrada_stock.get()),
-                         'cod_resultado_reparacao': RESULTADOS[EV_SEM_INFORMACAO],
+                         'cod_resultado_reparacao': EV_SEM_INFORMACAO,
                          # 'descr_detalhe_reparacao': "",
                          # 'novo_sn_artigo': ,
                          # 'notas_entrega': ,
