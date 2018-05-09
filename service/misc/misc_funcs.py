@@ -110,11 +110,15 @@ def validate_past_date(given_date: str):
 
 def obfuscate_text(text: str) -> str:
     """ Create a simple (insecure) obfuscated string """
-    return base64.b64encode(text.encode('utf-8'))
+    print("Encoding:", text)
+    print("Encoded:", base64.b64encode(text.encode('utf-8')))
+    return base64.b64encode(text.encode('utf-8')).decode('utf-8')
 
 
 def reveal_text(text: str) -> str:
     """ Reveal the content of an obfuscated string """
+    print("Decoding:", text)
+    print("Decoded:", base64.b64decode(text).decode('utf-8'))
     return base64.b64decode(text).decode('utf-8')
 
 
