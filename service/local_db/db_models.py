@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, Date, ForeignKey, DateTime, func
+from sqlalchemy import Column, Integer, String, LargeBinary, Boolean, Date, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship, backref
 
 from local_db.db_base import Base
