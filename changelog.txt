@@ -16,6 +16,7 @@ v.0.22 - 31/03/2018
    controlos.
  * Para simplificar um pouco o desenvolvimento, optou-se por eliminar a tabela
    de produtos, incluindo os dois campos correspondentes na tabela reparações.
+ * Foi corrigido um bug que impedia a visualização da senha do cliente.
 
 
 ---
